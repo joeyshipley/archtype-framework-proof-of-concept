@@ -1,4 +1,5 @@
 using PagePlay.Site.Application.Accounts.Login;
+using PagePlay.Site.Application.Accounts.ViewProfile;
 using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Infrastructure.IoC;
@@ -20,5 +21,6 @@ public static class DependencyResolver
     private static void BindWorkflows(IServiceCollection services)
     {
         services.AddTransient<ILoginWorkflow, LoginWorkflow>();
+        services.AddTransient<IViewProfileWorkflow, ViewProfileWorkflow>();
     }
 }

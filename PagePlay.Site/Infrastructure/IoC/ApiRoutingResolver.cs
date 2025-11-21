@@ -1,5 +1,6 @@
 using PagePlay.Site.Application.Accounts;
 using PagePlay.Site.Application.Accounts.Login;
+using PagePlay.Site.Application.Accounts.ViewProfile;
 using PagePlay.Site.Infrastructure.Routing;
 
 namespace PagePlay.Site.Infrastructure.IoC;
@@ -16,5 +17,6 @@ public static class ApiRoutingResolver
         services.AddScoped<IEndpointRoutes, AccountRoutes>();
         
         services.AddScoped<IAccountEndpoint, LoginEndpoint>();
+        services.AddScoped<IAccountEndpoint, ViewProfileEndpoint>();
     }
 }
