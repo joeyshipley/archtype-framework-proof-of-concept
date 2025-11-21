@@ -8,7 +8,8 @@ public class AccountRoutes(IEnumerable<IAccountEndpoint> _endpoints) : IEndpoint
 {
     public void MapRoutes(IEndpointRouteBuilder routeBuilder)
     {
-        var group = routeBuilder.MapGroup("/api/account")
+        var group = routeBuilder
+            .MapGroup("/api/account")
             .WithTags("Accounts");
         
         foreach (var endpoint in _endpoints)
