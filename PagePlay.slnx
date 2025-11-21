@@ -1,5 +1,9 @@
 <Solution>
+  <Folder Name="/development-files/" />
   <Folder Name="/repository-files/">
+    <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="PagePlay.Site/PagePlay.Site.csproj" Id="505e5dac-198a-439b-ab11-9d02455c1861" />
+  <Project Path="PagePlay.Tests/PagePlay.Tests.csproj" Id="91b767d4-7bda-4ccb-91fc-58e3c52662a1" />
 </Solution>
