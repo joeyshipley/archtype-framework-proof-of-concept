@@ -7,7 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.0" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Application\Accounts\Register\" />
+    <Folder Include="Application\Accounts\RequestParentalConsent\" />
+    <Folder Include="Application\Accounts\VerifyAge\" />
+    <Folder Include="Application\Administration\" />
+    <Folder Include="Application\Authoring\" />
+    <Folder Include="Application\Characters\" />
+    <Folder Include="Application\Engagement\" />
+    <Folder Include="Application\Reading\" />
+    <Folder Include="Application\Browsing\" />
+    <Folder Include="Application\Common\" />
+    <Folder Include="Infrastructure\Caching\" />
+    <Folder Include="Infrastructure\Email\" />
+    <Folder Include="Infrastructure\Sessions\" />
   </ItemGroup>
 
 </Project>
