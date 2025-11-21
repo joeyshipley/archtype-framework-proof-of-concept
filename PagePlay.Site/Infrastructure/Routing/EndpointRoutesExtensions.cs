@@ -23,15 +23,12 @@ public static class EndpointRoutesExtensions
 
         return endpoints;
     }
+
+    public static RouteHandlerBuilder Register<TResponse>(this IEndpointRouteBuilder endpoints, string pattern, Delegate handler) where TResponse : class =>
+        endpoints.MapPost(pattern, handler).WithResponseOf<TResponse>();
     
-    public static RouteHandlerBuilder WithApplicationErrorResponses(this RouteHandlerBuilder builder)
-    {
-        return builder
-            .ProducesProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status401Unauthorized)
-            .ProducesProblem(StatusCodes.Status403Forbidden)
-            .ProducesProblem(StatusCodes.Status404NotFound)
-            .ProducesProblem(StatusCodes.Status409Conflict)
+    public static RouteHandlerBuilder WithResponseOf<T>(this RouteHandlerBuilder builder) where T : class =>
+        builder
+            .Produces<T>(StatusCodes.Status200OK)
             .ProducesProblem(StatusCodes.Status500InternalServerError);
-    }
 }

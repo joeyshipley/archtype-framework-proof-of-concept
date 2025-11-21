@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Application\Accounts\EditProfile\" />
+    <Folder Include="Application\Accounts\ViewProfile\" />
     <Folder Include="Application\Accounts\Register\" />
     <Folder Include="Application\Accounts\RequestParentalConsent\" />
     <Folder Include="Application\Accounts\VerifyAge\" />
