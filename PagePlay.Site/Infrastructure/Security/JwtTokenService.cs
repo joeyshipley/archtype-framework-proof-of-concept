@@ -15,7 +15,7 @@ public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
 {
     public string GenerateToken(string email)
     {
-        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Jwt.SecretKey));
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Security.Jwt.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -26,10 +26,10 @@ public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
         };
 
         var token = new JwtSecurityToken(
-            issuer: _settings.Jwt.Issuer,
-            audience: _settings.Jwt.Audience,
+            issuer: _settings.Security.Jwt.Issuer,
+            audience: _settings.Security.Jwt.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_settings.Jwt.ExpirationMinutes)),
+            expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(_settings.Security.Jwt.ExpirationMinutes)),
             signingCredentials: credentials
         );
 

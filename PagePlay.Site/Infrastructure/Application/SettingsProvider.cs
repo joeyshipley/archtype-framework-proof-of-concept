@@ -2,16 +2,22 @@ namespace PagePlay.Site.Infrastructure.Application;
 
 public interface ISettingsProvider
 {
-    JwtSettings Jwt { get; }
+    SecuritySettings Security { get; }
 }
 
 public class SettingsProvider(IConfiguration _configuration) 
     : ISettingsProvider
 {
-    public JwtSettings Jwt { get; } = _configuration
-        .GetSection("Jwt")
-        .Get<JwtSettings>() 
-        ?? new JwtSettings();
+    public SecuritySettings Security { get; } = _configuration
+        .GetSection("Security")
+        .Get<SecuritySettings>()
+        ?? new SecuritySettings();
+}
+
+public class SecuritySettings
+{
+    public string PasswordPepper { get; set; }
+    public JwtSettings Jwt { get; set; }
 }
 
 public class JwtSettings
