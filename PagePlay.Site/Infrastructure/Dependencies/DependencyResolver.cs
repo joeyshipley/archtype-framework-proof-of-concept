@@ -1,8 +1,9 @@
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Application.Accounts.ViewProfile;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Infrastructure.IoC;
+namespace PagePlay.Site.Infrastructure.Dependencies;
 
 public static class DependencyResolver
 {
@@ -15,7 +16,9 @@ public static class DependencyResolver
 
     private static void BindApplicationComponents(IServiceCollection services)
     {
-        services.AddTransient<ISettingsProvider, SettingsProvider>();
+        services.AddSingleton<ISettingsProvider, SettingsProvider>();
+        services.AddSingleton<IJwtTokenService, JwtTokenService>();
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();        
     }
 
     private static void BindWorkflows(IServiceCollection services)

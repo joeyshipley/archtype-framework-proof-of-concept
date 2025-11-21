@@ -18,6 +18,20 @@ public class ApplicationResult<T> : IApplicationResult<T>
     public static IApplicationResult<T> Succeed(T? model) => 
         new ApplicationResult<T> { Success = true, Model = model };
 
+    public static IApplicationResult<T> Fail(string message) => 
+        new ApplicationResult<T>
+        {
+            Success = false, 
+            Errors = new List<ResponseErrorEntry>
+            {
+                new ResponseErrorEntry
+                {
+                    Property = string.Empty,
+                    Message = message
+                }
+            }
+        };
+
     public static IApplicationResult<T> Fail(ValidationResult validationResult) => 
         new ApplicationResult<T>
         {

@@ -3,7 +3,7 @@ using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Application.Accounts.ViewProfile;
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Infrastructure.IoC;
+namespace PagePlay.Site.Infrastructure.Dependencies;
 
 public static class ApiRoutingResolver
 {

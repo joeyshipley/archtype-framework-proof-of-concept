@@ -1,11 +1,32 @@
-using PagePlay.Site.Infrastructure.IoC;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
 DependencyResolver.Bind(builder.Services);
+
+builder.Services.AddOpenApi();
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>();
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+    });
 
 var app = builder.Build();
 
@@ -20,7 +41,9 @@ else
     app.UseExceptionHandler("/error");
 }
 
-app.MapEndpoints();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
+app.MapEndpoints();
 
 app.Run();
