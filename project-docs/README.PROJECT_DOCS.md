@@ -1,5 +1,7 @@
 # Project Documentation
 
+> **Note:** This folder contains many files that aren't listed in the solution explorer. Browse the folder directly in your file system to see everything.
+
 ## Folders
 
 ### `/briefs/`
