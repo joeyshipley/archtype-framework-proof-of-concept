@@ -71,8 +71,12 @@ public async Task<IApplicationResult<LoginResponse>> perform(LoginRequest reques
 
 Use C# 12+ primary constructors with underscore-prefixed parameter names.
 
+### Multi-Line Formatting (2+ Dependencies)
+
+When a class has **two or more dependencies**, format the constructor with each parameter on its own line and closing parenthesis on a separate line:
+
 ```csharp
-// ✅ Correct - Primary constructor with underscore parameters
+// ✅ Correct - Multi-line with closing paren on own line
 public class LoginWorkflow(
     IUserRepository _userRepository,
     IPasswordHasher _passwordHasher,
@@ -88,6 +92,37 @@ public class LoginWorkflow(
     }
 }
 
+// ❌ Incorrect - Closing paren on same line as last parameter
+public class LoginWorkflow(
+    IUserRepository _userRepository,
+    IPasswordHasher _passwordHasher) : IWorkflow<LoginRequest, LoginResponse>
+{
+    // ...
+}
+
+// ❌ Incorrect - All on one line (only acceptable for single dependency)
+public class LoginWorkflow(IUserRepository _userRepository, IPasswordHasher _passwordHasher) : IWorkflow<LoginRequest, LoginResponse>
+{
+    // ...
+}
+```
+
+### Single Dependency Formatting
+
+For classes with **only one dependency**, use a single line:
+
+```csharp
+// ✅ Correct - Single dependency on one line
+public class UserRepository(AppDbContext _context) : Repository<User>(_context), IUserRepository
+{
+    public async Task<User> GetByEmailAsync(string email) =>
+        await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+}
+```
+
+### Traditional Constructor (Incorrect)
+
+```csharp
 // ❌ Incorrect - Traditional constructor with field assignments
 public class LoginWorkflow : IWorkflow<LoginRequest, LoginResponse>
 {
@@ -105,6 +140,12 @@ public class LoginWorkflow : IWorkflow<LoginRequest, LoginResponse>
 ```
 
 **Why:** Primary constructors eliminate boilerplate field declarations and assignments. The underscore prefix maintains consistency with traditional field naming while making dependency injection parameters immediately recognizable. This reduces a 10-line constructor to 1 line.
+
+**Formatting Rationale:**
+- **Closing paren on own line:** Makes it clear where parameters end and base class/interfaces begin
+- **Vertical alignment:** Easy to scan dependencies at a glance
+- **Diff-friendly:** Adding/removing dependencies changes minimal lines in version control
+- **Single dependency exception:** No need for multi-line when there's only one parameter
 
 **Benefits:**
 - **Less boilerplate:** No field declarations, no assignments
