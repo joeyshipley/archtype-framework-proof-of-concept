@@ -42,7 +42,7 @@
 
 ### 2. Load Context
 
-**Load relevant .claude/context/ documentation** to understand constraints.
+**Load relevant context/ documentation** to understand constraints.
 
 ### 3. Draft Brief Sections
 
@@ -64,7 +64,7 @@
 
 **Create**: `briefs/P[phase]_[category]_[feature].md`
 
-**Use**: `.claude/context/briefs/PRODUCT_BRIEF_TEMPLATE.md`
+**Use**: `context/briefs/PRODUCT_BRIEF_TEMPLATE.md`
 
 **Fill in**:
 1. Status: "active"

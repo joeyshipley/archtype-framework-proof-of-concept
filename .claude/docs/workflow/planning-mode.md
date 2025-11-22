@@ -42,7 +42,7 @@
 
 ### 2. Load Context
 
-Navigate to relevant docs via `.claude/context/`
+Navigate to relevant docs via `context/`
 
 Ensures plan aligns with architectural decisions.
 
@@ -288,7 +288,7 @@ Unsure how something works? Plan investigative test first.
 ## Example Session
 
 1. Read brief's Exploration Findings (Planning Input)
-2. Load arch context (via .claude/context/)
+2. Load arch context (via context/)
 3. **Step 1** (Context): Read relevant source files, understand structure
 4. **Step 2** (Plan): Create ATOMIC tasks across implementation phases, map dependencies
 5. **Step 3** (Present):

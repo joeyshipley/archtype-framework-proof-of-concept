@@ -32,7 +32,7 @@ Read these first, every session.
 - **Architecture questions mid-implementation** → STOP, return to exploration
 - **Context collapse** (any bugs, workarounds) → STOP, rollback, smaller slices
 
-**Recovery**: Implementation without plan → STOP → Retroactive plan → Keep/rollback | Exploration not documented → Pause → Document in .claude/context/ → Resume
+**Recovery**: Implementation without plan → STOP → Retroactive plan → Keep/rollback | Exploration not documented → Pause → Document in context/ → Resume
 
 ---
 
