@@ -92,7 +92,7 @@
 ### 6. Tell Human Next Steps
 
 **Template**:
-> "Brief created at `.claude/briefs/P[phase]_[category]_[feature].md`. Starting mode: [MODE].
+> "Brief created at `briefs/P[phase]_[category]_[feature].md`. Starting mode: [MODE].
 >
 > Ready to start now, or saving for later?"
 

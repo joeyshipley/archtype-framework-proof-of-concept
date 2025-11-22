@@ -9,7 +9,8 @@
 
 **Before anything else, read these files in order**:
 1. `.claude/docs/README.md` - Project philosophy, team velocity principles, and architecture overview
-2. `.claude/docs/README.WEB_FRAMEWORK.md` - HTTP-First philosophy and turn-based architecture (web framework context)
+2. `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md` - Vertical slices, self-enforcing patterns, and maintaining predictable feature complexity
+3. `.claude/docs/README.WEB_FRAMEWORK.md` - HTTP-First philosophy and turn-based architecture (web framework context)
 
 Read these first, every session.
 
@@ -45,7 +46,7 @@ Read these first, every session.
 
 **Note**: Briefs can be created three ways:
 1. **AI-assisted** (brief-creation.md) - Conversational structuring
-2. **Human-written** (directly in `.claude/briefs/` using template) - Then validate in Exploration
+2. **Human-written** (directly in `briefs/` using template) - Then validate in Exploration
 3. **During exploration** (Exploration mode creates brief as artifact) - Documents discoveries
 
 All paths valid. Briefs are tools, not requirements.
