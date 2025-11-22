@@ -75,14 +75,14 @@ Ensures plan aligns with architectural decisions.
 For each task that creates new code, ask:
 
 1. **Does this need a new workflow?**
-   - If YES → Include in task: "Read `.claude/docs/patterns/workflow-creation.md` and create {Feature} workflow"
+   - If YES → Include in task: "Read `project-docs/context/patterns/workflow-creation.md` and create {Feature} workflow"
 
 2. **Does this need workflow tests?**
-   - If YES → Include in task: "Read `.claude/docs/patterns/test-creation.md` (Pattern A) and create tests for {Feature} workflow"
+   - If YES → Include in task: "Read `project-docs/context/patterns/test-creation.md` (Pattern A) and create tests for {Feature} workflow"
 
 3. **Does this need standalone test files?** (outside workflow context)
    - Examples: Testing utilities, domain models, repositories, validators
-   - If YES → Include in task: "Read `.claude/docs/patterns/test-creation.md` (Pattern B) and create test file for {Component}"
+   - If YES → Include in task: "Read `project-docs/context/patterns/test-creation.md` (Pattern B) and create test file for {Component}"
 
 These pattern docs provide scaffolding templates. AI reads them during implementation and executes in root session (maintains full context).
 

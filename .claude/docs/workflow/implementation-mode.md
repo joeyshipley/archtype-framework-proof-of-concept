@@ -97,8 +97,8 @@ Read relevant architectural documentation before implementing:
 - `.claude/docs/README.SYNTAX_STYLE.md` - Code style conventions
 
 **If task includes pattern references, read those:**
-- `.claude/docs/patterns/workflow-creation.md` - When creating new workflows
-- `.claude/docs/patterns/test-creation.md` - When creating test files
+- `project-docs/context/patterns/workflow-creation.md` - When creating new workflows
+- `project-docs/context/patterns/test-creation.md` - When creating test files
 
 Pattern docs provide scaffolding templates. Execute in root session (no subprocess) to maintain full context.
 
