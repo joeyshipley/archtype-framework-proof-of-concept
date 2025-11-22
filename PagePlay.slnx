@@ -1,6 +1,7 @@
 <Solution>
-  <Folder Name="/ai-files/" />
-  <Folder Name="/development-files/" />
+  <Folder Name="/development-files/">
+    <File Path="docker-compose.yml" />
+  </Folder>
   <Folder Name="/repository-files/">
     <File Path=".gitignore" />
     <File Path="README.md" />
