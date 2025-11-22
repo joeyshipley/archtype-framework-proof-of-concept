@@ -1,3 +1,3 @@
 Let's continue in the mode Planning.
 
-Read docs/workflow/planning-mode.md
+Read .claude/docs/workflow/planning-mode.md
