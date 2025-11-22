@@ -65,6 +65,116 @@ public async Task<IApplicationResult<LoginResponse>> perform(LoginRequest reques
 
 **Why:** Public methods are the API surface. PascalCase follows C# conventions and makes the contract boundary clear.
 
+### Method Names - No Implementation Details
+
+Method names should describe **what they do**, not **how they do it**. Avoid suffixes that reveal implementation details like `Async`, `Sync`, `Internal`, or output types.
+
+```csharp
+// ✅ Correct - Names describe intent, not implementation
+private async Task<User> getUserByEmail(string email) =>
+    await _userRepository.GetByEmail(email);
+
+private async Task<bool> checkEmailExists(string email) =>
+    await _userRepository.EmailExists(email);
+
+public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
+{
+    var user = await getUserByEmail(request.Email);
+    // ...
+}
+
+// ❌ Incorrect - "Async" suffix exposes implementation detail
+private async Task<User> getUserByEmailAsync(string email) =>  // Remove "Async"
+    await _userRepository.GetByEmailAsync(email);
+
+private async Task<bool> checkEmailExistsAsync(string email) =>  // Remove "Async"
+    await _userRepository.EmailExistsAsync(email);
+
+// ❌ Incorrect - Other implementation detail suffixes
+private string getUserEmailString(long userId) =>  // Remove "String"
+    _userRepository.GetById(userId).Email;
+
+private Task<User> getUserByEmailTask(string email) =>  // Remove "Task"
+    _userRepository.GetByEmail(email);
+
+private User getUserByEmailInternal(string email) =>  // Remove "Internal"
+    _context.Users.FirstOrDefault(u => u.Email == email);
+```
+
+**Why this is a code smell:**
+
+1. **Implementation coupling:** If you change from async to sync, the method name becomes a lie
+2. **Noise:** `Async` adds no semantic value—the return type already declares it
+3. **Inconsistency:** Do you also add `String`, `Int`, `Bool` suffixes? Where does it end?
+4. **Leaky abstraction:** Callers shouldn't care about the implementation strategy
+
+**The .NET Framework Exception:**
+
+Many .NET framework methods use `Async` suffixes (e.g., `SaveChangesAsync`, `FirstOrDefaultAsync`). This is a framework convention we cannot change. However:
+
+- **Do not propagate this pattern** to your own methods
+- Think of `Async` in framework methods as part of their name, not a suffix we copy
+- Our methods should have clean, intent-revealing names
+
+**Examples in Context:**
+
+```csharp
+// ✅ Correct - Clean, intent-based names
+public class RegisterWorkflow(
+    IPasswordHasher _passwordHasher,
+    IUserRepository _userRepository,
+    IValidator<RegisterRequest> _validator
+) : IWorkflow<RegisterRequest, RegisterResponse>
+{
+    public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
+    {
+        var validationResult = await validate(request);
+        if (!validationResult.IsValid)
+            return buildErrorResponse(validationResult);
+
+        var emailExists = await checkEmailExists(request.Email);
+        if (emailExists)
+            return buildErrorResponse("Email already exists.");
+
+        var user = await createAndSaveUser(request);
+        return buildSuccessResponse();
+    }
+
+    private async Task<ValidationResult> validate(RegisterRequest request) =>
+        await _validator.ValidateAsync(request);
+
+    private async Task<bool> checkEmailExists(string email) =>
+        await _userRepository.EmailExistsAsync(email);
+
+    private async Task<User> createAndSaveUser(RegisterRequest request)
+    {
+        var user = User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
+        await _userRepository.AddAsync(user);
+        await _userRepository.SaveChangesAsync();
+        return user;
+    }
+}
+
+// ❌ Incorrect - Implementation detail suffixes everywhere
+public class RegisterWorkflow(
+    IPasswordHasher _passwordHasher,
+    IUserRepository _userRepository,
+    IValidator<RegisterRequest> _validator
+) : IWorkflow<RegisterRequest, RegisterResponse>
+{
+    public async Task<IApplicationResult<RegisterResponse>> PerformAsync(RegisterRequest request)  // Remove Async
+    {
+        var validationResult = await validateAsync(request);  // Remove Async
+        // ...
+    }
+
+    private async Task<ValidationResult> validateAsync(RegisterRequest request) =>  // Remove Async
+        await _validator.ValidateAsync(request);
+}
+```
+
+**Summary:** Method names should be timeless and implementation-agnostic. They should describe intent, not technical details. If you rename a method from sync to async (or vice versa), the name shouldn't need to change.
+
 ---
 
 ## Constructor Style - Primary Constructors
@@ -393,7 +503,11 @@ When writing or reviewing code, check:
 
 - [ ] Private methods use lower camel case (`getUserById`, not `GetUserById`)
 - [ ] Public methods use PascalCase (`Perform`, not `perform`)
+- [ ] No implementation detail suffixes (`Async`, `Internal`, `String`, etc.)
+- [ ] Method names describe intent, not implementation
 - [ ] Classes use primary constructors with `_param` naming
+- [ ] Multi-line constructor format: closing paren on own line (2+ dependencies)
+- [ ] Single-line constructor format: one line only (1 dependency)
 - [ ] No explicit field declarations when primary constructor suffices
 - [ ] Simple methods use expression-bodied syntax (`=>`)
 - [ ] Complex methods use block bodies with proper formatting
