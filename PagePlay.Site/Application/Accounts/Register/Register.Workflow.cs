@@ -26,7 +26,7 @@ public class RegisterWorkflow(
 
         await saveUser(user);
 
-        return response();
+        return response(user.Id);
     }
 
     private IApplicationResult<RegisterResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
@@ -35,9 +35,9 @@ public class RegisterWorkflow(
     private IApplicationResult<RegisterResponse> response(string errorMessage) =>
         ApplicationResult<RegisterResponse>.Fail(errorMessage);
 
-    private IApplicationResult<RegisterResponse> response() =>
+    private IApplicationResult<RegisterResponse> response(long userId) =>
         ApplicationResult<RegisterResponse>.Succeed(
-            new RegisterResponse { Message = "Account created successfully. You can now log in." }
+            new RegisterResponse { UserId = userId }
         );
 
     private async Task<FluentValidation.Results.ValidationResult> validate(RegisterRequest request) =>

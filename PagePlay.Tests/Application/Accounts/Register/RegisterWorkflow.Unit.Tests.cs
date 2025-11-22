@@ -41,7 +41,12 @@ public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
         Mocker
             .GetSubstituteFor<IUserRepository>()
             .Add(Arg.Any<User>())
-            .Returns(callInfo => callInfo.Arg<User>());
+            .Returns(callInfo =>
+            {
+                var user = callInfo.Arg<User>();
+                user.Id = 123;
+                return user;
+            });
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -54,7 +59,7 @@ public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
         // Assert
         result.Success.Should().BeTrue();
         result.Model.Should().NotBeNull();
-        result.Model.Message.Should().Be("Account created successfully. You can now log in.");
+        result.Model.UserId.Should().Be(123);
 
         await Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -275,7 +280,12 @@ public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
         Mocker
             .GetSubstituteFor<IUserRepository>()
             .Add(Arg.Any<User>())
-            .Returns(callInfo => callInfo.Arg<User>());
+            .Returns(callInfo =>
+            {
+                var user = callInfo.Arg<User>();
+                user.Id = 456;
+                return user;
+            });
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -287,6 +297,7 @@ public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
 
         // Assert
         result.Success.Should().BeTrue();
+        result.Model.UserId.Should().Be(456);
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()

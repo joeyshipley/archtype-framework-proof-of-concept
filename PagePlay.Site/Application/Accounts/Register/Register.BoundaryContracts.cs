@@ -5,7 +5,7 @@ namespace PagePlay.Site.Application.Accounts.Register;
 
 public class RegisterResponse : IResponse
 {
-    public string Message { get; set; }
+    public long UserId { get; set; }
 }
 
 public class RegisterRequest : IRequest
