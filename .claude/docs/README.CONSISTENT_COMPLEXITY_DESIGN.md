@@ -85,10 +85,11 @@ Application/
 - Business workflow
 - API endpoint
 
-**Complexity is visible:**
-- Feature has 10 files? Probably too complex, should decompose
-- All features have 3-4 files? Good consistency
-- One feature has custom infrastructure? Architecture smell
+**Key principle: Start with single-method features**
+- Each folder represents ONE operation (CreateProject, UpdateProject, ListProjects)
+- No "UserManager" or "ProjectService" god classes
+- Feature complexity is immediately visible by file count
+- Features naturally stay small and focused
 
 ---
 
@@ -191,16 +192,24 @@ Multiple features need email →
 
 Now all features using these services have consistent complexity again.
 
-### Strategy 2: Decompose the Feature
+### Strategy 2: Keep Single-Method Features
 
-If ONE feature is much more complex:
+**We don't build "User Management" as one feature.** We start decomposed:
 
 ```
-"User Management" feature is 500 lines →
-  Break into: CreateUser, UpdateUser, DeleteUser, ListUsers, UserPermissions
-
-Now each sub-feature is ~100 lines (consistent with others)
+Application/
+├── Users/
+│   ├── CreateUser/           # One operation
+│   ├── UpdateUser/           # One operation
+│   ├── DeleteUser/           # One operation
+│   ├── ListUsers/            # One operation
+│   └── UpdateUserPermissions/ # One operation
+└── Users.Domain/
+    ├── Models/
+    └── Repository/
 ```
+
+Each folder is a single method/operation. No god classes, no managers, no services that do multiple things.
 
 ### Strategy 3: Accept the Complexity (Rarely)
 
@@ -266,14 +275,16 @@ public interface IRepository<T>
 ✅ No flags, no manual paths
 ❌ Never hard-code connection strings
 
-### Vertical Slices - Feature Folders
+### Vertical Slices - Single-Method Features
 ```
 Feature/
   ├── Feature.Workflow.cs      # Business logic
   ├── Feature.BoundaryContracts.cs  # Request/Response
   └── Feature.Endpoint.cs       # API routing
 ```
+✅ Each folder = one operation (CreateUser, UpdateUser, etc.)
 ✅ Everything related to feature in one place
+❌ Never create god classes (UserManager, ProjectService)
 ❌ Never split by technical layer (Models/, Controllers/, Services/)
 
 ---
@@ -282,15 +293,18 @@ Feature/
 
 When implementing features, AI should:
 
-1. **Look for existing patterns** - Find similar feature, copy structure
-2. **Measure deviation** - If new feature is 2x bigger, ask why
-3. **Reuse abstractions** - Use repositories, specifications, services
-4. **Flag inconsistency** - "This feature seems more complex than others, should we decompose?"
+1. **Start with single operation** - Each feature folder does ONE thing (CreateUser, not UserManagement)
+2. **Look for existing patterns** - Find similar feature, copy structure
+3. **Measure deviation** - If new feature is 2x bigger, ask why
+4. **Reuse abstractions** - Use repositories, specifications, services
+5. **Flag inconsistency** - "This feature seems more complex than others, should we extract infrastructure?"
 
 AI should NOT:
+- Create god classes (UserManager, ProjectService, DataService)
 - Create custom patterns for one feature
 - Skip existing abstractions "because it's easier"
 - Implement without checking similar features first
+- Put multiple operations in one feature folder
 
 ---
 
