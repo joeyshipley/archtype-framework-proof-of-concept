@@ -203,15 +203,17 @@ public class LoginWorkflow(
 }
 
 // ❌ Incorrect - Closing paren on same line as last parameter
-public class LoginWorkflow(
-    IUserRepository _userRepository,
-    IPasswordHasher _passwordHasher) : IWorkflow<LoginRequest, LoginResponse>
+public class ExampleWorkflow(
+    IExampleRepository _exampleRepository,
+    IOtherDependency _otherDependency
+) : IWorkflow<ExampleRequest, ExampleResponse>
 {
     // ...
 }
 
 // ❌ Incorrect - All on one line (only acceptable for single dependency)
-public class LoginWorkflow(IUserRepository _userRepository, IPasswordHasher _passwordHasher) : IWorkflow<LoginRequest, LoginResponse>
+public class ExampleWorkflow(IExampleRepository _exampleRepository) 
+    : IWorkflow<ExampleRequest, ExampleResponse>
 {
     // ...
 }
