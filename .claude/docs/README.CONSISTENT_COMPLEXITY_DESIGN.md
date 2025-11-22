@@ -287,6 +287,88 @@ Feature/
 ❌ Never create god classes (UserManager, ProjectService)
 ❌ Never split by technical layer (Models/, Controllers/, Services/)
 
+### Workflow Pattern - Revealing Intent Class Structure
+
+Every workflow follows a consistent internal structure that reveals business intent while hiding implementation details.
+
+**Core principles:**
+
+1. **Single entry point reveals process** - The public `Perform()` method reads like a business process story
+2. **Temporal coupling through data flow** - Method signatures enforce correct ordering through dependencies
+3. **Response transformation isolation** - All output shaping lives in dedicated `response()` methods
+4. **Implementation details hidden** - Private helper methods hide "how" while entry point shows "what"
+
+**Example:**
+
+```csharp
+public class RegisterWorkflow(
+    IPasswordHasher _passwordHasher,
+    IUserRepository _userRepository,
+    IValidator<RegisterRequest> _validator
+) : IWorkflow<RegisterRequest, RegisterResponse>
+{
+    // Entry point reveals business intent - readable without implementation details
+    public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
+    {
+        var validationResult = await validate(request);
+        if (!validationResult.IsValid)
+            return response(validationResult);
+
+        var user = createUser(request);
+
+        // Temporal coupling: must create user before checking email
+        var emailExists = await checkEmailExists(user.Email);
+        if (emailExists)
+            return response("An account with this email already exists.");
+
+        await saveUser(user);
+        return response();
+    }
+
+    // Response transformation - isolated, easy to modify
+    private IApplicationResult<RegisterResponse> response(ValidationResult validationResult) =>
+        ApplicationResult<RegisterResponse>.Fail(validationResult);
+
+    private IApplicationResult<RegisterResponse> response(string errorMessage) =>
+        ApplicationResult<RegisterResponse>.Fail(errorMessage);
+
+    private IApplicationResult<RegisterResponse> response() =>
+        ApplicationResult<RegisterResponse>.Succeed(
+            new RegisterResponse { Message = "Account created successfully. You can now log in." }
+        );
+
+    // Implementation details - drill down only when needed
+    private async Task<ValidationResult> validate(RegisterRequest request) =>
+        await _validator.ValidateAsync(request);
+
+    private async Task<bool> checkEmailExists(string email) =>
+        await _userRepository.EmailExists(email);
+
+    private User createUser(RegisterRequest request) =>
+        User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
+
+    private async Task saveUser(User user)
+    {
+        await _userRepository.Add(user);
+        await _userRepository.SaveChanges();
+    }
+}
+```
+
+**Benefits:**
+
+- **Communication** - Developers and business stakeholders can discuss `Perform()` using shared vocabulary
+- **Maintenance** - Clear where to add steps (entry point), change logic (helper methods), or modify output (response methods)
+- **Self-documenting** - The code structure itself explains the process flow
+- **Type-safe ordering** - Compiler enforces temporal dependencies through method signatures
+- **Consistent complexity** - Every workflow follows this pattern, making them predictable
+
+**When reviewing workflows:**
+- Can you understand the business process by reading only `Perform()`?
+- Are temporal dependencies enforced through data flow (not just ordering)?
+- Is response shaping isolated from business logic?
+- Are implementation details hidden in appropriately-named helper methods?
+
 ---
 
 ## For AI Agents
