@@ -2,7 +2,7 @@
 
 ## Demographics
 
-- **Age:** [your age]
+- **Age:** 50
 - **Background:** Software consultancy owner, developer
 - **Tech Savvy:** Expert
 - **Business Experience:** High
