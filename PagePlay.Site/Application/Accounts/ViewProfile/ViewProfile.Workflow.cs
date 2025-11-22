@@ -2,16 +2,15 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
-public interface IViewProfileWorkflow
+public class ViewProfileWorkflow() : IWorkflow<ViewProfileRequest, ViewProfileResponse>
 {
-    Task<IApplicationResult<ViewProfileResponse>> ViewProfile(ViewProfileRequest request);
-}
-
-public class ViewProfileWorkflow() : IViewProfileWorkflow
-{
-    public Task<IApplicationResult<ViewProfileResponse>> ViewProfile(ViewProfileRequest request)
+    public Task<IApplicationResult<ViewProfileResponse>> Perform(ViewProfileRequest request)
     {
-        var response = new ViewProfileResponse { Message = "ViewProfile API Workflow is GO!" };
-        return Task.FromResult(ApplicationResult<ViewProfileResponse>.Succeed(response));
+        return Task.FromResult(response());
     }
+
+    private IApplicationResult<ViewProfileResponse> response() =>
+        ApplicationResult<ViewProfileResponse>.Succeed(
+            new ViewProfileResponse { Message = "ViewProfile API Workflow is GO!" }
+        );
 }

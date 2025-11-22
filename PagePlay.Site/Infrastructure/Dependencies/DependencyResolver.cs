@@ -27,7 +27,11 @@ public static class DependencyResolver
 
     private static void BindData(IServiceCollection services)
     {
-        services.AddDbContext<AppDbContext>();
+        services.AddScoped<AppDbContext>(sp =>
+        {
+            var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
+            return new AppDbContext(settingsProvider);
+        });
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();
     }
