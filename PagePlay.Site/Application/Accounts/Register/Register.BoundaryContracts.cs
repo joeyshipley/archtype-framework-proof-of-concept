@@ -1,4 +1,11 @@
+using FluentValidation;
+
 namespace PagePlay.Site.Application.Accounts.Register;
+
+public class RegisterResponse
+{
+    public string Message { get; set; }
+}
 
 public class RegisterRequest
 {
@@ -7,7 +14,20 @@ public class RegisterRequest
     public string ConfirmPassword { get; set; }
 }
 
-public class RegisterResponse
+public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
 {
-    public string Message { get; set; }
+    public RegisterRequestValidator()
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty().WithMessage("Email is required.")
+            .EmailAddress().WithMessage("Invalid email format.");
+
+        RuleFor(x => x.Password)
+            .NotEmpty().WithMessage("Password is required.")
+            .MinimumLength(8).WithMessage("Password must be at least 8 characters long.");
+
+        RuleFor(x => x.ConfirmPassword)
+            .NotEmpty().WithMessage("Password confirmation is required.")
+            .Equal(x => x.Password).WithMessage("Passwords do not match.");
+    }
 }
