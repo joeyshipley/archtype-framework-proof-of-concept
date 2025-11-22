@@ -36,7 +36,7 @@ public static class ResolverExtensions
     {
         var types = Assembly.GetExecutingAssembly()
             .GetTypes()
-            .Where(t => 
+            .Where(t =>
                 t is { IsClass: true, IsAbstract: false }
                 && t.Name.Contains(pattern)
             );
@@ -49,6 +49,35 @@ public static class ResolverExtensions
             if (interfaceType != null)
             {
                 var descriptor = new ServiceDescriptor(interfaceType, type, lifetime);
+                services.Add(descriptor);
+            }
+        }
+    }
+
+    public static void AutoRegisterWorkflows(
+        this IServiceCollection services,
+        ServiceLifetime lifetime
+    )
+    {
+        var workflowTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t =>
+                t is { IsClass: true, IsAbstract: false }
+                && t.Name.EndsWith("Workflow")
+            );
+
+        foreach (var workflowType in workflowTypes)
+        {
+            var workflowInterface = workflowType.GetInterfaces()
+                .FirstOrDefault(i =>
+                    i.IsGenericType &&
+                    (i.GetGenericTypeDefinition() == typeof(PagePlay.Site.Infrastructure.Application.IWorkflow<,>) ||
+                     i.GetGenericTypeDefinition() == typeof(PagePlay.Site.Infrastructure.Application.IWorkflow<>))
+                );
+
+            if (workflowInterface != null)
+            {
+                var descriptor = new ServiceDescriptor(workflowInterface, workflowType, lifetime);
                 services.Add(descriptor);
             }
         }

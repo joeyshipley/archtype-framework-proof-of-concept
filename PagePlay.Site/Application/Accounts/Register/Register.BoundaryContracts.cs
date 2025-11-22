@@ -1,13 +1,14 @@
 using FluentValidation;
+using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Accounts.Register;
 
-public class RegisterResponse
+public class RegisterResponse : IResponse
 {
     public string Message { get; set; }
 }
 
-public class RegisterRequest
+public class RegisterRequest : IRequest
 {
     public string Email { get; set; }
     public string Password { get; set; }

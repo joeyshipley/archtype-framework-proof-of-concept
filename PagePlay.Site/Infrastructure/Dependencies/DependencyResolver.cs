@@ -1,3 +1,4 @@
+using FluentValidation;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
@@ -12,6 +13,7 @@ public static class DependencyResolver
     {
         BindApplicationComponents(services);
         BindData(services);
+        BindValidation(services);
         BindWorkflows(services);
         ApiRoutingResolver.BindRouting(services);
     }
@@ -30,8 +32,13 @@ public static class DependencyResolver
         services.AddScoped<IUserRepository, UserRepository>();
     }
 
+    private static void BindValidation(IServiceCollection services)
+    {
+        services.AddValidatorsFromAssemblyContaining<IRequest>();
+    }
+
     private static void BindWorkflows(IServiceCollection services)
     {
-        services.AutoRegisterByNamingPattern("Workflow", ServiceLifetime.Scoped);
+        services.AutoRegisterWorkflows(ServiceLifetime.Scoped);
     }
 }
