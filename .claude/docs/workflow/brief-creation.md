@@ -1,6 +1,3 @@
----
----
-
 # BRIEF CREATION
 
 **Purpose**: Convert human intent into structured brief through conversation.
@@ -9,21 +6,28 @@
 
 ---
 
-## What Is This?
+## Context Reference Map
 
-**Brief creation converts**:
-- Human's thoughts → Structured brief
-- Vague intent → Clear starting mode
-- "Something feels off" → Specific work package
+**Foundation docs** (principles/patterns):
+- `.claude/docs/README*.md` - Read at session start (already done via /start)
 
-**Not for**:
-- Starting implementation
-- Making architectural decisions
-- Creating task lists
+**User context** (if user-facing):
+- `project-docs/context/personas/` - Target user personas
+
+**Related work** (avoid duplication):
+- `project-docs/briefs/` - Check for existing/related briefs
+
+**Discovery**: Use glob for keywords when needed (e.g., `*auth*.md`, `*database*.md`)
 
 ---
 
-## Workflow (6 Steps)
+## What Is This?
+
+Brief creation converts human intent into structured work packages with clear starting mode.
+
+---
+
+## Workflow (5 Steps)
 
 ### 1. Understand Intent
 
@@ -40,11 +44,7 @@
 - Frustration → Possible mission misalignment
 - User impact → Capture for Intent section
 
-### 2. Load Context
-
-**Load relevant project-docs/context/ documentation** to understand constraints.
-
-### 3. Draft Brief Sections
+### 2. Draft Brief Sections
 
 **Work through with human**:
 
@@ -60,7 +60,7 @@
 - Implementation unknowns → PLANNING
 - No unknowns → IMPLEMENTATION
 
-### 4. Write Brief
+### 3. Write Brief
 
 **Create**: `project-docs/briefs/P[phase]_[category]_[feature].md`
 
@@ -69,17 +69,16 @@
 **Fill in**:
 1. Status: "active"
 2. CURRENT MODE: (exploration/planning/implementation)
-3. Relevant Architecture Tags (from Step 2)
-4. Intent, Constraints, Signal, Open Questions
-5. Leave mode sections empty (filled during work)
+3. Intent, Constraints, Signal, Open Questions
+4. Leave mode sections empty (filled during work)
 
 **Naming convention**:
 - **Phase**: P000 through P999 (flexible numbering based on project size)
-- **Category**: Matches architecture tags (api, database, ui, etc.)
+- **Category**: Descriptive (api, database, ui, auth, etc.)
 - **Feature**: Specific work unit (kebab-case)
 - **Examples**: P000_api_authentication.md, P002_database_migrations.md, P010_ui_dashboard.md
 
-### 5. Identify Mode
+### 4. Identify Mode
 
 **From Open Questions**:
 
@@ -89,7 +88,7 @@
 | Implementation unknowns | PLANNING |
 | No unknowns | IMPLEMENTATION |
 
-### 6. Tell Human Next Steps
+### 5. Tell Human Next Steps
 
 **Template**:
 > "Brief created at `project-docs/briefs/P[phase]_[category]_[feature].md`. Starting mode: [MODE].
@@ -116,7 +115,7 @@
 
 ## Examples
 
-### Vague Intent → Exploration
+### Full Example: Vague Intent → Exploration
 
 **Human**: "The authentication approach doesn't feel right"
 
@@ -132,7 +131,7 @@
 
 **Human**: "Blocking v1.0 launch - we can't ship without a clear auth strategy."
 
-**AI**: Reads .claude/docs/README.md → "What architectural questions remain?"
+**AI**: "What architectural questions remain?"
 
 **Human**: "Not sure if we need session-based or token-based auth. Where does auth live architecturally?"
 
@@ -152,95 +151,23 @@ Signal:
 Open Questions: Session-based vs token-based? Where does auth live architecturally?
 ```
 
-**Mode**: EXPLORATION
+**Mode**: EXPLORATION (architectural unknowns)
 
-### Clear Intent → Planning
+---
 
-**Human**: "Need to implement API rate limiting"
+### Quick Example: Planning Mode
 
-**AI**: "Who is this for?"
+**Open Questions**: "Token bucket vs sliding window? Redis or in-memory? How to handle distributed systems?"
 
-**Human**: "API consumers making high-volume requests"
+→ Implementation questions (not architectural) → **PLANNING**
 
-**AI**: "What problem are they experiencing?"
+---
 
-**Human**: "No rate limiting currently allows abuse - we've seen service degradation affecting all users"
+### Quick Example: Implementation Mode
 
-**AI**: "What becomes possible when this exists?"
+**Open Questions**: None (bug clear, fix known: add null check in query)
 
-**Human**: "Fair usage is enforced, service remains stable under load, abusers get blocked automatically"
-
-**AI**: "Why now?"
-
-**Human**: "We had a production incident last week where one client overwhelmed the API"
-
-**AI**: Checks arch → "RESTful API applies. Constraints?"
-
-**Human**: "Must work with existing auth, no new dependencies"
-
-**AI**: "What are the unknowns?"
-
-**Human**: "Rate limit algorithm choice, storage mechanism, distributed system handling"
-
-**Brief**:
-```
-Intent:
-For: API consumers making high-volume requests
-Problem: No rate limiting allows abuse, potential service degradation for all users
-Outcome: Fair usage enforced, service remains stable under load, abusers blocked automatically
-Why Now: Production incident last week - one client overwhelmed the API
-
-Constraints: Work with existing auth, no new dependencies
-Signal:
-- User: "My legitimate requests succeed, I get clear feedback if rate limited"
-- Technical: API returns 429 when limit exceeded, 200 for valid requests
-- Outcome: Rate limiting live in production
-Open Questions: Token bucket vs sliding window? Redis or in-memory? How to handle distributed systems?
-```
-
-**Mode**: PLANNING
-
-### Specific Intent → Implementation
-
-**Human**: "Database query fails when user has null email"
-
-**AI**: "Who is affected?"
-
-**Human**: "Users with optional email fields in their profile"
-
-**AI**: "What problem are they experiencing?"
-
-**Human**: "Their profile page crashes when email is null"
-
-**AI**: "What becomes possible when fixed?"
-
-**Human**: "Profile page loads correctly regardless of email presence"
-
-**AI**: "Why now?"
-
-**Human**: "It's affecting 15% of users right now - production bug"
-
-**AI**: "Unknowns?"
-
-**Human**: "Nope, just need to add null check in query"
-
-**Brief**:
-```
-Intent:
-For: Users with optional email fields in their profile
-Problem: Database query crashes when email is null, breaking profile page
-Outcome: Profile page loads correctly regardless of email presence
-Why Now: Affecting 15% of users right now - production bug
-
-Constraints: Don't break existing tests, TDD workflow
-Signal:
-- User: "Profile page loads without errors"
-- Technical: Test "query handles null email" passes
-- Outcome: Bug fixed in production
-Open Questions: None
-```
-
-**Mode**: IMPLEMENTATION
+→ No unknowns → **IMPLEMENTATION**
 
 ---
 

@@ -8,19 +8,15 @@
 
 ## 📋 CURRENT MODE: [exploration/planning/implementation]
 
-### Required Reading:
-- [ ] docs/context/MISSION.md (always)
-- [ ] docs/workflow/[current-mode].md (exploration-mode/planning-mode/implementation-mode)
-- [ ] Other relevant documentation (check TAG_INDEX.json for tags)
-
-### Documentation Tags:
-[Add relevant tags from TAG_INDEX.json - e.g., #api, #database, #security]
+**Must read each session:**
+- `.claude/docs/README*.md` - Project philosophy and architecture
+- `.claude/docs/workflow/[current-mode].md` - Mode-specific workflow (exploration/planning/implementation)
 
 ---
 
 ## Intent
 
-**For:** [Who is this for? Specific role/persona - e.g., "developers reading unfamiliar codebases", "API consumers", "system administrators"]
+**For:** [Which persona? Check `project-docs/context/personas/README.md` for options. Examples: eager-explorer, aspiring-novelist, platform-owner]
 
 **Problem:** [What problem are they experiencing? What's painful/slow/impossible today?]
 
@@ -40,7 +36,7 @@ _The above captures user value and drives all decisions below._
 Always include:
 - Mission alignment (serves project goals?)
 - Architectural decisions (reference relevant documentation)
-- Project core constraints (from docs/context/MISSION.md)
+- Project core constraints (from `.claude/docs/README.md`)
 
 Add specific constraints:
 - Technical constraints for this brief
@@ -94,18 +90,13 @@ If unsure, list what you don't know. That's the point.
 ## 🔍 EXPLORATION FINDINGS
 **Leave empty until Exploration mode**
 
-**⚠️ CRITICAL**: Do NOT design or specify implementation here. This section captures architectural DECISIONS, not implementation plans. If you find yourself writing "Create X with functions..." or "Phase A: Build Y...", STOP - that belongs in Planning Output.
-
-**Use `/explore-finalize` command** when ready to capture findings (prevents drift into planning/implementation).
+**⚠️ CRITICAL**: This section captures architectural DECISIONS only, not implementation plans. If you find yourself writing "Create X with functions..." or "Phase A: Build Y...", STOP - that belongs in Planning Output.
 
 **Status**: [ ] Not started | [ ] In progress | [x] Complete
 
 **Architectural Decisions Made**:
 - [Decision 1: What architectural approach chosen]
 - [Decision 2: What design pattern chosen]
-
-**Documented In** (if design docs exist):
-- [Reference to docs/context/ or docs/standards/ documents]
 
 **Rationale**:
 [Why this approach? What constraints led here? What requirements influenced this?]
@@ -119,9 +110,6 @@ If unsure, list what you don't know. That's the point.
 ✅ **YES in this section**: Decisions, rationale, high-level what to build
 
 **Before leaving Exploration**:
-- [ ] Run `/explore-finalize` to capture findings cleanly
-- [ ] Document decisions in docs/context/ or docs/standards/ (if significant)
-- [ ] Update TAG_INDEX.json if new docs added
 - [ ] Mark status complete
 - [ ] Update CURRENT MODE to planning
 - [ ] Commit: "Brief XX: Exploration complete"
@@ -151,96 +139,110 @@ Example:
 
 ### Task List
 
-**🚨 CRITICAL: ALWAYS include explicit test + commit + STOP steps in EVERY phase**
+**🚨 CRITICAL: Follow the test cycle pattern (Write → Implement → Run All → Commit) for each test. Maximum 3 test cycles per phase.**
 
 **📋 CHECKBOX TRACKING**: Task checkboxes `[ ]` are the **source of truth** for progress
 - During implementation: Update `[ ]` → `[x]` at each **Commit** task
 - On session restart: Find first unchecked `[ ]` task - that's where you resume
 - Brief checkboxes persist across sessions (unlike TodoWrite which is ephemeral)
-- See `docs/workflow/implementation-mode.md` for details
+- See `.claude/docs/workflow/implementation-mode.md` for details
 
 **Organize by phases with ATOMIC tasks:**
 
+**Phase sizing rule**: Maximum 3 test cycles per phase. If more tests needed, create additional phases.
+
+**Test cycle pattern**: Write Test → Implement → Run All Tests → Commit
+
 #### Phase A: [Name]
-1. [ ] Write Test: [Specific behavior]
+1. [ ] Write Test: [Specific behavior A1]
 2. [ ] Implement: [Make test pass]
-3. [ ] **Run tests**: Verify all green
-4. [ ] **Commit**: "[Phase A summary]"
-5. [ ] **STOP**: End session, resume at Phase B
+3. [ ] **Run all tests**: Verify all green
+4. [ ] **Commit**: "Test A1: [description]"
+5. [ ] Write Test: [Specific behavior A2]
+6. [ ] Implement: [Make test pass]
+7. [ ] **Run all tests**: Verify all green
+8. [ ] **Commit**: "Test A2: [description]"
+9. [ ] Write Test: [Specific behavior A3]
+10. [ ] Implement: [Make test pass]
+11. [ ] **Run all tests**: Verify all green
+12. [ ] **Commit**: "Test A3: [description]"
+13. [ ] **STOP**: End session, resume at Phase B
 
 #### Phase B: [Name]
-6. [ ] Write Test: [Specific behavior]
-7. [ ] Implement: [Make test pass]
-8. [ ] **Run tests**: Verify all green
-9. [ ] **Commit**: "[Phase B summary]"
-10. [ ] **STOP**: End session, resume at Phase C
+14. [ ] Write Test: [Specific behavior B1]
+15. [ ] Implement: [Make test pass]
+16. [ ] **Run all tests**: Verify all green
+17. [ ] **Commit**: "Test B1: [description]"
+18. [ ] Write Test: [Specific behavior B2]
+19. [ ] Implement: [Make test pass]
+20. [ ] **Run all tests**: Verify all green
+21. [ ] **Commit**: "Test B2: [description]"
+22. [ ] **STOP**: End session, resume at Phase C
 
 #### Phase X (Final): Integration Audit
-N. [ ] **Architecture Docs**: docs/context/ and docs/standards/ updated if architectural decisions made
-N+1. [ ] **TAG_INDEX.json**: Updated if new docs added or tags changed
-N+2. [ ] **Update brief status**: Mark completed, move to project-docs/briefs/completed/
-N+3. [ ] **Commit**: "Brief XX integration audit complete"
-N+4. [ ] **STOP**: Brief complete, ready for next brief
+N. [ ] **Update brief status**: Mark completed, move to project-docs/briefs/completed/
+N+1. [ ] **Commit**: "Brief XX integration audit complete"
+N+2. [ ] **STOP**: Brief complete, ready for next brief
 
 **Each phase MUST**:
-- End with explicit "Run tests" task
-- End with explicit "Commit" task
+- Have maximum 3 test cycles (Write → Implement → Run → Commit)
+- Each test cycle ends with "Run all tests" and "Commit"
 - End with explicit "STOP" task (signals session boundary)
 - Have tasks that are atomic and focused
-- Separate "Write Test" from "Implement"
 
 **Example of CORRECT task breakdown**:
 ```markdown
-#### Phase C: Error Formatting
+#### Phase C: Error Formatting (2 test cycles)
 11. [ ] Write Test: E001 error formatter structure
 12. [ ] Implement: Basic error formatter
-13. [ ] Write Test: E001 shows constraint + reason + fix
-14. [ ] Implement: Complete E001 error template
-15. [ ] **Run tests**: Verify all formatters pass
-16. [ ] **Commit**: "Phase C: Error formatting complete"
-17. [ ] **STOP**: End session, resume at Phase D
+13. [ ] **Run all tests**: Verify all green
+14. [ ] **Commit**: "Test: E001 error formatter structure"
+15. [ ] Write Test: E001 shows constraint + reason + fix
+16. [ ] Implement: Complete E001 error template
+17. [ ] **Run all tests**: Verify all green
+18. [ ] **Commit**: "Test: E001 complete error template"
+19. [ ] **STOP**: End session, resume at Phase D
 ```
 
-**Example of WRONG task breakdown** (missing steps):
+**Example of WRONG task breakdown** (batched commits):
 ```markdown
 ❌ Phase C: Error Formatting
 11. [ ] Write Test: E001 error formatter structure
 12. [ ] Implement: Basic error formatter
 13. [ ] Write Test: E001 shows constraint + reason + fix
 14. [ ] Implement: Complete E001 error template
-   ⚠️ Missing "Run tests" step!
-   ⚠️ Missing "Commit" step!
-   ⚠️ Missing "STOP" step!
+15. [ ] **Run tests**: Verify all formatters pass
+16. [ ] **Commit**: "Phase C: Error formatting complete"
+   ⚠️ Should commit after EACH test cycle, not at end!
+   ⚠️ Pattern should be: Write → Implement → Run → Commit (repeat)
 ```
 
 ### Multi-Session Strategy
 
-**Recommended**: One phase per session to prevent context drift/slippage
+**Recommended approach**: One phase per session to prevent context drift/slippage
 
-**Single-Phase Cycle** (Recommended):
+**Single-Phase Sessions**:
 - Session 1: Phase A only (natural commit point)
 - Session 2: Phase B only (natural commit point)
 - Session 3: Phase C only (natural commit point)
 - Session 4: Phase D only (validation + completion)
 
-**Why Single-Phase**:
+**Why this works**:
 - ✅ Clear "done" signal (phase complete + tests pass)
 - ✅ Natural breakpoints every phase
 - ✅ Lowest context drift risk
 - ✅ Easy to resume (next session = next phase)
 - ✅ Clean git history (one commit per phase)
 
-**Session Management** (Option 4 + Option 1):
-- **Option 4 (TodoWrite)**: All tasks in TodoWrite from Session 1
+**Track progress with TodoWrite + Brief checkboxes**:
+- **TodoWrite**: All tasks loaded from Session 1
   - Tracks progress across sessions
   - Prevents forgetting tasks
   - User sees real-time progress
   - Mark in_progress/completed immediately
-- **Option 1 (Single-Phase Sessions)**: One phase per session
-  - Each session ends with phase complete + git commit
-  - Preserves context between sessions
-  - Clear completion criteria per session
-  - User can review commits per phase
+- **Brief checkboxes**: Persist across sessions
+  - Source of truth for resume point
+  - Find first unchecked task to resume
 
 **Workflow**:
 1. Planning session: Create plan, commit to brief
@@ -283,58 +285,50 @@ N+4. [ ] **STOP**: Brief complete, ready for next brief
 **Status**: [ ] Not started | [ ] In progress | [x] Complete
 
 ---
-📍 **MULTI-SESSION TRACKING** 📍
+
+### 📍 Multi-Session Tracking
+
+**Update at end of each session** so next session knows where to continue.
 
 **TodoWrite Status**: [All tasks in TodoWrite from Session 1 start]
 - Tasks 1-8: ✅ Completed (Session 1)
 - Tasks 9-16: ⏳ In Progress (Session 2)
 - Tasks 17-20: ⏸️ Pending (Session 3)
 
-**Session Commits**:
-- `abc123d` - Session 1: [Phase A-B summary] (YYYY-MM-DD)
-- `def456e` - Session 2: [Phase C-D summary] (YYYY-MM-DD)
-- `ghi789f` - Session 3: [Phase E summary] (YYYY-MM-DD)
-
----
-📍 **PHASE PROGRESS TRACKER** 📍
-
-**Current Phase**: [Phase name]
-**Completed**:
+**Phase Progress**:
 - [x] Phase A: [Name]
 - [x] Phase B: [Name]
 - [ ] Phase C: [Name] ← **NEXT**
 - [ ] Phase D: [Name]
 
-**Update at end of each session** so next session knows where to continue.
+**Session Commits**:
+- `abc123d` - Session 1: Phase A-B summary (YYYY-MM-DD)
+- `def456e` - Session 2: Phase C-D summary (YYYY-MM-DD)
 
 ---
 
-**Before completing brief** (handled by Phase X):
-- All implementation phases complete
-- Phase X (Integration Audit) complete
-- Brief moved to project-docs/briefs/completed/
+### Session Notes (Optional)
 
----
+**Current Session**: YYYY-MM-DD Session N
 
-### Session Info:
-- **Session**: YYYY-MM-DD Session N
-- **Notes**: [Session notes/artifacts if needed]
-
-### Files Modified:
+**Files Modified**:
 - [file] (changes)
 - [test] (tests added)
 
-### Validation:
+**Notes**: [Session-specific observations, gotchas, or context]
+
+---
+
+### Completion Checklist
+
+**Before completing brief** (handled by Phase X: Integration Audit):
+- [ ] All implementation phases complete
 - [ ] Tests passing
 - [ ] Build succeeds
-- [ ] Validation complete
+- [ ] Signal achieved
+- [ ] Brief moved to project-docs/briefs/completed/
 
-### Signal Achievement:
-- [ ] Yes - [How achieved]
-- [ ] No - [What's missing]
-
-### Completion Notes:
-[Learnings, gotchas, future considerations]
+**Learnings**: [Key takeaways, patterns discovered, future considerations]
 
 ---
 
@@ -356,127 +350,65 @@ N+4. [ ] **STOP**: Brief complete, ready for next brief
 
 ---
 
-## Examples
+## Example: Mid-Implementation Resume
 
-### Example: Starts in Exploration
-```markdown
-Intent:
-For: API consumers integrating with our service
-Problem: No clear way to authenticate - some endpoints open, some closed, no docs on auth flow
-Outcome: Developers can securely authenticate and understand the security model immediately
-Why Now: Blocking v1.0 launch - can't ship without auth strategy
+This shows how to resume work across multiple sessions:
 
-Constraints: Mission alignment, existing architecture, security requirements
-Signal:
-- User: "Auth flow is clear and obvious"
-- Technical: All endpoints protected, auth tests pass
-- Outcome: Complete auth implementation shipped
-
-Open Questions:
-- What authentication approach fits this system?
-- Session-based or token-based?
-- Where does auth live architecturally?
-→ Architecture questions = EXPLORATION
-```
-
-### Example: Starts in Planning
-```markdown
-Intent:
-For: API consumers making high-volume requests
-Problem: No rate limiting allows abuse, potential service degradation for all users
-Outcome: Fair usage enforced, service remains stable under load, abusers blocked automatically
-Why Now: Production incident last week - one client overwhelmed the API
-
-Constraints: Work with existing auth, no new dependencies
-Signal:
-- User: "My legitimate requests succeed, I get clear feedback if rate limited"
-- Technical: API returns 429 when limit exceeded, 200 for valid requests
-- Outcome: Rate limiting live in production
-
-Open Questions:
-- Token bucket vs sliding window algorithm?
-- Redis or in-memory storage?
-- How to handle distributed systems?
-→ Implementation questions = PLANNING
-```
-
-### Example: Starts in Implementation
-```markdown
-Intent:
-For: Users with optional email fields in their profile
-Problem: Database query crashes when email is null, breaking profile page
-Outcome: Profile page loads correctly regardless of email presence
-Why Now: Affecting 15% of users right now - production bug
-
-Constraints: Don't break existing tests, TDD workflow
-Signal:
-- User: "Profile page loads without errors"
-- Technical: Test "query handles null email" passes
-- Outcome: Bug fixed in production
-
-Open Questions: None (bug clear, fix known)
-→ No questions = IMPLEMENTATION
-```
-
-### Example: Mid-Implementation Resume (Single-Phase Cycles)
 ```markdown
 ## ⚙️ IMPLEMENTATION PROGRESS
 Status: [~] In progress
 
-📍 **MULTI-SESSION TRACKING** 📍
+### 📍 Multi-Session Tracking
 
-**TodoWrite Status**: All 25 tasks in TodoWrite
+**TodoWrite Status**: All 25 tasks in TodoWrite from Session 1
 - Tasks 1-4: ✅ Completed (Session 1 - Phase A)
 - Tasks 5-8: ✅ Completed (Session 2 - Phase B)
 - Tasks 9-12: ⏸️ Pending ← **NEXT SESSION** (Session 3 - Phase C)
 - Tasks 13-16: ⏸️ Pending (Session 4 - Phase D)
-- Tasks 17-25: ⏸️ Pending (Session 5 - Phase X: Integration Audit)
+- Tasks 17-25: ⏸️ Pending (Session 5 - Phase X)
 
-**Session Commits**:
-- `abc123d` - Session 1: Phase A - Foundation (2025-10-21)
-- `def456e` - Session 2: Phase B - Detection (2025-10-21)
-
-📍 **PHASE PROGRESS TRACKER** 📍
-**Current Phase**: Phase C: Error Formatting
-**Completed**:
+**Phase Progress**:
 - [x] Phase A: Foundation
 - [x] Phase B: Detection
 - [ ] Phase C: Error Formatting ← **NEXT**
 - [ ] Phase D: CLI Integration
 - [ ] Phase X: Integration Audit
 
-→ AI knows: Session 3 = Phase C only (Tasks 9-12)
-→ TodoWrite already has all tasks, just continue from Task 9
-→ Commits abc123d + def456e preserve context from Phases A-B
-→ Clear breakpoint: Implement Phase C, commit, end session
-→ Phase X (Integration Audit) is always the final phase
+**Session Commits**:
+- `abc123d` - Session 1: Phase A (2025-10-21)
+- `def456e` - Session 2: Phase B (2025-10-21)
 ```
+
+**What AI knows at Session 3 start:**
+- TodoWrite has all 25 tasks, continue from Task 9
+- Phase C is next (Tasks 9-12)
+- Previous commits preserve context from Phases A-B
+- Complete Phase C, commit, end session
+- Phase X (Integration Audit) always comes last
 
 ---
 
 ## Usage Guide
 
 ### For Humans:
-1. Use docs/workflow/brief-creation.md to create with AI assistance
+1. Use `.claude/docs/workflow/brief-creation.md` to create with AI assistance
 2. Or manually create in `project-docs/briefs/P[phase]_[category]_[feature].md`
 3. Fill Intent, Constraints, Signal, Open Questions
-4. Add architecture tags
-5. Leave mode sections empty (AI fills)
-6. Start session, AI enters appropriate mode
+4. Leave mode sections empty (AI fills during work)
+5. Start session, AI enters appropriate mode
 
 ### For AI:
 1. Read brief at session start
 2. Check CURRENT MODE and Status
-3. **If implementation: check PHASE PROGRESS TRACKER for next phase**
+3. **If implementation: check Phase Progress for next phase**
 4. Read required files for mode
-5. Load architecture files by tags
-6. Do work for current mode
-7. **At session end: update PHASE PROGRESS TRACKER**
-8. Update section before leaving mode
-9. Update CURRENT MODE when transitioning
-10. **When complete: CHECK CHECKLIST in Implementation section**
-11. **Complete ALL items** (move to completed/)
-12. Only mark "Complete" after ALL checklist items done
+5. Do work for current mode
+6. **At session end: update Multi-Session Tracking**
+7. Update section before leaving mode
+8. Update CURRENT MODE when transitioning
+9. **When complete: Complete ALL items in Completion Checklist**
+10. Move brief to project-docs/briefs/completed/
+11. Only mark "Complete" after ALL checklist items done
 
 ---
 
