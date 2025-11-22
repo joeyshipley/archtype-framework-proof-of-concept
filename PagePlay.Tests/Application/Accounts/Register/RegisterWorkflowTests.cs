@@ -1,6 +1,7 @@
+using AwesomeAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using Moq;
+using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Register;
@@ -10,21 +11,21 @@ namespace PagePlay.Tests.Application.Accounts.Register;
 
 public class RegisterWorkflowTests
 {
-    private readonly Mock<IPasswordHasher> _passwordHasherMock;
-    private readonly Mock<IUserRepository> _userRepositoryMock;
-    private readonly Mock<IValidator<RegisterRequest>> _validatorMock;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IUserRepository _userRepository;
+    private readonly IValidator<RegisterRequest> _validator;
     private readonly RegisterWorkflow _workflow;
 
     public RegisterWorkflowTests()
     {
-        _passwordHasherMock = new Mock<IPasswordHasher>();
-        _userRepositoryMock = new Mock<IUserRepository>();
-        _validatorMock = new Mock<IValidator<RegisterRequest>>();
+        _passwordHasher = Substitute.For<IPasswordHasher>();
+        _userRepository = Substitute.For<IUserRepository>();
+        _validator = Substitute.For<IValidator<RegisterRequest>>();
 
         _workflow = new RegisterWorkflow(
-            _passwordHasherMock.Object,
-            _userRepositoryMock.Object,
-            _validatorMock.Object
+            _passwordHasher,
+            _userRepository,
+            _validator
         );
     }
 
@@ -39,40 +40,40 @@ public class RegisterWorkflowTests
             ConfirmPassword = "Password123!"
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult());
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult());
 
-        _userRepositoryMock
-            .Setup(r => r.EmailExistsAsync(request.Email))
-            .ReturnsAsync(false);
+        _userRepository
+            .EmailExistsAsync(request.Email)
+            .Returns(false);
 
-        _passwordHasherMock
-            .Setup(h => h.HashPassword(request.Password))
+        _passwordHasher
+            .HashPassword(request.Password)
             .Returns("hashed_password");
 
-        _userRepositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<User>()))
-            .ReturnsAsync((User u) => u);
+        _userRepository
+            .AddAsync(Arg.Any<User>())
+            .Returns(callInfo => callInfo.Arg<User>());
 
-        _userRepositoryMock
-            .Setup(r => r.SaveChangesAsync())
+        _userRepository
+            .SaveChangesAsync()
             .Returns(Task.CompletedTask);
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.True(result.Success);
-        Assert.NotNull(result.Model);
-        Assert.Equal("Account created successfully. You can now log in.", result.Model.Message);
+        result.Success.Should().BeTrue();
+        result.Model.Should().NotBeNull();
+        result.Model.Message.Should().Be("Account created successfully. You can now log in.");
 
-        _userRepositoryMock.Verify(r => r.AddAsync(It.Is<User>(u =>
+        await _userRepository.Received(1).AddAsync(Arg.Is<User>(u =>
             u.Email == request.Email &&
             u.PasswordHash == "hashed_password"
-        )), Times.Once);
+        ));
 
-        _userRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Once);
+        await _userRepository.Received(1).SaveChangesAsync();
     }
 
     [Fact]
@@ -93,22 +94,22 @@ public class RegisterWorkflowTests
             new ValidationFailure("ConfirmPassword", "Passwords do not match.")
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult(validationFailures));
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult(validationFailures));
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.False(result.Success);
-        Assert.NotEmpty(result.Errors);
-        Assert.Contains(result.Errors, e => e.Message.Contains("Invalid email format."));
-        Assert.Contains(result.Errors, e => e.Message.Contains("Password must be at least 8 characters long."));
-        Assert.Contains(result.Errors, e => e.Message.Contains("Passwords do not match."));
+        result.Success.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().Contain(e => e.Message.Contains("Invalid email format."));
+        result.Errors.Should().Contain(e => e.Message.Contains("Password must be at least 8 characters long."));
+        result.Errors.Should().Contain(e => e.Message.Contains("Passwords do not match."));
 
-        _userRepositoryMock.Verify(r => r.EmailExistsAsync(It.IsAny<string>()), Times.Never);
-        _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
+        await _userRepository.DidNotReceive().EmailExistsAsync(Arg.Any<string>());
+        await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
     }
 
     [Fact]
@@ -122,24 +123,24 @@ public class RegisterWorkflowTests
             ConfirmPassword = "Password123!"
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult());
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult());
 
-        _userRepositoryMock
-            .Setup(r => r.EmailExistsAsync(request.Email))
-            .ReturnsAsync(true);
+        _userRepository
+            .EmailExistsAsync(request.Email)
+            .Returns(true);
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.False(result.Success);
-        Assert.NotEmpty(result.Errors);
-        Assert.Contains(result.Errors, e => e.Message == "An account with this email already exists.");
+        result.Success.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().Contain(e => e.Message == "An account with this email already exists.");
 
-        _userRepositoryMock.Verify(r => r.AddAsync(It.IsAny<User>()), Times.Never);
-        _userRepositoryMock.Verify(r => r.SaveChangesAsync(), Times.Never);
+        await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
+        await _userRepository.DidNotReceive().SaveChangesAsync();
     }
 
     [Fact]
@@ -158,17 +159,17 @@ public class RegisterWorkflowTests
             new ValidationFailure("Email", "Email is required.")
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult(validationFailures));
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult(validationFailures));
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.False(result.Success);
-        Assert.NotEmpty(result.Errors);
-        Assert.Contains(result.Errors, e => e.Message.Contains("Email is required."));
+        result.Success.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().Contain(e => e.Message.Contains("Email is required."));
     }
 
     [Fact]
@@ -187,17 +188,17 @@ public class RegisterWorkflowTests
             new ValidationFailure("Password", "Password is required.")
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult(validationFailures));
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult(validationFailures));
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.False(result.Success);
-        Assert.NotEmpty(result.Errors);
-        Assert.Contains(result.Errors, e => e.Message.Contains("Password is required."));
+        result.Success.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().Contain(e => e.Message.Contains("Password is required."));
     }
 
     [Fact]
@@ -216,17 +217,17 @@ public class RegisterWorkflowTests
             new ValidationFailure("ConfirmPassword", "Passwords do not match.")
         };
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult(validationFailures));
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult(validationFailures));
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.False(result.Success);
-        Assert.NotEmpty(result.Errors);
-        Assert.Contains(result.Errors, e => e.Message.Contains("Passwords do not match."));
+        result.Success.Should().BeFalse();
+        result.Errors.Should().NotBeEmpty();
+        result.Errors.Should().Contain(e => e.Message.Contains("Passwords do not match."));
     }
 
     [Fact]
@@ -242,34 +243,34 @@ public class RegisterWorkflowTests
 
         var hashedPassword = "securely_hashed_password_value";
 
-        _validatorMock
-            .Setup(v => v.ValidateAsync(request, default))
-            .ReturnsAsync(new ValidationResult());
+        _validator
+            .ValidateAsync(request, default)
+            .Returns(new ValidationResult());
 
-        _userRepositoryMock
-            .Setup(r => r.EmailExistsAsync(request.Email))
-            .ReturnsAsync(false);
+        _userRepository
+            .EmailExistsAsync(request.Email)
+            .Returns(false);
 
-        _passwordHasherMock
-            .Setup(h => h.HashPassword(request.Password))
+        _passwordHasher
+            .HashPassword(request.Password)
             .Returns(hashedPassword);
 
-        _userRepositoryMock
-            .Setup(r => r.AddAsync(It.IsAny<User>()))
-            .ReturnsAsync((User u) => u);
+        _userRepository
+            .AddAsync(Arg.Any<User>())
+            .Returns(callInfo => callInfo.Arg<User>());
 
-        _userRepositoryMock
-            .Setup(r => r.SaveChangesAsync())
+        _userRepository
+            .SaveChangesAsync()
             .Returns(Task.CompletedTask);
 
         // Act
         var result = await _workflow.Perform(request);
 
         // Assert
-        Assert.True(result.Success);
-        _passwordHasherMock.Verify(h => h.HashPassword(request.Password), Times.Once);
-        _userRepositoryMock.Verify(r => r.AddAsync(It.Is<User>(u =>
+        result.Success.Should().BeTrue();
+        _passwordHasher.Received(1).HashPassword(request.Password);
+        await _userRepository.Received(1).AddAsync(Arg.Is<User>(u =>
             u.PasswordHash == hashedPassword
-        )), Times.Once);
+        ));
     }
 }

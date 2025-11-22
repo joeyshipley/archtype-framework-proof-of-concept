@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Moq;
+using NSubstitute;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 
@@ -13,12 +13,12 @@ public class TestAppDbContext : AppDbContext
 
     private static ISettingsProvider CreateMockSettingsProvider()
     {
-        var mock = new Mock<ISettingsProvider>();
-        mock.Setup(x => x.Database).Returns(new DatabaseSettings
+        var settingsProvider = Substitute.For<ISettingsProvider>();
+        settingsProvider.Database.Returns(new DatabaseSettings
         {
             ConnectionString = "unused-in-tests"
         });
-        return mock.Object;
+        return settingsProvider;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
