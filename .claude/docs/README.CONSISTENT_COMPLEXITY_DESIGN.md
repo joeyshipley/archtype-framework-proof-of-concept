@@ -32,12 +32,12 @@ In a well-designed system, adding a new feature should feel similar to adding th
 
 ## Benefits
 
-### For Junior Developers
-When complexity is consistent, juniors can:
-- Predict how long features will take
-- Copy existing patterns with confidence
-- Know when to ask for help (deviation from pattern)
-- Build muscle memory through repetition
+### For Feature Development
+When complexity is consistent, developers focus on business logic, not infrastructure:
+- **No plumbing decisions** - Framework provides test bases, DI setup, repository patterns
+- **Predictable patterns** - Find similar feature, copy structure, ship faster
+- **Obvious deviations** - When something feels harder than expected, it signals missing framework support
+- **Muscle memory** - Same patterns across features means less context switching
 
 ### For AI Agents
 AI excels at pattern repetition:
@@ -45,6 +45,13 @@ AI excels at pattern repetition:
 - Predictable structure → fewer hallucinations
 - Similar complexity → better estimates
 - Clear conventions → less guidance needed
+
+### For Architectural Integrity
+Constraints prevent individuals from breaking consistency with clever solutions:
+- **Self-enforcing patterns** - Framework patterns make the right way the easy way
+- **No "special" features** - If a feature needs special handling, extract to framework
+- **Code review focus** - Reviewers check "does this match the pattern?" not "is this clever?"
+- **Prevents clever one-offs** - Individual optimization breaks team velocity
 
 ### For Teams
 - **Faster code reviews** - reviewers know what to expect
@@ -287,6 +294,62 @@ Feature/
 ❌ Never create god classes (UserManager, ProjectService)
 ❌ Never split by technical layer (Models/, Controllers/, Services/)
 
+### Testing Pattern - Framework-Provided Base
+
+**Every test inherits from `SetupTestFor<T>`:**
+```csharp
+public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
+{
+    [Fact]
+    public async Task Perform_WithValidRequest_ReturnsSuccess()
+    {
+        // Mocker automatically provides mocked dependencies
+        Mocker
+            .GetSubstituteFor<IUserRepository>()
+            .EmailExists(Arg.Any<string>())
+            .Returns(false);
+
+        var result = await SUT.Perform(request);
+
+        result.Success.Should().BeTrue();
+    }
+}
+```
+
+**Integration tests use same base with `Fakes()` for selective real implementations:**
+```csharp
+public class RegisterWorkflowIntegrationTests : SetupTestFor<RegisterWorkflow>
+{
+    [Fact]
+    public async Task Perform_EndToEnd_WithFakeRepository()
+    {
+        // Use real implementations instead of mocks
+        Fakes()
+            .Replace<IUserRepository, InMemoryUserRepository>()
+            .Replace<IPasswordHasher, FakePasswordHasher>()
+            .Use();
+
+        // Test with real behavior
+        var result = await SUT.Perform(request);
+        result.Success.Should().BeTrue();
+    }
+}
+```
+
+**Why framework-provided test base:**
+- Developers never write test setup boilerplate
+- Adding dependencies to class under test doesn't break tests (AutoSubstitute handles it)
+- Consistent test structure across entire codebase
+- Same base for unit and integration tests—only what's faked changes
+
+**Framework responsibility vs Feature responsibility:**
+- **Framework provides:** Test bases, DI registration, repository pattern, migration discovery, fake injection
+- **Features use:** Existing patterns without thinking about infrastructure
+- **If feature work feels complex:** Extract infrastructure to framework
+
+✅ Framework handles complexity once, features stay simple forever
+❌ Never solve infrastructure problems at feature level
+
 ### Workflow Pattern - Revealing Intent Class Structure
 
 Every workflow follows a consistent internal structure that reveals business intent while hiding implementation details.
@@ -371,21 +434,26 @@ public class RegisterWorkflow(
 
 ---
 
-## For AI Agents
+## For AI Agents and Framework Development
 
 When implementing features, AI should:
 
-1. **Start with single operation** - Each feature folder does ONE thing (CreateUser, not UserManagement)
-2. **Look for existing patterns** - Find similar feature, copy structure
-3. **Measure deviation** - If new feature is 2x bigger, ask why
-4. **Reuse abstractions** - Use repositories, specifications, services
-5. **Flag inconsistency** - "This feature seems more complex than others, should we extract infrastructure?"
+1. **Use framework infrastructure** - Tests inherit from `SetupTestFor<T>`, workflows use repositories, DI is centralized
+2. **Start with single operation** - Each feature folder does ONE thing (CreateUser, not UserManagement)
+3. **Look for existing patterns** - Find similar feature, copy structure exactly
+4. **Measure deviation** - If new feature is 2x bigger, ask why
+5. **Flag complexity** - "This feature seems more complex than others, should we extract to framework?"
+
+**When infrastructure is missing:**
+- Feature code reveals need for framework support (pagination, file upload, email)
+- Extract to framework infrastructure, not feature-level abstraction
+- Update all features to use new framework capability
 
 AI should NOT:
-- Create god classes (UserManager, ProjectService, DataService)
 - Create custom patterns for one feature
 - Skip existing abstractions "because it's easier"
-- Implement without checking similar features first
+- Manually mock dependencies in tests (use `SetupTestFor<T>`)
+- Create god classes (UserManager, ProjectService)
 - Put multiple operations in one feature folder
 
 ---
