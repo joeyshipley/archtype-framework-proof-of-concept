@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Domain;
 
 namespace PagePlay.Site.Infrastructure.Database;
 
@@ -34,5 +34,39 @@ public class AppDbContext : DbContext
         optionsBuilder.UseNpgsql(_settingsProvider.Database.ConnectionString);
     }
 
-    public DbSet<User> Users { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // Automatically discover and register all entities implementing IAggregateEntity
+        var aggregateEntityTypes = typeof(AppDbContext).Assembly
+            .GetTypes()
+            .Where(t => t is { IsClass: true, IsAbstract: false }
+                        && typeof(IAggregateEntity).IsAssignableFrom(t));
+
+        foreach (var entityType in aggregateEntityTypes)
+        {
+            modelBuilder.Entity(entityType);
+        }
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries<IAggregateEntity>();
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt = DateTime.UtcNow;
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+            else if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = DateTime.UtcNow;
+            }
+        }
+
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 }
