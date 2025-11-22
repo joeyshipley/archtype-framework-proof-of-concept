@@ -79,7 +79,7 @@
 
 ### When You're Confused
 
-Ask against .claude/README.md:
+Ask against .claude/docs/README.md:
 - Does this serve the mission?
 - Does this help the user?
 - Does this respect core constraints?
@@ -98,7 +98,7 @@ Stop everything. Their intuition is usually correct. Have the discussion.
 
 1. Clear architectural decision
 2. Understanding of what needs to be built
-3. Alignment with .claude/README.md
+3. Alignment with .claude/docs/README.md
 4. Human agreement on approach
 
 ### Capture Findings in Brief

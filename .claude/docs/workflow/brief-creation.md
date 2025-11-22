@@ -109,7 +109,7 @@
 | Start implementation | "Add feature" → code immediately | Create brief first, then enter mode |
 | Skip Open Questions | Pretend to know everything | Be honest about unknowns, they drive work |
 | Implementation in Intent | "Create UserForm with fields X, Y, Z" | Intent is WHY not WHAT: "Enable user management" |
-| Skip .claude/README.md | Brief drifts from mission | Always read .claude/README.md, check alignment |
+| Skip .claude/docs/README.md | Brief drifts from mission | Always read .claude/docs/README.md, check alignment |
 | Vague constraints | Only "follow mission" | Include specific arch decisions + tech constraints |
 
 ---
@@ -132,7 +132,7 @@
 
 **Human**: "Blocking v1.0 launch - we can't ship without a clear auth strategy."
 
-**AI**: Reads .claude/README.md → "What architectural questions remain?"
+**AI**: Reads .claude/docs/README.md → "What architectural questions remain?"
 
 **Human**: "Not sure if we need session-based or token-based auth. Where does auth live architecturally?"
 

@@ -1,1 +1,1 @@
-1) Read /docs/_AI_START.md
+1) Read .claude/docs/AI_START.md
