@@ -6,6 +6,9 @@
     <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
+  <Folder Name="/project-docs/">
+    <File Path="project-docs/README.PROJECT_DOCS.md" />
+  </Folder>
   <Project Path="PagePlay.Site/PagePlay.Site.csproj" />
   <Project Path="PagePlay.Tests/PagePlay.Tests.csproj" />
 </Solution>
