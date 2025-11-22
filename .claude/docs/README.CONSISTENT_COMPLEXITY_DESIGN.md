@@ -61,20 +61,22 @@ We organize by feature, not by technical layer:
 ```
 Application/
 ├── Accounts/
-│   ├── Domain/
-│   │   ├── Models/
-│   │   └── Repository/
 │   ├── Login/
 │   │   ├── Login.Workflow.cs
 │   │   ├── Login.BoundaryContracts.cs
 │   │   └── Login.Endpoint.cs
 │   ├── Register/
 │   └── ViewProfile/
-└── Projects/
-    ├── Domain/
-    ├── CreateProject/
-    ├── ListProjects/
-    └── UpdateProject/
+├── Accounts.Domain/
+│   ├── Models/
+│   └── Repository/
+├── Projects/
+│   ├── CreateProject/
+│   ├── ListProjects/
+│   └── UpdateProject/
+└── Projects.Domain/
+    ├── Models/
+    └── Repository/
 ```
 
 **Each feature is self-contained:**
