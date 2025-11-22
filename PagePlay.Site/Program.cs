@@ -1,7 +1,9 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
 using Scalar.AspNetCore;
@@ -9,6 +11,9 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 
 DependencyResolver.Bind(builder.Services);
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
