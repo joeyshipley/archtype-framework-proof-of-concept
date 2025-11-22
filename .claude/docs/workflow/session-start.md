@@ -8,7 +8,7 @@
 ## STEP 1: READ CORE FILES
 
 **Before anything else, read these files**:
-1. Must read: **.claude/context/philosophy.md** - Project identity, purpose, target users
+1. Must read: **.claude/README.md** - Project identity, purpose, target users
 
 Read these first, every session.
 

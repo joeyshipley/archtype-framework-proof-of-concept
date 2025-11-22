@@ -1,36 +1,27 @@
 {
   "permissions": {
-    "allow": [
-      "Bash(archtype:*)",
-      "Bash(cat:*)",
-      "Bash(cd:*)",
-      "Bash(chmod:*)",
-      "Bash(cp:*)",
-      "Bash(dir:*)",
-      "Bash(dotnet:*)",
-      "Bash(echo:*)",
-      "Bash(git:*)",
-      "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(grep:*)",
-      "Bash(ls:*)",
-      "Bash(mkdir:*)",
-      "Bash(mv:*)",
-      "Bash(netstat:*)",
-      "Bash(node:*)",
-      "Bash(npm:*)",
-      "Bash(python:*)",
-      "Bash(sed:*)",
-      "Bash(test:*)",
-      "Bash(touch:*)",
-      "Bash(tree:*)",
-      "Edit(.gitignore)",
-      "Edit(**/*)",
-      "Write(**/*)",
-      "WebSearch",
-      "WebFetch(domain:cheatsheetseries.owasp.org)"
-    ],
-    "deny": [],
-    "ask": []
+      "allow": [
+        "Bash(*)",
+        "Edit(**/*)",
+        "Write(**/*)",
+        "Read(**/*)",
+        "WebSearch",
+        "WebFetch(*)"
+      ],
+      "deny": [],
+      "ask": [
+        "Bash(rm:*)",
+        "Bash(rm -rf:*)",
+        "Bash(rmdir:*)",
+        "Bash(dd:*)",
+        "Bash(mkfs:*)",
+        "Bash(format:*)",
+        "Bash(curl:*|bash)",
+        "Bash(wget:*|bash)",
+        "Bash(chmod 777:*)",
+        "Bash(git push --force:*)",
+        "Bash(git reset --hard:*)",
+        "Bash(sudo:*)"
+      ]
   }
 }
