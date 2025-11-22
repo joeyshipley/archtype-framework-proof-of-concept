@@ -44,15 +44,15 @@ public class RegisterWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<bool> checkEmailExists(string email) =>
-        await _userRepository.EmailExistsAsync(email);
+        await _userRepository.EmailExists(email);
 
     private User createUser(RegisterRequest request) =>
         User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
 
     private async Task saveUser(User user)
     {
-        await _userRepository.AddAsync(user);
-        await _userRepository.SaveChangesAsync();
+        await _userRepository.Add(user);
+        await _userRepository.SaveChanges();
     }
 }
 

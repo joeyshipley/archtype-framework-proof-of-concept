@@ -11,17 +11,13 @@ namespace PagePlay.Tests.Application.Accounts.Register;
 
 public class RegisterWorkflowTests
 {
-    private readonly IPasswordHasher _passwordHasher;
-    private readonly IUserRepository _userRepository;
-    private readonly IValidator<RegisterRequest> _validator;
+    private readonly IPasswordHasher _passwordHasher = Substitute.For<IPasswordHasher>();
+    private readonly IUserRepository _userRepository = Substitute.For<IUserRepository>();
+    private readonly IValidator<RegisterRequest> _validator = Substitute.For<IValidator<RegisterRequest>>();
     private readonly RegisterWorkflow _workflow;
 
     public RegisterWorkflowTests()
     {
-        _passwordHasher = Substitute.For<IPasswordHasher>();
-        _userRepository = Substitute.For<IUserRepository>();
-        _validator = Substitute.For<IValidator<RegisterRequest>>();
-
         _workflow = new RegisterWorkflow(
             _passwordHasher,
             _userRepository,
@@ -45,7 +41,7 @@ public class RegisterWorkflowTests
             .Returns(new ValidationResult());
 
         _userRepository
-            .EmailExistsAsync(request.Email)
+            .EmailExists(request.Email)
             .Returns(false);
 
         _passwordHasher
@@ -53,11 +49,11 @@ public class RegisterWorkflowTests
             .Returns("hashed_password");
 
         _userRepository
-            .AddAsync(Arg.Any<User>())
+            .Add(Arg.Any<User>())
             .Returns(callInfo => callInfo.Arg<User>());
 
         _userRepository
-            .SaveChangesAsync()
+            .SaveChanges()
             .Returns(Task.CompletedTask);
 
         // Act
@@ -68,12 +64,12 @@ public class RegisterWorkflowTests
         result.Model.Should().NotBeNull();
         result.Model.Message.Should().Be("Account created successfully. You can now log in.");
 
-        await _userRepository.Received(1).AddAsync(Arg.Is<User>(u =>
+        await _userRepository.Received(1).Add(Arg.Is<User>(u =>
             u.Email == request.Email &&
             u.PasswordHash == "hashed_password"
         ));
 
-        await _userRepository.Received(1).SaveChangesAsync();
+        await _userRepository.Received(1).SaveChanges();
     }
 
     [Fact]
@@ -108,8 +104,8 @@ public class RegisterWorkflowTests
         result.Errors.Should().Contain(e => e.Message.Contains("Password must be at least 8 characters long."));
         result.Errors.Should().Contain(e => e.Message.Contains("Passwords do not match."));
 
-        await _userRepository.DidNotReceive().EmailExistsAsync(Arg.Any<string>());
-        await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
+        await _userRepository.DidNotReceive().EmailExists(Arg.Any<string>());
+        await _userRepository.DidNotReceive().Add(Arg.Any<User>());
     }
 
     [Fact]
@@ -128,7 +124,7 @@ public class RegisterWorkflowTests
             .Returns(new ValidationResult());
 
         _userRepository
-            .EmailExistsAsync(request.Email)
+            .EmailExists(request.Email)
             .Returns(true);
 
         // Act
@@ -139,8 +135,8 @@ public class RegisterWorkflowTests
         result.Errors.Should().NotBeEmpty();
         result.Errors.Should().Contain(e => e.Message == "An account with this email already exists.");
 
-        await _userRepository.DidNotReceive().AddAsync(Arg.Any<User>());
-        await _userRepository.DidNotReceive().SaveChangesAsync();
+        await _userRepository.DidNotReceive().Add(Arg.Any<User>());
+        await _userRepository.DidNotReceive().SaveChanges();
     }
 
     [Fact]
@@ -248,7 +244,7 @@ public class RegisterWorkflowTests
             .Returns(new ValidationResult());
 
         _userRepository
-            .EmailExistsAsync(request.Email)
+            .EmailExists(request.Email)
             .Returns(false);
 
         _passwordHasher
@@ -256,11 +252,11 @@ public class RegisterWorkflowTests
             .Returns(hashedPassword);
 
         _userRepository
-            .AddAsync(Arg.Any<User>())
+            .Add(Arg.Any<User>())
             .Returns(callInfo => callInfo.Arg<User>());
 
         _userRepository
-            .SaveChangesAsync()
+            .SaveChanges()
             .Returns(Task.CompletedTask);
 
         // Act
@@ -269,7 +265,7 @@ public class RegisterWorkflowTests
         // Assert
         result.Success.Should().BeTrue();
         _passwordHasher.Received(1).HashPassword(request.Password);
-        await _userRepository.Received(1).AddAsync(Arg.Is<User>(u =>
+        await _userRepository.Received(1).Add(Arg.Is<User>(u =>
             u.PasswordHash == hashedPassword
         ));
     }

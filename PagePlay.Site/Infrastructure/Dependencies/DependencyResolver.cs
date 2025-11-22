@@ -11,21 +11,21 @@ public static class DependencyResolver
 {
     public static void Bind(IServiceCollection services)
     {
-        BindApplicationComponents(services);
-        BindData(services);
-        BindValidation(services);
-        BindWorkflows(services);
+        bindApplicationComponents(services);
+        bindData(services);
+        bindValidation(services);
+        bindWorkflows(services);
         ApiRoutingResolver.BindRouting(services);
     }
 
-    private static void BindApplicationComponents(IServiceCollection services)
+    private static void bindApplicationComponents(IServiceCollection services)
     {
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
     }
 
-    private static void BindData(IServiceCollection services)
+    private static void bindData(IServiceCollection services)
     {
         services.AddScoped<AppDbContext>(sp =>
         {
@@ -36,12 +36,12 @@ public static class DependencyResolver
         services.AddScoped<IUserRepository, UserRepository>();
     }
 
-    private static void BindValidation(IServiceCollection services)
+    private static void bindValidation(IServiceCollection services)
     {
         services.AddValidatorsFromAssemblyContaining<IRequest>();
     }
 
-    private static void BindWorkflows(IServiceCollection services)
+    private static void bindWorkflows(IServiceCollection services)
     {
         services.AutoRegisterWorkflows(ServiceLifetime.Scoped);
     }

@@ -20,11 +20,11 @@ public class UserRepositoryTests
             CreatedAt = DateTime.UtcNow
         };
 
-        await repository.AddAsync(user);
+        await repository.Add(user);
         await context.SaveChangesAsync();
 
         // Act
-        var result = await repository.GetByEmailAsync("test@example.com");
+        var result = await repository.GetByEmail("test@example.com");
 
         // Assert
         Assert.NotNull(result);
@@ -39,7 +39,7 @@ public class UserRepositoryTests
         var repository = new UserRepository(context);
 
         // Act
-        var result = await repository.GetByEmailAsync("nonexistent@example.com");
+        var result = await repository.GetByEmail("nonexistent@example.com");
 
         // Assert
         Assert.Null(result);
@@ -59,11 +59,11 @@ public class UserRepositoryTests
             CreatedAt = DateTime.UtcNow
         };
 
-        await repository.AddAsync(user);
+        await repository.Add(user);
         await context.SaveChangesAsync();
 
         // Act
-        var exists = await repository.EmailExistsAsync("existing@example.com");
+        var exists = await repository.EmailExists("existing@example.com");
 
         // Assert
         Assert.True(exists);
@@ -77,7 +77,7 @@ public class UserRepositoryTests
         var repository = new UserRepository(context);
 
         // Act
-        var exists = await repository.EmailExistsAsync("nonexistent@example.com");
+        var exists = await repository.EmailExists("nonexistent@example.com");
 
         // Assert
         Assert.False(exists);

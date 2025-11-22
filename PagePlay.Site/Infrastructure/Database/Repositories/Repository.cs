@@ -13,49 +13,49 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         _context = context;
     }
 
-    public async Task<T> GetAsync(Specification<T> spec)
+    public async Task<T> Get(Specification<T> spec)
     {
-        return await ApplySpecification(spec)
+        return await applySpecification(spec)
             .AsNoTracking()
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> ListAsync(Specification<T> spec)
+    public async Task<List<T>> List(Specification<T> spec)
     {
-        return await ApplySpecification(spec)
+        return await applySpecification(spec)
             .AsNoTracking()
             .ToListAsync();
     }
 
-    public async Task<bool> AnyAsync(Specification<T> spec)
+    public async Task<bool> Any(Specification<T> spec)
     {
-        return await ApplySpecification(spec).AnyAsync();
+        return await applySpecification(spec).AnyAsync();
     }
 
-    public async Task<T> AddAsync(T entity)
+    public async Task<T> Add(T entity)
     {
         await _context.Set<T>().AddAsync(entity);
         return entity;
     }
 
-    public Task UpdateAsync(T entity)
+    public Task Update(T entity)
     {
         _context.Set<T>().Update(entity);
         return Task.CompletedTask;
     }
 
-    public Task DeleteAsync(T entity)
+    public Task Delete(T entity)
     {
         _context.Set<T>().Remove(entity);
         return Task.CompletedTask;
     }
 
-    public async Task SaveChangesAsync()
+    public async Task SaveChanges()
     {
         await _context.SaveChangesAsync();
     }
 
-    private IQueryable<T> ApplySpecification(Specification<T> spec)
+    private IQueryable<T> applySpecification(Specification<T> spec)
     {
         var query = _context.Set<T>().Where(spec.Criteria);
 

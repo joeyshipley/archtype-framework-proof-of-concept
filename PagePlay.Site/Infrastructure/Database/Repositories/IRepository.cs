@@ -5,11 +5,11 @@ namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
 public interface IRepository<T> where T : class, IEntity
 {
-    Task<T> GetAsync(Specification<T> spec);
-    Task<List<T>> ListAsync(Specification<T> spec);
-    Task<bool> AnyAsync(Specification<T> spec);
-    Task<T> AddAsync(T entity);
-    Task UpdateAsync(T entity);
-    Task DeleteAsync(T entity);
-    Task SaveChangesAsync();
+    Task<T> Get(Specification<T> spec);
+    Task<List<T>> List(Specification<T> spec);
+    Task<bool> Any(Specification<T> spec);
+    Task<T> Add(T entity);
+    Task Update(T entity);
+    Task Delete(T entity);
+    Task SaveChanges();
 }

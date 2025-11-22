@@ -10,18 +10,18 @@ public class UserRepository : Repository<User>, IUserRepository
     {
     }
 
-    public async Task<User> GetByEmailAsync(string email)
+    public async Task<User> GetByEmail(string email)
     {
-        return await GetAsync(UserSpecifications.ByEmail(email));
+        return await Get(UserSpecifications.ByEmail(email));
     }
 
-    public async Task<User> GetByIdAsync(long id)
+    public async Task<User> GetById(long id)
     {
         return await _context.Set<User>().FindAsync(id);
     }
 
-    public async Task<bool> EmailExistsAsync(string email)
+    public async Task<bool> EmailExists(string email)
     {
-        return await AnyAsync(UserSpecifications.ByEmail(email));
+        return await Any(UserSpecifications.ByEmail(email));
     }
 }

@@ -7,11 +7,11 @@ namespace PagePlay.Tests.Infrastructure.Database;
 
 public class TestAppDbContext : AppDbContext
 {
-    public TestAppDbContext() : base(CreateMockSettingsProvider())
+    public TestAppDbContext() : base(createMockSettingsProvider())
     {
     }
 
-    private static ISettingsProvider CreateMockSettingsProvider()
+    private static ISettingsProvider createMockSettingsProvider()
     {
         var settingsProvider = Substitute.For<ISettingsProvider>();
         settingsProvider.Database.Returns(new DatabaseSettings
