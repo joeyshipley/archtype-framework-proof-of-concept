@@ -12,7 +12,7 @@ public class RegisterWorkflow(
     IValidator<RegisterRequest> _validator
 ) : IWorkflow<RegisterRequest, RegisterResponse>
 {
-    public async Task<IApplicationResult<RegisterResponse>> Execute(RegisterRequest request)
+    public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
     {
         var validationResult = await validate(request);
         if (!validationResult.IsValid)

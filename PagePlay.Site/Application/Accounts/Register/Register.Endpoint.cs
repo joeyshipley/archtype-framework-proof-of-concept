@@ -9,6 +9,6 @@ public class RegisterEndpoint(IWorkflow<RegisterRequest, RegisterResponse> _work
         endpoints.Register<RegisterResponse>("/register", handle);
 
     private async Task<IResult> handle(RegisterRequest request) =>
-        Respond.With(await _workflow.Execute(request));
+        Respond.With(await _workflow.Perform(request));
 }
 
