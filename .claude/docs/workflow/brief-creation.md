@@ -64,7 +64,7 @@
 
 **Create**: `project-docs/briefs/P[phase]_[category]_[feature].md`
 
-**Use**: `project-docs/briefs/PRODUCT_BRIEF_TEMPLATE.md`
+**Use**: `.claude/docs/briefs/PRODUCT_BRIEF_TEMPLATE.md`
 
 **Fill in**:
 1. Status: "active"
