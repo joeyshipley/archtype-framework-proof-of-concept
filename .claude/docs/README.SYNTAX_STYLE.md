@@ -262,6 +262,90 @@ public class UserRepository(AppDbContext _context) : Repository<User>(_context),
 
 ---
 
+## Nullability - Explicit Intent Over Suppression
+
+### Nullable Reference Types - Disabled Project-Wide
+
+This project has **nullable reference types disabled** (`<Nullable>disable</Nullable>`). All reference types are non-nullable by default.
+
+```csharp
+// ✅ Correct - No nullable annotations
+public class User
+{
+    public string Email { get; set; }
+    public string PasswordHash { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public async Task<User> GetByEmailAsync(string email) =>
+    await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+// ❌ Incorrect - Do not add nullable annotations
+public async Task<User?> GetByEmailAsync(string email) =>  // Remove the ?
+    await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+
+public class User
+{
+    public string? Email { get; set; }  // Remove the ?
+    public string? PasswordHash { get; set; }  // Remove the ?
+}
+```
+
+**Why:** We've made the architectural decision to disable nullable reference types. This ensures:
+- **Consistency:** No mix of nullable and non-nullable contexts
+- **Simplicity:** No cognitive load from nullable warnings
+- **Explicit handling:** Null checks happen through logic, not type annotations
+
+### Null-Forgiving Operator (!) - Requires Discussion
+
+The null-forgiving operator (`!`) should **almost never be used**. Its presence indicates one of two problems:
+
+1. **Logic issue:** You're unsure if the value is actually non-null
+2. **Type system mismatch:** The type system doesn't understand your guarantee
+
+```csharp
+// ❌ Incorrect - Suppressing potential null
+public async Task<string> GetUserEmail(long userId)
+{
+    var user = await _userRepository.GetByIdAsync(userId);
+    return user!.Email;  // Dangerous! What if user is null?
+}
+
+// ✅ Correct - Handle null explicitly
+public async Task<string> GetUserEmail(long userId)
+{
+    var user = await _userRepository.GetByIdAsync(userId);
+    if (user == null)
+        throw new InvalidOperationException($"User with ID {userId} not found.");
+
+    return user.Email;
+}
+
+// ✅ Also correct - Return early pattern
+public async Task<IApplicationResult<string>> GetUserEmail(long userId)
+{
+    var user = await _userRepository.GetByIdAsync(userId);
+    if (user == null)
+        return ApplicationResult<string>.Fail("User not found.");
+
+    return ApplicationResult<string>.Succeed(user.Email);
+}
+```
+
+**When ! might be acceptable (rare cases):**
+- Framework code where you have absolute guarantees (e.g., DI-injected services)
+- Immediately after null checks where the compiler can't infer safety
+- Test code where null scenarios are explicitly prevented by test setup
+
+**Rule:** Before using `!`, ask:
+1. Can I restructure the code to eliminate the need?
+2. Can I add an explicit null check instead?
+3. If I must use it, can I add a comment explaining the guarantee?
+
+**Discussion Required:** Any use of `!` in production code should be discussed during code review. It's a signal that something might be architecturally wrong.
+
+---
+
 ## Consistency Checklist
 
 When writing or reviewing code, check:
@@ -273,6 +357,9 @@ When writing or reviewing code, check:
 - [ ] Simple methods use expression-bodied syntax (`=>`)
 - [ ] Complex methods use block bodies with proper formatting
 - [ ] Local variables use lower camel case
+- [ ] No `?` nullable annotations on reference types
+- [ ] No `!` null-forgiving operators without explicit discussion
+- [ ] Null handling is explicit through logic, not type suppression
 - [ ] Code matches existing patterns in the codebase
 
 ---
