@@ -21,5 +21,5 @@ This documentation describes the technical patterns and architectural decisions 
 ## Additional Documentation
 
 - **[Web Framework Philosophy](./README.WEB_FRAMEWORK.md)** - HTTP-First approach, turn-based architecture, and game-inspired patterns
-- **[Architecture](./ARCHITECTURE.md)** - Technical implementation details and patterns
+- **[Consistent Complexity Design](./README.CONSISTENT_COMPLEXITY_DESIGN.md)** - Vertical slices, self-enforcing patterns, and maintaining predictable feature complexity
 - **[Workflow](./workflow/)** - Development modes and processes
