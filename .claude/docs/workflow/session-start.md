@@ -7,8 +7,9 @@
 
 ## STEP 1: READ CORE FILES
 
-**Before anything else, read these files**:
-1. Must read: **.claude/docs/README.md** - Project identity, purpose, target users
+**Before anything else, read these files in order**:
+1. `.claude/docs/README.md` - Project philosophy, team velocity principles, and architecture overview
+2. `.claude/docs/README.WEB_FRAMEWORK.md` - HTTP-First philosophy and turn-based architecture (web framework context)
 
 Read these first, every session.
 
