@@ -1,8 +1,8 @@
 namespace PagePlay.Site.Infrastructure.Domain;
 
-public interface IAggregateEntity
+public interface IEntity
 {
-    int Id { get; set; }
+    long Id { get; set; }
     DateTime CreatedAt { get; set; }
     DateTime UpdatedAt { get; set; }
 }

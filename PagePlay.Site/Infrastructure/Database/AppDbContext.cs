@@ -38,13 +38,13 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Automatically discover and register all entities implementing IAggregateEntity
-        var aggregateEntityTypes = typeof(AppDbContext).Assembly
+        // Automatically discover and register all entities implementing IEntity
+        var entityTypes = typeof(AppDbContext).Assembly
             .GetTypes()
             .Where(t => t is { IsClass: true, IsAbstract: false }
-                        && typeof(IAggregateEntity).IsAssignableFrom(t));
+                        && typeof(IEntity).IsAssignableFrom(t));
 
-        foreach (var entityType in aggregateEntityTypes)
+        foreach (var entityType in entityTypes)
         {
             modelBuilder.Entity(entityType);
         }
@@ -52,7 +52,7 @@ public class AppDbContext : DbContext
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        var entries = ChangeTracker.Entries<IAggregateEntity>();
+        var entries = ChangeTracker.Entries<IEntity>();
 
         foreach (var entry in entries)
         {

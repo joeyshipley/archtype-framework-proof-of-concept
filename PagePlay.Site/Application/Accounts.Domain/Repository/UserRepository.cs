@@ -15,7 +15,7 @@ public class UserRepository : Repository<User>, IUserRepository
         return await GetAsync(UserSpecifications.ByEmail(email));
     }
 
-    public async Task<User> GetByIdAsync(int id)
+    public async Task<User> GetByIdAsync(long id)
     {
         return await _context.Set<User>().FindAsync(id);
     }

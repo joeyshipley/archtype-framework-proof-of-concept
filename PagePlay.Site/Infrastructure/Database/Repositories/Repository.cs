@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Infrastructure.Database.Specifications;
+using PagePlay.Site.Infrastructure.Domain;
 
 namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T> : IRepository<T> where T : class, IEntity
 {
     protected readonly AppDbContext _context;
 
