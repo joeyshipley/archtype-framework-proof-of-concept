@@ -8,7 +8,7 @@ using PagePlay.Site.Infrastructure.Database;
 
 #nullable disable
 
-namespace PagePlay.Site.Migrations
+namespace PagePlay.Site.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     partial class AppDbContextModelSnapshot : ModelSnapshot
@@ -43,7 +43,7 @@ namespace PagePlay.Site.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 #pragma warning restore 612, 618
         }

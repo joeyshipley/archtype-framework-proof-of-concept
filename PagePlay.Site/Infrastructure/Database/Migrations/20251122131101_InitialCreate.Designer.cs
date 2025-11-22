@@ -9,7 +9,7 @@ using PagePlay.Site.Infrastructure.Database;
 
 #nullable disable
 
-namespace PagePlay.Site.Migrations
+namespace PagePlay.Site.Infrastructure.Database.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20251122131101_InitialCreate")]
