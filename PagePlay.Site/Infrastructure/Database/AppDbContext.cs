@@ -6,7 +6,7 @@ namespace PagePlay.Site.Infrastructure.Database;
 
 public class AppDbContext : DbContext
 {
-    private readonly ISettingsProvider? _settingsProvider;
+    private readonly ISettingsProvider _settingsProvider;
 
     // Runtime constructor - used by your application via DI
     public AppDbContext(ISettingsProvider settingsProvider)

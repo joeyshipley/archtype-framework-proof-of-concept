@@ -12,7 +12,7 @@ public class Repository<T> : IRepository<T> where T : class
         _context = context;
     }
 
-    public async Task<T?> GetAsync(Specification<T> spec)
+    public async Task<T> GetAsync(Specification<T> spec)
     {
         return await ApplySpecification(spec)
             .AsNoTracking()

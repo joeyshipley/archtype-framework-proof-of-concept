@@ -5,7 +5,7 @@ namespace PagePlay.Site.Application.Accounts.Domain.Repository;
 
 public interface IUserRepository : IRepository<User>
 {
-    Task<User?> GetByEmailAsync(string email);
-    Task<User?> GetByIdAsync(int id);
+    Task<User> GetByEmailAsync(string email);
+    Task<User> GetByIdAsync(int id);
     Task<bool> EmailExistsAsync(string email);
 }
