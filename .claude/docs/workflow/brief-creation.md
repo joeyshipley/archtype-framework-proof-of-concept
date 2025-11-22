@@ -42,7 +42,7 @@
 
 ### 2. Load Context
 
-**Load relevant context/ documentation** to understand constraints.
+**Load relevant project-docs/context/ documentation** to understand constraints.
 
 ### 3. Draft Brief Sections
 
@@ -62,9 +62,9 @@
 
 ### 4. Write Brief
 
-**Create**: `briefs/P[phase]_[category]_[feature].md`
+**Create**: `project-docs/briefs/P[phase]_[category]_[feature].md`
 
-**Use**: `context/briefs/PRODUCT_BRIEF_TEMPLATE.md`
+**Use**: `project-docs/briefs/PRODUCT_BRIEF_TEMPLATE.md`
 
 **Fill in**:
 1. Status: "active"
@@ -92,7 +92,7 @@
 ### 6. Tell Human Next Steps
 
 **Template**:
-> "Brief created at `briefs/P[phase]_[category]_[feature].md`. Starting mode: [MODE].
+> "Brief created at `project-docs/briefs/P[phase]_[category]_[feature].md`. Starting mode: [MODE].
 >
 > Ready to start now, or saving for later?"
 

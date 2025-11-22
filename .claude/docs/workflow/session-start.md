@@ -32,7 +32,7 @@ Read these first, every session.
 - **Architecture questions mid-implementation** → STOP, return to exploration
 - **Context collapse** (any bugs, workarounds) → STOP, rollback, smaller slices
 
-**Recovery**: Implementation without plan → STOP → Retroactive plan → Keep/rollback | Exploration not documented → Pause → Document in context/ → Resume
+**Recovery**: Implementation without plan → STOP → Retroactive plan → Keep/rollback | Exploration not documented → Pause → Document in project-docs/context/ → Resume
 
 ---
 
@@ -46,7 +46,7 @@ Read these first, every session.
 
 **Note**: Briefs can be created three ways:
 1. **AI-assisted** (brief-creation.md) - Conversational structuring
-2. **Human-written** (directly in `briefs/` using template) - Then validate in Exploration
+2. **Human-written** (directly in `project-docs/briefs/` using template) - Then validate in Exploration
 3. **During exploration** (Exploration mode creates brief as artifact) - Documents discoveries
 
 All paths valid. Briefs are tools, not requirements.

@@ -75,16 +75,16 @@
 
 ### 5. Write Persona File
 
-**Create**: `context/personas/[role].md`
+**Create**: `project-docs/context/personas/[role].md`
 
-**Use**: `context/personas/PERSONA_TEMPLATE.md`
+**Use**: `project-docs/context/personas/PERSONA_TEMPLATE.md`
 
 **Include**:
 - Real name as heading (can change later)
 - All sections filled with specific details
 - Quote that captures their voice
 
-**Update**: `context/personas/README.md` with new persona entry
+**Update**: `project-docs/context/personas/README.md` with new persona entry
 
 ---
 
@@ -124,7 +124,7 @@
 
 **Human**: "Perfect."
 
-**AI creates**: `context/personas/aspiring-novelist.md` with all details structured using template.
+**AI creates**: `project-docs/context/personas/aspiring-novelist.md` with all details structured using template.
 
 ---
 

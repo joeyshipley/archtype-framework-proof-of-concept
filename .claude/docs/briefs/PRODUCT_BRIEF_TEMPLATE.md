@@ -1,6 +1,6 @@
 # Brief: [Name]
 
-**Filename**: `briefs/P[phase]_[category]_[feature].md` (Phase P000-P999, flexible based on project)
+**Filename**: `project-docs/briefs/P[phase]_[category]_[feature].md` (Phase P000-P999, flexible based on project)
 **Created**: YYYY-MM-DD HH:MM
 **Status**: active | exploration | planning | implementation | completed
 
@@ -178,7 +178,7 @@ Example:
 #### Phase X (Final): Integration Audit
 N. [ ] **Architecture Docs**: docs/context/ and docs/standards/ updated if architectural decisions made
 N+1. [ ] **TAG_INDEX.json**: Updated if new docs added or tags changed
-N+2. [ ] **Update brief status**: Mark completed, move to briefs/completed/
+N+2. [ ] **Update brief status**: Mark completed, move to project-docs/briefs/completed/
 N+3. [ ] **Commit**: "Brief XX integration audit complete"
 N+4. [ ] **STOP**: Brief complete, ready for next brief
 
@@ -312,7 +312,7 @@ N+4. [ ] **STOP**: Brief complete, ready for next brief
 **Before completing brief** (handled by Phase X):
 - All implementation phases complete
 - Phase X (Integration Audit) complete
-- Brief moved to briefs/completed/
+- Brief moved to project-docs/briefs/completed/
 
 ---
 
@@ -340,17 +340,17 @@ N+4. [ ] **STOP**: Brief complete, ready for next brief
 
 ## Brief Lifecycle
 
-**Active**: `briefs/P[phase]_[category]_[feature].md`
+**Active**: `project-docs/briefs/P[phase]_[category]_[feature].md`
 - Work ongoing
 - Enriched through modes
 - Status shows current mode
 
-**Completed**: `briefs/completed/P[phase]_[category]_[feature].md`
+**Completed**: `project-docs/briefs/completed/P[phase]_[category]_[feature].md`
 - All modes complete
 - Signal achieved
 - Historical record
 
-**Won't Do**: `briefs/wont-do/P[phase]_[category]_[feature].md`
+**Won't Do**: `project-docs/briefs/wont-do/P[phase]_[category]_[feature].md`
 - Not pursuing
 - Add note explaining why
 
@@ -458,7 +458,7 @@ Status: [~] In progress
 
 ### For Humans:
 1. Use docs/workflow/brief-creation.md to create with AI assistance
-2. Or manually create in `briefs/P[phase]_[category]_[feature].md`
+2. Or manually create in `project-docs/briefs/P[phase]_[category]_[feature].md`
 3. Fill Intent, Constraints, Signal, Open Questions
 4. Add architecture tags
 5. Leave mode sections empty (AI fills)

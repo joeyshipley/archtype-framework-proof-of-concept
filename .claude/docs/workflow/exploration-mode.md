@@ -25,7 +25,7 @@
 
 ### 1. Find the Brief
 
-**Check `briefs/` directory**
+**Check `project-docs/briefs/` directory**
 
 **Brief exists?**
 - Read: Intent, Constraints, Signal, Open Questions
@@ -137,7 +137,7 @@ Stop everything. Their intuition is usually correct. Have the discussion.
 ## Example Session
 
 1. Check brief → Read Open Questions
-2. Load context → Architecture tags from context/
+2. Load context → Architecture tags from project-docs/context/
 3. Present: "Should authentication be session-based or token-based?"
 4. Ask: "What's the use case? Mobile apps? Web only? Microservices?"
 5. Discuss trade-offs
