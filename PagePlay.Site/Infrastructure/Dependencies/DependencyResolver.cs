@@ -19,13 +19,11 @@ public static class DependencyResolver
     {
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
-        services.AddSingleton<IPasswordHasher, PasswordHasher>();        
+        services.AddSingleton<IPasswordHasher, PasswordHasher>();
     }
 
     private static void BindWorkflows(IServiceCollection services)
     {
-        services.AddTransient<ILoginWorkflow, LoginWorkflow>();
-        services.AddTransient<IRegisterWorkflow, RegisterWorkflow>();
-        services.AddTransient<IViewProfileWorkflow, ViewProfileWorkflow>();
+        services.AutoRegisterByNamingPattern("Workflow", ServiceLifetime.Scoped);
     }
 }
