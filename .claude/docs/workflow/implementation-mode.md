@@ -91,6 +91,17 @@ Check if tasks are organized in phases with proper structure:
 
 **CRITICAL: Prevents drift to training data patterns**
 
+Read relevant architectural documentation before implementing:
+- `.claude/docs/README.md` - Project philosophy and team velocity principles
+- `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md` - Vertical slices and self-enforcing patterns
+- `.claude/docs/README.SYNTAX_STYLE.md` - Code style conventions
+
+**If task includes pattern references, read those:**
+- `.claude/docs/patterns/workflow-creation.md` - When creating new workflows
+- `.claude/docs/patterns/test-creation.md` - When creating test files
+
+Pattern docs provide scaffolding templates. Execute in root session (no subprocess) to maintain full context.
+
 ### 3. Check TodoWrite
 
 - What's in_progress?
