@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Application.Accounts;
-using PagePlay.Site.Application.Accounts._Domain.Models;
+using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Infrastructure.Database;

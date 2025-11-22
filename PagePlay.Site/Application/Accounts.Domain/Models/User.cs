@@ -1,6 +1,6 @@
 using PagePlay.Site.Infrastructure.Domain;
 
-namespace PagePlay.Site.Application.Accounts._Domain.Models;
+namespace PagePlay.Site.Application.Accounts.Domain.Models;
 
 public class User : Entity
 {

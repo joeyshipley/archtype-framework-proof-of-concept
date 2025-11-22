@@ -1,6 +1,5 @@
-using PagePlay.Site.Application.Accounts;
-using PagePlay.Site.Application.Accounts._Domain.Models;
-using PagePlay.Site.Application.Accounts._Domain.Repository;
+using PagePlay.Site.Application.Accounts.Domain.Models;
+using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Tests.Infrastructure.Database;
 
 namespace PagePlay.Tests.Application.Accounts;
