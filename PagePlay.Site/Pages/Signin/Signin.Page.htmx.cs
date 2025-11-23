@@ -2,26 +2,6 @@ namespace PagePlay.Site.Pages.Signin;
 
 public class SigninPage
 {
-//      // language=html
-//      public string RenderPage2(string antiforgeryToken) =>
-//      $$"""
-//      <!DOCTYPE html>
-//      <html lang="en">
-//      <head>
-//          <meta charset="utf-8" />
-//          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-//          <title>Sign In - PagePlay</title>
-//          <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-//          <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
-//      </head>
-//      <body hx-ext="morph">
-//          <main>
-//              {{RenderForm(antiforgeryToken)}}
-//          </main>
-//      </body>
-//      </html>
-//      """;
-
     // language=html
     public string RenderPage(string antiforgeryToken) =>
     $$"""
