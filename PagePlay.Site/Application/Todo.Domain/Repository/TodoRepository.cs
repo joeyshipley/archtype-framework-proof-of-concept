@@ -30,4 +30,19 @@ public class TodoRepository : Repository<Models.Todo>, ITodoRepository
     {
         return await List(TodoSpecifications.Incomplete());
     }
+
+    public async Task<List<Models.Todo>> GetByUserId(long userId)
+    {
+        return await List(TodoSpecifications.ByUserId(userId));
+    }
+
+    public async Task<List<Models.Todo>> GetCompletedByUserId(long userId)
+    {
+        return await List(TodoSpecifications.CompletedByUserId(userId));
+    }
+
+    public async Task<List<Models.Todo>> GetIncompleteByUserId(long userId)
+    {
+        return await List(TodoSpecifications.IncompleteByUserId(userId));
+    }
 }

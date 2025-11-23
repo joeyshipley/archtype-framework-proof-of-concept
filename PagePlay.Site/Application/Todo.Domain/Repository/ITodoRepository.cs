@@ -9,4 +9,7 @@ public interface ITodoRepository : IRepository<Models.Todo>
     Task<List<Models.Todo>> GetAll();
     Task<List<Models.Todo>> GetCompleted();
     Task<List<Models.Todo>> GetIncomplete();
+    Task<List<Models.Todo>> GetByUserId(long userId);
+    Task<List<Models.Todo>> GetCompletedByUserId(long userId);
+    Task<List<Models.Todo>> GetIncompleteByUserId(long userId);
 }
