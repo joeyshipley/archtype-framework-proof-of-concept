@@ -66,11 +66,11 @@ public class TodoPage
         var checkedAttr = todo.IsCompleted ? "checked" : "";
 
         return $$"""
-        <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}" data-todo-id="{{todo.Id}}">
+        <li class="todo-item {{completedClass}}" data-todo-id="{{todo.Id}}">
             <div class="todo-content">
                 <form hx-post="/api/todos/toggle"
-                      hx-target="#todo-{{todo.Id}}"
-                      hx-swap="outerHTML"
+                      hx-target="#todo-list"
+                      hx-swap="innerHTML"
                       class="todo-toggle-form">
                     <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
                     <input type="hidden" name="id" value="{{todo.Id}}" />
