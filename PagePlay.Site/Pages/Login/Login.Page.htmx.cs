@@ -1,6 +1,6 @@
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageHtmx : IHtmxPage
+public interface ILoginPageHtmx : IHtmxPage<LoginPageData>
 {
     string RenderError(string error);
     string RenderSuccess(string token);
@@ -9,18 +9,19 @@ public interface ILoginPageHtmx : IHtmxPage
 public class LoginPage : ILoginPageHtmx
 {
     // language=html
-    public string RenderPage(string antiforgeryToken = "") =>
+    public string RenderPage(string antiforgeryToken, LoginPageData data) =>
     $$"""
     <div>
-        {{RenderForm(antiforgeryToken)}}
+        {{RenderForm(antiforgeryToken, data)}}
     </div>
     """;
 
     // language=html
-    public string RenderForm(string antiforgeryToken, string? error = null) =>
+    public string RenderForm(string antiforgeryToken, LoginPageData data, string? error = null) =>
     $$"""
     <div class="login-form">
         <h1>Login</h1>
+        <p>Preloaded user email: {{data.UserEmail}}</p>
         {{(error != null ? $"""<div class="error" role="alert">{error}</div>""" : "")}}
         <form hx-post="/htmx/api/login"
               hx-target="#login-container"
