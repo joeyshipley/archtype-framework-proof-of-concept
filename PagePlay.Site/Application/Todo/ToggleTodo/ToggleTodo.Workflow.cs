@@ -25,7 +25,6 @@ public class ToggleTodoWorkflow(
             return response("You do not have permission to modify this todo.");
 
         toggleTodo(todo);
-        await updateTodo(todo);
         await saveTodo(todo);
 
         return response(todo);
@@ -42,9 +41,6 @@ public class ToggleTodoWorkflow(
 
     private void toggleTodo(Domain.Models.Todo todo) =>
         todo.Toggle();
-
-    private async Task updateTodo(Domain.Models.Todo todo) =>
-        await _todoRepository.Update(todo);
 
     private async Task saveTodo(Domain.Models.Todo todo) =>
         await _todoRepository.SaveChanges();
