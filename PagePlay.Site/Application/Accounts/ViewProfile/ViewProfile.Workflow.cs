@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
@@ -35,7 +35,7 @@ public class ViewProfileWorkflow(
     private long? getCurrentUserId()
     {
         var userClaim = _httpContextAccessor.HttpContext?.User
-            .FindFirst(JwtRegisteredClaimNames.Sub);
+            .FindFirst(ClaimTypes.NameIdentifier);
 
         if (userClaim == null || !long.TryParse(userClaim.Value, out var userId))
             return null;
