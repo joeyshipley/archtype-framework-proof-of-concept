@@ -14,7 +14,9 @@ public static class SigninEndpoint
         endpoints.MapGet("/signin", (IAntiforgery antiforgery, HttpContext context) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
-            return Results.Content(component.RenderPage(tokens.RequestToken!), "text/html");
+            var bodyContent = component.RenderPage(tokens.RequestToken!);
+            var fullPage = WrapInLayout(bodyContent, "Sign In");
+            return Results.Content(fullPage, "text/html");
         });
 
         endpoints.MapPost("/api/signin", async (
@@ -62,4 +64,25 @@ public static class SigninEndpoint
         public string? Property { get; set; }
         public string? Message { get; set; }
     }
+
+    // language=html
+    private static string WrapInLayout(string bodyContent, string title) =>
+    $$"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>{{title}} - PagePlay</title>
+        <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+        <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
+        <link rel="stylesheet" href="/css/site.css" />
+    </head>
+    <body>
+        <main>
+            {{bodyContent}}
+        </main>
+    </body>
+    </html>
+    """;
 }
