@@ -9,6 +9,7 @@ namespace PagePlay.Site.Infrastructure.Security;
 public interface IJwtTokenService
 {
     string GenerateToken(TokenClaims claims);
+    TokenClaims ValidateToken(string token);
 }
 
 public class TokenClaims
@@ -38,5 +39,38 @@ public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public TokenClaims ValidateToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Security.Jwt.SecretKey));
+
+        try
+        {
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _settings.Security.Jwt.Issuer,
+                ValidAudience = _settings.Security.Jwt.Audience,
+                IssuerSigningKey = securityKey,
+                ClockSkew = TimeSpan.Zero
+            };
+
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
+
+            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+                return null;
+
+            return new TokenClaims { UserId = userId };
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
