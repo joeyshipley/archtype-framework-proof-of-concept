@@ -31,6 +31,13 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .FirstOrDefaultAsync();
     }
 
+    public async Task<T> GetTracked(Specification<T> spec)
+    {
+        var context = await GetContext();
+        return await applySpecification(context, spec)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<T>> List(Specification<T> spec)
     {
         await using var context = await _contextFactory.CreateDbContextAsync();

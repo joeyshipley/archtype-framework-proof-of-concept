@@ -6,6 +6,7 @@ namespace PagePlay.Site.Infrastructure.Database.Repositories;
 public interface IRepository<T> where T : class, IEntity
 {
     Task<T> Get(Specification<T> spec);
+    Task<T> GetTracked(Specification<T> spec);
     Task<List<T>> List(Specification<T> spec);
     Task<bool> Any(Specification<T> spec);
     Task<T> Add(T entity);

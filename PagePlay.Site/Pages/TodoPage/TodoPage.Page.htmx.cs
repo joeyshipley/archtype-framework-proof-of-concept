@@ -8,7 +8,7 @@ public class TodoPage
     // language=html
     public string RenderPage(string antiforgeryToken, List<TodoItem> todos) =>
     $$"""
-    <div class="todo-page">
+    <div class="todo-page" hx-ext="morph">
         <h1>My Todos</h1>
         {{RenderCreateForm(antiforgeryToken)}}
         <div id="todo-list">
@@ -23,7 +23,7 @@ public class TodoPage
     <div class="todo-create-form">
         <form hx-post="/api/todos/create"
               hx-target="#todo-list"
-              hx-swap="innerHTML"
+              hx-swap="morph:innerHTML"
               hx-on::after-request="if(event.detail.successful) this.reset()">
             <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
             <div class="todo-input-group">
@@ -67,11 +67,11 @@ public class TodoPage
         var checkedAttr = todo.IsCompleted ? "checked" : "";
 
         return $$"""
-        <li class="todo-item {{completedClass}}" data-todo-id="{{todo.Id}}">
+        <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}">
             <div class="todo-content">
                 <form hx-post="/api/todos/toggle"
                       hx-target="#todo-list"
-                      hx-swap="innerHTML"
+                      hx-swap="morph:innerHTML"
                       class="todo-toggle-form">
                     <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
                     <input type="hidden" name="id" value="{{todo.Id}}" />
@@ -83,7 +83,7 @@ public class TodoPage
                 <span class="todo-title">{{HttpUtility.HtmlEncode(todo.Title)}}</span>
                 <button hx-post="/api/todos/delete"
                         hx-target="#todo-list"
-                        hx-swap="innerHTML"
+                        hx-swap="morph:innerHTML"
                         hx-vals='{"id": {{todo.Id}}, "__RequestVerificationToken": "{{antiforgeryToken}}"}'
                         class="todo-delete"
                         title="Delete todo">

@@ -16,6 +16,11 @@ public class TodoRepository : Repository<Models.Todo>, ITodoRepository
         return await Get(TodoSpecifications.ById(id));
     }
 
+    public async Task<Models.Todo> GetByIdTracked(long id)
+    {
+        return await GetTracked(TodoSpecifications.ById(id));
+    }
+
     public async Task<List<Models.Todo>> GetAll()
     {
         return await List(TodoSpecifications.All());
