@@ -11,6 +11,7 @@ using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Signin;
 using PagePlay.Site.Pages.Signin2;
+using PagePlay.Site.Pages.TodoPage;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +64,7 @@ app.MapRazorPages();
 app.MapSigninRoutes();
 app.MapSignin2Routes();
 app.MapLoginRoutes();
+app.MapTodoPageRoutes();
 app.MapEndpoints();
 
 // TODO: clean this up.

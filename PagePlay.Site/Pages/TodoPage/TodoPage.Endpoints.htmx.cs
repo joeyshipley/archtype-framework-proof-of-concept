@@ -1,0 +1,114 @@
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Mvc;
+using PagePlay.Site.Application.Todo.CreateTodo;
+using PagePlay.Site.Application.Todo.DeleteTodo;
+using PagePlay.Site.Application.Todo.ListTodos;
+using PagePlay.Site.Application.Todo.ToggleTodo;
+using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Pages.Shared;
+
+namespace PagePlay.Site.Pages.TodoPage;
+
+public static class TodoPageEndpoints
+{
+    public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
+    {
+        var page = new TodoPage();
+
+        endpoints.MapGet("/todos", async (
+            IAntiforgery antiforgery,
+            HttpContext context,
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            var request = new ListTodosRequest();
+            var result = await listWorkflow.Perform(request);
+
+            if (!result.Success)
+            {
+                var errorContent = page.RenderError("Failed to load todos");
+                var errorPage = Layout.Render(errorContent, "Todos");
+                return Results.Content(errorPage, "text/html");
+            }
+
+            var bodyContent = page.RenderPage(tokens.RequestToken!, result.Model.Todos);
+            var fullPage = Layout.Render(bodyContent, "Todos");
+            return Results.Content(fullPage, "text/html");
+        });
+
+        endpoints.MapPost("/api/todos/create", async (
+            [FromForm] string title,
+            IAntiforgery antiforgery,
+            HttpContext context,
+            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow,
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            var createRequest = new CreateTodoRequest { Title = title };
+            var createResult = await createWorkflow.Perform(createRequest);
+
+            var listResult = await listWorkflow.Perform(new ListTodosRequest());
+
+            if (!listResult.Success)
+            {
+                return Results.Content(
+                    page.RenderError("Failed to load todos"),
+                    "text/html");
+            }
+
+            return Results.Content(
+                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                "text/html");
+        });
+
+        endpoints.MapPost("/api/todos/toggle", async (
+            [FromForm] long id,
+            IAntiforgery antiforgery,
+            HttpContext context,
+            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow,
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            var toggleRequest = new ToggleTodoRequest { Id = id };
+            var toggleResult = await toggleWorkflow.Perform(toggleRequest);
+
+            var listResult = await listWorkflow.Perform(new ListTodosRequest());
+
+            if (!listResult.Success)
+            {
+                return Results.Content(
+                    page.RenderError("Failed to load todos"),
+                    "text/html");
+            }
+
+            return Results.Content(
+                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                "text/html");
+        });
+
+        endpoints.MapPost("/api/todos/delete", async (
+            [FromForm] long id,
+            IAntiforgery antiforgery,
+            HttpContext context,
+            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow,
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            var deleteRequest = new DeleteTodoRequest { Id = id };
+            var deleteResult = await deleteWorkflow.Perform(deleteRequest);
+
+            var listResult = await listWorkflow.Perform(new ListTodosRequest());
+
+            if (!listResult.Success)
+            {
+                return Results.Content(
+                    page.RenderError("Failed to load todos"),
+                    "text/html");
+            }
+
+            return Results.Content(
+                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                "text/html");
+        });
+    }
+}
