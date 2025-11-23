@@ -32,8 +32,8 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IJwtTokenService>()
-            .GetCurrentUserId()
+            .GetSubstituteFor<LoggedInAuthContext>()
+            .UserId
             .Returns(userId);
 
         Mocker
@@ -87,37 +87,6 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
     }
 
     [Fact]
-    public async Task Perform_WithNoAuthenticatedUser_ReturnsAuthenticationError()
-    {
-        // Arrange
-        var request = new ViewProfileRequest();
-
-        Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
-            .ValidateAsync(request, default)
-            .Returns(new ValidationResult());
-
-        Mocker
-            .GetSubstituteFor<IJwtTokenService>()
-            .GetCurrentUserId()
-            .Returns((long?)null);
-
-        // Act
-        var result = await SUT.Perform(request);
-
-        // Assert
-        result.Success.Should().BeFalse();
-        result.Errors.Should().NotBeEmpty();
-        result.Errors.Should().Contain(e => e.Message == "User not authenticated.");
-
-        await Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .DidNotReceive()
-            .GetById(Arg.Any<long>());
-    }
-
-
-    [Fact]
     public async Task Perform_WithNonExistentUser_ReturnsUserNotFoundError()
     {
         // Arrange
@@ -130,8 +99,8 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IJwtTokenService>()
-            .GetCurrentUserId()
+            .GetSubstituteFor<LoggedInAuthContext>()
+            .UserId
             .Returns(userId);
 
         Mocker
@@ -154,7 +123,7 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
     }
 
     [Fact]
-    public async Task Perform_UsesCorrectUserIdFromJwtService()
+    public async Task Perform_UsesCorrectUserIdFromAuthContext()
     {
         // Arrange
         var request = new ViewProfileRequest();
@@ -173,8 +142,8 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IJwtTokenService>()
-            .GetCurrentUserId()
+            .GetSubstituteFor<LoggedInAuthContext>()
+            .UserId
             .Returns(expectedUserId);
 
         Mocker
@@ -216,8 +185,8 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IJwtTokenService>()
-            .GetCurrentUserId()
+            .GetSubstituteFor<LoggedInAuthContext>()
+            .UserId
             .Returns(userId);
 
         Mocker

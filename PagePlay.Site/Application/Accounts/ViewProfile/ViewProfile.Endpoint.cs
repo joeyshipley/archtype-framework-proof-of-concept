@@ -7,7 +7,7 @@ public class ViewProfileEndpoint(IWorkflow<ViewProfileRequest, ViewProfileRespon
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
         endpoints.Register<ViewProfileResponse>("/accounts/viewprofile", handle)
-            .RequireAuthorization();
+            .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(ViewProfileRequest request) =>
         Respond.With(await _workflow.Perform(request));

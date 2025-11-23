@@ -8,7 +8,7 @@ namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
 public class ViewProfileWorkflow(
     IUserRepository _userRepository,
-    IJwtTokenService _jwtTokenService,
+    LoggedInAuthContext _authContext,
     IValidator<ViewProfileRequest> _validator
 ) : IWorkflow<ViewProfileRequest, ViewProfileResponse>
 {
@@ -18,11 +18,7 @@ public class ViewProfileWorkflow(
         if (!validationResult.IsValid)
             return response(validationResult);
 
-        var userId = _jwtTokenService.GetCurrentUserId();
-        if (userId == null)
-            return response("User not authenticated.");
-
-        var user = await getUserById(userId.Value);
+        var user = await getUserById(_authContext.UserId);
         if (user == null)
             return response("User not found.");
 
