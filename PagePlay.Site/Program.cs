@@ -6,18 +6,11 @@ using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
 using Scalar.AspNetCore;
 
-var builder = WebApplication.CreateBuilder(new WebApplicationOptions
-{
-    Args = args,
-    WebRootPath = "Client/wwwroot"
-});
+var builder = WebApplication.CreateBuilder(args);
 
 DependencyResolver.Bind(builder.Services);
 
-builder.Services.AddRazorPages(options =>
-{
-    options.RootDirectory = "/Client/Pages";
-});
+builder.Services.AddRazorPages();
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();

@@ -4,10 +4,6 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
-    
-  <PropertyGroup>
-    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
   </PropertyGroup>    
 
   <ItemGroup>
@@ -38,12 +34,6 @@
     <Folder Include="Infrastructure\Caching\" />
     <Folder Include="Infrastructure\Email\" />
     <Folder Include="Infrastructure\Sessions\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Client/wwwroot/**/*">
-      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
 
 </Project>
