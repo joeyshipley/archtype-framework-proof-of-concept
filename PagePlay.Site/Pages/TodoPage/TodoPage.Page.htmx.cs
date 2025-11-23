@@ -23,7 +23,8 @@ public class TodoPage
     <div class="todo-create-form">
         <form hx-post="/api/todos/create"
               hx-target="#todo-list"
-              hx-swap="innerHTML">
+              hx-swap="innerHTML"
+              hx-on::after-request="if(event.detail.successful) this.reset()">
             <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
             <div class="todo-input-group">
                 <input id="title"
