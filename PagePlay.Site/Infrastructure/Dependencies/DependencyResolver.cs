@@ -26,7 +26,13 @@ public static class DependencyResolver
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<LoggedInAuthContext>();
         services.AddHttpContextAccessor();
-        services.AddHttpClient();
+
+        // Named HttpClient for calling internal APIs
+        services.AddHttpClient("ApiClient", client =>
+        {
+            client.BaseAddress = new Uri("http://localhost:5200");
+            client.DefaultRequestHeaders.Add("Accept", "application/json");
+        });
     }
 
     private static void bindData(IServiceCollection services)
