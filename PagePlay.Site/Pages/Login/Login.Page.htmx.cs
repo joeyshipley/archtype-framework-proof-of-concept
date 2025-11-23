@@ -1,9 +1,16 @@
 namespace PagePlay.Site.Pages.Login;
 
-public class LoginPage
+public interface ILoginPageHtmx
+{
+    string RenderPage(string antiforgeryToken = "");
+    string RenderError(string error);
+    string RenderSuccess(string token);
+}
+
+public class LoginPage : ILoginPageHtmx
 {
     // language=html
-    public string RenderPage(string antiforgeryToken) =>
+    public string RenderPage(string antiforgeryToken = "") =>
     $$"""
     <div>
         {{RenderForm(antiforgeryToken)}}

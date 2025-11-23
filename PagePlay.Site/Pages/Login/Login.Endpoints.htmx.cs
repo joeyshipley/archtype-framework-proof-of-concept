@@ -10,20 +10,24 @@ public static class LoginEndpoints
 {
     public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
     {
-        var page = new LoginPage();
-
-        endpoints.MapGet("/htmx/login", (IAntiforgery antiforgery, HttpContext context) =>
+        endpoints.MapGet("/htmx/login", (
+            HttpContext context,
+            [FromServices] IAntiforgery antiforgery,
+            [FromServices] ILoginPageHtmx page
+        ) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
-            var bodyContent = page.RenderPage(tokens.RequestToken!);
+            var bodyContent = page.RenderPage(tokens.RequestToken);
             var fullPage = Layout.Render(bodyContent, "Login");
             return Results.Content(fullPage, "text/html");
         });
 
         endpoints.MapPost("/htmx/api/login", async (
+            [FromServices] ILoginPageHtmx page,
+            [FromServices] IWorkflow<LoginRequest, LoginResponse> loginWorkflow,
             [FromForm] string email,
-            [FromForm] string password,
-            IWorkflow<LoginRequest, LoginResponse> loginWorkflow) =>
+            [FromForm] string password
+        ) =>
         {
             var request = new LoginRequest { Email = email, Password = password };
             var result = await loginWorkflow.Perform(request);
@@ -33,12 +37,14 @@ public static class LoginEndpoints
                 var errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "An error occurred";
                 return Results.Content(
                     page.RenderError(errorMessage),
-                    "text/html");
+                    "text/html"
+                );
             }
 
             return Results.Content(
-                page.RenderSuccess(result.Model.Token),
-                "text/html");
+                page.RenderSuccess(result.Model.Token), 
+                "text/html"
+            );
         });
     }
 }

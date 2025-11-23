@@ -16,6 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 DependencyResolver.Bind(builder.Services);
 
+builder.Services.AddScoped<ILoginPageHtmx, LoginPage>();
+
 builder.Services.AddRazorPages();
 
 builder.Services.AddOpenApi();
