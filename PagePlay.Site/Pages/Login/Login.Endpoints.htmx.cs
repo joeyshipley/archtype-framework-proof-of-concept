@@ -6,21 +6,39 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Login;
 
-public static class LoginEndpoints
+public interface IHtmxPage
 {
-    public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
+    string RenderPage(string antiforgeryToken = "");
+}
+
+public static class PlumbingExplorations
+{
+    // Generic GET endpoint for any page that implements IHtmxPage
+    public static void MapHtmxPageGet<TPageInterface>(
+        this IEndpointRouteBuilder endpoints,
+        string route,
+        string pageTitle
+    ) where TPageInterface : IHtmxPage
     {
-        endpoints.MapGet("/htmx/login", (
+        endpoints.MapGet(route, (
             HttpContext context,
             [FromServices] IAntiforgery antiforgery,
-            [FromServices] ILoginPageHtmx page
+            [FromServices] TPageInterface page
         ) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var bodyContent = page.RenderPage(tokens.RequestToken);
-            var fullPage = Layout.Render(bodyContent, "Login");
+            var fullPage = Layout.Render(bodyContent, pageTitle);
             return Results.Content(fullPage, "text/html");
         });
+    }
+}
+
+public static class LoginEndpoints
+{
+    public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapHtmxPageGet<ILoginPageHtmx>("/htmx/login", "Login");
 
         endpoints.MapPost("/htmx/api/login", async (
             [FromServices] ILoginPageHtmx page,

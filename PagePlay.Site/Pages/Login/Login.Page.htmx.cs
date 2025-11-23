@@ -1,8 +1,7 @@
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageHtmx
+public interface ILoginPageHtmx : IHtmxPage
 {
-    string RenderPage(string antiforgeryToken = "");
     string RenderError(string error);
     string RenderSuccess(string token);
 }
