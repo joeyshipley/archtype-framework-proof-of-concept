@@ -1,4 +1,6 @@
 using FluentValidation;
+using FluentValidation.Results;
+using Microsoft.IdentityModel.Tokens.Experimental;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
@@ -30,7 +32,7 @@ public class LoginWorkflow(
         return response(user.Id, token);
     }
 
-    private IApplicationResult<LoginResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
+    private IApplicationResult<LoginResponse> response(ValidationResult validationResult) =>
         ApplicationResult<LoginResponse>.Fail(validationResult);
 
     private IApplicationResult<LoginResponse> response(string errorMessage) =>
@@ -41,10 +43,10 @@ public class LoginWorkflow(
             new LoginResponse { UserId = userId, Token = token }
         );
 
-    private async Task<FluentValidation.Results.ValidationResult> validate(LoginRequest request) =>
+    private async Task<ValidationResult> validate(LoginRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<PagePlay.Site.Application.Accounts.Domain.Models.User> getUserByEmail(string email) =>
+    private async Task<Domain.Models.User> getUserByEmail(string email) =>
         await _userRepository.GetByEmail(email);
 
     private bool verifyPassword(string password, string passwordHash) =>
