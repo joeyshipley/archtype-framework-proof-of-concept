@@ -10,6 +10,7 @@ using PagePlay.Site.Infrastructure.Routing;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Signin;
+using PagePlay.Site.Pages.Signin2;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -60,6 +61,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 app.MapRazorPages();
 app.MapSigninRoutes();
+app.MapSignin2Routes();
 app.MapLoginRoutes();
 app.MapEndpoints();
 
