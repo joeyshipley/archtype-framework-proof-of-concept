@@ -19,7 +19,7 @@ public interface IHtmxPage<TPageData>
 
 public interface IPageDataLoader<TPageData>
 {
-    Task<TPageData> Load(HttpContext context);
+    Task<TPageData> Load();
 }
 
 public static class PlumbingExplorations
@@ -58,7 +58,7 @@ public static class PlumbingExplorations
         ) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
-            var data = await loader.Load(context);
+            var data = await loader.Load();
             var bodyContent = page.RenderPage(tokens.RequestToken, data);
             return RenderFullPage(bodyContent, pageTitle);
         });
@@ -106,16 +106,10 @@ public static class LoginEndpoints
 
 public record LoginPageData(string UserEmail);
 
-public class LoginPageDataLoader : IPageDataLoader<LoginPageData>
+public class LoginPageDataLoader(IUserRepository _userRepository) 
+    : IPageDataLoader<LoginPageData>
 {
-    private readonly IUserRepository _userRepository;
-
-    public LoginPageDataLoader(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
-    public async Task<LoginPageData> Load(HttpContext context)
+    public async Task<LoginPageData> Load()
     {
         var user = await _userRepository.GetById(1);
         return new LoginPageData(user.Email);
