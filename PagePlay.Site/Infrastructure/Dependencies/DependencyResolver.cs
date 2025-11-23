@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
+using PagePlay.Site.Application.Todo.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
@@ -44,6 +45,7 @@ public static class DependencyResolver
         });
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ITodoRepository, TodoRepository>();
     }
 
     private static void bindValidation(IServiceCollection services)
