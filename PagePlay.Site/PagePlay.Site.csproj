@@ -23,6 +23,7 @@
     <Folder Include="Application\Accounts\EditProfile\" />
     <Folder Include="Application\Accounts\RequestParentalConsent\" />
     <Folder Include="Application\Accounts\VerifyAge\" />
+    <Folder Include="Application\Accounts\ViewProfile\" />
     <Folder Include="Application\Administration\" />
     <Folder Include="Application\Authoring\" />
     <Folder Include="Application\Characters\" />
