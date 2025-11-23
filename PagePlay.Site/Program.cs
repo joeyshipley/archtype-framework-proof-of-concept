@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
+using PagePlay.Site.Pages.Signin;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +49,7 @@ app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
+app.MapSigninRoutes();
 app.MapEndpoints();
 
 app.Run();

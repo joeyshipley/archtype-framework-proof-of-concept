@@ -26,6 +26,7 @@ public static class DependencyResolver
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<LoggedInAuthContext>();
         services.AddHttpContextAccessor();
+        services.AddHttpClient();
     }
 
     private static void bindData(IServiceCollection services)
