@@ -22,7 +22,7 @@ public interface IPageDataLoader<TPageData>
     Task<TPageData> Load();
 }
 
-public interface IHtmxPagePost<TResponse> where TResponse : IResponse
+public interface IHtmxFragment<TResponse> where TResponse : IResponse
 {
     string RenderSuccess(TResponse model);
     string RenderError(IEnumerable<ResponseErrorEntry> errors);
@@ -31,7 +31,7 @@ public interface IHtmxPagePost<TResponse> where TResponse : IResponse
 public static class PlumbingExplorations
 {
     // Generic GET endpoint for any page that implements IHtmxPage
-    public static void MapHtmxPageGet<TPageInterface>(
+    public static void MapHtmxPage<TPageInterface>(
         this IEndpointRouteBuilder endpoints,
         string route,
         string pageTitle
@@ -50,7 +50,7 @@ public static class PlumbingExplorations
     }
 
     // Generic GET endpoint for pages with preloaded data
-    public static void MapHtmxPageGet<TPageInterface, TPageData>(
+    public static void MapHtmxPage<TPageInterface, TPageData>(
         this IEndpointRouteBuilder endpoints,
         string route,
         string pageTitle
@@ -70,18 +70,18 @@ public static class PlumbingExplorations
         });
     }
 
-    // Generic POST endpoint for workflow-based form submissions
-    public static void MapHtmxPagePost<TPageInterface, TRequest, TResponse>(
+    // Generic POST endpoint for HTMX workflow fragments
+    public static void MapHtmxFragment<TFragment, TRequest, TResponse>(
         this IEndpointRouteBuilder endpoints,
         string route
     )
-        where TPageInterface : IHtmxPagePost<TResponse>
+        where TFragment : IHtmxFragment<TResponse>
         where TRequest : IRequest, new()
         where TResponse : IResponse
     {
         endpoints.MapPost(route, async (
             HttpContext context,
-            [FromServices] TPageInterface page,
+            [FromServices] TFragment fragment,
             [FromServices] IWorkflow<TRequest, TResponse> workflow
         ) =>
         {
@@ -108,13 +108,13 @@ public static class PlumbingExplorations
             if (!result.Success)
             {
                 return Results.Content(
-                    page.RenderError(result.Errors),
+                    fragment.RenderError(result.Errors),
                     "text/html"
                 );
             }
 
             return Results.Content(
-                page.RenderSuccess(result.Model),
+                fragment.RenderSuccess(result.Model),
                 "text/html"
             );
         });

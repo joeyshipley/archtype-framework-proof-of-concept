@@ -4,17 +4,17 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageHtmx : 
-    IHtmxPage<LoginPageData>, 
-    IHtmxPagePost<LoginResponse>
+public interface ILoginPageHtmx :
+    IHtmxPage<LoginPageData>,
+    IHtmxFragment<LoginResponse>
 {}
 
 public static class LoginEndpoints
 {
     public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapHtmxPageGet<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
-        endpoints.MapHtmxPagePost<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
+        endpoints.MapHtmxPage<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
+        endpoints.MapHtmxFragment<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
     }
 }
 
