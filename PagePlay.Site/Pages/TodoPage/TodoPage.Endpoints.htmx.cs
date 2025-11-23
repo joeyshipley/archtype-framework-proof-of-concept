@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todo.CreateTodo;
@@ -65,24 +66,30 @@ public static class TodoPageEndpoints
             [FromForm] long id,
             IAntiforgery antiforgery,
             HttpContext context,
-            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var toggleRequest = new ToggleTodoRequest { Id = id };
             var toggleResult = await toggleWorkflow.Perform(toggleRequest);
 
-            var listResult = await listWorkflow.Perform(new ListTodosRequest());
-
-            if (!listResult.Success)
+            if (!toggleResult.Success)
             {
                 return Results.Content(
-                    page.RenderError("Failed to load todos"),
+                    page.RenderError("Failed to toggle todo"),
                     "text/html");
             }
 
+            var todoItem = new TodoItem
+            {
+                Id = toggleResult.Model.Id,
+                IsCompleted = toggleResult.Model.IsCompleted,
+                Title = toggleResult.Model.Title,
+                CreatedAt = toggleResult.Model.CreatedAt,
+                UpdatedAt = toggleResult.Model.UpdatedAt
+            };
+
             return Results.Content(
-                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                page.RenderTodoItem(tokens.RequestToken!, todoItem),
                 "text/html");
         });
 

@@ -66,17 +66,17 @@ public class TodoPage
         var checkedAttr = todo.IsCompleted ? "checked" : "";
 
         return $$"""
-        <li class="todo-item {{completedClass}}" data-todo-id="{{todo.Id}}">
+        <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}" data-todo-id="{{todo.Id}}">
             <div class="todo-content">
                 <form hx-post="/api/todos/toggle"
-                      hx-target="#todo-list"
-                      hx-swap="innerHTML"
+                      hx-target="#todo-{{todo.Id}}"
+                      hx-swap="outerHTML"
                       class="todo-toggle-form">
                     <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
                     <input type="hidden" name="id" value="{{todo.Id}}" />
                     <input type="checkbox"
                            {{checkedAttr}}
-                           onchange="this.form.requestSubmit()"
+                           onclick="event.preventDefault(); this.form.requestSubmit();"
                            class="todo-checkbox" />
                 </form>
                 <span class="todo-title">{{HttpUtility.HtmlEncode(todo.Title)}}</span>
@@ -88,6 +88,7 @@ public class TodoPage
                         title="Delete todo">
                     ✕
                 </button>
+                <hr />
             </div>
         </li>
         """;
