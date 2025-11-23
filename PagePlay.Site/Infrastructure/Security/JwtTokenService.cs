@@ -8,19 +8,24 @@ namespace PagePlay.Site.Infrastructure.Security;
 
 public interface IJwtTokenService
 {
-    string GenerateToken(long userId);
+    string GenerateToken(TokenClaims claims);
+}
+
+public class TokenClaims
+{
+    public long UserId { get; set; }
 }
 
 public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
 {
-    public string GenerateToken(long userId)
+    public string GenerateToken(TokenClaims tokenClaims)
     {
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Security.Jwt.SecretKey));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()),
+            new Claim(JwtRegisteredClaimNames.Sub, tokenClaims.UserId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 

@@ -51,5 +51,5 @@ public class LoginWorkflow(
         _passwordHasher.VerifyPassword(password, passwordHash);
 
     private string generateToken(long userId) =>
-        _jwtTokenService.GenerateToken(userId);
+        _jwtTokenService.GenerateToken(new TokenClaims { UserId = userId });
 }

@@ -46,7 +46,7 @@ public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IJwtTokenService>()
-            .GenerateToken(user.Id)
+            .GenerateToken(Arg.Is<TokenClaims>(tc => tc.UserId == user.Id))
             .Returns("test_jwt_token");
 
         // Act
@@ -71,7 +71,7 @@ public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
         Mocker
             .GetSubstituteFor<IJwtTokenService>()
             .Received(1)
-            .GenerateToken(user.Id);
+            .GenerateToken(Arg.Is<TokenClaims>(tc => tc.UserId == user.Id));
     }
 
     [Fact]
@@ -308,7 +308,7 @@ public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IJwtTokenService>()
-            .GenerateToken(user.Id)
+            .GenerateToken(Arg.Is<TokenClaims>(tc => tc.UserId == user.Id))
             .Returns("jwt_token_for_user_789");
 
         // Act
@@ -360,7 +360,7 @@ public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IJwtTokenService>()
-            .GenerateToken(user.Id)
+            .GenerateToken(Arg.Is<TokenClaims>(tc => tc.UserId == user.Id))
             .Returns(expectedToken);
 
         // Act
@@ -373,6 +373,6 @@ public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
         Mocker
             .GetSubstituteFor<IJwtTokenService>()
             .Received(1)
-            .GenerateToken(user.Id);
+            .GenerateToken(Arg.Is<TokenClaims>(tc => tc.UserId == user.Id));
     }
 }
