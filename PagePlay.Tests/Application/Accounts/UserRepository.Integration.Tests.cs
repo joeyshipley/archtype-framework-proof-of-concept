@@ -10,14 +10,17 @@ namespace PagePlay.Tests.Application.Accounts;
 
 public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepository>
 {
+    public UserRepositoryIntegrationTests() 
+    {
+        Fakes()
+            .Replace<IDbContextFactory<AppDbContext>, TestDbContextFactory>()
+            .Use();
+    }
+    
     [Fact]
     public async Task GetByEmailAsync_WhenUserExists_ReturnsUser()
     {
         // Arrange
-        Fakes()
-            .Replace<IDbContextFactory<AppDbContext>, TestDbContextFactory>()
-            .Use();
-
         var user = new User
         {
             Email = "test@example.com",
@@ -40,10 +43,6 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     public async Task GetByEmailAsync_WhenUserDoesNotExist_ReturnsNull()
     {
         // Arrange
-        Fakes()
-            .Replace<IDbContextFactory<AppDbContext>, TestDbContextFactory>()
-            .Use();
-
         // Act
         var result = await SUT.GetByEmail("nonexistent@example.com");
 
@@ -55,10 +54,6 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     public async Task EmailExistsAsync_WhenUserExists_ReturnsTrue()
     {
         // Arrange
-        Fakes()
-            .Replace<IDbContextFactory<AppDbContext>, TestDbContextFactory>()
-            .Use();
-
         var user = new User
         {
             Email = "existing@example.com",
@@ -80,10 +75,6 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     public async Task EmailExistsAsync_WhenUserDoesNotExist_ReturnsFalse()
     {
         // Arrange
-        Fakes()
-            .Replace<IDbContextFactory<AppDbContext>, TestDbContextFactory>()
-            .Use();
-
         // Act
         var exists = await SUT.EmailExists("nonexistent@example.com");
 
