@@ -7,7 +7,7 @@ public class ViewProfileEndpoint : IAccountEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
         endpoints
-            .Register<ViewProfileResponse>("/accounts/viewprofile", handle)
+            .Register<ViewProfileResponse>("/viewprofile", handle)
             .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
