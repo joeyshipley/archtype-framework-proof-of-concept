@@ -10,7 +10,7 @@ using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.Login;
 
-public class LoginWorkflowUnitTests : SetupTestFor<LoginWorkflow>
+public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 {
     [Fact]
     public async Task Perform_WithValidCredentials_ReturnsSuccess()

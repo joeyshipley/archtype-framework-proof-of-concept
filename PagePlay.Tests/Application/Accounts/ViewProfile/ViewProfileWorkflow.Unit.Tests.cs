@@ -10,7 +10,7 @@ using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.ViewProfile;
 
-public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
+public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow>
 {
     [Fact]
     public async Task Perform_WithAuthenticatedUser_ReturnsUserProfile()

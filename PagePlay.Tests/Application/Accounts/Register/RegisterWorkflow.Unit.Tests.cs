@@ -10,7 +10,7 @@ using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.Register;
 
-public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
+public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
 {
     [Fact]
     public async Task Perform_WithValidRequest_ReturnsSuccess()

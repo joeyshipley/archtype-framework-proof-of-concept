@@ -2,7 +2,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace PagePlay.Tests.Infrastructure.Dependencies;
 
-public class FakesInjectorBuilder(IServiceCollection _services)
+public class FakesInjectorBuilder(
+    IServiceCollection _services,
+    Action<IServiceCollection> _configure
+)
 {
     private readonly List<(Type InterfaceType, Type ImplementationType)> _fakes = new();
 
@@ -17,5 +20,6 @@ public class FakesInjectorBuilder(IServiceCollection _services)
     public void Use()
     {
         _services.BindWithFakes(_fakes);
+        _configure.Invoke(_services);
     }
 }
