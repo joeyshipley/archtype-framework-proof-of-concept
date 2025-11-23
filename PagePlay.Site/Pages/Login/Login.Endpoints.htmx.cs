@@ -126,24 +126,3 @@ public static class PlumbingExplorations
         return Results.Content(fullPage, "text/html");
     }
 }
-
-public static class LoginEndpoints
-{
-    public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
-    {
-        endpoints.MapHtmxPageGet<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
-        endpoints.MapHtmxPagePost<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
-    }
-}
-
-public record LoginPageData(string UserEmail);
-
-public class LoginPageDataLoader(IUserRepository _userRepository) 
-    : IPageDataLoader<LoginPageData>
-{
-    public async Task<LoginPageData> Load()
-    {
-        var user = await _userRepository.GetById(1);
-        return new LoginPageData(user.Email);
-    }
-}

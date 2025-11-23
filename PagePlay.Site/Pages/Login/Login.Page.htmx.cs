@@ -1,3 +1,4 @@
+using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
 
@@ -6,7 +7,27 @@ namespace PagePlay.Site.Pages.Login;
 public interface ILoginPageHtmx : 
     IHtmxPage<LoginPageData>, 
     IHtmxPagePost<LoginResponse>
+{}
+
+public static class LoginEndpoints
 {
+    public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapHtmxPageGet<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
+        endpoints.MapHtmxPagePost<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
+    }
+}
+
+public record LoginPageData(string UserEmail);
+
+public class LoginPageDataLoader(IUserRepository _userRepository) 
+    : IPageDataLoader<LoginPageData>
+{
+    public async Task<LoginPageData> Load()
+    {
+        var user = await _userRepository.GetById(1);
+        return new LoginPageData(user.Email);
+    }
 }
 
 public class LoginPage : ILoginPageHtmx
