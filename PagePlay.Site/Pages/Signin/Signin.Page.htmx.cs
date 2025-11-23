@@ -1,6 +1,6 @@
 namespace PagePlay.Site.Pages.Signin;
 
-public class SigninComponent
+public class SigninPage
 {
 //      // language=html
 //      public string RenderPage2(string antiforgeryToken) =>

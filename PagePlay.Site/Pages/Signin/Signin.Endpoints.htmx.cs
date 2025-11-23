@@ -1,20 +1,19 @@
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Accounts.Login;
-using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Pages.Signin;
 
-public static class SigninEndpoint
+public static class SigninEndpoints
 {
     public static void MapSigninRoutes(this IEndpointRouteBuilder endpoints)
     {
-        var component = new SigninComponent();
+        var page = new SigninPage();
 
         endpoints.MapGet("/signin", (IAntiforgery antiforgery, HttpContext context) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
-            var bodyContent = component.RenderPage(tokens.RequestToken!);
+            var bodyContent = page.RenderPage(tokens.RequestToken!);
             var fullPage = WrapInLayout(bodyContent, "Sign In");
             return Results.Content(fullPage, "text/html");
         });
@@ -32,7 +31,7 @@ public static class SigninEndpoint
             if (!response.IsSuccessStatusCode)
             {
                 return Results.Content(
-                    component.RenderError("Login failed. Please check your credentials."),
+                    page.RenderError("Login failed. Please check your credentials."),
                     "text/html");
             }
 
@@ -42,12 +41,12 @@ public static class SigninEndpoint
             {
                 var errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "An error occurred";
                 return Results.Content(
-                    component.RenderError(errorMessage),
+                    page.RenderError(errorMessage),
                     "text/html");
             }
 
             return Results.Content(
-                component.RenderSuccess(result?.Model?.Token ?? "No token received"),
+                page.RenderSuccess(result?.Model?.Token ?? "No token received"),
                 "text/html");
         });
     }
