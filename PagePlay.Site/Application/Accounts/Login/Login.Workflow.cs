@@ -26,7 +26,7 @@ public class LoginWorkflow(
         if (!passwordValid)
             return response("Invalid email or password.");
 
-        var token = generateToken(user.Email);
+        var token = generateToken(user.Id);
         return response(user.Id, token);
     }
 
@@ -50,6 +50,6 @@ public class LoginWorkflow(
     private bool verifyPassword(string password, string passwordHash) =>
         _passwordHasher.VerifyPassword(password, passwordHash);
 
-    private string generateToken(string email) =>
-        _jwtTokenService.GenerateToken(email);
+    private string generateToken(long userId) =>
+        _jwtTokenService.GenerateToken(userId);
 }
