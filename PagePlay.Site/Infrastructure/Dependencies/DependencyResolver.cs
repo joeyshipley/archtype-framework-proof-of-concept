@@ -23,6 +23,7 @@ public static class DependencyResolver
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddHttpContextAccessor();
     }
 
     private static void bindData(IServiceCollection services)
