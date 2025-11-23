@@ -8,6 +8,7 @@ using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Signin;
 using Scalar.AspNetCore;
 
@@ -56,6 +57,7 @@ app.UseAuthorization();
 app.UseAntiforgery();
 app.MapRazorPages();
 app.MapSigninRoutes();
+app.MapLoginRoutes();
 app.MapEndpoints();
 
 // TODO: clean this up.
