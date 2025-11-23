@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
@@ -10,8 +11,11 @@ public static class SigninEndpoint
     {
         var component = new SigninComponent();
 
-        endpoints.MapGet("/signin", () =>
-            Results.Content(component.RenderPage(), "text/html"));
+        endpoints.MapGet("/signin", (IAntiforgery antiforgery, HttpContext context) =>
+        {
+            var tokens = antiforgery.GetAndStoreTokens(context);
+            return Results.Content(component.RenderPage(tokens.RequestToken!), "text/html");
+        });
 
         endpoints.MapPost("/api/signin", async (
             [FromForm] string email,
@@ -43,8 +47,7 @@ public static class SigninEndpoint
             return Results.Content(
                 component.RenderSuccess(result?.Model?.Token ?? "No token received"),
                 "text/html");
-        })
-        .DisableAntiforgery();
+        });
     }
 
     private class ApiResult

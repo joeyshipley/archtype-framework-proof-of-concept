@@ -3,7 +3,7 @@ namespace PagePlay.Site.Pages.Signin;
 public class SigninComponent
 {
     // language=html
-    public string RenderPage() =>
+    public string RenderPage(string antiforgeryToken) =>
     $$"""
     <!DOCTYPE html>
     <html lang="en">
@@ -16,14 +16,14 @@ public class SigninComponent
     </head>
     <body hx-ext="morph">
         <main>
-            {{RenderForm()}}
+            {{RenderForm(antiforgeryToken)}}
         </main>
     </body>
     </html>
     """;
 
     // language=html
-    public string RenderForm(string? error = null) => 
+    public string RenderForm(string antiforgeryToken, string? error = null) =>
     $$"""
     <div class="signin-form">
         <h1>Sign In</h1>
@@ -31,6 +31,7 @@ public class SigninComponent
         <form hx-post="/api/signin"
               hx-target="#signin-container"
               hx-swap="innerHTML">
+            <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
             <div>
                 <label for="email">Email</label>
                 <input id="email" name="email" type="email" required />

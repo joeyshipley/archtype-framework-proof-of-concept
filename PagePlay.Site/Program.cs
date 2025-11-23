@@ -46,8 +46,10 @@ else
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseAntiforgery();
 app.MapRazorPages();
 app.MapSigninRoutes();
 app.MapEndpoints();
