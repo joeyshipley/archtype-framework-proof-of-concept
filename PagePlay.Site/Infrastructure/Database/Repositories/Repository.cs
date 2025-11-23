@@ -6,58 +6,73 @@ namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class, IEntity
 {
-    protected readonly AppDbContext _context;
+    protected readonly IDbContextFactory<AppDbContext> _contextFactory;
+    private AppDbContext _context;
 
-    public Repository(AppDbContext context)
+    public Repository(IDbContextFactory<AppDbContext> contextFactory)
     {
-        _context = context;
+        _contextFactory = contextFactory;
+    }
+
+    protected async Task<AppDbContext> GetContext()
+    {
+        if (_context == null)
+        {
+            _context = await _contextFactory.CreateDbContextAsync();
+        }
+        return _context;
     }
 
     public async Task<T> Get(Specification<T> spec)
     {
-        return await applySpecification(spec)
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await applySpecification(context, spec)
             .AsNoTracking()
             .FirstOrDefaultAsync();
     }
 
     public async Task<List<T>> List(Specification<T> spec)
     {
-        return await applySpecification(spec)
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await applySpecification(context, spec)
             .AsNoTracking()
             .ToListAsync();
     }
 
     public async Task<bool> Any(Specification<T> spec)
     {
-        return await applySpecification(spec).AnyAsync();
+        await using var context = await _contextFactory.CreateDbContextAsync();
+        return await applySpecification(context, spec).AnyAsync();
     }
 
     public async Task<T> Add(T entity)
     {
-        await _context.Set<T>().AddAsync(entity);
+        var context = await GetContext();
+        await context.Set<T>().AddAsync(entity);
         return entity;
     }
 
-    public Task Update(T entity)
+    public async Task Update(T entity)
     {
-        _context.Set<T>().Update(entity);
-        return Task.CompletedTask;
+        var context = await GetContext();
+        context.Set<T>().Update(entity);
     }
 
-    public Task Delete(T entity)
+    public async Task Delete(T entity)
     {
-        _context.Set<T>().Remove(entity);
-        return Task.CompletedTask;
+        var context = await GetContext();
+        context.Set<T>().Remove(entity);
     }
 
     public async Task SaveChanges()
     {
-        await _context.SaveChangesAsync();
+        var context = await GetContext();
+        await context.SaveChangesAsync();
     }
 
-    private IQueryable<T> applySpecification(Specification<T> spec)
+    private IQueryable<T> applySpecification(AppDbContext context, Specification<T> spec)
     {
-        var query = _context.Set<T>().Where(spec.Criteria);
+        var query = context.Set<T>().Where(spec.Criteria);
 
         // Apply includes
         query = spec.Includes

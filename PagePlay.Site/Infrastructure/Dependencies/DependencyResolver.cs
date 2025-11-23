@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
@@ -28,10 +29,10 @@ public static class DependencyResolver
 
     private static void bindData(IServiceCollection services)
     {
-        services.AddScoped<AppDbContext>(sp =>
+        services.AddDbContextFactory<AppDbContext>((sp, options) =>
         {
             var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
-            return new AppDbContext(settingsProvider);
+            options.UseNpgsql(settingsProvider.Database.ConnectionString);
         });
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IUserRepository, UserRepository>();

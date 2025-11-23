@@ -10,8 +10,8 @@ public class UserRepositoryTests
     public async Task GetByEmailAsync_WhenUserExists_ReturnsUser()
     {
         // Arrange
-        var context = new TestAppDbContext();
-        var repository = new UserRepository(context);
+        var factory = new TestDbContextFactory();
+        var repository = new UserRepository(factory);
 
         var user = new User
         {
@@ -21,7 +21,7 @@ public class UserRepositoryTests
         };
 
         await repository.Add(user);
-        await context.SaveChangesAsync();
+        await repository.SaveChanges();
 
         // Act
         var result = await repository.GetByEmail("test@example.com");
@@ -35,8 +35,8 @@ public class UserRepositoryTests
     public async Task GetByEmailAsync_WhenUserDoesNotExist_ReturnsNull()
     {
         // Arrange
-        var context = new TestAppDbContext();
-        var repository = new UserRepository(context);
+        var factory = new TestDbContextFactory();
+        var repository = new UserRepository(factory);
 
         // Act
         var result = await repository.GetByEmail("nonexistent@example.com");
@@ -49,8 +49,8 @@ public class UserRepositoryTests
     public async Task EmailExistsAsync_WhenUserExists_ReturnsTrue()
     {
         // Arrange
-        var context = new TestAppDbContext();
-        var repository = new UserRepository(context);
+        var factory = new TestDbContextFactory();
+        var repository = new UserRepository(factory);
 
         var user = new User
         {
@@ -60,7 +60,7 @@ public class UserRepositoryTests
         };
 
         await repository.Add(user);
-        await context.SaveChangesAsync();
+        await repository.SaveChanges();
 
         // Act
         var exists = await repository.EmailExists("existing@example.com");
@@ -73,8 +73,8 @@ public class UserRepositoryTests
     public async Task EmailExistsAsync_WhenUserDoesNotExist_ReturnsFalse()
     {
         // Arrange
-        var context = new TestAppDbContext();
-        var repository = new UserRepository(context);
+        var factory = new TestDbContextFactory();
+        var repository = new UserRepository(factory);
 
         // Act
         var exists = await repository.EmailExists("nonexistent@example.com");
