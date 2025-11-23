@@ -1,13 +1,11 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using AwesomeAssertions;
 using FluentValidation;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Http;
 using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.ViewProfile;
+using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.ViewProfile;
@@ -33,16 +31,10 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString())
-        }));
-
         Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
+            .GetSubstituteFor<IJwtTokenService>()
+            .GetCurrentUserId()
+            .Returns(userId);
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -95,7 +87,7 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
     }
 
     [Fact]
-    public async Task Perform_WithNoHttpContext_ReturnsAuthenticationError()
+    public async Task Perform_WithNoAuthenticatedUser_ReturnsAuthenticationError()
     {
         // Arrange
         var request = new ViewProfileRequest();
@@ -106,9 +98,9 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns((HttpContext)null);
+            .GetSubstituteFor<IJwtTokenService>()
+            .GetCurrentUserId()
+            .Returns((long?)null);
 
         // Act
         var result = await SUT.Perform(request);
@@ -124,77 +116,6 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .GetById(Arg.Any<long>());
     }
 
-    [Fact]
-    public async Task Perform_WithMissingUserIdClaim_ReturnsAuthenticationError()
-    {
-        // Arrange
-        var request = new ViewProfileRequest();
-
-        Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
-            .ValidateAsync(request, default)
-            .Returns(new ValidationResult());
-
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim("SomeOtherClaim", "value")
-        }));
-
-        Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
-
-        // Act
-        var result = await SUT.Perform(request);
-
-        // Assert
-        result.Success.Should().BeFalse();
-        result.Errors.Should().NotBeEmpty();
-        result.Errors.Should().Contain(e => e.Message == "User not authenticated.");
-
-        await Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .DidNotReceive()
-            .GetById(Arg.Any<long>());
-    }
-
-    [Fact]
-    public async Task Perform_WithInvalidUserIdClaim_ReturnsAuthenticationError()
-    {
-        // Arrange
-        var request = new ViewProfileRequest();
-
-        Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
-            .ValidateAsync(request, default)
-            .Returns(new ValidationResult());
-
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, "not-a-number")
-        }));
-
-        Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
-
-        // Act
-        var result = await SUT.Perform(request);
-
-        // Assert
-        result.Success.Should().BeFalse();
-        result.Errors.Should().NotBeEmpty();
-        result.Errors.Should().Contain(e => e.Message == "User not authenticated.");
-
-        await Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .DidNotReceive()
-            .GetById(Arg.Any<long>());
-    }
 
     [Fact]
     public async Task Perform_WithNonExistentUser_ReturnsUserNotFoundError()
@@ -208,16 +129,10 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString())
-        }));
-
         Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
+            .GetSubstituteFor<IJwtTokenService>()
+            .GetCurrentUserId()
+            .Returns(userId);
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -239,7 +154,7 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
     }
 
     [Fact]
-    public async Task Perform_ExtractsCorrectUserIdFromJwtClaim()
+    public async Task Perform_UsesCorrectUserIdFromJwtService()
     {
         // Arrange
         var request = new ViewProfileRequest();
@@ -257,16 +172,10 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, expectedUserId.ToString())
-        }));
-
         Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
+            .GetSubstituteFor<IJwtTokenService>()
+            .GetCurrentUserId()
+            .Returns(expectedUserId);
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -306,16 +215,10 @@ public class ViewProfileWorkflowUnitTests : SetupTestFor<ViewProfileWorkflow>
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
-        var httpContext = new DefaultHttpContext();
-        httpContext.User = new ClaimsPrincipal(new ClaimsIdentity(new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, userId.ToString())
-        }));
-
         Mocker
-            .GetSubstituteFor<IHttpContextAccessor>()
-            .HttpContext
-            .Returns(httpContext);
+            .GetSubstituteFor<IJwtTokenService>()
+            .GetCurrentUserId()
+            .Returns(userId);
 
         Mocker
             .GetSubstituteFor<IUserRepository>()

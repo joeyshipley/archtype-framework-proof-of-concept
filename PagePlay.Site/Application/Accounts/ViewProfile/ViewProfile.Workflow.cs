@@ -1,14 +1,14 @@
-using System.Security.Claims;
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
 public class ViewProfileWorkflow(
     IUserRepository _userRepository,
-    IHttpContextAccessor _httpContextAccessor,
+    IJwtTokenService _jwtTokenService,
     IValidator<ViewProfileRequest> _validator
 ) : IWorkflow<ViewProfileRequest, ViewProfileResponse>
 {
@@ -18,7 +18,7 @@ public class ViewProfileWorkflow(
         if (!validationResult.IsValid)
             return response(validationResult);
 
-        var userId = getCurrentUserId();
+        var userId = _jwtTokenService.GetCurrentUserId();
         if (userId == null)
             return response("User not authenticated.");
 
@@ -31,17 +31,6 @@ public class ViewProfileWorkflow(
 
     private async Task<ValidationResult> validate(ViewProfileRequest request) =>
         await _validator.ValidateAsync(request);
-
-    private long? getCurrentUserId()
-    {
-        var userClaim = _httpContextAccessor.HttpContext?.User
-            .FindFirst(ClaimTypes.NameIdentifier);
-
-        if (userClaim == null || !long.TryParse(userClaim.Value, out var userId))
-            return null;
-
-        return userId;
-    }
 
     private async Task<Domain.Models.User> getUserById(long userId) =>
         await _userRepository.GetById(userId);

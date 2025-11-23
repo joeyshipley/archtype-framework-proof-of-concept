@@ -10,6 +10,7 @@ public interface IJwtTokenService
 {
     string GenerateToken(TokenClaims claims);
     TokenClaims ValidateToken(string token);
+    long? GetCurrentUserId();
 }
 
 public class TokenClaims
@@ -17,7 +18,10 @@ public class TokenClaims
     public long UserId { get; set; }
 }
 
-public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
+public class JwtTokenService(
+    ISettingsProvider _settings,
+    IHttpContextAccessor _httpContextAccessor
+) : IJwtTokenService
 {
     public string GenerateToken(TokenClaims tokenClaims)
     {
@@ -61,16 +65,31 @@ public class JwtTokenService(ISettingsProvider _settings) : IJwtTokenService
             };
 
             var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
-            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
-
-            if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
-                return null;
-
-            return new TokenClaims { UserId = userId };
+            return mapClaimsToTokenClaims(principal);
         }
         catch
         {
             return null;
         }
+    }
+
+    public long? GetCurrentUserId()
+    {
+        var principal = _httpContextAccessor.HttpContext?.User;
+        if (principal == null)
+            return null;
+
+        var tokenClaims = mapClaimsToTokenClaims(principal);
+        return tokenClaims?.UserId;
+    }
+
+    private TokenClaims mapClaimsToTokenClaims(ClaimsPrincipal principal)
+    {
+        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
+
+        if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+            return null;
+
+        return new TokenClaims { UserId = userId };
     }
 }
