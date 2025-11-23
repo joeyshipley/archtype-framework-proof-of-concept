@@ -148,17 +148,30 @@ using PagePlay.Site.Infrastructure.Routing;
 
 namespace PagePlay.Site.Application.{Domain}.{Feature};
 
-public class {Feature}Endpoint(IWorkflow<{Feature}Request, {Feature}Response> _workflow) : I{Domain}Endpoint
+public class {Feature}Endpoint : I{Domain}Endpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
         endpoints.Register<{Feature}Response>("/{endpoint-route}", handle);
 
-    private async Task<IResult> handle({Feature}Request request) =>
-        Respond.With(await _workflow.Perform(request));
+    private async Task<IResult> handle(
+        {Feature}Request request,
+        IWorkflow<{Feature}Request, {Feature}Response> workflow
+    ) => Respond.With(await workflow.Perform(request));
 }
 ```
 
-**Note:** Replace `{endpoint-route}` with the actual HTTP route (e.g., `/accounts/update-profile`)
+**Key points:**
+- No constructor needed - endpoints have no dependencies
+- Workflow injected as handler method parameter (resolved per-request)
+- Request must be first parameter, workflow second parameter
+- Replace `{endpoint-route}` with the actual HTTP route (e.g., `/accounts/update-profile`)
+
+**For authenticated endpoints:**
+```csharp
+public void Map(IEndpointRouteBuilder endpoints) =>
+    endpoints.Register<{Feature}Response>("/{endpoint-route}", handle)
+        .RequireAuthenticatedUser();  // Populates LoggedInAuthContext
+```
 
 ### 4. Add dependencies to workflow (if needed)
 
@@ -175,6 +188,33 @@ public class {Feature}Workflow(
     // Use them directly: _userRepository.GetByIdAsync(userId)
 }
 ```
+
+**For authenticated workflows:**
+
+If your endpoint uses `.RequireAuthenticatedUser()`, inject `LoggedInAuthContext` to access the authenticated user's ID:
+
+```csharp
+using PagePlay.Site.Infrastructure.Security;
+
+public class {Feature}Workflow(
+    IValidator<{Feature}Request> _validator,
+    LoggedInAuthContext _authContext,  // Injected by framework
+    IUserRepository _userRepository
+) : IWorkflow<{Feature}Request, {Feature}Response>
+{
+    public async Task<IApplicationResult<{Feature}Response>> Perform({Feature}Request request)
+    {
+        var userId = _authContext.UserId;  // Non-nullable, guaranteed populated
+        var user = await _userRepository.GetById(userId);
+        // ... rest of workflow
+    }
+}
+```
+
+**Key points:**
+- `LoggedInAuthContext.UserId` is guaranteed to be populated by the filter
+- No null checks needed - if workflow executes, user is authenticated
+- Framework populates context before workflow runs
 
 ### 5. Provide next steps
 
