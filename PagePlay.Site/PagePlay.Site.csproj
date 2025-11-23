@@ -36,4 +36,10 @@
     <Folder Include="Infrastructure\Sessions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Client/wwwroot/**/*">
+      <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
