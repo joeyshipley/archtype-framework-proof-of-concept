@@ -3,15 +3,15 @@ using PagePlay.Site.Application.Todo.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Application.Todo.ListTodo;
+namespace PagePlay.Site.Application.Todo.ListTodos;
 
-public class ListTodoWorkflow(
-    IValidator<ListTodoRequest> _validator,
+public class ListTodosWorkflow(
+    IValidator<ListTodosRequest> _validator,
     LoggedInAuthContext _authContext,
     ITodoRepository _todoRepository
-) : IWorkflow<ListTodoRequest, ListTodoResponse>
+) : IWorkflow<ListTodosRequest, ListTodosResponse>
 {
-    public async Task<IApplicationResult<ListTodoResponse>> Perform(ListTodoRequest request)
+    public async Task<IApplicationResult<ListTodosResponse>> Perform(ListTodosRequest request)
     {
         var validationResult = await validate(request);
         if (!validationResult.IsValid)
@@ -22,18 +22,18 @@ public class ListTodoWorkflow(
         return response(todos);
     }
 
-    private async Task<FluentValidation.Results.ValidationResult> validate(ListTodoRequest request) =>
+    private async Task<FluentValidation.Results.ValidationResult> validate(ListTodosRequest request) =>
         await _validator.ValidateAsync(request);
 
     private async Task<List<Domain.Models.Todo>> getTodosByUserId() =>
         await _todoRepository.GetByUserId(_authContext.UserId);
 
-    private IApplicationResult<ListTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
-        ApplicationResult<ListTodoResponse>.Fail(validationResult);
+    private IApplicationResult<ListTodosResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
+        ApplicationResult<ListTodosResponse>.Fail(validationResult);
 
-    private IApplicationResult<ListTodoResponse> response(List<Domain.Models.Todo> todos) =>
-        ApplicationResult<ListTodoResponse>.Succeed(
-            new ListTodoResponse
+    private IApplicationResult<ListTodosResponse> response(List<Domain.Models.Todo> todos) =>
+        ApplicationResult<ListTodosResponse>.Succeed(
+            new ListTodosResponse
             {
                 Todos = todos
                     .OrderBy(t => t.IsCompleted)

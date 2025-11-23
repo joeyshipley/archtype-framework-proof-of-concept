@@ -1,9 +1,9 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Application;
 
-namespace PagePlay.Site.Application.Todo.ListTodo;
+namespace PagePlay.Site.Application.Todo.ListTodos;
 
-public class ListTodoResponse : IResponse
+public class ListTodosResponse : IResponse
 {
     public List<TodoItem> Todos { get; set; } = new();
 }
@@ -17,14 +17,14 @@ public class TodoItem
     public DateTime UpdatedAt { get; set; }
 }
 
-public class ListTodoRequest : IRequest
+public class ListTodosRequest : IRequest
 {
     // No request parameters needed - will list all todos for authenticated user
 }
 
-public class ListTodoRequestValidator : AbstractValidator<ListTodoRequest>
+public class ListTodosRequestValidator : AbstractValidator<ListTodosRequest>
 {
-    public ListTodoRequestValidator()
+    public ListTodosRequestValidator()
     {
         // No validation rules needed for empty request
     }

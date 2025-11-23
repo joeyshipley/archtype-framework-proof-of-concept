@@ -33,7 +33,6 @@
     <Folder Include="Application\Common\" />
     <Folder Include="Application\Todo\CreateTodo\" />
     <Folder Include="Application\Todo\DeleteTodo\" />
-    <Folder Include="Application\Todo\ListTodos\" />
     <Folder Include="Application\Todo\ToggleTodo\" />
     <Folder Include="Application\Todo\UpdateTodo\" />
     <Folder Include="Infrastructure\Caching\" />
