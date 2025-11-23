@@ -1,9 +1,12 @@
+using PagePlay.Site.Application.Accounts.Login;
+using PagePlay.Site.Infrastructure.Application;
+
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageHtmx : IHtmxPage<LoginPageData>
+public interface ILoginPageHtmx : 
+    IHtmxPage<LoginPageData>, 
+    IHtmxPagePost<LoginResponse>
 {
-    string RenderError(string error);
-    string RenderSuccess(string token);
 }
 
 public class LoginPage : ILoginPageHtmx
@@ -42,19 +45,22 @@ public class LoginPage : ILoginPageHtmx
     """;
 
     // language=html
-    public string RenderError(string error) =>
+    public string RenderError(IEnumerable<ResponseErrorEntry> errors) =>
     $$"""
-    <div class="error" role="alert">
-        {{error}}
+    <div class="errors">
+        {{string.Join("", errors.Select(e =>
+            $"""<div class="error" role="alert">{e.Message}</div>"""
+        ))}}
     </div>
     """;
 
     // language=html
-    public string RenderSuccess(string token) =>
+    public string RenderSuccess(LoginResponse model) =>
     $$"""
     <div class="success">
         <h2>Success</h2>
-        <p>Token: {{token}}</p>
+        <p>Token: {{model.Token}}</p>
+        <p>User ID: {{model.UserId}}</p>
     </div>
     """;
 }

@@ -22,6 +22,12 @@ public interface IPageDataLoader<TPageData>
     Task<TPageData> Load();
 }
 
+public interface IHtmxPagePost<TResponse> where TResponse : IResponse
+{
+    string RenderSuccess(TResponse model);
+    string RenderError(IEnumerable<ResponseErrorEntry> errors);
+}
+
 public static class PlumbingExplorations
 {
     // Generic GET endpoint for any page that implements IHtmxPage
@@ -64,6 +70,56 @@ public static class PlumbingExplorations
         });
     }
 
+    // Generic POST endpoint for workflow-based form submissions
+    public static void MapHtmxPagePost<TPageInterface, TRequest, TResponse>(
+        this IEndpointRouteBuilder endpoints,
+        string route
+    )
+        where TPageInterface : IHtmxPagePost<TResponse>
+        where TRequest : IRequest, new()
+        where TResponse : IResponse
+    {
+        endpoints.MapPost(route, async (
+            HttpContext context,
+            [FromServices] TPageInterface page,
+            [FromServices] IWorkflow<TRequest, TResponse> workflow
+        ) =>
+        {
+            var form = context.Request.Form;
+            var request = new TRequest();
+
+            // Bind form data to request properties
+            foreach (var property in typeof(TRequest).GetProperties())
+            {
+                if (form.ContainsKey(property.Name.ToLowerInvariant()))
+                {
+                    var value = form[property.Name.ToLowerInvariant()].ToString();
+                    property.SetValue(request, value);
+                }
+                else if (form.ContainsKey(property.Name))
+                {
+                    var value = form[property.Name].ToString();
+                    property.SetValue(request, value);
+                }
+            }
+
+            var result = await workflow.Perform(request);
+
+            if (!result.Success)
+            {
+                return Results.Content(
+                    page.RenderError(result.Errors),
+                    "text/html"
+                );
+            }
+
+            return Results.Content(
+                page.RenderSuccess(result.Model),
+                "text/html"
+            );
+        });
+    }
+
     private static IResult RenderFullPage(string bodyContent, string pageTitle)
     {
         var fullPage = Layout.Render(bodyContent, pageTitle);
@@ -76,31 +132,7 @@ public static class LoginEndpoints
     public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapHtmxPageGet<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
-
-        endpoints.MapPost("/htmx/api/login", async (
-            [FromServices] ILoginPageHtmx page,
-            [FromServices] IWorkflow<LoginRequest, LoginResponse> loginWorkflow,
-            [FromForm] string email,
-            [FromForm] string password
-        ) =>
-        {
-            var request = new LoginRequest { Email = email, Password = password };
-            var result = await loginWorkflow.Perform(request);
-
-            if (!result.Success)
-            {
-                var errorMessage = result.Errors?.FirstOrDefault()?.Message ?? "An error occurred";
-                return Results.Content(
-                    page.RenderError(errorMessage),
-                    "text/html"
-                );
-            }
-
-            return Results.Content(
-                page.RenderSuccess(result.Model.Token),
-                "text/html"
-            );
-        });
+        endpoints.MapHtmxPagePost<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
     }
 }
 
