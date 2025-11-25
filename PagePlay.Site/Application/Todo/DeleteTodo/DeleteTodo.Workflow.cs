@@ -33,7 +33,7 @@ public class DeleteTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Domain.Models.Todo> getTodoById(long id) =>
-        await _todoRepository.GetById(id);
+        await _todoRepository.GetByIdUntracked(id);
 
     private bool userOwnsTodo(Domain.Models.Todo todo) =>
         todo.UserId == _authContext.UserId;

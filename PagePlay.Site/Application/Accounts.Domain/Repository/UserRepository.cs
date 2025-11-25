@@ -11,9 +11,9 @@ public class UserRepository : Repository<User>, IUserRepository
     {
     }
 
-    public async Task<User> GetByEmail(string email)
+    public async Task<User> GetByEmailUntracked(string email)
     {
-        return await Get(UserSpecifications.ByEmail(email));
+        return await GetUntracked(UserSpecifications.ByEmail(email));
     }
 
     public async Task<User> GetById(long id)

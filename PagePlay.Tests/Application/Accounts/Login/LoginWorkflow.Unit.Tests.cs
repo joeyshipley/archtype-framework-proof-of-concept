@@ -36,7 +36,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetByEmail(request.Email)
+            .GetByEmailUntracked(request.Email)
             .Returns(user);
 
         Mocker
@@ -61,7 +61,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetByEmail(request.Email);
+            .GetByEmailUntracked(request.Email);
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -107,7 +107,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .DidNotReceive()
-            .GetByEmail(Arg.Any<string>());
+            .GetByEmailUntracked(Arg.Any<string>());
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -132,7 +132,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetByEmail(request.Email)
+            .GetByEmailUntracked(request.Email)
             .Returns((User)null);
 
         // Act
@@ -146,7 +146,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetByEmail(request.Email);
+            .GetByEmailUntracked(request.Email);
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -178,7 +178,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetByEmail(request.Email)
+            .GetByEmailUntracked(request.Email)
             .Returns(user);
 
         Mocker
@@ -197,7 +197,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetByEmail(request.Email);
+            .GetByEmailUntracked(request.Email);
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -236,7 +236,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .DidNotReceive()
-            .GetByEmail(Arg.Any<string>());
+            .GetByEmailUntracked(Arg.Any<string>());
     }
 
     [Fact]
@@ -270,7 +270,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .DidNotReceive()
-            .GetByEmail(Arg.Any<string>());
+            .GetByEmailUntracked(Arg.Any<string>());
     }
 
     [Fact]
@@ -298,7 +298,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetByEmail(request.Email)
+            .GetByEmailUntracked(request.Email)
             .Returns(user);
 
         Mocker
@@ -350,7 +350,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetByEmail(request.Email)
+            .GetByEmailUntracked(request.Email)
             .Returns(user);
 
         Mocker

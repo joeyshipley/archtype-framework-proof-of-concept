@@ -23,9 +23,9 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return _context;
     }
 
-    public async Task<T> Get(Specification<T> spec)
+    public async Task<T> GetUntracked(Specification<T> spec)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        var context = await GetContext();
         return await applySpecification(context, spec)
             .AsNoTracking()
             .FirstOrDefaultAsync();
@@ -38,9 +38,9 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> List(Specification<T> spec)
+    public async Task<List<T>> ListUntracked(Specification<T> spec)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        var context = await GetContext();
         return await applySpecification(context, spec)
             .AsNoTracking()
             .ToListAsync();
@@ -48,7 +48,7 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
 
     public async Task<bool> Any(Specification<T> spec)
     {
-        await using var context = await _contextFactory.CreateDbContextAsync();
+        var context = await GetContext();
         return await applySpecification(context, spec).AnyAsync();
     }
 
