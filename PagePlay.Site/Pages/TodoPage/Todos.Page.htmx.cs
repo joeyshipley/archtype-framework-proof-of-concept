@@ -6,26 +6,26 @@ namespace PagePlay.Site.Pages.TodoPage;
 public class TodosPage
 {
     // language=html
-    public string RenderPage(string antiforgeryToken, List<TodoListEntry> todos) =>
+    public string RenderPage(List<TodoListEntry> todos) =>
     $$"""
     <div class="todo-page" hx-ext="morph">
         <h1>My Todos</h1>
-        {{RenderCreateForm(antiforgeryToken)}}
+        <div id="notifications"></div>
+        {{RenderCreateForm()}}
         <div id="todo-list">
-            {{RenderTodoList(antiforgeryToken, todos)}}
+            {{RenderTodoList(todos)}}
         </div>
     </div>
     """;
 
     // language=html
-    public string RenderCreateForm(string antiforgeryToken) =>
+    public string RenderCreateForm() =>
     $$"""
     <div class="todo-create-form">
         <form hx-post="/api/todos/create"
               hx-target="#todo-list-ul"
               hx-swap="afterbegin"
               hx-on::after-request="if(event.detail.successful) { this.reset(); document.querySelector('.todo-empty')?.remove(); }">
-            <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
             <div class="todo-input-group">
                 <input id="title"
                        name="title"
@@ -40,11 +40,11 @@ public class TodosPage
     """;
 
     // language=html
-    public string RenderTodoList(string antiforgeryToken, List<TodoListEntry> todos)
+    public string RenderTodoList(List<TodoListEntry> todos)
     {
         var todosHtml = todos.Count == 0
             ? """<li class="todo-empty"><p>No todos yet. Add one above to get started!</p></li>"""
-            : string.Join("\n", todos.Select(todo => RenderTodoItem(antiforgeryToken, todo)));
+            : string.Join("\n", todos.Select(RenderTodoItem));
 
         return $$"""
         <ul class="todo-list" id="todo-list-ul">
@@ -54,7 +54,7 @@ public class TodosPage
     }
 
     // language=html
-    public string RenderTodoItem(string antiforgeryToken, TodoListEntry todo)
+    public string RenderTodoItem(TodoListEntry todo)
     {
         var completedClass = todo.IsCompleted ? "completed" : "";
         var checkedAttr = todo.IsCompleted ? "checked" : "";
@@ -108,6 +108,16 @@ public class TodosPage
     $$"""
     <div class="error" role="alert">
         {{HttpUtility.HtmlEncode(error)}}
+    </div>
+    """;
+
+    // language=html
+    public string RenderErrorNotification(string error) =>
+    $$"""
+    <div id="notifications" hx-swap-oob="innerHTML">
+        <div class="error" role="alert">
+            {{HttpUtility.HtmlEncode(error)}}
+        </div>
     </div>
     """;
 }

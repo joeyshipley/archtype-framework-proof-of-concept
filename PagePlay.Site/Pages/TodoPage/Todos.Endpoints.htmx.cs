@@ -32,7 +32,7 @@ public static class TodosPageEndpoints
                 return Results.Content(errorPage, "text/html");
             }
 
-            var bodyContent = page.RenderPage(tokens.RequestToken!, result.Model.Todos);
+            var bodyContent = page.RenderPage(result.Model.Todos);
             var fullPage = Layout.Render(bodyContent, "Todos", tokens.RequestToken!);
             return Results.Content(fullPage, "text/html");
         });
@@ -48,10 +48,10 @@ public static class TodosPageEndpoints
             var createResult = await createWorkflow.Perform(createRequest);
 
             if (!createResult.Success)
-                return Results.Content(page.RenderError("Failed to create todo"), "text/html");
+                return Results.Content(page.RenderErrorNotification("Failed to create todo"), "text/html");
 
             return Results.Content(
-                page.RenderTodoItem(tokens.RequestToken!, createResult.Model.Todo),
+                page.RenderTodoItem(createResult.Model.Todo),
                 "text/html");
         });
 
@@ -66,10 +66,10 @@ public static class TodosPageEndpoints
             var toggleResult = await toggleWorkflow.Perform(toggleRequest);
 
             if (!toggleResult.Success)
-                return Results.Content(page.RenderError("Failed to toggle todo"), "text/html");
+                return Results.Content(page.RenderErrorNotification("Failed to toggle todo"), "text/html");
 
             return Results.Content(
-                page.RenderTodoList(tokens.RequestToken!, toggleResult.Model.Todos),
+                page.RenderTodoList(toggleResult.Model.Todos),
                 "text/html");
         });
 
@@ -77,13 +77,15 @@ public static class TodosPageEndpoints
             [FromForm] long id,
             IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
         {
+            return Results.Content(page.RenderErrorNotification("Failed to delete todo"), "text/html");
+            
             var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
             if (!deleteResult.Success)
-                return Results.BadRequest();
+                return Results.Content(page.RenderErrorNotification("Failed to delete todo"), "text/html");
 
-            return Results.Ok();
+            return Results.Content("", "text/html");
         });
     }
 }
