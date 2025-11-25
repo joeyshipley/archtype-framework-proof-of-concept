@@ -30,7 +30,7 @@ public class ViewProfileWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<User> getUserById(long userId) =>
-        await _repository.Get<User>(User.ById(userId));
+        await _repository.Get(User.ById(userId));
 
     private ViewProfileResponse buildResponse(User user) =>
         new ViewProfileResponse

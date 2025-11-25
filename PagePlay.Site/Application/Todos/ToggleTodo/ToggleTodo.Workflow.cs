@@ -36,7 +36,7 @@ public class ToggleTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
-        await _repository.GetForUpdate<Todo>(Todo.ById(id));
+        await _repository.GetForUpdate(Todo.ById(id));
 
     private void toggleTodo(Todo todo) =>
         todo.Toggle();

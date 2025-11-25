@@ -26,7 +26,7 @@ public class LoginPageDataLoader(IRepository _repository)
 {
     public async Task<LoginPageData> Load()
     {
-        var user = await _repository.Get<User>(User.ById(1));
+        var user = await _repository.Get(User.ById(1));
         return new LoginPageData(user.Email);
     }
 }

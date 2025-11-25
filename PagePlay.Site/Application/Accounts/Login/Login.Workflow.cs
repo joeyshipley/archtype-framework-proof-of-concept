@@ -35,8 +35,8 @@ public class LoginWorkflow(
     private async Task<ValidationResult> validate(LoginRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<Domain.Models.User> getUserByEmail(string email) =>
-        await _repository.Get<User>(User.ByEmail(email));
+    private async Task<User> getUserByEmail(string email) =>
+        await _repository.Get(User.ByEmail(email));
 
     private bool verifyPassword(string password, string passwordHash) =>
         _passwordHasher.VerifyPassword(password, passwordHash);
