@@ -22,7 +22,7 @@ public class ToggleTodoWorkflow(
         if (todo == null)
             return response("Todo not found.");
 
-        if (!userOwnsTodo(todo))
+        if (!todo.IsOwnedBy(_authContext.UserId))
             return response("You do not have permission to modify this todo.");
 
         toggleTodo(todo);
@@ -36,9 +36,6 @@ public class ToggleTodoWorkflow(
 
     private async Task<Todo> getTodoById(long id) =>
         await _todoRepository.GetByIdForUpdate(id);
-
-    private bool userOwnsTodo(Todo todo) =>
-        todo.UserId == _authContext.UserId;
 
     private void toggleTodo(Todo todo) =>
         todo.Toggle();

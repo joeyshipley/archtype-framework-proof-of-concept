@@ -34,4 +34,9 @@ public class Todo : IEntity
         Title = title;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public bool IsOwnedBy(long userId)
+    {
+        return UserId == userId;
+    }
 }

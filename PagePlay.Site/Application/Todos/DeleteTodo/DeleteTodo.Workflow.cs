@@ -22,7 +22,7 @@ public class DeleteTodoWorkflow(
         if (todo == null)
             return response("Todo not found.");
 
-        if (!userOwnsTodo(todo))
+        if (!todo.IsOwnedBy(_authContext.UserId))
             return response("You do not have permission to delete this todo.");
 
         await deleteTodo(todo);
@@ -35,9 +35,6 @@ public class DeleteTodoWorkflow(
 
     private async Task<Todo> getTodoById(long id) =>
         await _todoRepository.GetById(id);
-
-    private bool userOwnsTodo(Todo todo) =>
-        todo.UserId == _authContext.UserId;
 
     private async Task deleteTodo(Todo todo)
     {

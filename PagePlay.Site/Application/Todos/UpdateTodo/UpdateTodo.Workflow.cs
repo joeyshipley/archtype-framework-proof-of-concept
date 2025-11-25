@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
@@ -15,7 +16,7 @@ public class UpdateTodoWorkflow(
     public async Task<IApplicationResult<UpdateTodoResponse>> Perform(UpdateTodoRequest request)
     {
         var validationResult = await validate(request);
-        if (!validationResult.IsValid)
+        if (!validationResult.IsValid) 
             return response(validationResult);
 
         var (todo, errorMessage) = await getTodo(request.Id);
@@ -33,17 +34,14 @@ public class UpdateTodoWorkflow(
         if (todo == null)
             return (null, "Todo not found.");
 
-        if (!userOwnsTodo(todo))
+        if (!todo.IsOwnedBy(_authContext.UserId))
             return (null, "You do not have permission to modify this todo.");
 
         return (todo, null);
     }
-    
-    private async Task<FluentValidation.Results.ValidationResult> validate(UpdateTodoRequest request) =>
-        await _validator.ValidateAsync(request);
 
-    private bool userOwnsTodo(Todo todo) =>
-        todo.UserId == _authContext.UserId;
+    private async Task<ValidationResult> validate(UpdateTodoRequest request) =>
+        await _validator.ValidateAsync(request);
 
     private async Task changeTitle(Todo todo, string title)
     { 
@@ -51,13 +49,13 @@ public class UpdateTodoWorkflow(
         await _todoRepository.SaveChanges();
     }
 
-    private IApplicationResult<UpdateTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
+    private IApplicationResult<UpdateTodoResponse> response(ValidationResult validationResult) =>
         ApplicationResult<UpdateTodoResponse>.Fail(validationResult);
 
     private IApplicationResult<UpdateTodoResponse> response(string errorMessage) =>
         ApplicationResult<UpdateTodoResponse>.Fail(errorMessage);
 
-    private IApplicationResult<UpdateTodoResponse> response(Domain.Models.Todo todo) =>
+    private IApplicationResult<UpdateTodoResponse> response(Todo todo) =>
         ApplicationResult<UpdateTodoResponse>.Succeed(
             new UpdateTodoResponse
             {
