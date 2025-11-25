@@ -66,7 +66,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
         await SUT.SaveChanges();
 
         // Act
-        var exists = await SUT.EmailExists("existing@example.com");
+        var exists = await SUT.Exists(ByEmail("existing@example.com"));
 
         // Assert
         exists.Should().BeTrue();
@@ -77,7 +77,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var exists = await SUT.EmailExists("nonexistent@example.com");
+        var exists = await SUT.Exists(ByEmail("nonexistent@example.com"));
 
         // Assert
         exists.Should().BeFalse();

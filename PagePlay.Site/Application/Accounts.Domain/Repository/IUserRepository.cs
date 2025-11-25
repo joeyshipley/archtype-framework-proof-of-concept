@@ -5,6 +5,6 @@ namespace PagePlay.Site.Application.Accounts.Domain.Repository;
 
 public interface IUserRepository : IRepository<User>
 {
-    // EmailExists provides semantic value - it's clear and concise
-    Task<bool> EmailExists(string email);
+    // Empty for now - ready for truly special repository logic when needed
+    // Use specifications through inherited IRepository<User> methods for queries
 }

@@ -6,7 +6,7 @@ namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
 public class Repository<T> : IRepository<T> where T : class, IEntity
 {
-    protected readonly IDbContextFactory<AppDbContext> _contextFactory;
+    private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private AppDbContext _context;
 
     public Repository(IDbContextFactory<AppDbContext> contextFactory)
@@ -14,15 +14,27 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         _contextFactory = contextFactory;
     }
 
-    protected async Task<AppDbContext> GetContext()
+    private async Task<AppDbContext> GetContext()
     {
-        if (_context == null)
-        {
-            _context = await _contextFactory.CreateDbContextAsync();
-        }
+        _context ??= await _contextFactory.CreateDbContextAsync();
         return _context;
     }
 
+    public async Task<T> GetById(long id)
+    {
+        var context = await GetContext();
+        return await context.Set<T>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+
+    public async Task<T> GetByIdForUpdate(long id)
+    {
+        var context = await GetContext();
+        return await context.Set<T>()
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+    
     public async Task<T> Get(Specification<T> spec)
     {
         var context = await GetContext();
@@ -46,25 +58,10 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .ToListAsync();
     }
 
-    public async Task<bool> Any(Specification<T> spec)
+    public async Task<bool> Exists(Specification<T> spec)
     {
         var context = await GetContext();
         return await applySpecification(context, spec).AnyAsync();
-    }
-
-    public async Task<T> GetById(long id)
-    {
-        var context = await GetContext();
-        return await context.Set<T>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id);
-    }
-
-    public async Task<T> GetByIdForUpdate(long id)
-    {
-        var context = await GetContext();
-        return await context.Set<T>()
-            .FirstOrDefaultAsync(e => e.Id == id);
     }
 
     public async Task<T> Add(T entity)
@@ -96,7 +93,6 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
     {
         var query = context.Set<T>().Where(spec.Criteria);
 
-        // Apply includes
         query = spec.Includes
             .Aggregate(query, (current, include) => current.Include(include));
 

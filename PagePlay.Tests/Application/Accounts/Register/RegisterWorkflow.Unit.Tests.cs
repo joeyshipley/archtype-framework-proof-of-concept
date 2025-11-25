@@ -5,6 +5,7 @@ using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Register;
+using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
 
@@ -30,7 +31,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .EmailExists(request.Email)
+            .Exists(Arg.Any<Specification<User>>())
             .Returns(false);
 
         Mocker
@@ -111,7 +112,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .DidNotReceive()
-            .EmailExists(Arg.Any<string>());
+            .Exists(Arg.Any<Specification<User>>());
 
         await Mocker
             .GetSubstituteFor<IUserRepository>()
@@ -137,7 +138,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .EmailExists(request.Email)
+            .Exists(Arg.Any<Specification<User>>())
             .Returns(true);
 
         // Act
@@ -269,7 +270,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .EmailExists(request.Email)
+            .Exists(Arg.Any<Specification<User>>())
             .Returns(false);
 
         Mocker

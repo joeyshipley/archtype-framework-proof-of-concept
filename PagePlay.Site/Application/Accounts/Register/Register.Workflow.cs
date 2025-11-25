@@ -34,7 +34,7 @@ public class RegisterWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<bool> checkEmailExists(string email) =>
-        await _userRepository.EmailExists(email);
+        await _userRepository.Exists(UserSpecifications.ByEmail(email));
 
     private User createUser(RegisterRequest request) =>
         User.Create(request.Email, _passwordHasher.HashPassword(request.Password));

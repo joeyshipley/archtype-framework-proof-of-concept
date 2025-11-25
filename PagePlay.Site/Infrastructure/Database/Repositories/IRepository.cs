@@ -5,12 +5,12 @@ namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
 public interface IRepository<T> where T : class, IEntity
 {
+    Task<T> GetById(long id);
+    Task<T> GetByIdForUpdate(long id);
     Task<T> Get(Specification<T> spec);
     Task<T> GetForUpdate(Specification<T> spec);
     Task<List<T>> List(Specification<T> spec);
-    Task<bool> Any(Specification<T> spec);
-    Task<T> GetById(long id);
-    Task<T> GetByIdForUpdate(long id);
+    Task<bool> Exists(Specification<T> spec);
     Task<T> Add(T entity);
     Task Update(T entity);
     Task Delete(T entity);

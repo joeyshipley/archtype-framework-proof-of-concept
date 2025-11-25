@@ -9,9 +9,4 @@ public class UserRepository : Repository<User>, IUserRepository
 {
     public UserRepository(IDbContextFactory<AppDbContext> contextFactory)
         : base(contextFactory) {}
-
-    public async Task<bool> EmailExists(string email)
-    {
-        return await Any(UserSpecifications.ByEmail(email));
-    }
 }
