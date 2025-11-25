@@ -19,6 +19,7 @@ public class RegisterWorkflow(
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
+        // TODO: remove once we have move this into patterns/examples. This does not need a transaction.
         User user = null;
         await using(var scope = _repository.BeginTransactionScope())
         {
