@@ -1,7 +1,7 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Application;
 
-namespace PagePlay.Site.Application.Todo.ToggleTodo;
+namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoResponse : IResponse
 {

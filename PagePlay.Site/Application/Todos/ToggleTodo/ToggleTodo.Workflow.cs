@@ -1,9 +1,10 @@
 using FluentValidation;
-using PagePlay.Site.Application.Todo.Domain.Repository;
+using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Application.Todo.ToggleTodo;
+namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoRequest> _validator,
@@ -33,16 +34,16 @@ public class ToggleTodoWorkflow(
     private async Task<FluentValidation.Results.ValidationResult> validate(ToggleTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<Domain.Models.Todo> getTodoById(long id) =>
-        await _todoRepository.GetById(id);
+    private async Task<Todo> getTodoById(long id) =>
+        await _todoRepository.GetByIdForUpdate(id);
 
-    private bool userOwnsTodo(Domain.Models.Todo todo) =>
+    private bool userOwnsTodo(Todo todo) =>
         todo.UserId == _authContext.UserId;
 
-    private void toggleTodo(Domain.Models.Todo todo) =>
+    private void toggleTodo(Todo todo) =>
         todo.Toggle();
 
-    private async Task saveTodo(Domain.Models.Todo todo) =>
+    private async Task saveTodo(Todo todo) =>
         await _todoRepository.SaveChanges();
 
     private IApplicationResult<ToggleTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
@@ -51,7 +52,7 @@ public class ToggleTodoWorkflow(
     private IApplicationResult<ToggleTodoResponse> response(string errorMessage) =>
         ApplicationResult<ToggleTodoResponse>.Fail(errorMessage);
 
-    private IApplicationResult<ToggleTodoResponse> response(Domain.Models.Todo todo) =>
+    private IApplicationResult<ToggleTodoResponse> response(Todo todo) =>
         ApplicationResult<ToggleTodoResponse>.Succeed(
             new ToggleTodoResponse
             {

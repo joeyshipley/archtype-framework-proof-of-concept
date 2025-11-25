@@ -23,7 +23,7 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return _context;
     }
 
-    public async Task<T> GetUntracked(Specification<T> spec)
+    public async Task<T> Get(Specification<T> spec)
     {
         var context = await GetContext();
         return await applySpecification(context, spec)
@@ -31,14 +31,14 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetTracked(Specification<T> spec)
+    public async Task<T> GetForUpdate(Specification<T> spec)
     {
         var context = await GetContext();
         return await applySpecification(context, spec)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> ListUntracked(Specification<T> spec)
+    public async Task<List<T>> List(Specification<T> spec)
     {
         var context = await GetContext();
         return await applySpecification(context, spec)

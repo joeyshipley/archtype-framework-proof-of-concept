@@ -1,9 +1,10 @@
 using FluentValidation;
-using PagePlay.Site.Application.Todo.Domain.Repository;
+using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Application.Todo.DeleteTodo;
+namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
 public class DeleteTodoWorkflow(
     IValidator<DeleteTodoRequest> _validator,
@@ -32,13 +33,13 @@ public class DeleteTodoWorkflow(
     private async Task<FluentValidation.Results.ValidationResult> validate(DeleteTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<Domain.Models.Todo> getTodoById(long id) =>
-        await _todoRepository.GetByIdUntracked(id);
+    private async Task<Todo> getTodoById(long id) =>
+        await _todoRepository.GetById(id);
 
-    private bool userOwnsTodo(Domain.Models.Todo todo) =>
+    private bool userOwnsTodo(Todo todo) =>
         todo.UserId == _authContext.UserId;
 
-    private async Task deleteTodo(Domain.Models.Todo todo)
+    private async Task deleteTodo(Todo todo)
     {
         await _todoRepository.Delete(todo);
         await _todoRepository.SaveChanges();

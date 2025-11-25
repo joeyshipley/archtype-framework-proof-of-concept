@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
-using PagePlay.Site.Application.Todo.Domain.Repository;
+using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;

@@ -1,6 +1,6 @@
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Application.Todo;
+namespace PagePlay.Site.Application.Todos;
 
 public interface ITodoEndpoint : IEndpoint {}
 

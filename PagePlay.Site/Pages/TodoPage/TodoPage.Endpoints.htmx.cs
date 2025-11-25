@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
-using PagePlay.Site.Application.Todo.CreateTodo;
-using PagePlay.Site.Application.Todo.DeleteTodo;
-using PagePlay.Site.Application.Todo.ListTodos;
-using PagePlay.Site.Application.Todo.ToggleTodo;
+using PagePlay.Site.Application.Todos.CreateTodo;
+using PagePlay.Site.Application.Todos.DeleteTodo;
+using PagePlay.Site.Application.Todos.ListTodos;
+using PagePlay.Site.Application.Todos.ToggleTodo;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Pages.Shared;
 

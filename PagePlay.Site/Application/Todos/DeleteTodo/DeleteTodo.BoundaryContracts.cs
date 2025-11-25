@@ -1,7 +1,7 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Application;
 
-namespace PagePlay.Site.Application.Todo.DeleteTodo;
+namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
 public class DeleteTodoResponse : IResponse
 {

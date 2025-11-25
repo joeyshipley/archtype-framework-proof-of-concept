@@ -1,16 +1,16 @@
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Application.Todo.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
-public class UpdateTodoEndpoint : ITodoEndpoint
+public class ToggleTodoEndpoint : ITodoEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
-        endpoints.Register<UpdateTodoResponse>("/update", handle)
+        endpoints.Register<ToggleTodoResponse>("/toggle", handle)
             .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
-        UpdateTodoRequest request,
-        IWorkflow<UpdateTodoRequest, UpdateTodoResponse> workflow
+        ToggleTodoRequest request,
+        IWorkflow<ToggleTodoRequest, ToggleTodoResponse> workflow
     ) => Respond.With(await workflow.Perform(request));
 }

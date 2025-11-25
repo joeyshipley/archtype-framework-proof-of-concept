@@ -1,9 +1,10 @@
 using FluentValidation;
-using PagePlay.Site.Application.Todo.Domain.Repository;
+using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Application.Todo.CreateTodo;
+namespace PagePlay.Site.Application.Todos.CreateTodo;
 
 public class CreateTodoWorkflow(
     IValidator<CreateTodoRequest> _validator,
@@ -26,10 +27,10 @@ public class CreateTodoWorkflow(
     private async Task<FluentValidation.Results.ValidationResult> validate(CreateTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private Domain.Models.Todo createTodo(CreateTodoRequest request) =>
-        Domain.Models.Todo.Create(_authContext.UserId, request.Title);
+    private Todo createTodo(CreateTodoRequest request) =>
+        Todo.Create(_authContext.UserId, request.Title);
 
-    private async Task saveTodo(Domain.Models.Todo todo)
+    private async Task saveTodo(Todo todo)
     {
         await _todoRepository.Add(todo);
         await _todoRepository.SaveChanges();
@@ -38,7 +39,7 @@ public class CreateTodoWorkflow(
     private IApplicationResult<CreateTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
         ApplicationResult<CreateTodoResponse>.Fail(validationResult);
 
-    private IApplicationResult<CreateTodoResponse> response(Domain.Models.Todo todo) =>
+    private IApplicationResult<CreateTodoResponse> response(Todo todo) =>
         ApplicationResult<CreateTodoResponse>.Succeed(
             new CreateTodoResponse
             {

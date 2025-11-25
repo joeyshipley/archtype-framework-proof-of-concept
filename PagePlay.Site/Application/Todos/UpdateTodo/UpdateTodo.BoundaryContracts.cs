@@ -1,7 +1,7 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Application;
 
-namespace PagePlay.Site.Application.Todo.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.UpdateTodo;
 
 public class UpdateTodoResponse : IResponse
 {

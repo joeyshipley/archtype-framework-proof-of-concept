@@ -32,7 +32,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
         await SUT.SaveChanges();
 
         // Act
-        var result = await SUT.GetByEmailUntracked("test@example.com");
+        var result = await SUT.GetByEmail("test@example.com");
 
         // Assert
         result.Should().NotBeNull();
@@ -44,7 +44,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var result = await SUT.GetByEmailUntracked("nonexistent@example.com");
+        var result = await SUT.GetByEmail("nonexistent@example.com");
 
         // Assert
         result.Should().BeNull();

@@ -1,16 +1,16 @@
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Application.Todo.DeleteTodo;
+namespace PagePlay.Site.Application.Todos.ListTodos;
 
-public class DeleteTodoEndpoint : ITodoEndpoint
+public class ListTodosEndpoint : ITodoEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
-        endpoints.Register<DeleteTodoResponse>("/delete", handle)
+        endpoints.Register<ListTodosResponse>("/list", handle)
             .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
-        DeleteTodoRequest request,
-        IWorkflow<DeleteTodoRequest, DeleteTodoResponse> workflow
+        ListTodosRequest request,
+        IWorkflow<ListTodosRequest, ListTodosResponse> workflow
     ) => Respond.With(await workflow.Perform(request));
 }

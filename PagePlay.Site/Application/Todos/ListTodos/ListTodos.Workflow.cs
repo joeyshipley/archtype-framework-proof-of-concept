@@ -1,9 +1,10 @@
 using FluentValidation;
-using PagePlay.Site.Application.Todo.Domain.Repository;
+using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
 
-namespace PagePlay.Site.Application.Todo.ListTodos;
+namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosWorkflow(
     IValidator<ListTodosRequest> _validator,
@@ -25,13 +26,13 @@ public class ListTodosWorkflow(
     private async Task<FluentValidation.Results.ValidationResult> validate(ListTodosRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<List<Domain.Models.Todo>> getTodosByUserId() =>
+    private async Task<List<Todo>> getTodosByUserId() =>
         await _todoRepository.GetByUserId(_authContext.UserId);
 
     private IApplicationResult<ListTodosResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
         ApplicationResult<ListTodosResponse>.Fail(validationResult);
 
-    private IApplicationResult<ListTodosResponse> response(List<Domain.Models.Todo> todos) =>
+    private IApplicationResult<ListTodosResponse> response(List<Todo> todos) =>
         ApplicationResult<ListTodosResponse>.Succeed(
             new ListTodosResponse
             {

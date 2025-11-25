@@ -1,16 +1,16 @@
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Application.Todo.CreateTodo;
+namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
-public class CreateTodoEndpoint : ITodoEndpoint
+public class DeleteTodoEndpoint : ITodoEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
-        endpoints.Register<CreateTodoResponse>("/create", handle)
+        endpoints.Register<DeleteTodoResponse>("/delete", handle)
             .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
-        CreateTodoRequest request,
-        IWorkflow<CreateTodoRequest, CreateTodoResponse> workflow
+        DeleteTodoRequest request,
+        IWorkflow<DeleteTodoRequest, DeleteTodoResponse> workflow
     ) => Respond.With(await workflow.Perform(request));
 }

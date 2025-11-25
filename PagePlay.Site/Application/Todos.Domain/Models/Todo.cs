@@ -1,6 +1,6 @@
 using PagePlay.Site.Infrastructure.Domain;
 
-namespace PagePlay.Site.Application.Todo.Domain.Models;
+namespace PagePlay.Site.Application.Todos.Domain.Models;
 
 public class Todo : IEntity
 {

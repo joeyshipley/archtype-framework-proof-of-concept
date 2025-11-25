@@ -1,16 +1,16 @@
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Application.Todo.ListTodos;
+namespace PagePlay.Site.Application.Todos.CreateTodo;
 
-public class ListTodosEndpoint : ITodoEndpoint
+public class CreateTodoEndpoint : ITodoEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
-        endpoints.Register<ListTodosResponse>("/list", handle)
+        endpoints.Register<CreateTodoResponse>("/create", handle)
             .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
-        ListTodosRequest request,
-        IWorkflow<ListTodosRequest, ListTodosResponse> workflow
+        CreateTodoRequest request,
+        IWorkflow<CreateTodoRequest, CreateTodoResponse> workflow
     ) => Respond.With(await workflow.Perform(request));
 }

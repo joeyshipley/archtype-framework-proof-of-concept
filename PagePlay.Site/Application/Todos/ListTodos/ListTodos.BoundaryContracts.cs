@@ -1,7 +1,7 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Application;
 
-namespace PagePlay.Site.Application.Todo.ListTodos;
+namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosResponse : IResponse
 {
