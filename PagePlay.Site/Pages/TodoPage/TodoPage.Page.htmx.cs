@@ -82,16 +82,19 @@ public class TodoPage
                 </form>
                 <span class="todo-title">{{todo.Title}}</span>
                 {{Button.Render(
-                    content: $$"""<span class="delete-inner-container">Delete {{ todo.Title }}</span>""",
-                    endpoint: "/api/todos/delete",
-                    antiforgeryToken: antiforgeryToken,
-                    targetSelector: "#todo-list",
-                    cssClass: "todo-delete",
-                    title: "Delete todo",
-                    additionalData: new Dictionary<string, object>
+                    route: new RouteData
                     {
-                        { "id", todo.Id }
-                    }
+                        Endpoint = "/api/todos/delete",
+                        ModelId = todo.Id,
+                        TargetSelector = "#todo-list"
+                    },
+                    html: new HtmlData
+                    {
+                        ElementId = $"delete-todo-{todo.Id}",
+                        Title = "Delete todo",
+                        CssClass = "todo-delete"
+                    },
+                    content: $$"""x"""
                 )}}
                 <hr />
             </div>

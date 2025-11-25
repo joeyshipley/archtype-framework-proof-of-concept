@@ -15,7 +15,7 @@ public static class SigninEndpoints
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var bodyContent = page.RenderPage(tokens.RequestToken!);
-            var fullPage = Layout.Render(bodyContent, "Sign In");
+            var fullPage = Layout.Render(bodyContent, "Sign In", tokens.RequestToken!);
             return Results.Content(fullPage, "text/html");
         });
 

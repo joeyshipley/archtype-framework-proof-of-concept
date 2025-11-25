@@ -44,7 +44,7 @@ public static class PlumbingExplorations
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var bodyContent = page.RenderPage(tokens.RequestToken);
-            return RenderFullPage(bodyContent, pageTitle);
+            return RenderFullPage(bodyContent, pageTitle, tokens.RequestToken!);
         });
     }
 
@@ -65,7 +65,7 @@ public static class PlumbingExplorations
             var tokens = antiforgery.GetAndStoreTokens(context);
             var data = await loader.Load();
             var bodyContent = page.RenderPage(tokens.RequestToken, data);
-            return RenderFullPage(bodyContent, pageTitle);
+            return RenderFullPage(bodyContent, pageTitle, tokens.RequestToken!);
         });
     }
 
@@ -119,9 +119,9 @@ public static class PlumbingExplorations
         });
     }
 
-    private static IResult RenderFullPage(string bodyContent, string pageTitle)
+    private static IResult RenderFullPage(string bodyContent, string pageTitle, string antiforgeryToken)
     {
-        var fullPage = Layout.Render(bodyContent, pageTitle);
+        var fullPage = Layout.Render(bodyContent, pageTitle, antiforgeryToken);
         return Results.Content(fullPage, "text/html");
     }
 }

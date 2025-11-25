@@ -28,12 +28,12 @@ public static class TodoPageEndpoints
             if (!result.Success)
             {
                 var errorContent = page.RenderError("Failed to load todos");
-                var errorPage = Layout.Render(errorContent, "Todos");
+                var errorPage = Layout.Render(errorContent, "Todos", tokens.RequestToken!);
                 return Results.Content(errorPage, "text/html");
             }
 
             var bodyContent = page.RenderPage(tokens.RequestToken!, result.Model.Todos);
-            var fullPage = Layout.Render(bodyContent, "Todos");
+            var fullPage = Layout.Render(bodyContent, "Todos", tokens.RequestToken!);
             return Results.Content(fullPage, "text/html");
         });
 
