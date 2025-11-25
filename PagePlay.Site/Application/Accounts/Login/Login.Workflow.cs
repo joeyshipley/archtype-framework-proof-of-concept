@@ -11,36 +11,25 @@ public class LoginWorkflow(
     IPasswordHasher _passwordHasher,
     IJwtTokenService _jwtTokenService,
     IValidator<LoginRequest> _validator
-) : IWorkflow<LoginRequest, LoginResponse>
+) : WorkflowBase<LoginRequest, LoginResponse>, IWorkflow<LoginRequest, LoginResponse>
 {
     public async Task<IApplicationResult<LoginResponse>> Perform(LoginRequest request)
     {
         var validationResult = await validate(request);
         if (!validationResult.IsValid)
-            return response(validationResult);
+            return Fail(validationResult);
 
         var user = await getUserByEmail(request.Email);
         if (user == null)
-            return response("Invalid email or password.");
+            return Fail("Invalid email or password.");
 
         var passwordValid = verifyPassword(request.Password, user.PasswordHash);
         if (!passwordValid)
-            return response("Invalid email or password.");
+            return Fail("Invalid email or password.");
 
         var token = generateToken(user.Id);
-        return response(user.Id, token);
+        return Succeed(new LoginResponse { UserId = user.Id, Token = token });
     }
-
-    private IApplicationResult<LoginResponse> response(ValidationResult validationResult) =>
-        ApplicationResult<LoginResponse>.Fail(validationResult);
-
-    private IApplicationResult<LoginResponse> response(string errorMessage) =>
-        ApplicationResult<LoginResponse>.Fail(errorMessage);
-
-    private IApplicationResult<LoginResponse> response(long userId, string token) =>
-        ApplicationResult<LoginResponse>.Succeed(
-            new LoginResponse { UserId = userId, Token = token }
-        );
 
     private async Task<ValidationResult> validate(LoginRequest request) =>
         await _validator.ValidateAsync(request);

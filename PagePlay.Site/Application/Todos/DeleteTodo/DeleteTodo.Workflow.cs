@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
@@ -10,27 +11,31 @@ public class DeleteTodoWorkflow(
     IValidator<DeleteTodoRequest> _validator,
     LoggedInAuthContext _authContext,
     ITodoRepository _todoRepository
-) : IWorkflow<DeleteTodoRequest, DeleteTodoResponse>
+) : WorkflowBase<DeleteTodoRequest, DeleteTodoResponse>, IWorkflow<DeleteTodoRequest, DeleteTodoResponse>
 {
     public async Task<IApplicationResult<DeleteTodoResponse>> Perform(DeleteTodoRequest request)
     {
         var validationResult = await validate(request);
         if (!validationResult.IsValid)
-            return response(validationResult);
+            return Fail(validationResult);
 
         var todo = await getTodoById(request.Id);
         if (todo == null)
-            return response("Todo not found.");
+            return Fail("Todo not found.");
 
         if (!todo.IsOwnedBy(_authContext.UserId))
-            return response("You do not have permission to delete this todo.");
+            return Fail("You do not have permission to delete this todo.");
 
         await deleteTodo(todo);
 
-        return response(todo.Id);
+        return Succeed(new DeleteTodoResponse
+        {
+            Id = todo.Id,
+            Message = "Todo deleted successfully."
+        });
     }
 
-    private async Task<FluentValidation.Results.ValidationResult> validate(DeleteTodoRequest request) =>
+    private async Task<ValidationResult> validate(DeleteTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
@@ -41,19 +46,4 @@ public class DeleteTodoWorkflow(
         await _todoRepository.Delete(todo);
         await _todoRepository.SaveChanges();
     }
-
-    private IApplicationResult<DeleteTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
-        ApplicationResult<DeleteTodoResponse>.Fail(validationResult);
-
-    private IApplicationResult<DeleteTodoResponse> response(string errorMessage) =>
-        ApplicationResult<DeleteTodoResponse>.Fail(errorMessage);
-
-    private IApplicationResult<DeleteTodoResponse> response(long todoId) =>
-        ApplicationResult<DeleteTodoResponse>.Succeed(
-            new DeleteTodoResponse
-            {
-                Id = todoId,
-                Message = "Todo deleted successfully."
-            }
-        );
 }

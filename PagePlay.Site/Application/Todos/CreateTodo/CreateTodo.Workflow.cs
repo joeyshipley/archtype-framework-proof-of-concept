@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
@@ -10,21 +11,27 @@ public class CreateTodoWorkflow(
     IValidator<CreateTodoRequest> _validator,
     LoggedInAuthContext _authContext,
     ITodoRepository _todoRepository
-) : IWorkflow<CreateTodoRequest, CreateTodoResponse>
+) : WorkflowBase<CreateTodoRequest, CreateTodoResponse>, IWorkflow<CreateTodoRequest, CreateTodoResponse>
 {
     public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
     {
         var validationResult = await validate(request);
         if (!validationResult.IsValid)
-            return response(validationResult);
+            return Fail(validationResult);
 
         var todo = createTodo(request);
         await saveTodo(todo);
 
-        return response(todo);
+        return Succeed(new CreateTodoResponse
+        {
+            Id = todo.Id,
+            Title = todo.Title,
+            IsCompleted = todo.IsCompleted,
+            CreatedAt = todo.CreatedAt
+        });
     }
 
-    private async Task<FluentValidation.Results.ValidationResult> validate(CreateTodoRequest request) =>
+    private async Task<ValidationResult> validate(CreateTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
     private Todo createTodo(CreateTodoRequest request) =>
@@ -35,18 +42,4 @@ public class CreateTodoWorkflow(
         await _todoRepository.Add(todo);
         await _todoRepository.SaveChanges();
     }
-
-    private IApplicationResult<CreateTodoResponse> response(FluentValidation.Results.ValidationResult validationResult) =>
-        ApplicationResult<CreateTodoResponse>.Fail(validationResult);
-
-    private IApplicationResult<CreateTodoResponse> response(Todo todo) =>
-        ApplicationResult<CreateTodoResponse>.Succeed(
-            new CreateTodoResponse
-            {
-                Id = todo.Id,
-                Title = todo.Title,
-                IsCompleted = todo.IsCompleted,
-                CreatedAt = todo.CreatedAt
-            }
-        );
 }
