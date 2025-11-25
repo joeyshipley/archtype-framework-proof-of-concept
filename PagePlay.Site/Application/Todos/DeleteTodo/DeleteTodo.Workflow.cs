@@ -28,11 +28,7 @@ public class DeleteTodoWorkflow(
 
         await deleteTodo(todo);
 
-        return Succeed(new DeleteTodoResponse
-        {
-            Id = todo.Id,
-            Message = "Todo deleted successfully."
-        });
+        return Succeed(buildResponse(todo));
     }
 
     private async Task<ValidationResult> validate(DeleteTodoRequest request) =>
@@ -46,4 +42,11 @@ public class DeleteTodoWorkflow(
         await _todoRepository.Delete(todo);
         await _todoRepository.SaveChanges();
     }
+
+    private DeleteTodoResponse buildResponse(Todo todo) =>
+        new DeleteTodoResponse
+        {
+            Id = todo.Id,
+            Message = "Todo deleted successfully."
+        };
 }

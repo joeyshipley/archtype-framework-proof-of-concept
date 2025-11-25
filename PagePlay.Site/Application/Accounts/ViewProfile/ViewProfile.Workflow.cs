@@ -22,11 +22,7 @@ public class ViewProfileWorkflow(
         if (user == null)
             return Fail("User not found.");
 
-        return Succeed(new ViewProfileResponse
-        {
-            Email = user.Email,
-            CreatedAt = user.CreatedAt
-        });
+        return Succeed(buildResponse(user));
     }
 
     private async Task<ValidationResult> validate(ViewProfileRequest request) =>
@@ -34,4 +30,11 @@ public class ViewProfileWorkflow(
 
     private async Task<Domain.Models.User> getUserById(long userId) =>
         await _userRepository.GetById(userId);
+
+    private ViewProfileResponse buildResponse(Domain.Models.User user) =>
+        new ViewProfileResponse
+        {
+            Email = user.Email,
+            CreatedAt = user.CreatedAt
+        };
 }

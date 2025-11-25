@@ -28,7 +28,7 @@ public class LoginWorkflow(
             return Fail("Invalid email or password.");
 
         var token = generateToken(user.Id);
-        return Succeed(new LoginResponse { UserId = user.Id, Token = token });
+        return Succeed(buildResponse(user.Id, token));
     }
 
     private async Task<ValidationResult> validate(LoginRequest request) =>
@@ -42,4 +42,7 @@ public class LoginWorkflow(
 
     private string generateToken(long userId) =>
         _jwtTokenService.GenerateToken(new TokenClaims { UserId = userId });
+
+    private LoginResponse buildResponse(long userId, string token) =>
+        new LoginResponse { UserId = userId, Token = token };
 }

@@ -27,7 +27,7 @@ public class RegisterWorkflow(
 
         await saveUser(user);
 
-        return Succeed(new RegisterResponse { UserId = user.Id });
+        return Succeed(buildResponse(user));
     }
 
     private async Task<ValidationResult> validate(RegisterRequest request) =>
@@ -44,5 +44,8 @@ public class RegisterWorkflow(
         await _userRepository.Add(user);
         await _userRepository.SaveChanges();
     }
+
+    private RegisterResponse buildResponse(User user) =>
+        new RegisterResponse { UserId = user.Id };
 }
 

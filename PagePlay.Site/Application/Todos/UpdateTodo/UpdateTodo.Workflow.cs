@@ -25,12 +25,7 @@ public class UpdateTodoWorkflow(
 
         await changeTitle(todo, request.Title);
 
-        return Succeed(new UpdateTodoResponse
-        {
-            Id = todo.Id,
-            Title = todo.Title,
-            UpdatedAt = todo.UpdatedAt
-        });
+        return Succeed(buildResponse(todo));
     }
 
     private async Task<(Todo todo, string errorMessage)> getTodo(long id)
@@ -53,4 +48,12 @@ public class UpdateTodoWorkflow(
         todo.UpdateTitle(title);
         await _todoRepository.SaveChanges();
     }
+
+    private UpdateTodoResponse buildResponse(Todo todo) =>
+        new UpdateTodoResponse
+        {
+            Id = todo.Id,
+            Title = todo.Title,
+            UpdatedAt = todo.UpdatedAt
+        };
 }

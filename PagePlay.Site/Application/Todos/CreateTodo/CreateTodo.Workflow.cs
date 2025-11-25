@@ -22,13 +22,7 @@ public class CreateTodoWorkflow(
         var todo = createTodo(request);
         await saveTodo(todo);
 
-        return Succeed(new CreateTodoResponse
-        {
-            Id = todo.Id,
-            Title = todo.Title,
-            IsCompleted = todo.IsCompleted,
-            CreatedAt = todo.CreatedAt
-        });
+        return Succeed(buildResponse(todo));
     }
 
     private async Task<ValidationResult> validate(CreateTodoRequest request) =>
@@ -42,4 +36,13 @@ public class CreateTodoWorkflow(
         await _todoRepository.Add(todo);
         await _todoRepository.SaveChanges();
     }
+
+    private CreateTodoResponse buildResponse(Todo todo) =>
+        new CreateTodoResponse
+        {
+            Id = todo.Id,
+            Title = todo.Title,
+            IsCompleted = todo.IsCompleted,
+            CreatedAt = todo.CreatedAt
+        };
 }

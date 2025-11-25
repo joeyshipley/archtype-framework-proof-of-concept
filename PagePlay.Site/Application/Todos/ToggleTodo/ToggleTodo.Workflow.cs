@@ -29,14 +29,7 @@ public class ToggleTodoWorkflow(
         toggleTodo(todo);
         await saveTodo(todo);
 
-        return Succeed(new ToggleTodoResponse
-        {
-            Id = todo.Id,
-            Title = todo.Title,
-            IsCompleted = todo.IsCompleted,
-            CreatedAt = todo.CreatedAt,
-            UpdatedAt = todo.UpdatedAt
-        });
+        return Succeed(buildResponse(todo));
     }
 
     private async Task<ValidationResult> validate(ToggleTodoRequest request) =>
@@ -50,4 +43,14 @@ public class ToggleTodoWorkflow(
 
     private async Task saveTodo(Todo todo) =>
         await _todoRepository.SaveChanges();
+
+    private ToggleTodoResponse buildResponse(Todo todo) =>
+        new ToggleTodoResponse
+        {
+            Id = todo.Id,
+            Title = todo.Title,
+            IsCompleted = todo.IsCompleted,
+            CreatedAt = todo.CreatedAt,
+            UpdatedAt = todo.UpdatedAt
+        };
 }
