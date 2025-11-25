@@ -19,8 +19,7 @@ public class CreateTodoWorkflow(
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = createTodo(request);
-        await saveTodo(todo);
+        var todo = await createTodo(request);
 
         return Succeed(buildResponse(todo));
     }
@@ -28,21 +27,17 @@ public class CreateTodoWorkflow(
     private async Task<ValidationResult> validate(CreateTodoRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private Todo createTodo(CreateTodoRequest request) =>
-        Todo.Create(_authContext.UserId, request.Title);
-
-    private async Task saveTodo(Todo todo)
+    private async Task<Todo> createTodo(CreateTodoRequest request)
     {
+        var todo = Todo.Create(_authContext.UserId, request.Title);
         await _repository.Add<Todo>(todo);
         await _repository.SaveChanges();
+        return todo;
     }
 
     private CreateTodoResponse buildResponse(Todo todo) =>
         new CreateTodoResponse
         {
-            Id = todo.Id,
-            Title = todo.Title,
-            IsCompleted = todo.IsCompleted,
-            CreatedAt = todo.CreatedAt
+            Todo = TodoListEntry.FromTodo(todo)
         };
 }

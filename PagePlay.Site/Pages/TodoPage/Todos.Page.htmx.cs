@@ -22,9 +22,9 @@ public class TodosPage
     $$"""
     <div class="todo-create-form">
         <form hx-post="/api/todos/create"
-              hx-target="#todo-list"
-              hx-swap="morph:innerHTML"
-              hx-on::after-request="if(event.detail.successful) this.reset()">
+              hx-target="#todo-list-ul"
+              hx-swap="afterbegin"
+              hx-on::after-request="if(event.detail.successful) { this.reset(); document.querySelector('.todo-empty')?.remove(); }">
             <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
             <div class="todo-input-group">
                 <input id="title"
@@ -42,19 +42,12 @@ public class TodosPage
     // language=html
     public string RenderTodoList(string antiforgeryToken, List<TodoListEntry> todos)
     {
-        if (todos.Count == 0)
-        {
-            return """
-            <div class="todo-empty">
-                <p>No todos yet. Add one above to get started!</p>
-            </div>
-            """;
-        }
-
-        var todosHtml = string.Join("\n", todos.Select(todo => RenderTodoItem(antiforgeryToken, todo)));
+        var todosHtml = todos.Count == 0
+            ? """<li class="todo-empty"><p>No todos yet. Add one above to get started!</p></li>"""
+            : string.Join("\n", todos.Select(todo => RenderTodoItem(antiforgeryToken, todo)));
 
         return $$"""
-        <ul class="todo-list">
+        <ul class="todo-list" id="todo-list-ul">
             {{todosHtml}}
         </ul>
         """;

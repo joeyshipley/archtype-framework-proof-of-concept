@@ -1,14 +1,12 @@
 using FluentValidation;
+using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.CreateTodo;
 
 public class CreateTodoResponse : IResponse
 {
-    public long Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public bool IsCompleted { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public required TodoListEntry Todo { get; set; }
 }
 
 public class CreateTodoRequest : IRequest

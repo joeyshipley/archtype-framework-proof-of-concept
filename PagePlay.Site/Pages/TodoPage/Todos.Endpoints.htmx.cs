@@ -42,24 +42,22 @@ public static class TodosPageEndpoints
             [FromForm] string title,
             IAntiforgery antiforgery,
             HttpContext context,
-            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var createRequest = new CreateTodoRequest { Title = title };
             var createResult = await createWorkflow.Perform(createRequest);
 
-            var listResult = await listWorkflow.Perform(new ListTodosRequest());
-
-            if (!listResult.Success)
+            if (!createResult.Success)
             {
                 return Results.Content(
-                    page.RenderError("Failed to load todos"),
+                    page.RenderError("Failed to create todo"),
                     "text/html");
             }
 
+            // Return just the new todo item - will be inserted at the top of the list
             return Results.Content(
-                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                page.RenderTodoItem(tokens.RequestToken!, createResult.Model.Todo),
                 "text/html");
         });
 
@@ -87,7 +85,8 @@ public static class TodosPageEndpoints
 
         endpoints.MapPost("/api/todos/delete", async (
             [FromForm] long id,
-            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
+            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow,
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
         {
             var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
@@ -96,6 +95,16 @@ public static class TodosPageEndpoints
             {
                 return Results.Content(
                     page.RenderError("Failed to delete todo"),
+                    "text/html");
+            }
+
+            // Check if we need to show the empty state
+            var listResult = await listWorkflow.Perform(new ListTodosRequest());
+            if (listResult.Success && listResult.Model.Todos.Count == 0)
+            {
+                // Return OOB swap to show empty state after removing the item
+                return Results.Content(
+                    """<li class="todo-empty" hx-swap-oob="afterbegin:#todo-list-ul"><p>No todos yet. Add one above to get started!</p></li>""",
                     "text/html");
             }
 
