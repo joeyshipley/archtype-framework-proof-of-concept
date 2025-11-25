@@ -1,14 +1,14 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Accounts.Login;
 
 public class LoginWorkflow(
-    IUserRepository _userRepository,
+    IRepository _userRepository,
     IPasswordHasher _passwordHasher,
     IJwtTokenService _jwtTokenService,
     IValidator<LoginRequest> _validator
@@ -36,7 +36,7 @@ public class LoginWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Domain.Models.User> getUserByEmail(string email) =>
-        await _userRepository.Get(User.ByEmail(email));
+        await _userRepository.Get<User>(User.ByEmail(email));
 
     private bool verifyPassword(string password, string passwordHash) =>
         _passwordHasher.VerifyPassword(password, passwordHash);

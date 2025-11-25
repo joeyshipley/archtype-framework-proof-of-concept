@@ -1,8 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
-using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Todos.ToggleTodo;
@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.ToggleTodo;
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    ITodoRepository _todoRepository
+    IRepository _todoRepository
 ) : WorkflowBase<ToggleTodoRequest, ToggleTodoResponse>, IWorkflow<ToggleTodoRequest, ToggleTodoResponse>
 {
     public async Task<IApplicationResult<ToggleTodoResponse>> Perform(ToggleTodoRequest request)
@@ -36,7 +36,7 @@ public class ToggleTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
-        await _todoRepository.GetForUpdate(TodoSpecifications.ById(id));
+        await _todoRepository.GetForUpdate<Todo>(Todo.ById(id));
 
     private void toggleTodo(Todo todo) =>
         todo.Toggle();

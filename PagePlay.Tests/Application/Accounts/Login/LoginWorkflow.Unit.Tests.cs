@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Login;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
@@ -36,8 +36,8 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         Mocker
@@ -60,9 +60,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Model.Token.Should().Be("test_jwt_token");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -106,9 +106,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Errors.Should().Contain(e => e.Message.Contains("Password is required."));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -132,8 +132,8 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns((User)null);
 
         // Act
@@ -145,9 +145,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Errors.Should().Contain(e => e.Message == "Invalid email or password.");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -178,8 +178,8 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         Mocker
@@ -196,9 +196,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Errors.Should().Contain(e => e.Message == "Invalid email or password.");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
 
         Mocker
             .GetSubstituteFor<IPasswordHasher>()
@@ -235,9 +235,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Errors.Should().Contain(e => e.Message.Contains("Email is required."));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -269,9 +269,9 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         result.Errors.Should().Contain(e => e.Message.Contains("Password is required."));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -298,8 +298,8 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         Mocker
@@ -350,8 +350,8 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         Mocker

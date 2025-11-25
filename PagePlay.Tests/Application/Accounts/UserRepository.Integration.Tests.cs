@@ -1,14 +1,14 @@
 using AwesomeAssertions;
 using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Database;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Tests.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts;
 
-public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepository>
+public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IRepository>
 {
     public UserRepositoryIntegrationTests() 
     {
@@ -28,11 +28,11 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
             CreatedAt = DateTime.UtcNow
         };
 
-        await SUT.Add(user);
+        await SUT.Add<User>(user);
         await SUT.SaveChanges();
 
         // Act
-        var result = await SUT.Get(User.ByEmail("test@example.com"));
+        var result = await SUT.Get<User>(User.ByEmail("test@example.com"));
 
         // Assert
         result.Should().NotBeNull();
@@ -44,7 +44,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var result = await SUT.Get(User.ByEmail("nonexistent@example.com"));
+        var result = await SUT.Get<User>(User.ByEmail("nonexistent@example.com"));
 
         // Assert
         result.Should().BeNull();
@@ -61,11 +61,11 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
             CreatedAt = DateTime.UtcNow
         };
 
-        await SUT.Add(user);
+        await SUT.Add<User>(user);
         await SUT.SaveChanges();
 
         // Act
-        var exists = await SUT.Exists(User.ByEmail("existing@example.com"));
+        var exists = await SUT.Exists<User>(User.ByEmail("existing@example.com"));
 
         // Assert
         exists.Should().BeTrue();
@@ -76,7 +76,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var exists = await SUT.Exists(User.ByEmail("nonexistent@example.com"));
+        var exists = await SUT.Exists<User>(User.ByEmail("nonexistent@example.com"));
 
         // Assert
         exists.Should().BeFalse();

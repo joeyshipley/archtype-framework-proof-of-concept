@@ -1,14 +1,14 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
 public class ViewProfileWorkflow(
-    IUserRepository _userRepository,
+    IRepository _userRepository,
     LoggedInAuthContext _authContext,
     IValidator<ViewProfileRequest> _validator
 ) : WorkflowBase<ViewProfileRequest, ViewProfileResponse>, IWorkflow<ViewProfileRequest, ViewProfileResponse>
@@ -30,7 +30,7 @@ public class ViewProfileWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<User> getUserById(long userId) =>
-        await _userRepository.Get(User.ById(userId));
+        await _userRepository.Get<User>(User.ById(userId));
 
     private ViewProfileResponse buildResponse(User user) =>
         new ViewProfileResponse

@@ -2,7 +2,7 @@ using PagePlay.Site.Infrastructure.Domain;
 
 namespace PagePlay.Site.Application.Todos.Domain.Models;
 
-public class Todo : IEntity
+public partial class Todo : IEntity
 {
     public long Id { get; set; }
     public long UserId { get; set; }

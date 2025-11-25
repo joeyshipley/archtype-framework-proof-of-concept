@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.ViewProfile;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
@@ -38,8 +38,8 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(userId);
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act
@@ -52,9 +52,9 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         result.Model.CreatedAt.Should().Be(new DateTime(2024, 1, 15, 10, 30, 0, DateTimeKind.Utc));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -82,9 +82,9 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         result.Errors.Should().Contain(e => e.Message.Contains("Invalid request."));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -105,8 +105,8 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(userId);
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns((User)null);
 
         // Act
@@ -118,9 +118,9 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         result.Errors.Should().Contain(e => e.Message == "User not found.");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -148,8 +148,8 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(expectedUserId);
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act
@@ -160,9 +160,9 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         result.Model.Email.Should().Be("specific@example.com");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
-            .Get(Arg.Any<Specification<User>>());
+            .Get<User>(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -191,8 +191,8 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(userId);
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Get(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Get<User>(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act

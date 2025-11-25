@@ -1,7 +1,5 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
-using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
@@ -43,9 +41,7 @@ public static class DependencyResolver
             var settingsProvider = sp.GetRequiredService<ISettingsProvider>();
             options.UseNpgsql(settingsProvider.Database.ConnectionString);
         });
-        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<ITodoRepository, TodoRepository>();
+        services.AddScoped<IRepository, Repository>();
     }
 
     private static void bindValidation(IServiceCollection services)

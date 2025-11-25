@@ -1,7 +1,7 @@
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 
 namespace PagePlay.Site.Pages.Login;
 
@@ -21,12 +21,12 @@ public static class LoginEndpoints
 
 public record LoginPageData(string UserEmail);
 
-public class LoginPageDataLoader(IUserRepository _userRepository) 
+public class LoginPageDataLoader(IRepository _userRepository)
     : IPageDataLoader<LoginPageData>
 {
     public async Task<LoginPageData> Load()
     {
-        var user = await _userRepository.Get(User.ById(1));
+        var user = await _userRepository.Get<User>(User.ById(1));
         return new LoginPageData(user.Email);
     }
 }

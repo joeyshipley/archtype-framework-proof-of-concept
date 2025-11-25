@@ -3,8 +3,8 @@ using FluentValidation;
 using FluentValidation.Results;
 using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Register;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
@@ -30,8 +30,8 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Exists(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Exists<User>(Arg.Any<Specification<User>>())
             .Returns(false);
 
         Mocker
@@ -40,8 +40,8 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .Returns("hashed_password");
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Add(Arg.Any<User>())
+            .GetSubstituteFor<IRepository>()
+            .Add<User>(Arg.Any<User>())
             .Returns(callInfo =>
             {
                 var user = callInfo.Arg<User>();
@@ -50,7 +50,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             });
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .SaveChanges()
             .Returns(Task.CompletedTask);
 
@@ -63,7 +63,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         result.Model.UserId.Should().Be(123);
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
             .Add(Arg.Is<User>(u =>
                 u.Email == request.Email &&
@@ -71,7 +71,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             ));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
             .SaveChanges();
     }
@@ -110,14 +110,14 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         result.Errors.Should().Contain(e => e.Message.Contains("Passwords do not match."));
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Exists(Arg.Any<Specification<User>>());
+            .Exists<User>(Arg.Any<Specification<User>>());
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Add(Arg.Any<User>());
+            .Add<User>(Arg.Any<User>());
     }
 
     [Fact]
@@ -137,8 +137,8 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Exists(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Exists<User>(Arg.Any<Specification<User>>())
             .Returns(true);
 
         // Act
@@ -150,12 +150,12 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         result.Errors.Should().Contain(e => e.Message == "An account with this email already exists.");
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
-            .Add(Arg.Any<User>());
+            .Add<User>(Arg.Any<User>());
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .DidNotReceive()
             .SaveChanges();
     }
@@ -269,8 +269,8 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Exists(Arg.Any<Specification<User>>())
+            .GetSubstituteFor<IRepository>()
+            .Exists<User>(Arg.Any<Specification<User>>())
             .Returns(false);
 
         Mocker
@@ -279,8 +279,8 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .Returns(hashedPassword);
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
-            .Add(Arg.Any<User>())
+            .GetSubstituteFor<IRepository>()
+            .Add<User>(Arg.Any<User>())
             .Returns(callInfo =>
             {
                 var user = callInfo.Arg<User>();
@@ -289,7 +289,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             });
 
         Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .SaveChanges()
             .Returns(Task.CompletedTask);
 
@@ -306,7 +306,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
             .HashPassword(request.Password);
 
         await Mocker
-            .GetSubstituteFor<IUserRepository>()
+            .GetSubstituteFor<IRepository>()
             .Received(1)
             .Add(Arg.Is<User>(u => u.PasswordHash == hashedPassword));
     }

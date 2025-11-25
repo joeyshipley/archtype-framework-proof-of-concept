@@ -4,7 +4,7 @@ using PagePlay.Site.Infrastructure.Domain;
 
 namespace PagePlay.Site.Infrastructure.Database.Repositories;
 
-public class Repository<T> : IRepository<T> where T : class, IEntity
+public class Repository : IRepository
 {
     private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private AppDbContext _context;
@@ -20,7 +20,7 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return _context;
     }
 
-    public async Task<T> Get(Specification<T> spec)
+    public async Task<T> Get<T>(Specification<T> spec) where T : class, IEntity
     {
         var context = await GetContext();
         return await applySpecification(context, spec)
@@ -28,14 +28,14 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .FirstOrDefaultAsync();
     }
 
-    public async Task<T> GetForUpdate(Specification<T> spec)
+    public async Task<T> GetForUpdate<T>(Specification<T> spec) where T : class, IEntity
     {
         var context = await GetContext();
         return await applySpecification(context, spec)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<List<T>> List(Specification<T> spec)
+    public async Task<List<T>> List<T>(Specification<T> spec) where T : class, IEntity
     {
         var context = await GetContext();
         return await applySpecification(context, spec)
@@ -43,26 +43,26 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
             .ToListAsync();
     }
 
-    public async Task<bool> Exists(Specification<T> spec)
+    public async Task<bool> Exists<T>(Specification<T> spec) where T : class, IEntity
     {
         var context = await GetContext();
         return await applySpecification(context, spec).AnyAsync();
     }
 
-    public async Task<T> Add(T entity)
+    public async Task<T> Add<T>(T entity) where T : class, IEntity
     {
         var context = await GetContext();
         await context.Set<T>().AddAsync(entity);
         return entity;
     }
 
-    public async Task Update(T entity)
+    public async Task Update<T>(T entity) where T : class, IEntity
     {
         var context = await GetContext();
         context.Set<T>().Update(entity);
     }
 
-    public async Task Delete(T entity)
+    public async Task Delete<T>(T entity) where T : class, IEntity
     {
         var context = await GetContext();
         context.Set<T>().Remove(entity);
@@ -74,7 +74,7 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         await context.SaveChangesAsync();
     }
 
-    private IQueryable<T> applySpecification(AppDbContext context, Specification<T> spec)
+    private IQueryable<T> applySpecification<T>(AppDbContext context, Specification<T> spec) where T : class, IEntity
     {
         var query = context.Set<T>().Where(spec.Criteria);
 

@@ -1,9 +1,8 @@
 using PagePlay.Site.Infrastructure.Database.Specifications;
-using PagePlay.Site.Application.Todos.Domain.Models;
 
-namespace PagePlay.Site.Application.Todos.Domain.Repository;
+namespace PagePlay.Site.Application.Todos.Domain.Models;
 
-public static class TodoSpecifications
+public partial class Todo
 {
     public static Specification<Todo> ById(long id)
     {

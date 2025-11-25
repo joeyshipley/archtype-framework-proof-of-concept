@@ -1,8 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
-using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Todos.CreateTodo;
@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.CreateTodo;
 public class CreateTodoWorkflow(
     IValidator<CreateTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    ITodoRepository _todoRepository
+    IRepository _todoRepository
 ) : WorkflowBase<CreateTodoRequest, CreateTodoResponse>, IWorkflow<CreateTodoRequest, CreateTodoResponse>
 {
     public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
@@ -33,7 +33,7 @@ public class CreateTodoWorkflow(
 
     private async Task saveTodo(Todo todo)
     {
-        await _todoRepository.Add(todo);
+        await _todoRepository.Add<Todo>(todo);
         await _todoRepository.SaveChanges();
     }
 

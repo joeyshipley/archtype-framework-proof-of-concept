@@ -1,8 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
-using PagePlay.Site.Application.Todos.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Todos.UpdateTodo;
@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.UpdateTodo;
 public class UpdateTodoWorkflow(
     IValidator<UpdateTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    ITodoRepository _todoRepository
+    IRepository _todoRepository
 ) : WorkflowBase<UpdateTodoRequest, UpdateTodoResponse>, IWorkflow<UpdateTodoRequest, UpdateTodoResponse>
 {
     public async Task<IApplicationResult<UpdateTodoResponse>> Perform(UpdateTodoRequest request)
@@ -30,7 +30,7 @@ public class UpdateTodoWorkflow(
 
     private async Task<(Todo todo, string errorMessage)> getTodo(long id)
     {
-        var todo = await _todoRepository.GetForUpdate(TodoSpecifications.ById(id));
+        var todo = await _todoRepository.GetForUpdate<Todo>(Todo.ById(id));
         if (todo == null)
             return (null, "Todo not found.");
 
