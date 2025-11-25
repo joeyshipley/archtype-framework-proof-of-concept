@@ -80,15 +80,18 @@ public class TodoPage
                            onclick="event.preventDefault(); this.form.requestSubmit();"
                            class="todo-checkbox" />
                 </form>
-                <span class="todo-title">{{HttpUtility.HtmlEncode(todo.Title)}}</span>
-                <button hx-post="/api/todos/delete"
-                        hx-target="#todo-list"
-                        hx-swap="morph:innerHTML"
-                        hx-vals='{"id": {{todo.Id}}, "__RequestVerificationToken": "{{antiforgeryToken}}"}'
-                        class="todo-delete"
-                        title="Delete todo">
-                    ✕
-                </button>
+                <span class="todo-title">{{todo.Title}}</span>
+                {{ButtonComponent(
+                    content: $$"""<span class="delete-inner-container">Delete {{ todo.Title }}</span>""",
+                    endpoint: "/api/todos/delete",
+                    antiforgeryToken: antiforgeryToken,
+                    cssClass: "todo-delete",
+                    title: "Delete todo",
+                    additionalData: new Dictionary<string, object>
+                    {
+                        { "id", todo.Id }
+                    }
+                )}}
                 <hr />
             </div>
         </li>
@@ -102,4 +105,51 @@ public class TodoPage
         {{HttpUtility.HtmlEncode(error)}}
     </div>
     """;
+
+    // language=html
+    private string ButtonComponent(
+        string content,
+        string endpoint,
+        string antiforgeryToken,
+        string? cssClass = null,
+        string? title = null,
+        string? targetSelector = "#todo-list",
+        string? swapStrategy = "morph:innerHTML",
+        Dictionary<string, object>? additionalData = null,
+        string httpMethod = "post")
+    {
+        var classAttr = !string.IsNullOrEmpty(cssClass) ? $"class=\"{cssClass}\"" : "";
+        var titleAttr = !string.IsNullOrEmpty(title) ? $"title=\"{title}\"" : "";
+
+        // Automatically include antiforgery token
+        var data = new Dictionary<string, object>
+        {
+            { "__RequestVerificationToken", antiforgeryToken }
+        };
+
+        if (additionalData != null)
+        {
+            foreach (var kvp in additionalData)
+                data[kvp.Key] = kvp.Value;
+        }
+
+        // Build hx-vals JSON
+        var jsonPairs = data.Select(kvp =>
+            kvp.Value is string
+                ? $"\"{kvp.Key}\": \"{kvp.Value}\""
+                : $"\"{kvp.Key}\": {kvp.Value}");
+        var json = string.Join(", ", jsonPairs);
+        var hxValsAttr = $"hx-vals='{{ {json} }}'";
+
+        return $$"""
+        <button hx-{{httpMethod}}="{{endpoint}}"
+                hx-target="{{targetSelector}}"
+                hx-swap="{{swapStrategy}}"
+                {{hxValsAttr}}
+                {{classAttr}}
+                {{titleAttr}}>
+            {{content}}
+        </button>
+        """;
+    }
 }
