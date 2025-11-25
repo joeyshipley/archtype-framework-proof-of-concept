@@ -28,7 +28,7 @@ public class ListTodosWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId));
+        await _repository.List(Todo.ByUserId(_authContext.UserId));
 
     private ListTodosResponse buildResponse(List<Todo> todos) =>
         new ListTodosResponse
@@ -36,13 +36,7 @@ public class ListTodosWorkflow(
             Todos = todos
                 .OrderBy(t => t.IsCompleted)
                 .ThenByDescending(t => t.CreatedAt)
-                .Select(t => new TodoItem
-                {
-                    Id = t.Id,
-                    Title = t.Title,
-                    IsCompleted = t.IsCompleted,
-                    CreatedAt = t.CreatedAt,
-                    UpdatedAt = t.UpdatedAt
-                }).ToList()
+                .Select(TodoListEntry.FromTodo)
+                .ToList()
         };
 }

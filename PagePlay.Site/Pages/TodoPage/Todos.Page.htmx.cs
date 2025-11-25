@@ -1,12 +1,12 @@
 using System.Web;
-using PagePlay.Site.Application.Todos.ListTodos;
+using PagePlay.Site.Application.Todos.Domain.Models;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
 public class TodosPage
 {
     // language=html
-    public string RenderPage(string antiforgeryToken, List<TodoItem> todos) =>
+    public string RenderPage(string antiforgeryToken, List<TodoListEntry> todos) =>
     $$"""
     <div class="todo-page" hx-ext="morph">
         <h1>My Todos</h1>
@@ -40,7 +40,7 @@ public class TodosPage
     """;
 
     // language=html
-    public string RenderTodoList(string antiforgeryToken, List<TodoItem> todos)
+    public string RenderTodoList(string antiforgeryToken, List<TodoListEntry> todos)
     {
         if (todos.Count == 0)
         {
@@ -61,7 +61,7 @@ public class TodosPage
     }
 
     // language=html
-    public string RenderTodoItem(string antiforgeryToken, TodoItem todo)
+    public string RenderTodoItem(string antiforgeryToken, TodoListEntry todo)
     {
         var completedClass = todo.IsCompleted ? "completed" : "";
         var checkedAttr = todo.IsCompleted ? "checked" : "";

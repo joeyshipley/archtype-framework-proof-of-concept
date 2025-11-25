@@ -1,20 +1,12 @@
 using FluentValidation;
+using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosResponse : IResponse
 {
-    public List<TodoItem> Todos { get; set; } = new();
-}
-
-public class TodoItem
-{
-    public long Id { get; set; }
-    public string Title { get; set; } = string.Empty;
-    public bool IsCompleted { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public List<TodoListEntry> Todos { get; set; } = new();
 }
 
 public class ListTodosRequest : IRequest

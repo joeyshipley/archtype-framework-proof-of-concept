@@ -19,7 +19,8 @@ public static class TodosPageEndpoints
         endpoints.MapGet("/todos", async (
             IAntiforgery antiforgery,
             HttpContext context,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow
+        ) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var request = new ListTodosRequest();
@@ -66,8 +67,7 @@ public static class TodosPageEndpoints
             [FromForm] long id,
             IAntiforgery antiforgery,
             HttpContext context,
-            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow) =>
         {
             var tokens = antiforgery.GetAndStoreTokens(context);
             var toggleRequest = new ToggleTodoRequest { Id = id };
@@ -80,17 +80,8 @@ public static class TodosPageEndpoints
                     "text/html");
             }
 
-            var listResult = await listWorkflow.Perform(new ListTodosRequest());
-
-            if (!listResult.Success)
-            {
-                return Results.Content(
-                    page.RenderError("Failed to load todos"),
-                    "text/html");
-            }
-
             return Results.Content(
-                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
+                page.RenderTodoList(tokens.RequestToken!, toggleResult.Model.Todos),
                 "text/html");
         });
 

@@ -1,15 +1,12 @@
 using FluentValidation;
+using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoResponse : IResponse
 {
-    public long Id { get; set; }
-    public string Title { get; set; }
-    public bool IsCompleted { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public List<TodoListEntry> Todos { get; set; } = new();
 }
 
 public class ToggleTodoRequest : IRequest
