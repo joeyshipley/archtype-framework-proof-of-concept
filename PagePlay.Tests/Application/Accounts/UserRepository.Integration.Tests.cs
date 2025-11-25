@@ -5,7 +5,6 @@ using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.TestBases;
-using static PagePlay.Site.Application.Accounts.Domain.Repository.UserSpecifications;
 
 namespace PagePlay.Tests.Application.Accounts;
 
@@ -33,7 +32,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
         await SUT.SaveChanges();
 
         // Act
-        var result = await SUT.Get(ByEmail("test@example.com"));
+        var result = await SUT.Get(User.ByEmail("test@example.com"));
 
         // Assert
         result.Should().NotBeNull();
@@ -45,7 +44,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var result = await SUT.Get(ByEmail("nonexistent@example.com"));
+        var result = await SUT.Get(User.ByEmail("nonexistent@example.com"));
 
         // Assert
         result.Should().BeNull();
@@ -66,7 +65,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
         await SUT.SaveChanges();
 
         // Act
-        var exists = await SUT.Exists(ByEmail("existing@example.com"));
+        var exists = await SUT.Exists(User.ByEmail("existing@example.com"));
 
         // Assert
         exists.Should().BeTrue();
@@ -77,7 +76,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var exists = await SUT.Exists(ByEmail("nonexistent@example.com"));
+        var exists = await SUT.Exists(User.ByEmail("nonexistent@example.com"));
 
         // Assert
         exists.Should().BeFalse();

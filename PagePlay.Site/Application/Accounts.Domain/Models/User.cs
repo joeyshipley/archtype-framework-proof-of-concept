@@ -2,7 +2,7 @@ using PagePlay.Site.Infrastructure.Domain;
 
 namespace PagePlay.Site.Application.Accounts.Domain.Models;
 
-public class User : IEntity, INormalizeValues
+public partial class User : IEntity, INormalizeValues
 {
     public long Id { get; set; }
     public string Email { get; set; } = string.Empty;

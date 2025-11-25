@@ -1,7 +1,7 @@
+using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
-using static PagePlay.Site.Application.Accounts.Domain.Repository.UserSpecifications;
 
 namespace PagePlay.Site.Pages.Login;
 
@@ -26,7 +26,7 @@ public class LoginPageDataLoader(IUserRepository _userRepository)
 {
     public async Task<LoginPageData> Load()
     {
-        var user = await _userRepository.Get(ById(1));
+        var user = await _userRepository.Get(User.ById(1));
         return new LoginPageData(user.Email);
     }
 }

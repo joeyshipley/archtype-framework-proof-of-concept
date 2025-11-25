@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
+using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Security;
@@ -28,10 +29,10 @@ public class ViewProfileWorkflow(
     private async Task<ValidationResult> validate(ViewProfileRequest request) =>
         await _validator.ValidateAsync(request);
 
-    private async Task<Domain.Models.User> getUserById(long userId) =>
-        await _userRepository.Get(UserSpecifications.ById((int)userId));
+    private async Task<User> getUserById(long userId) =>
+        await _userRepository.Get(User.ById(userId));
 
-    private ViewProfileResponse buildResponse(Domain.Models.User user) =>
+    private ViewProfileResponse buildResponse(User user) =>
         new ViewProfileResponse
         {
             Email = user.Email,
