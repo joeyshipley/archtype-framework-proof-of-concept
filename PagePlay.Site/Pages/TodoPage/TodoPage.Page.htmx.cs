@@ -85,6 +85,7 @@ public class TodoPage
                     content: $$"""<span class="delete-inner-container">Delete {{ todo.Title }}</span>""",
                     endpoint: "/api/todos/delete",
                     antiforgeryToken: antiforgeryToken,
+                    targetSelector: "#todo-list",
                     cssClass: "todo-delete",
                     title: "Delete todo",
                     additionalData: new Dictionary<string, object>
@@ -111,12 +112,13 @@ public class TodoPage
         string content,
         string endpoint,
         string antiforgeryToken,
+        string targetSelector,
+        string httpMethod = "post",
+        string swapStrategy = "morph:innerHTML",
         string? cssClass = null,
         string? title = null,
-        string? targetSelector = "#todo-list",
-        string? swapStrategy = "morph:innerHTML",
-        Dictionary<string, object>? additionalData = null,
-        string httpMethod = "post")
+        Dictionary<string, object>? additionalData = null
+    )
     {
         var classAttr = !string.IsNullOrEmpty(cssClass) ? $"class=\"{cssClass}\"" : "";
         var titleAttr = !string.IsNullOrEmpty(title) ? $"title=\"{title}\"" : "";
