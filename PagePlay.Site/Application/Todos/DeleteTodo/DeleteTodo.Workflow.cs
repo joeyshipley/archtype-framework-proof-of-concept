@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.DeleteTodo;
 public class DeleteTodoWorkflow(
     IValidator<DeleteTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    IRepository _todoRepository
+    IRepository _repository
 ) : WorkflowBase<DeleteTodoRequest, DeleteTodoResponse>, IWorkflow<DeleteTodoRequest, DeleteTodoResponse>
 {
     public async Task<IApplicationResult<DeleteTodoResponse>> Perform(DeleteTodoRequest request)
@@ -35,12 +35,12 @@ public class DeleteTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
-        await _todoRepository.Get<Todo>(Todo.ById(id));
+        await _repository.Get<Todo>(Todo.ById(id));
 
     private async Task deleteTodo(Todo todo)
     {
-        await _todoRepository.Delete<Todo>(todo);
-        await _todoRepository.SaveChanges();
+        await _repository.Delete<Todo>(todo);
+        await _repository.SaveChanges();
     }
 
     private DeleteTodoResponse buildResponse(Todo todo) =>

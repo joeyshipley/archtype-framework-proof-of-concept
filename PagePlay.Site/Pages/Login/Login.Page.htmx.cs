@@ -21,12 +21,12 @@ public static class LoginEndpoints
 
 public record LoginPageData(string UserEmail);
 
-public class LoginPageDataLoader(IRepository _userRepository)
+public class LoginPageDataLoader(IRepository _repository)
     : IPageDataLoader<LoginPageData>
 {
     public async Task<LoginPageData> Load()
     {
-        var user = await _userRepository.Get<User>(User.ById(1));
+        var user = await _repository.Get<User>(User.ById(1));
         return new LoginPageData(user.Email);
     }
 }

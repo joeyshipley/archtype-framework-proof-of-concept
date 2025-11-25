@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.CreateTodo;
 public class CreateTodoWorkflow(
     IValidator<CreateTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    IRepository _todoRepository
+    IRepository _repository
 ) : WorkflowBase<CreateTodoRequest, CreateTodoResponse>, IWorkflow<CreateTodoRequest, CreateTodoResponse>
 {
     public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
@@ -33,8 +33,8 @@ public class CreateTodoWorkflow(
 
     private async Task saveTodo(Todo todo)
     {
-        await _todoRepository.Add<Todo>(todo);
-        await _todoRepository.SaveChanges();
+        await _repository.Add<Todo>(todo);
+        await _repository.SaveChanges();
     }
 
     private CreateTodoResponse buildResponse(Todo todo) =>

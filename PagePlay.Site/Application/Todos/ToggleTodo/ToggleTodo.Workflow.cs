@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.ToggleTodo;
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    IRepository _todoRepository
+    IRepository _repository
 ) : WorkflowBase<ToggleTodoRequest, ToggleTodoResponse>, IWorkflow<ToggleTodoRequest, ToggleTodoResponse>
 {
     public async Task<IApplicationResult<ToggleTodoResponse>> Perform(ToggleTodoRequest request)
@@ -36,13 +36,13 @@ public class ToggleTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
-        await _todoRepository.GetForUpdate<Todo>(Todo.ById(id));
+        await _repository.GetForUpdate<Todo>(Todo.ById(id));
 
     private void toggleTodo(Todo todo) =>
         todo.Toggle();
 
     private async Task saveTodo(Todo todo) =>
-        await _todoRepository.SaveChanges();
+        await _repository.SaveChanges();
 
     private ToggleTodoResponse buildResponse(Todo todo) =>
         new ToggleTodoResponse

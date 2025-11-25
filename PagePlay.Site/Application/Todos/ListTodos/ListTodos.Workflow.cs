@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.ListTodos;
 public class ListTodosWorkflow(
     IValidator<ListTodosRequest> _validator,
     LoggedInAuthContext _authContext,
-    IRepository _todoRepository
+    IRepository _repository
 ) : WorkflowBase<ListTodosRequest, ListTodosResponse>, IWorkflow<ListTodosRequest, ListTodosResponse>
 {
     public async Task<IApplicationResult<ListTodosResponse>> Perform(ListTodosRequest request)
@@ -28,7 +28,7 @@ public class ListTodosWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _todoRepository.List<Todo>(Todo.ByUserId(_authContext.UserId));
+        await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId));
 
     private ListTodosResponse buildResponse(List<Todo> todos) =>
         new ListTodosResponse

@@ -10,7 +10,7 @@ namespace PagePlay.Site.Application.Todos.UpdateTodo;
 public class UpdateTodoWorkflow(
     IValidator<UpdateTodoRequest> _validator,
     LoggedInAuthContext _authContext,
-    IRepository _todoRepository
+    IRepository _repository
 ) : WorkflowBase<UpdateTodoRequest, UpdateTodoResponse>, IWorkflow<UpdateTodoRequest, UpdateTodoResponse>
 {
     public async Task<IApplicationResult<UpdateTodoResponse>> Perform(UpdateTodoRequest request)
@@ -30,7 +30,7 @@ public class UpdateTodoWorkflow(
 
     private async Task<(Todo todo, string errorMessage)> getTodo(long id)
     {
-        var todo = await _todoRepository.GetForUpdate<Todo>(Todo.ById(id));
+        var todo = await _repository.GetForUpdate<Todo>(Todo.ById(id));
         if (todo == null)
             return (null, "Todo not found.");
 
@@ -46,7 +46,7 @@ public class UpdateTodoWorkflow(
     private async Task changeTitle(Todo todo, string title)
     {
         todo.UpdateTitle(title);
-        await _todoRepository.SaveChanges();
+        await _repository.SaveChanges();
     }
 
     private UpdateTodoResponse buildResponse(Todo todo) =>

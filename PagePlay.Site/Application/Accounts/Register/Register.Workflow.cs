@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Accounts.Register;
 
 public class RegisterWorkflow(
     IPasswordHasher _passwordHasher,
-    IRepository _userRepository,
+    IRepository _repository,
     IValidator<RegisterRequest> _validator
 ) : WorkflowBase<RegisterRequest, RegisterResponse>, IWorkflow<RegisterRequest, RegisterResponse>
 {
@@ -34,15 +34,15 @@ public class RegisterWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<bool> checkEmailExists(string email) =>
-        await _userRepository.Exists<User>(User.ByEmail(email));
+        await _repository.Exists<User>(User.ByEmail(email));
 
     private User createUser(RegisterRequest request) =>
         User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
 
     private async Task saveUser(User user)
     {
-        await _userRepository.Add<User>(user);
-        await _userRepository.SaveChanges();
+        await _repository.Add<User>(user);
+        await _repository.SaveChanges();
     }
 
     private RegisterResponse buildResponse(User user) =>

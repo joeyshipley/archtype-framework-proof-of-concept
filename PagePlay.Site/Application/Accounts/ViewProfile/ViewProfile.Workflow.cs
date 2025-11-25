@@ -8,7 +8,7 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
 public class ViewProfileWorkflow(
-    IRepository _userRepository,
+    IRepository _repository,
     LoggedInAuthContext _authContext,
     IValidator<ViewProfileRequest> _validator
 ) : WorkflowBase<ViewProfileRequest, ViewProfileResponse>, IWorkflow<ViewProfileRequest, ViewProfileResponse>
@@ -30,7 +30,7 @@ public class ViewProfileWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<User> getUserById(long userId) =>
-        await _userRepository.Get<User>(User.ById(userId));
+        await _repository.Get<User>(User.ById(userId));
 
     private ViewProfileResponse buildResponse(User user) =>
         new ViewProfileResponse

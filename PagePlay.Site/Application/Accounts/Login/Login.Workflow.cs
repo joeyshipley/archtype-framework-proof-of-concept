@@ -8,7 +8,7 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Accounts.Login;
 
 public class LoginWorkflow(
-    IRepository _userRepository,
+    IRepository _repository,
     IPasswordHasher _passwordHasher,
     IJwtTokenService _jwtTokenService,
     IValidator<LoginRequest> _validator
@@ -36,7 +36,7 @@ public class LoginWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Domain.Models.User> getUserByEmail(string email) =>
-        await _userRepository.Get<User>(User.ByEmail(email));
+        await _repository.Get<User>(User.ByEmail(email));
 
     private bool verifyPassword(string password, string passwordHash) =>
         _passwordHasher.VerifyPassword(password, passwordHash);
