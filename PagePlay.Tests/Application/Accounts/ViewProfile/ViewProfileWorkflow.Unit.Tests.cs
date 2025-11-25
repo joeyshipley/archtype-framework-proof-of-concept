@@ -5,6 +5,7 @@ using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Application.Accounts.ViewProfile;
+using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
 
@@ -38,7 +39,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetById(userId)
+            .Get(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act
@@ -53,7 +54,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetById(userId);
+            .Get(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -83,7 +84,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .DidNotReceive()
-            .GetById(Arg.Any<long>());
+            .Get(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -105,7 +106,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetById(userId)
+            .Get(Arg.Any<Specification<User>>())
             .Returns((User)null);
 
         // Act
@@ -119,7 +120,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetById(userId);
+            .Get(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -148,7 +149,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetById(expectedUserId)
+            .Get(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act
@@ -161,7 +162,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         await Mocker
             .GetSubstituteFor<IUserRepository>()
             .Received(1)
-            .GetById(expectedUserId);
+            .Get(Arg.Any<Specification<User>>());
     }
 
     [Fact]
@@ -191,7 +192,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
 
         Mocker
             .GetSubstituteFor<IUserRepository>()
-            .GetById(userId)
+            .Get(Arg.Any<Specification<User>>())
             .Returns(user);
 
         // Act

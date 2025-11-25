@@ -35,7 +35,7 @@ public class DeleteTodoWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
-        await _todoRepository.GetById(id);
+        await _todoRepository.Get(TodoSpecifications.ById(id));
 
     private async Task deleteTodo(Todo todo)
     {

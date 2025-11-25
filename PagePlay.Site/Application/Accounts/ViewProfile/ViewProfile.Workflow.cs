@@ -29,7 +29,7 @@ public class ViewProfileWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<Domain.Models.User> getUserById(long userId) =>
-        await _userRepository.GetById(userId);
+        await _userRepository.Get(UserSpecifications.ById((int)userId));
 
     private ViewProfileResponse buildResponse(Domain.Models.User user) =>
         new ViewProfileResponse

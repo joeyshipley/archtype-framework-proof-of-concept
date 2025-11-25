@@ -30,7 +30,7 @@ public class UpdateTodoWorkflow(
 
     private async Task<(Todo todo, string errorMessage)> getTodo(long id)
     {
-        var todo = await _todoRepository.GetByIdForUpdate(id);
+        var todo = await _todoRepository.GetForUpdate(TodoSpecifications.ById(id));
         if (todo == null)
             return (null, "Todo not found.");
 

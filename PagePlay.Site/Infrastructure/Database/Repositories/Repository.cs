@@ -20,21 +20,6 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return _context;
     }
 
-    public async Task<T> GetById(long id)
-    {
-        var context = await GetContext();
-        return await context.Set<T>()
-            .AsNoTracking()
-            .FirstOrDefaultAsync(e => e.Id == id);
-    }
-
-    public async Task<T> GetByIdForUpdate(long id)
-    {
-        var context = await GetContext();
-        return await context.Set<T>()
-            .FirstOrDefaultAsync(e => e.Id == id);
-    }
-    
     public async Task<T> Get(Specification<T> spec)
     {
         var context = await GetContext();
