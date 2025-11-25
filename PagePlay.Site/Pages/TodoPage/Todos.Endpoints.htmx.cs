@@ -10,7 +10,7 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
-public static class TodoPageEndpoints
+public static class TodosPageEndpoints
 {
     public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
     {
