@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using PagePlay.Site.Infrastructure.Database.Specifications;
 using PagePlay.Site.Infrastructure.Domain;
 
@@ -74,6 +75,14 @@ public class Repository : IRepository
         await context.SaveChangesAsync();
     }
 
+    public ITransactionScope BeginTransactionScope()
+    {
+        var scope = new TransactionScope(this);
+        // Start transaction immediately
+        scope.Initialize().GetAwaiter().GetResult();
+        return scope;
+    }
+
     private IQueryable<T> applySpecification<T>(AppDbContext context, Specification<T> spec) where T : class, IEntity
     {
         var query = context.Set<T>().Where(spec.Criteria);
@@ -82,5 +91,83 @@ public class Repository : IRepository
             .Aggregate(query, (current, include) => current.Include(include));
 
         return query;
+    }
+
+    internal class TransactionScope : ITransactionScope
+    {
+        private readonly Repository _repository;
+        private IDbContextTransaction _transaction;
+        private bool _completed = false;
+        private bool _disposed = false;
+
+        public TransactionScope(Repository repository)
+        {
+            _repository = repository;
+        }
+
+        internal async Task Initialize()
+        {
+            var context = await _repository.GetContext();
+            _transaction = await context.Database.BeginTransactionAsync();
+            // _logger.LogDebug("Transaction started");
+        }
+
+        public async Task CompleteTransaction()
+        {
+            if (_transaction == null)
+            {
+                // _logger.LogWarning("CompleteTransaction called but no transaction was started");
+                return;
+            }
+
+            await _transaction.CommitAsync();
+            _completed = true;
+            // _logger.LogDebug("Transaction committed");
+        }
+
+        public void Dispose()
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            if (_transaction != null && !_completed)
+            {
+                try
+                {
+                    _transaction.Rollback();
+                    // _logger.LogWarning("Transaction rolled back - CompleteTransaction() was not called");
+                }
+                catch (Exception ex)
+                {
+                    // _logger.LogError(ex, "Failed to rollback transaction");
+                }
+            }
+
+            _transaction?.Dispose();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_disposed) return;
+            _disposed = true;
+
+            if (_transaction != null && !_completed)
+            {
+                try
+                {
+                    await _transaction.RollbackAsync();
+                    // _logger.LogWarning("Transaction rolled back - CompleteTransaction() was not called");
+                }
+                catch (Exception ex)
+                {
+                    // _logger.LogError(ex, "Failed to rollback transaction");
+                }
+            }
+
+            if (_transaction != null)
+            {
+                await _transaction.DisposeAsync();
+            }
+        }
     }
 }

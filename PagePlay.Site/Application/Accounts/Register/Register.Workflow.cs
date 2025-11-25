@@ -19,13 +19,18 @@ public class RegisterWorkflow(
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var user = createUser(request);
+        User user = null;
+        await using(var scope = _repository.BeginTransactionScope())
+        {
+            user = createUser(request);
 
-        var emailExists = await checkEmailExists(user.Email);
-        if (emailExists)
-            return Fail("An account with this email already exists.");
+            var emailExists = await checkEmailExists(user.Email);
+            if (emailExists)
+                return Fail("An account with this email already exists.");
 
-        await saveUser(user);
+            await saveUser(user);
+            await scope.CompleteTransaction();
+        }
 
         return Succeed(buildResponse(user));
     }
@@ -34,17 +39,17 @@ public class RegisterWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<bool> checkEmailExists(string email) =>
-        await _repository.Exists<User>(User.ByEmail(email));
+        await _repository.Exists(User.ByEmail(email));
 
     private User createUser(RegisterRequest request) =>
         User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
 
     private async Task saveUser(User user)
     {
-        await _repository.Add<User>(user);
+        await _repository.Add(user);
         await _repository.SaveChanges();
     }
-
+    
     private RegisterResponse buildResponse(User user) =>
         new RegisterResponse { UserId = user.Id };
 }

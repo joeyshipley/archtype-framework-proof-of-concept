@@ -13,4 +13,10 @@ public interface IRepository
     Task Update<T>(T entity) where T : class, IEntity;
     Task Delete<T>(T entity) where T : class, IEntity;
     Task SaveChanges();
+    ITransactionScope BeginTransactionScope();
+}
+
+public interface ITransactionScope : IDisposable, IAsyncDisposable
+{
+    Task CompleteTransaction();
 }
