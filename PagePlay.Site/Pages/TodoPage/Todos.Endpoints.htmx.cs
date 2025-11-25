@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todos.CreateTodo;
@@ -76,27 +75,15 @@ public static class TodosPageEndpoints
 
         endpoints.MapPost("/api/todos/delete", async (
             [FromForm] long id,
-            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
         {
             var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
             if (!deleteResult.Success)
-                return Results.Content(page.RenderError("Failed to delete todo"), "text/html");
+                return Results.BadRequest();
 
-            // Check if we need to show the empty state
-            var listResult = await listWorkflow.Perform(new ListTodosRequest());
-            if (listResult.Success && listResult.Model.Todos.Count == 0)
-            {
-                // Return OOB swap to show empty state after removing the item
-                return Results.Content(
-                    """<li class="todo-empty" hx-swap-oob="afterbegin:#todo-list-ul"><p>No todos yet. Add one above to get started!</p></li>""",
-                    "text/html");
-            }
-
-            // Return empty content - the frontend will remove the element
-            return Results.Content("", "text/html");
+            return Results.Ok();
         });
     }
 }
