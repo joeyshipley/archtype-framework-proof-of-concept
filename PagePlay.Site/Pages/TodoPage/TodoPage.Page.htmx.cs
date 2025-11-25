@@ -73,7 +73,6 @@ public class TodoPage
                       hx-target="#todo-list"
                       hx-swap="morph:innerHTML"
                       class="todo-toggle-form">
-                    <input type="hidden" name="__RequestVerificationToken" value="{{antiforgeryToken}}" />
                     <input type="hidden" name="id" value="{{todo.Id}}" />
                     <input type="checkbox"
                            {{checkedAttr}}

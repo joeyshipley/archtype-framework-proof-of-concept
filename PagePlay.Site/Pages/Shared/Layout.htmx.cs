@@ -15,6 +15,11 @@ public static class Layout
         <script src="https://unpkg.com/htmx.org@1.9.10"></script>
         <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
         <link rel="stylesheet" href="/css/site.css" />
+    </head>
+    <body>
+        <main>
+            {{bodyContent}}
+        </main>
         <script>
             document.body.addEventListener('htmx:configRequest', function(evt) {
                 const token = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -23,11 +28,6 @@ public static class Layout
                 }
             });
         </script>
-    </head>
-    <body>
-        <main>
-            {{bodyContent}}
-        </main>
     </body>
     </html>
     """;
