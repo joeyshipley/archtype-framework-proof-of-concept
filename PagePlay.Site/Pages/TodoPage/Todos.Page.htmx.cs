@@ -85,7 +85,8 @@ public class TodosPage
                     {
                         Endpoint = "/api/todos/delete",
                         ModelId = todo.Id,
-                        Target = "#todo-list"
+                        Target = $"#todo-{todo.Id}",
+                        SwapStrategy = "outerHTML"
                     },
                     html: new()
                     {
@@ -99,8 +100,9 @@ public class TodosPage
                     endpoint: "/api/todos/delete",
                     id: todo.Id,
                     tag: "todo",
-                    target: "#todo-list",
-                    content: $$"""X2"""
+                    target: $"#todo-{todo.Id}",
+                    content: $$"""X2""",
+                    swapStrategy: "outerHTML"
                 )}}
                 <hr />
             </div>

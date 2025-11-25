@@ -87,27 +87,20 @@ public static class TodosPageEndpoints
 
         endpoints.MapPost("/api/todos/delete", async (
             [FromForm] long id,
-            IAntiforgery antiforgery,
-            HttpContext context,
-            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow) =>
+            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
         {
-            var tokens = antiforgery.GetAndStoreTokens(context);
             var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
-            var listResult = await listWorkflow.Perform(new ListTodosRequest());
-
-            if (!listResult.Success)
+            if (!deleteResult.Success)
             {
                 return Results.Content(
-                    page.RenderError("Failed to load todos"),
+                    page.RenderError("Failed to delete todo"),
                     "text/html");
             }
 
-            return Results.Content(
-                page.RenderTodoList(tokens.RequestToken!, listResult.Model.Todos),
-                "text/html");
+            // Return empty content - the frontend will remove the element
+            return Results.Content("", "text/html");
         });
     }
 }

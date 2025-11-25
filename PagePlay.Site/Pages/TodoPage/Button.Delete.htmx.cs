@@ -10,7 +10,8 @@ public static class ButtonDelete
         string target,
         string content,
         string? cssClass = null,
-        string? title = null
+        string? title = null,
+        string? swapStrategy = null
     )
     {
         return Button.Render(
@@ -18,7 +19,8 @@ public static class ButtonDelete
             {
                 Endpoint = endpoint,
                 ModelId = id,
-                Target = target
+                Target = target,
+                SwapStrategy = swapStrategy ?? "morph:innerHTML"
             },
             html: new HtmlData
             {
