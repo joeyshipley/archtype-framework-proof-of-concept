@@ -14,7 +14,7 @@ public static class TodoPageEndpoints
 {
     public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
     {
-        var page = new TodoPage();
+        var page = new TodosPage();
 
         endpoints.MapGet("/todos", async (
             IAntiforgery antiforgery,

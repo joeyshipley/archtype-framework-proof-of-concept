@@ -4,7 +4,7 @@ public class RouteData
 {
     public required string Endpoint { get; init; }
     public long? ModelId { get; init; }
-    public required string TargetSelector { get; init; }
+    public required string Target { get; init; }
     public string HttpMethod { get; init; } = "post";
     public string SwapStrategy { get; init; } = "morph:innerHTML";
     public List<(string name, object value)>? AdditionalValues { get; init; }
@@ -59,7 +59,7 @@ public class Button
         return $$"""
         <button id="{{html.ElementId}}"
                 hx-{{route.HttpMethod}}="{{route.Endpoint}}"
-                hx-target="{{route.TargetSelector}}"
+                hx-target="{{route.Target}}"
                 hx-swap="{{route.SwapStrategy}}"
                 {{hxValsAttr}}
                 {{classAttr}}

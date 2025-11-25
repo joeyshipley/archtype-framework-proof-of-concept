@@ -3,7 +3,7 @@ using PagePlay.Site.Application.Todos.ListTodos;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
-public class TodoPage
+public class TodosPage
 {
     // language=html
     public string RenderPage(string antiforgeryToken, List<TodoItem> todos) =>
@@ -81,19 +81,26 @@ public class TodoPage
                 </form>
                 <span class="todo-title">{{todo.Title}}</span>
                 {{Button.Render(
-                    route: new RouteData
+                    route: new()
                     {
                         Endpoint = "/api/todos/delete",
                         ModelId = todo.Id,
-                        TargetSelector = "#todo-list"
+                        Target = "#todo-list"
                     },
-                    html: new HtmlData
+                    html: new()
                     {
                         ElementId = $"delete-todo-{todo.Id}",
                         Title = "Delete todo",
                         CssClass = "todo-delete"
                     },
-                    content: $$"""x"""
+                    content: $$"""X1"""
+                )}}
+                {{ButtonDelete.Render(
+                    endpoint: "/api/todos/delete",
+                    id: todo.Id,
+                    tag: "todo",
+                    target: "#todo-list",
+                    content: $$"""X2"""
                 )}}
                 <hr />
             </div>
