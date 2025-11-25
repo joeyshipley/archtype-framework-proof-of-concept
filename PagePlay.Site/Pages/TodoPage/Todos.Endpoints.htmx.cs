@@ -49,13 +49,8 @@ public static class TodosPageEndpoints
             var createResult = await createWorkflow.Perform(createRequest);
 
             if (!createResult.Success)
-            {
-                return Results.Content(
-                    page.RenderError("Failed to create todo"),
-                    "text/html");
-            }
+                return Results.Content(page.RenderError("Failed to create todo"), "text/html");
 
-            // Return just the new todo item - will be inserted at the top of the list
             return Results.Content(
                 page.RenderTodoItem(tokens.RequestToken!, createResult.Model.Todo),
                 "text/html");
@@ -72,11 +67,7 @@ public static class TodosPageEndpoints
             var toggleResult = await toggleWorkflow.Perform(toggleRequest);
 
             if (!toggleResult.Success)
-            {
-                return Results.Content(
-                    page.RenderError("Failed to toggle todo"),
-                    "text/html");
-            }
+                return Results.Content(page.RenderError("Failed to toggle todo"), "text/html");
 
             return Results.Content(
                 page.RenderTodoList(tokens.RequestToken!, toggleResult.Model.Todos),
@@ -92,11 +83,7 @@ public static class TodosPageEndpoints
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
             if (!deleteResult.Success)
-            {
-                return Results.Content(
-                    page.RenderError("Failed to delete todo"),
-                    "text/html");
-            }
+                return Results.Content(page.RenderError("Failed to delete todo"), "text/html");
 
             // Check if we need to show the empty state
             var listResult = await listWorkflow.Perform(new ListTodosRequest());
