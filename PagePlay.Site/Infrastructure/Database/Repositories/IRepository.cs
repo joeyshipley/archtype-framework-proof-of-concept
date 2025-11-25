@@ -9,6 +9,8 @@ public interface IRepository<T> where T : class, IEntity
     Task<T> GetForUpdate(Specification<T> spec);
     Task<List<T>> List(Specification<T> spec);
     Task<bool> Any(Specification<T> spec);
+    Task<T> GetById(long id);
+    Task<T> GetByIdForUpdate(long id);
     Task<T> Add(T entity);
     Task Update(T entity);
     Task Delete(T entity);

@@ -5,12 +5,6 @@ namespace PagePlay.Site.Application.Todos.Domain.Repository;
 
 public interface ITodoRepository : IRepository<Todo>
 {
-    Task<Todo> GetById(long id);
-    Task<Todo> GetByIdForUpdate(long id);
-    Task<List<Todo>> GetAll();
-    Task<List<Todo>> GetCompleted();
-    Task<List<Todo>> GetIncomplete();
-    Task<List<Todo>> GetByUserId(long userId);
-    Task<List<Todo>> GetCompletedByUserId(long userId);
-    Task<List<Todo>> GetIncompleteByUserId(long userId);
+    // Empty for now - ready for truly special repository logic when needed
+    // Use specifications through inherited IRepository<Todo> methods for queries
 }

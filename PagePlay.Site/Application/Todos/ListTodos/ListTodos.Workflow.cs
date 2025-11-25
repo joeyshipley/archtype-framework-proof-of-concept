@@ -28,7 +28,7 @@ public class ListTodosWorkflow(
         await _validator.ValidateAsync(request);
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _todoRepository.GetByUserId(_authContext.UserId);
+        await _todoRepository.List(TodoSpecifications.ByUserId(_authContext.UserId));
 
     private ListTodosResponse buildResponse(List<Todo> todos) =>
         new ListTodosResponse

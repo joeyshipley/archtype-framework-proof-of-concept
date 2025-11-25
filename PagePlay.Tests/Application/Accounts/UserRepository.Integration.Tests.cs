@@ -5,6 +5,7 @@ using PagePlay.Site.Application.Accounts.Domain.Repository;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.TestBases;
+using static PagePlay.Site.Application.Accounts.Domain.Repository.UserSpecifications;
 
 namespace PagePlay.Tests.Application.Accounts;
 
@@ -32,7 +33,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
         await SUT.SaveChanges();
 
         // Act
-        var result = await SUT.GetByEmail("test@example.com");
+        var result = await SUT.Get(ByEmail("test@example.com"));
 
         // Assert
         result.Should().NotBeNull();
@@ -44,7 +45,7 @@ public class UserRepositoryIntegrationTests : SetupIntegrationTestFor<IUserRepos
     {
         // Arrange
         // Act
-        var result = await SUT.GetByEmail("nonexistent@example.com");
+        var result = await SUT.Get(ByEmail("nonexistent@example.com"));
 
         // Assert
         result.Should().BeNull();

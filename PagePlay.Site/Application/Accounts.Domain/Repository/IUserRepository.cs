@@ -5,7 +5,6 @@ namespace PagePlay.Site.Application.Accounts.Domain.Repository;
 
 public interface IUserRepository : IRepository<User>
 {
-    Task<User> GetByEmail(string email);
-    Task<User> GetById(long id);
+    // EmailExists provides semantic value - it's clear and concise
     Task<bool> EmailExists(string email);
 }

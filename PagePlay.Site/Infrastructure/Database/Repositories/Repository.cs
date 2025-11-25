@@ -52,6 +52,21 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return await applySpecification(context, spec).AnyAsync();
     }
 
+    public async Task<T> GetById(long id)
+    {
+        var context = await GetContext();
+        return await context.Set<T>()
+            .AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+
+    public async Task<T> GetByIdForUpdate(long id)
+    {
+        var context = await GetContext();
+        return await context.Set<T>()
+            .FirstOrDefaultAsync(e => e.Id == id);
+    }
+
     public async Task<T> Add(T entity)
     {
         var context = await GetContext();
