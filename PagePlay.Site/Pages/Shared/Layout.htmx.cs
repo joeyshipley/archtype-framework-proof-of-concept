@@ -35,7 +35,7 @@ public class Layout(IAntiforgery _antiforgery) : IPageLayout
                 document.body.addEventListener('htmx:configRequest', function(evt) {
                     const token = document.querySelector('meta[name="csrf-token"]')?.content;
                     if (token) {
-                        evt.detail.headers['RequestVerificationToken'] = token;
+                        evt.detail.headers['X-XSRF-TOKEN'] = token;
                     }
                 });
             </script>
