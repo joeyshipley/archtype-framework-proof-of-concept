@@ -2,9 +2,8 @@ using PagePlay.Site.Application.Todos.ListTodos;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Pages;
 using PagePlay.Site.Pages.Shared;
-using PagePlay.Site.Pages.Todos;
 
-namespace PagePlay.Site.Pages.TodoPage;
+namespace PagePlay.Site.Pages.Todos;
 
 public class TodosPageEndpoints(
     IPageLayout _layout,
