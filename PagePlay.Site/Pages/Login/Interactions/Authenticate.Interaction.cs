@@ -1,11 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Http;
 using PagePlay.Site.Infrastructure.Pages;
 
 namespace PagePlay.Site.Pages.Login.Interactions;
 
-public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
+public class AuthenticateInteraction(
+    LoginPage _page,
+    ICookieManager _cookieManager,
+    IResponseManager _responseManager
+) : ILoginPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(LoginPageEndpoints.ROUTE_BASE, "authenticate"),
@@ -13,7 +18,6 @@ public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
     );
 
     private async Task<IResult> handle(
-        HttpContext context,
         [FromForm] LoginWorkflowRequest loginWorkflowRequest,
         IWorkflow<LoginWorkflowRequest, LoginWorkflowResponse> loginWorkflow
     )
@@ -23,17 +27,9 @@ public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
         if (!loginResult.Success)
             return Results.Content(_page.RenderError("Invalid email or password"), "text/html");
 
-        // Set secure HTTP-only cookie with JWT token
-        context.Response.Cookies.Append("auth_token", loginResult.Model.Token, new CookieOptions
-        {
-            HttpOnly = true,                        // Prevents JavaScript access (XSS protection)
-            Secure = true,                          // Only sent over HTTPS
-            SameSite = SameSiteMode.Strict,         // CSRF protection
-            MaxAge = TimeSpan.FromMinutes(60),      // Match JWT expiration
-            Path = "/"
-        });
+        _cookieManager.SetAuthCookie(loginResult.Model.Token);
+        _responseManager.SetRedirectHeader("/todos");
 
-        context.Response.Headers.Append("HX-Redirect", "/todos");
         return Results.Ok();
     }
 }

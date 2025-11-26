@@ -19,7 +19,6 @@ public class TodosPageEndpoints(
     public void Map(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet(ROUTE_BASE, async (
-            HttpContext context,
             IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse> listWorkflow
         ) =>
         {
@@ -28,7 +27,7 @@ public class TodosPageEndpoints(
                 ? _page.RenderError("Failed to load todos")
                 : _page.RenderPage(result.Model.Todos);
 
-            var page = _layout.Render(context, "Todos", bodyContent);
+            var page = _layout.Render("Todos", bodyContent);
             return Results.Content(page, "text/html");
         })
         .RequireAuthenticatedUser();

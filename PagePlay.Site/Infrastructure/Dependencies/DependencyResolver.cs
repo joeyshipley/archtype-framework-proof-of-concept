@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
+using PagePlay.Site.Infrastructure.Http;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;
@@ -30,6 +31,9 @@ public static class DependencyResolver
         services.AddScoped<IAuthContext, LoggedInAuthContext>();
         services.AddScoped(sp => (LoggedInAuthContext)sp.GetRequiredService<IAuthContext>());
         services.AddHttpContextAccessor();
+        services.AddScoped<ICookieManager, CookieManager>();
+        services.AddScoped<IResponseManager, ResponseManager>();
+        services.AddScoped<IAntiforgeryTokenProvider, AntiforgeryTokenProvider>();
     }
 
     private static void bindData(IServiceCollection services)

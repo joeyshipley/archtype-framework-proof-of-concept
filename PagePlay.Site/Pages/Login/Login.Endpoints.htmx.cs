@@ -15,10 +15,10 @@ public class LoginPageEndpoints(
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(ROUTE_BASE, (HttpContext context) =>
+        endpoints.MapGet(ROUTE_BASE, () =>
         {
             var bodyContent = _page.RenderPage();
-            var page = _layout.Render(context, "Login", bodyContent);
+            var page = _layout.Render("Login", bodyContent);
             return Results.Content(page, "text/html");
         });
 

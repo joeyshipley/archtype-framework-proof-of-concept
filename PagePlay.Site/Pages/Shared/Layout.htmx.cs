@@ -1,19 +1,18 @@
-using Microsoft.AspNetCore.Antiforgery;
+using PagePlay.Site.Infrastructure.Http;
 
 namespace PagePlay.Site.Pages.Shared;
 
 public interface IPageLayout
 {
-    string Render(HttpContext context, string title, string bodyContent);
+    string Render(string title, string bodyContent);
 }
 
-public class Layout(IAntiforgery _antiforgery) : IPageLayout
+public class Layout(IAntiforgeryTokenProvider _antiforgeryTokenProvider) : IPageLayout
 {
     // language=html
-    public string Render(HttpContext context, string title, string bodyContent)
+    public string Render(string title, string bodyContent)
     {
-        var tokens = _antiforgery.GetAndStoreTokens(context);
-        var antiforgeryToken = tokens.RequestToken;
+        var antiforgeryToken = _antiforgeryTokenProvider.GetRequestToken();
 
         return $$"""
         <!DOCTYPE html>
