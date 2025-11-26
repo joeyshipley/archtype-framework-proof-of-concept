@@ -79,7 +79,8 @@ public class TodosPage
                         Endpoint = "/api/todos/delete",
                         ModelId = todo.Id,
                         Target = $"#todo-{todo.Id}",
-                        SwapStrategy = "outerHTML"
+                        SwapStrategy = "outerHTML",
+                        HxExt = "ignore:morph"
                     },
                     html: new()
                     {
@@ -95,7 +96,8 @@ public class TodosPage
                     tag: "todo",
                     target: $"#todo-{todo.Id}",
                     content: $$"""X2""",
-                    swapStrategy: "outerHTML"
+                    swapStrategy: "outerHTML",
+                    hxExt: "ignore:morph"
                 )}}
                 <hr />
             </div>
@@ -114,10 +116,21 @@ public class TodosPage
     // language=html
     public string RenderErrorNotification(string error) =>
     $$"""
-    <div id="notifications" hx-swap-oob="innerHTML">
+    <div id="notifications" hx-swap-oob="true">
         <div class="error" role="alert">
             {{HttpUtility.HtmlEncode(error)}}
         </div>
     </div>
+    """;
+
+    // language=html
+    public string RenderDeleteErrorWithNotification(long todoId, string error) =>
+    $$"""
+    <li class="todo-item todo-error" id="todo-{{todoId}}">
+        <div class="todo-content">
+            OH NOES!!!
+        </div>
+    </li>
+    {{RenderErrorNotification(error)}}
     """;
 }

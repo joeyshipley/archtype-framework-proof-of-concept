@@ -7,6 +7,7 @@ public class RouteData
     public required string Target { get; init; }
     public string HttpMethod { get; init; } = "post";
     public string SwapStrategy { get; init; } = "morph:innerHTML";
+    public string? HxExt { get; init; }
     public List<(string name, object value)>? AdditionalValues { get; init; }
 }
 
@@ -56,11 +57,14 @@ public class Button
                 $"data-{attr.attribute}=\"{attr.value}\""));
         }
 
+        var hxExtAttr = !string.IsNullOrEmpty(route.HxExt) ? $"hx-ext=\"{route.HxExt}\"" : "";
+
         return $$"""
         <button id="{{html.ElementId}}"
                 hx-{{route.HttpMethod}}="{{route.Endpoint}}"
                 hx-target="{{route.Target}}"
                 hx-swap="{{route.SwapStrategy}}"
+                {{hxExtAttr}}
                 {{hxValsAttr}}
                 {{classAttr}}
                 {{titleAttr}}
