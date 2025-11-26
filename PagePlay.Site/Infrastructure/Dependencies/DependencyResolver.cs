@@ -60,5 +60,6 @@ public static class DependencyResolver
     private static void bindClient(IServiceCollection services)
     {
         services.AddScoped<IPageLayout, Layout>();
+        services.AddScoped<Pages.TodoPage.TodosPage>();
     }
 }
