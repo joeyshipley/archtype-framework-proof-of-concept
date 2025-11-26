@@ -11,8 +11,7 @@ public class ToggleTodoInteraction(TodosPage _page) : ITodosPageInteraction
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "toggle"),
         handle
-    )
-    .RequireAuthenticatedUser();
+    ).RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
         [FromForm] ToggleTodoWorkflowRequest toggleWorkflowRequest,

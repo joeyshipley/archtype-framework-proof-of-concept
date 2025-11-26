@@ -11,8 +11,7 @@ public class DeleteTodoInteraction(TodosPage _page) : ITodosPageInteraction
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "delete"),
         handle
-    )
-    .RequireAuthenticatedUser();
+    ).RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
         [FromForm] DeleteTodoWorkflowRequest deleteWorkflowRequest,
