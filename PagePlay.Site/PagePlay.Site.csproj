@@ -40,7 +40,7 @@
     <Folder Include="Infrastructure\Sessions\" />
     <Folder Include="Pages\Login_OLD\" />
     <Folder Include="Pages\Profile\" />
-    <Folder Include="Pages\TodoPage\Interactions\" />
+    <Folder Include="Pages\Todos\Interactions\" />
   </ItemGroup>
 
 </Project>

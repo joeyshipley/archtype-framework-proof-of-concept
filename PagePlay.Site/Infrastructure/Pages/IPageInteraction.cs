@@ -1,6 +1,6 @@
 using PagePlay.Site.Infrastructure.Routing;
 
-namespace PagePlay.Site.Pages;
+namespace PagePlay.Site.Infrastructure.Pages;
 
 public interface IPageInteraction : IEndpoint {}
 

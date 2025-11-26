@@ -2,7 +2,7 @@ using System.Web;
 using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Pages.Shared.Elements;
 
-namespace PagePlay.Site.Pages.TodoPage;
+namespace PagePlay.Site.Pages.Todos;
 
 public class TodosPage
 {

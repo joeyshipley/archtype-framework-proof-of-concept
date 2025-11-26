@@ -5,6 +5,7 @@ using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Pages.Shared;
+using PagePlay.Site.Pages.Todos;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
 
@@ -60,6 +61,6 @@ public static class DependencyResolver
     private static void bindClient(IServiceCollection services)
     {
         services.AddScoped<IPageLayout, Layout>();
-        services.AddScoped<Pages.TodoPage.TodosPage>();
+        services.AddScoped<TodosPage>();
     }
 }
