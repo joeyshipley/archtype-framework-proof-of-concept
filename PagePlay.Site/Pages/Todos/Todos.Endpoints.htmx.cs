@@ -25,7 +25,7 @@ public class TodosPageEndpoints(
             var bodyContent = !result.Success
                 ? _page.RenderError("Failed to load todos")
                 : _page.RenderPage(result.Model.Todos);
-            
+
             var page = _layout.Render(context, "Todos", bodyContent);
             return Results.Content(page, "text/html");
         });

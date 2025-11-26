@@ -4,6 +4,7 @@ using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;
 using PagePlay.Site.Pages.Todos;
 
@@ -62,5 +63,6 @@ public static class DependencyResolver
     {
         services.AddScoped<IPageLayout, Layout>();
         services.AddScoped<TodosPage>();
+        services.AddScoped<LoginPage>();
     }
 }
