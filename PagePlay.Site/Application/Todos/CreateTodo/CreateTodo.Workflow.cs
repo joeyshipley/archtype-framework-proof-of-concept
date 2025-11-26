@@ -29,7 +29,7 @@ public class CreateTodoWorkflow(
 
     private async Task<Todo> createTodo(CreateTodoWorkflowRequest workflowRequest)
     {
-        var todo = Todo.Create(_authContext.UserId, workflowRequest.Title);
+        var todo = Todo.Create(_authContext.UserId.Value, workflowRequest.Title);
         await _repository.Add<Todo>(todo);
         await _repository.SaveChanges();
         return todo;

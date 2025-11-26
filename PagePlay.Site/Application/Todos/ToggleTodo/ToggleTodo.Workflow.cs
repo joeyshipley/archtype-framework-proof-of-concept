@@ -23,7 +23,7 @@ public class ToggleTodoWorkflow(
         if (todo == null)
             return Fail("Todo not found.");
 
-        if (!todo.IsOwnedBy(_authContext.UserId))
+        if (!todo.IsOwnedBy(_authContext.UserId.Value))
             return Fail("You do not have permission to modify this todo.");
 
         toggleTodo(todo);
@@ -46,7 +46,7 @@ public class ToggleTodoWorkflow(
         await _repository.SaveChanges();
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId));
+        await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId.Value));
 
     private ToggleTodoWorkflowResponse buildResponse(List<Todo> todos) =>
         new ToggleTodoWorkflowResponse

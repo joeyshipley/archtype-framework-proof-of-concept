@@ -34,7 +34,7 @@ public class UpdateTodoWorkflow(
         if (todo == null)
             return (null, "Todo not found.");
 
-        if (!todo.IsOwnedBy(_authContext.UserId))
+        if (!todo.IsOwnedBy(_authContext.UserId.Value))
             return (null, "You do not have permission to modify this todo.");
 
         return (todo, null);

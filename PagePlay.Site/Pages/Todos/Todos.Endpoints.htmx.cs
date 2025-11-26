@@ -1,6 +1,7 @@
 using PagePlay.Site.Application.Todos.ListTodos;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Pages;
+using PagePlay.Site.Infrastructure.Routing;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Todos;
@@ -29,7 +30,8 @@ public class TodosPageEndpoints(
 
             var page = _layout.Render(context, "Todos", bodyContent);
             return Results.Content(page, "text/html");
-        });
+        })
+        .RequireAuthenticatedUser();
 
         foreach (var interaction in _interactions)
             interaction.Map(endpoints);
