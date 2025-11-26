@@ -5,7 +5,7 @@ using PagePlay.Site.Infrastructure.Pages;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
-public class CreateTodoInteraction(TodosPage _page) : IPageInteraction
+public class CreateTodoInteraction(TodosPage _page) : ITodosPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "create"), 

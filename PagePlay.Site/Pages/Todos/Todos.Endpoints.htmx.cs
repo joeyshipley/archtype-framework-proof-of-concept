@@ -5,10 +5,12 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Todos;
 
+public interface ITodosPageInteraction : IPageInteraction {}
+
 public class TodosPageEndpoints(
     IPageLayout _layout,
     TodosPage _page,
-    IEnumerable<IPageInteraction> _interactions
+    IEnumerable<ITodosPageInteraction> _interactions
 ) : IClientEndpoint
 {
     public const string ROUTE_BASE = "todos";

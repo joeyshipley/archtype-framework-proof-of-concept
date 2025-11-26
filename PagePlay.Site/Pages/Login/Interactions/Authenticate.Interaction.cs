@@ -5,7 +5,7 @@ using PagePlay.Site.Infrastructure.Pages;
 
 namespace PagePlay.Site.Pages.Login.Interactions;
 
-public class AuthenticateInteraction(LoginPage _page) : IPageInteraction
+public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(LoginPageEndpoints.ROUTE_BASE, "authenticate"),

@@ -3,10 +3,12 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Login;
 
+public interface ILoginPageInteraction : IPageInteraction {}
+
 public class LoginPageEndpoints(
     IPageLayout _layout,
     LoginPage _page,
-    IEnumerable<IPageInteraction> _interactions
+    IEnumerable<ILoginPageInteraction> _interactions
 ) : IClientEndpoint
 {
     public const string ROUTE_BASE = "login";
