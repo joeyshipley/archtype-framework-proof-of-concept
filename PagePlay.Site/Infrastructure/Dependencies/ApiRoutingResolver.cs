@@ -1,5 +1,6 @@
 using PagePlay.Site.Application.Accounts;
 using PagePlay.Site.Infrastructure.Routing;
+using PagePlay.Site.Pages;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
 
@@ -10,5 +11,6 @@ public static class ApiRoutingResolver
         services.AutoRegister<IEndpointRoutes>(ServiceLifetime.Scoped);
 
         services.AutoRegister<IAccountEndpoint>(ServiceLifetime.Scoped);
+        services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
     }
 }

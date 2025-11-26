@@ -9,15 +9,19 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
-public static class TodosPageEndpoints
+public class TodosPageEndpoints : IClientEndpoint
 {
-    public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
+    private const string ROUTE_BASE = "todos";
+    
+    public void Map(
+        IEndpointRouteBuilder endpoints
+    )
     {
         // TODO: DI the TodoPage?
         // Not sure that'll work at the level this is attached to program at this time.
         var page = new TodosPage();
 
-        endpoints.MapGet("/todos", async (
+        endpoints.MapGet(ROUTE_BASE, async (
             IAntiforgery antiforgery,
             HttpContext context,
             IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow
@@ -31,15 +35,15 @@ public static class TodosPageEndpoints
             {
                 var errorContent = page.RenderError("Failed to load todos");
                 var errorPage = Layout.Render(errorContent, "Todos", tokens.RequestToken!);
-                return Html(errorPage);
+                return htmxResult(errorPage);
             }
 
             var bodyContent = page.RenderPage(result.Model.Todos);
             var fullPage = Layout.Render(bodyContent, "Todos", tokens.RequestToken!);
-            return Html(fullPage);
+            return htmxResult(fullPage);
         });
 
-        endpoints.MapPost("/api/todos/create", async (
+        endpoints.MapPost(interactionUrl("create"), async (
             [FromForm] CreateTodoRequest createRequest,
             IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow
         ) => 
@@ -47,12 +51,12 @@ public static class TodosPageEndpoints
             var createResult = await createWorkflow.Perform(createRequest);
 
             if (!createResult.Success)
-                return Html(page.RenderErrorNotification("Failed to create todo"));
+                return htmxResult(page.RenderErrorNotification("Failed to create todo"));
 
-            return Html(page.RenderTodoItem(createResult.Model.Todo));
+            return htmxResult(page.RenderTodoItem(createResult.Model.Todo));
         });
 
-        endpoints.MapPost("/api/todos/toggle", async (
+        endpoints.MapPost(interactionUrl("toggle"), async (
             [FromForm] ToggleTodoRequest toggleRequest,
             IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow
         ) =>
@@ -60,12 +64,12 @@ public static class TodosPageEndpoints
             var toggleResult = await toggleWorkflow.Perform(toggleRequest);
 
             if (!toggleResult.Success)
-                return Html(page.RenderErrorNotification("Failed to toggle todo"));
+                return htmxResult(page.RenderErrorNotification("Failed to toggle todo"));
 
-            return Html(page.RenderTodoList(toggleResult.Model.Todos));
+            return htmxResult(page.RenderTodoList(toggleResult.Model.Todos));
         });
 
-        endpoints.MapPost("/api/todos/delete", async (
+        endpoints.MapPost(interactionUrl("delete"), async (
             [FromForm] DeleteTodoRequest deleteRequest,
             IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow
         ) =>
@@ -75,11 +79,13 @@ public static class TodosPageEndpoints
             // TODO: fetch the task from DB and send back a row with error state instead of using OH NOES!!! in html
             // This will be needed for better UX in other places.
             if (!deleteResult.Success)
-                return Html(page.RenderDeleteErrorWithNotification(deleteRequest.Id, "Failed to delete todo"));
+                return htmxResult(page.RenderDeleteErrorWithNotification(deleteRequest.Id, "Failed to delete todo"));
 
-            return Html(string.Empty);
+            return htmxResult(string.Empty);
         });
-
     }
-    private static IResult Html(string content) => Results.Content(content, "text/html");
+    
+    private string interactionUrl(string path) => $"/interaction/{ ROUTE_BASE }/{ path.TrimStart('/') }";
+
+    private IResult htmxResult(string content) => Results.Content(content, "text/html");
 }

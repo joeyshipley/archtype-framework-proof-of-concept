@@ -71,7 +71,7 @@ public static class ResolverExtensions
             var workflowInterface = workflowType.GetInterfaces()
                 .FirstOrDefault(i =>
                     i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(PagePlay.Site.Infrastructure.Application.IWorkflow<,>)
+                    i.GetGenericTypeDefinition() == typeof(Application.IWorkflow<,>)
                 );
 
             if (workflowInterface != null)

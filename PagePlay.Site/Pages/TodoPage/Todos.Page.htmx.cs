@@ -1,5 +1,6 @@
 using System.Web;
 using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Pages.Shared.Elements;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
@@ -24,7 +25,7 @@ public class TodosPage
     public string RenderCreateForm() =>
     $$"""
     <div class="todo-create-form">
-        <form hx-post="/api/todos/create"
+        <form hx-post="/interaction/todos/create"
               hx-target="#todo-list-ul"
               hx-swap="afterbegin"
               hx-on::after-request="if(event.detail.successful) { this.reset(); document.querySelector('.todo-empty')?.remove(); }">
@@ -64,7 +65,7 @@ public class TodosPage
         return $$"""
         <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}">
             <div class="todo-content">
-                <form hx-post="/api/todos/toggle"
+                <form hx-post="/interaction/todos/toggle"
                       hx-target="#todo-list"
                       hx-swap="morph:innerHTML"
                       hx-ext="morph"
@@ -79,7 +80,7 @@ public class TodosPage
                 {{Button.Render(
                     route: new()
                     {
-                        Endpoint = "/api/todos/delete",
+                        Endpoint = "/interaction/todos/delete",
                         ModelId = todo.Id,
                         Target = $"#todo-{todo.Id}",
                         SwapStrategy = "outerHTML"
@@ -93,7 +94,7 @@ public class TodosPage
                     content: $$"""X1"""
                 )}}
                 {{ButtonDelete.Render(
-                    endpoint: "/api/todos/delete",
+                    endpoint: "/interaction/todos/delete",
                     id: todo.Id,
                     tag: "todo",
                     target: $"#todo-{todo.Id}",
