@@ -38,7 +38,7 @@
     <Folder Include="Infrastructure\Caching\" />
     <Folder Include="Infrastructure\Email\" />
     <Folder Include="Infrastructure\Sessions\" />
-    <Folder Include="Pages\Login\" />
+    <Folder Include="Pages\Login_OLD\" />
     <Folder Include="Pages\Profile\" />
     <Folder Include="Pages\TodoPage\Interactions\" />
   </ItemGroup>
