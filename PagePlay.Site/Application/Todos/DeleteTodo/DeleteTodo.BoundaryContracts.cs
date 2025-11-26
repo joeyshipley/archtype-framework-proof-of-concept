@@ -3,18 +3,18 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
-public class DeleteTodoResponse : IResponse
+public class DeleteTodoWorkflowResponse : IWorkflowResponse
 {
     public long Id { get; set; }
     public string Message { get; set; } = string.Empty;
 }
 
-public class DeleteTodoRequest : IRequest
+public class DeleteTodoWorkflowRequest : IWorkflowRequest
 {
     public long Id { get; set; }
 }
 
-public class DeleteTodoRequestValidator : AbstractValidator<DeleteTodoRequest>
+public class DeleteTodoRequestValidator : AbstractValidator<DeleteTodoWorkflowRequest>
 {
     public DeleteTodoRequestValidator()
     {

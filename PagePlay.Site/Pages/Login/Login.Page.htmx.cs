@@ -1,3 +1,4 @@
+/*
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Login;
 using PagePlay.Site.Infrastructure.Application;
@@ -7,7 +8,7 @@ namespace PagePlay.Site.Pages.Login;
 
 public interface ILoginPageHtmx :
     IHtmxPage<LoginPageData>,
-    IHtmxFragment<LoginResponse>
+    IHtmxFragment<LoginWorkflowResponse>
 {}
 
 public static class LoginEndpoints
@@ -15,7 +16,7 @@ public static class LoginEndpoints
     public static void MapLoginRoutes(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapHtmxPage<ILoginPageHtmx, LoginPageData>("/htmx/login", "Login");
-        endpoints.MapHtmxFragment<ILoginPageHtmx, LoginRequest, LoginResponse>("/htmx/api/login");
+        endpoints.MapHtmxFragment<ILoginPageHtmx, LoginWorkflowRequest, LoginWorkflowResponse>("/htmx/api/login");
     }
 }
 
@@ -77,7 +78,7 @@ public class LoginPage : ILoginPageHtmx
     """;
 
     // language=html
-    public string RenderSuccess(LoginResponse model) =>
+    public string RenderSuccess(LoginWorkflowResponse model) =>
     $$"""
     <div class="success">
         <h2>Success</h2>
@@ -86,3 +87,4 @@ public class LoginPage : ILoginPageHtmx
     </div>
     """;
 }
+*/

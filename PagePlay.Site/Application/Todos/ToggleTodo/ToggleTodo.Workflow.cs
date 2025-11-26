@@ -8,18 +8,18 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoWorkflow(
-    IValidator<ToggleTodoRequest> _validator,
+    IValidator<ToggleTodoWorkflowRequest> _validator,
     LoggedInAuthContext _authContext,
     IRepository _repository
-) : WorkflowBase<ToggleTodoRequest, ToggleTodoResponse>, IWorkflow<ToggleTodoRequest, ToggleTodoResponse>
+) : WorkflowBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>, IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>
 {
-    public async Task<IApplicationResult<ToggleTodoResponse>> Perform(ToggleTodoRequest request)
+    public async Task<IApplicationResult<ToggleTodoWorkflowResponse>> Perform(ToggleTodoWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = await getTodoById(request.Id);
+        var todo = await getTodoById(workflowRequest.Id);
         if (todo == null)
             return Fail("Todo not found.");
 
@@ -33,8 +33,8 @@ public class ToggleTodoWorkflow(
         return Succeed(buildResponse(todos));
     }
 
-    private async Task<ValidationResult> validate(ToggleTodoRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(ToggleTodoWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
     private async Task<Todo> getTodoById(long id) =>
         await _repository.GetForUpdate(Todo.ById(id));
@@ -48,8 +48,8 @@ public class ToggleTodoWorkflow(
     private async Task<List<Todo>> getTodosByUserId() =>
         await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId));
 
-    private ToggleTodoResponse buildResponse(List<Todo> todos) =>
-        new ToggleTodoResponse
+    private ToggleTodoWorkflowResponse buildResponse(List<Todo> todos) =>
+        new ToggleTodoWorkflowResponse
         {
             Todos = todos
                 .OrderBy(t => t.IsCompleted)

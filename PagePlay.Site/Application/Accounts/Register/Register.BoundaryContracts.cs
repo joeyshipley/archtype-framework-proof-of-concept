@@ -3,19 +3,19 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Accounts.Register;
 
-public class RegisterResponse : IResponse
+public class RegisterWorkflowResponse : IWorkflowResponse
 {
     public long UserId { get; set; }
 }
 
-public class RegisterRequest : IRequest
+public class RegisterWorkflowRequest : IWorkflowRequest
 {
     public string Email { get; set; }
     public string Password { get; set; }
     public string ConfirmPassword { get; set; }
 }
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterRequestValidator : AbstractValidator<RegisterWorkflowRequest>
 {
     public RegisterRequestValidator()
     {

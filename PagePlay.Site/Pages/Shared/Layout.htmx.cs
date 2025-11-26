@@ -1,9 +1,27 @@
+using Microsoft.AspNetCore.Antiforgery;
+
 namespace PagePlay.Site.Pages.Shared;
 
-public static class Layout
+public interface IPageLayout
 {
+    string Render(string title, string bodyContent);
+}
+
+public class Layout : IPageLayout
+{
+    public readonly string antiforgeryToken;
+    
+    public Layout(
+        HttpContext context,        
+        IAntiforgery antiforgery
+    )
+    {
+        var tokens = antiforgery.GetAndStoreTokens(context);
+        antiforgeryToken = tokens.RequestToken;
+    }
+    
     // language=html
-    public static string Render(string bodyContent, string title, string antiforgeryToken) =>
+    public string Render(string bodyContent, string title) =>
     $$"""
     <!DOCTYPE html>
     <html lang="en">

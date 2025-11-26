@@ -17,7 +17,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
     public async Task Perform_WithAuthenticatedUser_ReturnsUserProfile()
     {
         // Arrange
-        var request = new ViewProfileRequest();
+        var request = new ViewProfileWorkflowRequest();
         var userId = 123L;
         var user = new User
         {
@@ -28,7 +28,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
+            .GetSubstituteFor<IValidator<ViewProfileWorkflowRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -61,7 +61,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
     public async Task Perform_WithInvalidRequest_ReturnsValidationErrors()
     {
         // Arrange
-        var request = new ViewProfileRequest();
+        var request = new ViewProfileWorkflowRequest();
 
         var validationFailures = new List<ValidationFailure>
         {
@@ -69,7 +69,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
+            .GetSubstituteFor<IValidator<ViewProfileWorkflowRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -91,11 +91,11 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
     public async Task Perform_WithNonExistentUser_ReturnsUserNotFoundError()
     {
         // Arrange
-        var request = new ViewProfileRequest();
+        var request = new ViewProfileWorkflowRequest();
         var userId = 999L;
 
         Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
+            .GetSubstituteFor<IValidator<ViewProfileWorkflowRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -127,7 +127,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
     public async Task Perform_UsesCorrectUserIdFromAuthContext()
     {
         // Arrange
-        var request = new ViewProfileRequest();
+        var request = new ViewProfileWorkflowRequest();
         var expectedUserId = 456L;
         var user = new User
         {
@@ -138,7 +138,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
+            .GetSubstituteFor<IValidator<ViewProfileWorkflowRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -169,7 +169,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
     public async Task Perform_ReturnsCorrectCreatedAtDate()
     {
         // Arrange
-        var request = new ViewProfileRequest();
+        var request = new ViewProfileWorkflowRequest();
         var userId = 789L;
         var expectedCreatedAt = new DateTime(2023, 5, 20, 14, 30, 45, DateTimeKind.Utc);
         var user = new User
@@ -181,7 +181,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<ViewProfileRequest>>()
+            .GetSubstituteFor<IValidator<ViewProfileWorkflowRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 

@@ -8,14 +8,14 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosWorkflow(
-    IValidator<ListTodosRequest> _validator,
+    IValidator<ListTodosWorkflowRequest> _validator,
     LoggedInAuthContext _authContext,
     IRepository _repository
-) : WorkflowBase<ListTodosRequest, ListTodosResponse>, IWorkflow<ListTodosRequest, ListTodosResponse>
+) : WorkflowBase<ListTodosWorkflowRequest, ListTodosWorkflowResponse>, IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse>
 {
-    public async Task<IApplicationResult<ListTodosResponse>> Perform(ListTodosRequest request)
+    public async Task<IApplicationResult<ListTodosWorkflowResponse>> Perform(ListTodosWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
@@ -24,14 +24,14 @@ public class ListTodosWorkflow(
         return Succeed(buildResponse(todos));
     }
 
-    private async Task<ValidationResult> validate(ListTodosRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(ListTodosWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
     private async Task<List<Todo>> getTodosByUserId() =>
         await _repository.List(Todo.ByUserId(_authContext.UserId));
 
-    private ListTodosResponse buildResponse(List<Todo> todos) =>
-        new ListTodosResponse
+    private ListTodosWorkflowResponse buildResponse(List<Todo> todos) =>
+        new ListTodosWorkflowResponse
         {
             Todos = todos
                 .OrderBy(t => t.IsCompleted)

@@ -3,20 +3,20 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.UpdateTodo;
 
-public class UpdateTodoResponse : IResponse
+public class UpdateTodoWorkflowResponse : IWorkflowResponse
 {
     public long Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public DateTime UpdatedAt { get; set; }
 }
 
-public class UpdateTodoRequest : IRequest
+public class UpdateTodoWorkflowRequest : IWorkflowRequest
 {
     public long Id { get; set; }
     public string Title { get; set; } = string.Empty;
 }
 
-public class UpdateTodoRequestValidator : AbstractValidator<UpdateTodoRequest>
+public class UpdateTodoRequestValidator : AbstractValidator<UpdateTodoWorkflowRequest>
 {
     public UpdateTodoRequestValidator()
     {

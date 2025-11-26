@@ -4,17 +4,17 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.CreateTodo;
 
-public class CreateTodoResponse : IResponse
+public class CreateTodoWorkflowResponse : IWorkflowResponse
 {
     public required TodoListEntry Todo { get; set; }
 }
 
-public class CreateTodoRequest : IRequest
+public class CreateTodoWorkflowRequest : IWorkflowRequest
 {
     public string Title { get; set; } = string.Empty;
 }
 
-public class CreateTodoRequestValidator : AbstractValidator<CreateTodoRequest>
+public class CreateTodoRequestValidator : AbstractValidator<CreateTodoWorkflowRequest>
 {
     public CreateTodoRequestValidator()
     {

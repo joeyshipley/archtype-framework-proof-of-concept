@@ -8,15 +8,14 @@ using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Routing;
 using PagePlay.Site.Infrastructure.Security;
-using PagePlay.Site.Pages.Login;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 DependencyResolver.Bind(builder.Services);
 
-builder.Services.AddScoped<ILoginPageHtmx, LoginPage>();
-builder.Services.AddScoped<IPageDataLoader<LoginPageData>, LoginPageDataLoader>();
+// builder.Services.AddScoped<ILoginPageHtmx, LoginPage>();
+// builder.Services.AddScoped<IPageDataLoader<LoginPageData>, LoginPageDataLoader>();
 
 builder.Services.AddRazorPages();
 
@@ -62,7 +61,7 @@ app.MapEndpoints();
 
 
 // TODO: delete this after updating login for new patterns.
-app.MapLoginRoutes();
+// app.MapLoginRoutes();
 
 // TODO: clean this up.
 // Warm up services to avoid cold start penalty on first request

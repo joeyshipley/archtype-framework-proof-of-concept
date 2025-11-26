@@ -10,12 +10,12 @@ namespace PagePlay.Site.Application.Accounts.ViewProfile;
 public class ViewProfileWorkflow(
     IRepository _repository,
     LoggedInAuthContext _authContext,
-    IValidator<ViewProfileRequest> _validator
-) : WorkflowBase<ViewProfileRequest, ViewProfileResponse>, IWorkflow<ViewProfileRequest, ViewProfileResponse>
+    IValidator<ViewProfileWorkflowRequest> _validator
+) : WorkflowBase<ViewProfileWorkflowRequest, ViewProfileWorkflowResponse>, IWorkflow<ViewProfileWorkflowRequest, ViewProfileWorkflowResponse>
 {
-    public async Task<IApplicationResult<ViewProfileResponse>> Perform(ViewProfileRequest request)
+    public async Task<IApplicationResult<ViewProfileWorkflowResponse>> Perform(ViewProfileWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
@@ -26,14 +26,14 @@ public class ViewProfileWorkflow(
         return Succeed(buildResponse(user));
     }
 
-    private async Task<ValidationResult> validate(ViewProfileRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(ViewProfileWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
     private async Task<User> getUserById(long userId) =>
         await _repository.Get(User.ById(userId));
 
-    private ViewProfileResponse buildResponse(User user) =>
-        new ViewProfileResponse
+    private ViewProfileWorkflowResponse buildResponse(User user) =>
+        new ViewProfileWorkflowResponse
         {
             Email = user.Email,
             CreatedAt = user.CreatedAt

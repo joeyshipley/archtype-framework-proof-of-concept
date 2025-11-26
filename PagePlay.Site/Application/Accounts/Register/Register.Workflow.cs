@@ -10,12 +10,12 @@ namespace PagePlay.Site.Application.Accounts.Register;
 public class RegisterWorkflow(
     IPasswordHasher _passwordHasher,
     IRepository _repository,
-    IValidator<RegisterRequest> _validator
-) : WorkflowBase<RegisterRequest, RegisterResponse>, IWorkflow<RegisterRequest, RegisterResponse>
+    IValidator<RegisterWorkflowRequest> _validator
+) : WorkflowBase<RegisterWorkflowRequest, RegisterWorkflowResponse>, IWorkflow<RegisterWorkflowRequest, RegisterWorkflowResponse>
 {
-    public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
+    public async Task<IApplicationResult<RegisterWorkflowResponse>> Perform(RegisterWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
@@ -23,7 +23,7 @@ public class RegisterWorkflow(
         User user = null;
         await using(var scope = _repository.BeginTransactionScope())
         {
-            user = createUser(request);
+            user = createUser(workflowRequest);
 
             var emailExists = await checkEmailExists(user.Email);
             if (emailExists)
@@ -36,14 +36,14 @@ public class RegisterWorkflow(
         return Succeed(buildResponse(user));
     }
 
-    private async Task<ValidationResult> validate(RegisterRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(RegisterWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
     private async Task<bool> checkEmailExists(string email) =>
         await _repository.Exists(User.ByEmail(email));
 
-    private User createUser(RegisterRequest request) =>
-        User.Create(request.Email, _passwordHasher.HashPassword(request.Password));
+    private User createUser(RegisterWorkflowRequest workflowRequest) =>
+        User.Create(workflowRequest.Email, _passwordHasher.HashPassword(workflowRequest.Password));
 
     private async Task saveUser(User user)
     {
@@ -51,7 +51,7 @@ public class RegisterWorkflow(
         await _repository.SaveChanges();
     }
     
-    private RegisterResponse buildResponse(User user) =>
-        new RegisterResponse { UserId = user.Id };
+    private RegisterWorkflowResponse buildResponse(User user) =>
+        new RegisterWorkflowResponse { UserId = user.Id };
 }
 

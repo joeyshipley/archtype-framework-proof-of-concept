@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todos.CreateTodo;
 using PagePlay.Site.Application.Todos.DeleteTodo;
@@ -9,46 +8,41 @@ using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.TodoPage;
 
-public class TodosPageEndpoints : IClientEndpoint
+public class TodosPageEndpoints(IPageLayout _layout) : IClientEndpoint
 {
     private const string ROUTE_BASE = "todos";
     
-    public void Map(
-        IEndpointRouteBuilder endpoints
-    )
+    public void Map(IEndpointRouteBuilder endpoints)
     {
         // TODO: DI the TodoPage?
         // Not sure that'll work at the level this is attached to program at this time.
         var page = new TodosPage();
 
         endpoints.MapGet(ROUTE_BASE, async (
-            IAntiforgery antiforgery,
-            HttpContext context,
-            IWorkflow<ListTodosRequest, ListTodosResponse> listWorkflow
+            IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse> listWorkflow
         ) =>
         {
-            var tokens = antiforgery.GetAndStoreTokens(context);
-            var request = new ListTodosRequest();
+            var request = new ListTodosWorkflowRequest();
             var result = await listWorkflow.Perform(request);
 
             if (!result.Success)
             {
                 var errorContent = page.RenderError("Failed to load todos");
-                var errorPage = Layout.Render(errorContent, "Todos", tokens.RequestToken!);
+                var errorPage = _layout.Render("Todos", errorContent);
                 return htmxResult(errorPage);
             }
 
             var bodyContent = page.RenderPage(result.Model.Todos);
-            var fullPage = Layout.Render(bodyContent, "Todos", tokens.RequestToken!);
+            var fullPage = _layout.Render("Todos", bodyContent);
             return htmxResult(fullPage);
         });
 
         endpoints.MapPost(interactionUrl("create"), async (
-            [FromForm] CreateTodoRequest createRequest,
-            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow
+            [FromForm] CreateTodoWorkflowRequest createWorkflowRequest,
+            IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse> createWorkflow
         ) => 
         {
-            var createResult = await createWorkflow.Perform(createRequest);
+            var createResult = await createWorkflow.Perform(createWorkflowRequest);
 
             if (!createResult.Success)
                 return htmxResult(page.RenderErrorNotification("Failed to create todo"));
@@ -57,11 +51,11 @@ public class TodosPageEndpoints : IClientEndpoint
         });
 
         endpoints.MapPost(interactionUrl("toggle"), async (
-            [FromForm] ToggleTodoRequest toggleRequest,
-            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow
+            [FromForm] ToggleTodoWorkflowRequest toggleWorkflowRequest,
+            IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse> toggleWorkflow
         ) =>
         {
-            var toggleResult = await toggleWorkflow.Perform(toggleRequest);
+            var toggleResult = await toggleWorkflow.Perform(toggleWorkflowRequest);
 
             if (!toggleResult.Success)
                 return htmxResult(page.RenderErrorNotification("Failed to toggle todo"));
@@ -70,16 +64,16 @@ public class TodosPageEndpoints : IClientEndpoint
         });
 
         endpoints.MapPost(interactionUrl("delete"), async (
-            [FromForm] DeleteTodoRequest deleteRequest,
-            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow
+            [FromForm] DeleteTodoWorkflowRequest deleteWorkflowRequest,
+            IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse> deleteWorkflow
         ) =>
         {
-            var deleteResult = await deleteWorkflow.Perform(deleteRequest);
+            var deleteResult = await deleteWorkflow.Perform(deleteWorkflowRequest);
 
             // TODO: fetch the task from DB and send back a row with error state instead of using OH NOES!!! in html
             // This will be needed for better UX in other places.
             if (!deleteResult.Success)
-                return htmxResult(page.RenderDeleteErrorWithNotification(deleteRequest.Id, "Failed to delete todo"));
+                return htmxResult(page.RenderDeleteErrorWithNotification(deleteWorkflowRequest.Id, "Failed to delete todo"));
 
             return htmxResult(string.Empty);
         });

@@ -6,10 +6,10 @@ namespace PagePlay.Site.Application.Accounts.Login;
 public class LoginEndpoint : IAccountEndpoint
 {
     public void Map(IEndpointRouteBuilder endpoints) =>
-        endpoints.Register<LoginResponse>("/login", handle);
+        endpoints.Register<LoginWorkflowResponse>("/login", handle);
 
     private async Task<IResult> handle(
-        LoginRequest request,
-        IWorkflow<LoginRequest, LoginResponse> workflow
-    ) => Respond.With(await workflow.Perform(request));
+        LoginWorkflowRequest workflowRequest,
+        IWorkflow<LoginWorkflowRequest, LoginWorkflowResponse> workflow
+    ) => Respond.With(await workflow.Perform(workflowRequest));
 }

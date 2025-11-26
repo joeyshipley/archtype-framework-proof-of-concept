@@ -4,17 +4,17 @@ using PagePlay.Site.Infrastructure.Application;
 
 namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
-public class ToggleTodoResponse : IResponse
+public class ToggleTodoWorkflowResponse : IWorkflowResponse
 {
     public List<TodoListEntry> Todos { get; set; } = new();
 }
 
-public class ToggleTodoRequest : IRequest
+public class ToggleTodoWorkflowRequest : IWorkflowRequest
 {
     public long Id { get; set; }
 }
 
-public class ToggleTodoRequestValidator : AbstractValidator<ToggleTodoRequest>
+public class ToggleTodoRequestValidator : AbstractValidator<ToggleTodoWorkflowRequest>
 {
     public ToggleTodoRequestValidator()
     {

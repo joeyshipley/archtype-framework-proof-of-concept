@@ -8,35 +8,35 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Todos.CreateTodo;
 
 public class CreateTodoWorkflow(
-    IValidator<CreateTodoRequest> _validator,
+    IValidator<CreateTodoWorkflowRequest> _validator,
     LoggedInAuthContext _authContext,
     IRepository _repository
-) : WorkflowBase<CreateTodoRequest, CreateTodoResponse>, IWorkflow<CreateTodoRequest, CreateTodoResponse>
+) : WorkflowBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>, IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>
 {
-    public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
+    public async Task<IApplicationResult<CreateTodoWorkflowResponse>> Perform(CreateTodoWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = await createTodo(request);
+        var todo = await createTodo(workflowRequest);
 
         return Succeed(buildResponse(todo));
     }
 
-    private async Task<ValidationResult> validate(CreateTodoRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(CreateTodoWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
-    private async Task<Todo> createTodo(CreateTodoRequest request)
+    private async Task<Todo> createTodo(CreateTodoWorkflowRequest workflowRequest)
     {
-        var todo = Todo.Create(_authContext.UserId, request.Title);
+        var todo = Todo.Create(_authContext.UserId, workflowRequest.Title);
         await _repository.Add<Todo>(todo);
         await _repository.SaveChanges();
         return todo;
     }
 
-    private CreateTodoResponse buildResponse(Todo todo) =>
-        new CreateTodoResponse
+    private CreateTodoWorkflowResponse buildResponse(Todo todo) =>
+        new CreateTodoWorkflowResponse
         {
             Todo = TodoListEntry.FromTodo(todo)
         };

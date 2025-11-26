@@ -8,18 +8,18 @@ using PagePlay.Site.Infrastructure.Security;
 namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
 public class DeleteTodoWorkflow(
-    IValidator<DeleteTodoRequest> _validator,
+    IValidator<DeleteTodoWorkflowRequest> _validator,
     LoggedInAuthContext _authContext,
     IRepository _repository
-) : WorkflowBase<DeleteTodoRequest, DeleteTodoResponse>, IWorkflow<DeleteTodoRequest, DeleteTodoResponse>
+) : WorkflowBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>, IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>
 {
-    public async Task<IApplicationResult<DeleteTodoResponse>> Perform(DeleteTodoRequest request)
+    public async Task<IApplicationResult<DeleteTodoWorkflowResponse>> Perform(DeleteTodoWorkflowRequest workflowRequest)
     {
-        var validationResult = await validate(request);
+        var validationResult = await validate(workflowRequest);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = await getTodoById(request.Id);
+        var todo = await getTodoById(workflowRequest.Id);
         if (todo == null)
             return Fail("Todo not found.");
 
@@ -31,8 +31,8 @@ public class DeleteTodoWorkflow(
         return Succeed(buildResponse(todo));
     }
 
-    private async Task<ValidationResult> validate(DeleteTodoRequest request) =>
-        await _validator.ValidateAsync(request);
+    private async Task<ValidationResult> validate(DeleteTodoWorkflowRequest workflowRequest) =>
+        await _validator.ValidateAsync(workflowRequest);
 
     private async Task<Todo> getTodoById(long id) =>
         await _repository.Get(Todo.ById(id));
@@ -43,8 +43,8 @@ public class DeleteTodoWorkflow(
         await _repository.SaveChanges();
     }
 
-    private DeleteTodoResponse buildResponse(Todo todo) =>
-        new DeleteTodoResponse
+    private DeleteTodoWorkflowResponse buildResponse(Todo todo) =>
+        new DeleteTodoWorkflowResponse
         {
             Id = todo.Id,
             Message = "Todo deleted successfully."

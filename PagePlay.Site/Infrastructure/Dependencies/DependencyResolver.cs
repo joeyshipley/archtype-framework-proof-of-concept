@@ -4,6 +4,7 @@ using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Database;
 using PagePlay.Site.Infrastructure.Database.Repositories;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
 
@@ -15,6 +16,7 @@ public static class DependencyResolver
         bindData(services);
         bindValidation(services);
         bindWorkflows(services);
+        bindClient(services);
         ApiRoutingResolver.BindRouting(services);
     }
 
@@ -25,7 +27,8 @@ public static class DependencyResolver
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddScoped<LoggedInAuthContext>();
         services.AddHttpContextAccessor();
-
+        
+        // TODO: remove this when cleaned up
         // Named HttpClient for calling internal APIs
         services.AddHttpClient("ApiClient", client =>
         {
@@ -46,11 +49,16 @@ public static class DependencyResolver
 
     private static void bindValidation(IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining<IRequest>();
+        services.AddValidatorsFromAssemblyContaining<IWorkflowRequest>();
     }
 
     private static void bindWorkflows(IServiceCollection services)
     {
         services.AutoRegisterWorkflows(ServiceLifetime.Scoped);
+    }
+
+    private static void bindClient(IServiceCollection services)
+    {
+        services.AddScoped<IPageLayout, Layout>();
     }
 }

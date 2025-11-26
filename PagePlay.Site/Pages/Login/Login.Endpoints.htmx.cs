@@ -1,3 +1,4 @@
+/*
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Accounts.Login;
@@ -21,7 +22,7 @@ public interface IPageDataLoader<TPageData>
     Task<TPageData> Load();
 }
 
-public interface IHtmxFragment<TResponse> where TResponse : IResponse
+public interface IHtmxFragment<TResponse> where TResponse : IWorkflowResponse
 {
     string RenderSuccess(TResponse model);
     string RenderError(IEnumerable<ResponseErrorEntry> errors);
@@ -75,8 +76,8 @@ public static class PlumbingExplorations
         string route
     )
         where TFragment : IHtmxFragment<TResponse>
-        where TRequest : IRequest, new()
-        where TResponse : IResponse
+        where TRequest : IWorkflowRequest, new()
+        where TResponse : IWorkflowResponse
     {
         endpoints.MapPost(route, async (
             HttpContext context,
@@ -121,7 +122,8 @@ public static class PlumbingExplorations
 
     private static IResult RenderFullPage(string bodyContent, string pageTitle, string antiforgeryToken)
     {
-        var fullPage = Layout.Render(bodyContent, pageTitle, antiforgeryToken);
+        var fullPage = LayoutOld.Render(pageTitle, bodyContent, antiforgeryToken);
         return Results.Content(fullPage, "text/html");
     }
 }
+*/

@@ -3,8 +3,8 @@ using FluentValidation.Results;
 namespace PagePlay.Site.Infrastructure.Application;
 
 public abstract class WorkflowBase<TRequest, TResponse>
-    where TRequest : IRequest
-    where TResponse : IResponse
+    where TRequest : IWorkflowRequest
+    where TResponse : IWorkflowResponse
 {
     protected IApplicationResult<TResponse> Fail(ValidationResult validationResult) =>
         ApplicationResult<TResponse>.Fail(validationResult);
