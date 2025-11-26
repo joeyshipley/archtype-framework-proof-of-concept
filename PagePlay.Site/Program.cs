@@ -8,6 +8,7 @@ using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Infrastructure.Web.Middleware;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -72,6 +73,7 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
