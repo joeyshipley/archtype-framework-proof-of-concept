@@ -30,14 +30,6 @@ public static class DependencyResolver
         services.AddScoped<IAuthContext, LoggedInAuthContext>();
         services.AddScoped(sp => (LoggedInAuthContext)sp.GetRequiredService<IAuthContext>());
         services.AddHttpContextAccessor();
-        
-        // TODO: remove this when cleaned up
-        // Named HttpClient for calling internal APIs
-        services.AddHttpClient("ApiClient", client =>
-        {
-            client.BaseAddress = new Uri("http://localhost:5200");
-            client.DefaultRequestHeaders.Add("Accept", "application/json");
-        });
     }
 
     private static void bindData(IServiceCollection services)
