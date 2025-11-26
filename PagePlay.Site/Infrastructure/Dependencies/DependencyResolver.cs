@@ -5,6 +5,7 @@ using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Web.Http;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;
@@ -21,7 +22,6 @@ public static class DependencyResolver
         bindValidation(services);
         bindWorkflows(services);
         bindClient(services);
-        ApiRoutingResolver.BindRouting(services);
     }
 
     private static void bindApplicationComponents(IServiceCollection services)
@@ -61,5 +61,8 @@ public static class DependencyResolver
     {
         services.AddScoped<IPageLayout, Layout>();
         services.AutoRegisterPages(ServiceLifetime.Scoped);
+        services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
+        services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
+        services.AutoRegister<ILoginPageInteraction>(ServiceLifetime.Scoped);
     }
 }
