@@ -6,7 +6,7 @@ using PagePlay.Site.Infrastructure.Web.Routing;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
-public class DeleteTodoInteraction(TodosPage _page) : ITodosPageInteraction
+public class DeleteTodoInteraction(ITodosPageView _page) : ITodosPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "delete"),

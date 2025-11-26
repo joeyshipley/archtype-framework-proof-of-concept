@@ -60,8 +60,6 @@ public static class DependencyResolver
     private static void bindClient(IServiceCollection services)
     {
         services.AddScoped<IPageLayout, Layout>();
-        services.AddScoped<HomePage>();
-        services.AddScoped<TodosPage>();
-        services.AddScoped<LoginPage>();
+        services.AutoRegisterPages(ServiceLifetime.Scoped);
     }
 }

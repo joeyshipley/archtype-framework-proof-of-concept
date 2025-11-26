@@ -1,6 +1,11 @@
 namespace PagePlay.Site.Pages.Home;
 
-public class HomePage
+public interface IHomePageView
+{
+    string RenderPage();
+}
+
+public class HomePage : IHomePageView
 {
     // language=html
     public string RenderPage() =>

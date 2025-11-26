@@ -6,7 +6,7 @@ using PagePlay.Site.Infrastructure.Web.Routing;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
-public class ToggleTodoInteraction(TodosPage _page) : ITodosPageInteraction
+public class ToggleTodoInteraction(ITodosPageView _page) : ITodosPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
         PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "toggle"),

@@ -7,7 +7,7 @@ public interface ILoginPageInteraction : IPageInteraction {}
 
 public class LoginPageEndpoints(
     IPageLayout _layout,
-    LoginPage _page,
+    ILoginPageView _page,
     IEnumerable<ILoginPageInteraction> _interactions
 ) : IClientEndpoint
 {

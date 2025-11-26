@@ -2,7 +2,15 @@ using PagePlay.Site.Infrastructure.Web.Html;
 
 namespace PagePlay.Site.Pages.Login;
 
-public class LoginPage
+public interface ILoginPageView
+{
+    string RenderPage();
+    string RenderLoginForm();
+    string RenderError(string error);
+    string RenderSuccess(string message);
+}
+
+public class LoginPage : ILoginPageView
 {
     // language=html
     public string RenderPage() =>

@@ -81,5 +81,31 @@ public static class ResolverExtensions
                 services.Add(descriptor);
             }
         }
-    }    
+    }
+
+    public static void AutoRegisterPages(
+        this IServiceCollection services,
+        ServiceLifetime lifetime
+    )
+    {
+        var pageTypes = Assembly.GetExecutingAssembly()
+            .GetTypes()
+            .Where(t =>
+                t is { IsClass: true, IsAbstract: false }
+                && t.Name.EndsWith("Page")
+                && t.Namespace?.Contains(".Pages.") == true
+            );
+
+        foreach (var pageType in pageTypes)
+        {
+            var pageViewInterface = pageType.GetInterfaces()
+                .FirstOrDefault(i => i.Name == $"I{pageType.Name}View");
+
+            if (pageViewInterface != null)
+            {
+                var descriptor = new ServiceDescriptor(pageViewInterface, pageType, lifetime);
+                services.Add(descriptor);
+            }
+        }
+    }
 }

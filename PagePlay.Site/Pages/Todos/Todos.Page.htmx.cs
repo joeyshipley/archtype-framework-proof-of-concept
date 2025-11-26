@@ -4,7 +4,18 @@ using PagePlay.Site.Pages.Shared.Elements;
 
 namespace PagePlay.Site.Pages.Todos;
 
-public class TodosPage
+public interface ITodosPageView
+{
+    string RenderPage(List<TodoListEntry> todos);
+    string RenderCreateForm();
+    string RenderTodoList(List<TodoListEntry> todos);
+    string RenderTodoItem(TodoListEntry todo);
+    string RenderError(string error);
+    string RenderErrorNotification(string error);
+    string RenderDeleteErrorWithNotification(long todoId, string error);
+}
+
+public class TodosPage : ITodosPageView
 {
     // language=html
     public string RenderPage(List<TodoListEntry> todos) =>

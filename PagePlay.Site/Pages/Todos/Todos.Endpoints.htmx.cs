@@ -10,7 +10,7 @@ public interface ITodosPageInteraction : IPageInteraction {}
 
 public class TodosPageEndpoints(
     IPageLayout _layout,
-    TodosPage _page,
+    ITodosPageView _page,
     IEnumerable<ITodosPageInteraction> _interactions
 ) : IClientEndpoint
 {

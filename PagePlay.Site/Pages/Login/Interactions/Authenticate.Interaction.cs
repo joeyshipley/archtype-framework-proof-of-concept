@@ -7,7 +7,7 @@ using PagePlay.Site.Infrastructure.Web.Pages;
 namespace PagePlay.Site.Pages.Login.Interactions;
 
 public class AuthenticateInteraction(
-    LoginPage _page,
+    ILoginPageView _page,
     ICookieManager _cookieManager,
     IResponseManager _responseManager
 ) : ILoginPageInteraction

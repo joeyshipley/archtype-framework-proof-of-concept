@@ -5,7 +5,7 @@ namespace PagePlay.Site.Pages.Home;
 
 public class HomePageEndpoints(
     IPageLayout _layout,
-    HomePage _page
+    IHomePageView _page
 ) : IClientEndpoint
 {
     public const string ROUTE_BASE = "";
