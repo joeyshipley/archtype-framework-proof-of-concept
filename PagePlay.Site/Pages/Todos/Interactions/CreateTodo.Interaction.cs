@@ -2,15 +2,17 @@ using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todos.CreateTodo;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Pages;
+using PagePlay.Site.Infrastructure.Routing;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
 public class CreateTodoInteraction(TodosPage _page) : ITodosPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
-        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "create"), 
+        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "create"),
         handle
-    );
+    )
+    .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
         [FromForm] CreateTodoWorkflowRequest createWorkflowRequest,

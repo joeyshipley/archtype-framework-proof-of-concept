@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.UpdateTodo;
 
 public class UpdateTodoWorkflow(
     IValidator<UpdateTodoWorkflowRequest> _validator,
-    LoggedInAuthContext _authContext,
+    IAuthContext _authContext,
     IRepository _repository
 ) : WorkflowBase<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>, IWorkflow<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>
 {

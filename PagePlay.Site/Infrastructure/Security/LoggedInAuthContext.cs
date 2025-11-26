@@ -1,6 +1,11 @@
 namespace PagePlay.Site.Infrastructure.Security;
 
-public class LoggedInAuthContext
+public interface IAuthContext
 {
-    public virtual long? UserId { get; set; }
+    long? UserId { get; }
+}
+
+public class LoggedInAuthContext : IAuthContext
+{
+    public long? UserId { get; set; }
 }

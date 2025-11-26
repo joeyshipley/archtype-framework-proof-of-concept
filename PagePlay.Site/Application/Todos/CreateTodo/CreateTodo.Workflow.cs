@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.CreateTodo;
 
 public class CreateTodoWorkflow(
     IValidator<CreateTodoWorkflowRequest> _validator,
-    LoggedInAuthContext _authContext,
+    IAuthContext _authContext,
     IRepository _repository
 ) : WorkflowBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>, IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>
 {

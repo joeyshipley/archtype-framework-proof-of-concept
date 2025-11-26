@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoWorkflowRequest> _validator,
-    LoggedInAuthContext _authContext,
+    IAuthContext _authContext,
     IRepository _repository
 ) : WorkflowBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>, IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>
 {

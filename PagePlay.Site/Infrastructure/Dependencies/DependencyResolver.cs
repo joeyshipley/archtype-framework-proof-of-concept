@@ -27,7 +27,8 @@ public static class DependencyResolver
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
-        services.AddScoped<LoggedInAuthContext>();
+        services.AddScoped<IAuthContext, LoggedInAuthContext>();
+        services.AddScoped(sp => (LoggedInAuthContext)sp.GetRequiredService<IAuthContext>());
         services.AddHttpContextAccessor();
         
         // TODO: remove this when cleaned up

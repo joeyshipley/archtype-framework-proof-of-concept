@@ -2,15 +2,17 @@ using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todos.DeleteTodo;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Pages;
+using PagePlay.Site.Infrastructure.Routing;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
 public class DeleteTodoInteraction(TodosPage _page) : ITodosPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
-        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "delete"), 
+        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "delete"),
         handle
-    );
+    )
+    .RequireAuthenticatedUser();
 
     private async Task<IResult> handle(
         [FromForm] DeleteTodoWorkflowRequest deleteWorkflowRequest,

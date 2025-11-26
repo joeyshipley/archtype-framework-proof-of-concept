@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
 public class DeleteTodoWorkflow(
     IValidator<DeleteTodoWorkflowRequest> _validator,
-    LoggedInAuthContext _authContext,
+    IAuthContext _authContext,
     IRepository _repository
 ) : WorkflowBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>, IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>
 {

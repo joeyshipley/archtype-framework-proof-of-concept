@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosWorkflow(
     IValidator<ListTodosWorkflowRequest> _validator,
-    LoggedInAuthContext _authContext,
+    IAuthContext _authContext,
     IRepository _repository
 ) : WorkflowBase<ListTodosWorkflowRequest, ListTodosWorkflowResponse>, IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse>
 {
