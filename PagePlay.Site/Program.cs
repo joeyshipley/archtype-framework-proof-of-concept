@@ -61,11 +61,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
 app.MapRazorPages();
+app.MapEndpoints();
+
 app.MapSigninRoutes();
 app.MapSignin2Routes();
 app.MapLoginRoutes();
 app.MapTodoPageRoutes();
-app.MapEndpoints();
 
 // TODO: clean this up.
 // Warm up services to avoid cold start penalty on first request

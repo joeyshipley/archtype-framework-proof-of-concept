@@ -11,8 +11,6 @@ namespace PagePlay.Site.Pages.TodoPage;
 
 public static class TodosPageEndpoints
 {
-    private static IResult Html(string content) => Results.Content(content, "text/html");
-
     public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
     {
         // TODO: DI the TodoPage?
@@ -81,5 +79,7 @@ public static class TodosPageEndpoints
 
             return Html(string.Empty);
         });
+
     }
+    private static IResult Html(string content) => Results.Content(content, "text/html");
 }
