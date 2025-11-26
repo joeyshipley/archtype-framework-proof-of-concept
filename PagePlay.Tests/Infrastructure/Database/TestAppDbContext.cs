@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Infrastructure.Database;
+using PagePlay.Site.Infrastructure.Data;
 
 namespace PagePlay.Tests.Infrastructure.Database;
 

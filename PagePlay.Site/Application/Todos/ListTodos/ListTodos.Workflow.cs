@@ -1,8 +1,8 @@
 using FluentValidation;
 using FluentValidation.Results;
 using PagePlay.Site.Application.Todos.Domain.Models;
-using PagePlay.Site.Infrastructure.Application;
-using PagePlay.Site.Infrastructure.Database.Repositories;
+using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Todos.ListTodos;

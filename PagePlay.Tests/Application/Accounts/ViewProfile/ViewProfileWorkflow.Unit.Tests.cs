@@ -4,8 +4,8 @@ using FluentValidation.Results;
 using NSubstitute;
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.ViewProfile;
-using PagePlay.Site.Infrastructure.Database.Repositories;
-using PagePlay.Site.Infrastructure.Database.Specifications;
+using PagePlay.Site.Infrastructure.Data.Repositories;
+using PagePlay.Site.Infrastructure.Data.Specifications;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Tests.Infrastructure.TestBases;
 

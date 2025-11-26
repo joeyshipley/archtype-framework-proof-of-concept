@@ -1,4 +1,4 @@
-using PagePlay.Site.Infrastructure.Pages;
+using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Login;

@@ -1,4 +1,4 @@
-using PagePlay.Site.Infrastructure.Html;
+using PagePlay.Site.Infrastructure.Web.Html;
 
 namespace PagePlay.Site.Pages.Login;
 

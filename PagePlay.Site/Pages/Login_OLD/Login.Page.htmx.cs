@@ -1,8 +1,8 @@
 /*
 using PagePlay.Site.Application.Accounts.Domain.Models;
 using PagePlay.Site.Application.Accounts.Login;
-using PagePlay.Site.Infrastructure.Application;
-using PagePlay.Site.Infrastructure.Database.Repositories;
+using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Data.Repositories;
 
 namespace PagePlay.Site.Pages.Login;
 

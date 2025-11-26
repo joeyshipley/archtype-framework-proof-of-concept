@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Accounts.Login;
-using PagePlay.Site.Infrastructure.Application;
-using PagePlay.Site.Infrastructure.Http;
-using PagePlay.Site.Infrastructure.Pages;
+using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Web.Http;
+using PagePlay.Site.Infrastructure.Web.Pages;
 
 namespace PagePlay.Site.Pages.Login.Interactions;
 

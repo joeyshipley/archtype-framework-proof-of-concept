@@ -3,10 +3,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Infrastructure.Application;
-using PagePlay.Site.Infrastructure.Database;
+using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Dependencies;
-using PagePlay.Site.Infrastructure.Routing;
+using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Infrastructure.Security;
 using Scalar.AspNetCore;
 

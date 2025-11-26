@@ -1,4 +1,4 @@
-using PagePlay.Site.Infrastructure.Domain;
+using PagePlay.Site.Infrastructure.Core.Domain;
 
 namespace PagePlay.Site.Application.Todos.Domain.Models;
 

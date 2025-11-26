@@ -1,9 +1,9 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Infrastructure.Application;
-using PagePlay.Site.Infrastructure.Database;
-using PagePlay.Site.Infrastructure.Database.Repositories;
-using PagePlay.Site.Infrastructure.Http;
+using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Data;
+using PagePlay.Site.Infrastructure.Data.Repositories;
+using PagePlay.Site.Infrastructure.Web.Http;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;

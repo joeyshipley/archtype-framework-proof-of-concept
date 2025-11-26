@@ -1,6 +1,6 @@
 using FluentValidation;
 using PagePlay.Site.Application.Todos.Domain.Models;
-using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Core.Application;
 
 namespace PagePlay.Site.Application.Todos.ToggleTodo;
 

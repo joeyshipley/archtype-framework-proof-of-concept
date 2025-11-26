@@ -1,4 +1,4 @@
-using PagePlay.Site.Infrastructure.Routing;
+using PagePlay.Site.Infrastructure.Web.Routing;
 
 namespace PagePlay.Site.Application.Accounts;
 

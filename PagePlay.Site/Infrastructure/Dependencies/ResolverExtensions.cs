@@ -1,4 +1,5 @@
 using System.Reflection;
+using PagePlay.Site.Infrastructure.Core.Application;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
 
@@ -71,7 +72,7 @@ public static class ResolverExtensions
             var workflowInterface = workflowType.GetInterfaces()
                 .FirstOrDefault(i =>
                     i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(Application.IWorkflow<,>)
+                    i.GetGenericTypeDefinition() == typeof(IWorkflow<,>)
                 );
 
             if (workflowInterface != null)

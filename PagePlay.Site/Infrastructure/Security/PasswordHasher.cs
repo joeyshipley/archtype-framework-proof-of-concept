@@ -1,6 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
-using PagePlay.Site.Infrastructure.Application;
+using PagePlay.Site.Infrastructure.Core.Application;
 
 namespace PagePlay.Site.Infrastructure.Security;
 

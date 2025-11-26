@@ -1,8 +1,8 @@
 using AwesomeAssertions;
 using Microsoft.EntityFrameworkCore;
 using PagePlay.Site.Application.Accounts.Domain.Models;
-using PagePlay.Site.Infrastructure.Database;
-using PagePlay.Site.Infrastructure.Database.Repositories;
+using PagePlay.Site.Infrastructure.Data;
+using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Tests.Infrastructure.Database;
 using PagePlay.Tests.Infrastructure.TestBases;
 
