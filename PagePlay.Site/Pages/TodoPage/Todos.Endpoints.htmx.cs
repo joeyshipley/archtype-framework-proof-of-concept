@@ -15,6 +15,8 @@ public static class TodosPageEndpoints
 
     public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
     {
+        // TODO: DI the TodoPage?
+        // Not sure that'll work at the level this is attached to program at this time.
         var page = new TodosPage();
 
         endpoints.MapGet("/todos", async (
@@ -72,6 +74,8 @@ public static class TodosPageEndpoints
         {
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
+            // TODO: fetch the task from DB and send back a row with error state instead of using OH NOES!!! in html
+            // This will be needed for better UX in other places.
             if (!deleteResult.Success)
                 return Html(page.RenderDeleteErrorWithNotification(deleteRequest.Id, "Failed to delete todo"));
 

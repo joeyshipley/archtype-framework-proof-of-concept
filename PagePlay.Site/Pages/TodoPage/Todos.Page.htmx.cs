@@ -18,6 +18,8 @@ public class TodosPage
     </div>
     """;
 
+    // TODO: look into this input after-request inline javascript.
+    // This is breaking our no JS policy, even though it's minimal.
     // language=html
     public string RenderCreateForm() =>
     $$"""
