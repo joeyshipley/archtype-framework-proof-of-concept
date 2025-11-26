@@ -13,6 +13,7 @@ public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
     );
 
     private async Task<IResult> handle(
+        HttpContext context,
         [FromForm] LoginWorkflowRequest loginWorkflowRequest,
         IWorkflow<LoginWorkflowRequest, LoginWorkflowResponse> loginWorkflow
     )
@@ -22,6 +23,9 @@ public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
         if (!loginResult.Success)
             return Results.Content(_page.RenderError("Invalid email or password"), "text/html");
 
-        return Results.Content(_page.RenderSuccess("Login successful!"), "text/html");
+        // TODO: Set authentication cookie/session with loginResult.Model.Token
+
+        context.Response.Headers.Append("HX-Redirect", "/todos");
+        return Results.Ok();
     }
 }
