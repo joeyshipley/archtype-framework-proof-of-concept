@@ -2,9 +2,9 @@ using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Application.Todos.DeleteTodo;
 using PagePlay.Site.Infrastructure.Application;
 using PagePlay.Site.Infrastructure.Pages;
-using PagePlay.Site.Pages.Todos;
+using PagePlay.Site.Pages.TodoPage;
 
-namespace PagePlay.Site.Pages.TodoPage.Interactions;
+namespace PagePlay.Site.Pages.Todos.Interactions;
 
 public class DeleteTodoInteraction(TodosPage _page) : IPageInteraction
 {
