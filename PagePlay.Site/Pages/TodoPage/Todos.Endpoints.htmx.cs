@@ -11,6 +11,8 @@ namespace PagePlay.Site.Pages.TodoPage;
 
 public static class TodosPageEndpoints
 {
+    private static IResult Html(string content) => Results.Content(content, "text/html");
+
     public static void MapTodoPageRoutes(this IEndpointRouteBuilder endpoints)
     {
         var page = new TodosPage();
@@ -29,61 +31,51 @@ public static class TodosPageEndpoints
             {
                 var errorContent = page.RenderError("Failed to load todos");
                 var errorPage = Layout.Render(errorContent, "Todos", tokens.RequestToken!);
-                return Results.Content(errorPage, "text/html");
+                return Html(errorPage);
             }
 
             var bodyContent = page.RenderPage(result.Model.Todos);
             var fullPage = Layout.Render(bodyContent, "Todos", tokens.RequestToken!);
-            return Results.Content(fullPage, "text/html");
+            return Html(fullPage);
         });
 
         endpoints.MapPost("/api/todos/create", async (
-            [FromForm] string title,
-            IAntiforgery antiforgery,
-            HttpContext context,
-            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow) =>
+            [FromForm] CreateTodoRequest createRequest,
+            IWorkflow<CreateTodoRequest, CreateTodoResponse> createWorkflow
+        ) => 
         {
-            var tokens = antiforgery.GetAndStoreTokens(context);
-            var createRequest = new CreateTodoRequest { Title = title };
             var createResult = await createWorkflow.Perform(createRequest);
 
             if (!createResult.Success)
-                return Results.Content(page.RenderErrorNotification("Failed to create todo"), "text/html");
+                return Html(page.RenderErrorNotification("Failed to create todo"));
 
-            return Results.Content(
-                page.RenderTodoItem(createResult.Model.Todo),
-                "text/html");
+            return Html(page.RenderTodoItem(createResult.Model.Todo));
         });
 
         endpoints.MapPost("/api/todos/toggle", async (
-            [FromForm] long id,
-            IAntiforgery antiforgery,
-            HttpContext context,
-            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow) =>
+            [FromForm] ToggleTodoRequest toggleRequest,
+            IWorkflow<ToggleTodoRequest, ToggleTodoResponse> toggleWorkflow
+        ) =>
         {
-            var tokens = antiforgery.GetAndStoreTokens(context);
-            var toggleRequest = new ToggleTodoRequest { Id = id };
             var toggleResult = await toggleWorkflow.Perform(toggleRequest);
 
             if (!toggleResult.Success)
-                return Results.Content(page.RenderErrorNotification("Failed to toggle todo"), "text/html");
+                return Html(page.RenderErrorNotification("Failed to toggle todo"));
 
-            return Results.Content(
-                page.RenderTodoList(toggleResult.Model.Todos),
-                "text/html");
+            return Html(page.RenderTodoList(toggleResult.Model.Todos));
         });
 
         endpoints.MapPost("/api/todos/delete", async (
-            [FromForm] long id,
-            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
+            [FromForm] DeleteTodoRequest deleteRequest,
+            IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow
+        ) =>
         {
-            var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
             if (!deleteResult.Success)
-                return Results.Content(page.RenderDeleteErrorWithNotification(id, "Failed to delete todo"), "text/html");
+                return Html(page.RenderDeleteErrorWithNotification(deleteRequest.Id, "Failed to delete todo"));
 
-            return Results.Content("", "text/html");
+            return Html(string.Empty);
         });
     }
 }
