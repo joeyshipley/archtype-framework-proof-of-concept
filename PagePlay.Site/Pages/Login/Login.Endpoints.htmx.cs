@@ -1,9 +1,9 @@
-using PagePlay.Site.Infrastructure.Web.Pages;
+using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageInteraction : IPageInteraction {}
+public interface ILoginPageInteraction : IEndpoint {}
 
 public class LoginPageEndpoints(
     IPageLayout _layout,

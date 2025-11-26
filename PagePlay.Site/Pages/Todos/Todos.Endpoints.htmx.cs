@@ -1,12 +1,11 @@
 using PagePlay.Site.Application.Todos.ListTodos;
 using PagePlay.Site.Infrastructure.Core.Application;
-using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Todos;
 
-public interface ITodosPageInteraction : IPageInteraction {}
+public interface ITodosPageInteraction : IEndpoint {}
 
 public class TodosPageEndpoints(
     IPageLayout _layout,
