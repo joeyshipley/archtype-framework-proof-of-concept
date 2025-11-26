@@ -7,7 +7,7 @@ namespace PagePlay.Site.Pages.TodoPage.Interactions;
 public class CreateTodoInteraction(TodosPage _page) : IPageInteraction
 {
     public void Map(IEndpointRouteBuilder endpoints) => endpoints.MapPost(
-        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "creates"), 
+        PageInteraction.GetRoute(TodosPageEndpoints.ROUTE_BASE, "create"), 
         handle
     );
 

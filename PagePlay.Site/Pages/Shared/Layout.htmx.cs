@@ -12,7 +12,8 @@ public class Layout(IAntiforgery _antiforgery) : IPageLayout
     // language=html
     public string Render(HttpContext context, string title, string bodyContent)
     {
-        var antiforgeryToken = _antiforgery.GetAndStoreTokens(context);
+        var tokens = _antiforgery.GetAndStoreTokens(context);
+        var antiforgeryToken = tokens.RequestToken;
 
         return $$"""
         <!DOCTYPE html>
