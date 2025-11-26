@@ -1,4 +1,4 @@
-using System.Web;
+using PagePlay.Site.Infrastructure.Html;
 
 namespace PagePlay.Site.Pages.Login;
 
@@ -47,7 +47,7 @@ public class LoginPage
     public string RenderError(string error) =>
     $$"""
     <div class="error" role="alert">
-        {{HttpUtility.HtmlEncode(error)}}
+        {{error.Safe()}}
     </div>
     """;
 
@@ -55,7 +55,7 @@ public class LoginPage
     public string RenderSuccess(string message) =>
     $$"""
     <div class="success" role="alert">
-        {{HttpUtility.HtmlEncode(message)}}
+        {{message.Safe()}}
     </div>
     """;
 }

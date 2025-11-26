@@ -1,5 +1,5 @@
-using System.Web;
 using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Infrastructure.Html;
 using PagePlay.Site.Pages.Shared.Elements;
 
 namespace PagePlay.Site.Pages.Todos;
@@ -76,7 +76,7 @@ public class TodosPage
                            onclick="event.preventDefault(); this.form.requestSubmit();"
                            class="todo-checkbox" />
                 </form>
-                <span class="todo-title">{{todo.Title}}</span>
+                <span class="todo-title">{{todo.Title.Safe()}}</span>
                 {{Button.Render(
                     route: new()
                     {
@@ -111,7 +111,7 @@ public class TodosPage
     public string RenderError(string error) =>
     $$"""
     <div class="error" role="alert">
-        {{HttpUtility.HtmlEncode(error)}}
+        {{error.Safe()}}
     </div>
     """;
 
@@ -120,7 +120,7 @@ public class TodosPage
     $$"""
     <div id="notifications" hx-swap-oob="true">
         <div class="error" role="alert">
-            {{HttpUtility.HtmlEncode(error)}}
+            {{error.Safe()}}
         </div>
     </div>
     """;
