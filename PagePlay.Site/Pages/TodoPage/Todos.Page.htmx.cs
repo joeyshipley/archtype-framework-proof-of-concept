@@ -8,7 +8,7 @@ public class TodosPage
     // language=html
     public string RenderPage(List<TodoListEntry> todos) =>
     $$"""
-    <div class="todo-page" hx-ext="morph">
+    <div class="todo-page">
         <h1>My Todos</h1>
         <div id="notifications"></div>
         {{RenderCreateForm()}}
@@ -65,6 +65,7 @@ public class TodosPage
                 <form hx-post="/api/todos/toggle"
                       hx-target="#todo-list"
                       hx-swap="morph:innerHTML"
+                      hx-ext="morph"
                       class="todo-toggle-form">
                     <input type="hidden" name="id" value="{{todo.Id}}" />
                     <input type="checkbox"

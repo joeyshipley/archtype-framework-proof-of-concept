@@ -77,12 +77,11 @@ public static class TodosPageEndpoints
             [FromForm] long id,
             IWorkflow<DeleteTodoRequest, DeleteTodoResponse> deleteWorkflow) =>
         {
-            return Results.Content(page.RenderDeleteErrorWithNotification(id, "Failed to delete todo"), "text/html");
-
             var deleteRequest = new DeleteTodoRequest { Id = id };
             var deleteResult = await deleteWorkflow.Perform(deleteRequest);
 
             if (!deleteResult.Success)
+                return Results.Content(page.RenderDeleteErrorWithNotification(id, "Failed to delete todo"), "text/html");
 
             return Results.Content("", "text/html");
         });
