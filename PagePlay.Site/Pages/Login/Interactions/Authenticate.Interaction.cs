@@ -23,7 +23,15 @@ public class AuthenticateInteraction(LoginPage _page) : ILoginPageInteraction
         if (!loginResult.Success)
             return Results.Content(_page.RenderError("Invalid email or password"), "text/html");
 
-        // TODO: Set authentication cookie/session with loginResult.Model.Token
+        // Set secure HTTP-only cookie with JWT token
+        context.Response.Cookies.Append("auth_token", loginResult.Model.Token, new CookieOptions
+        {
+            HttpOnly = true,                        // Prevents JavaScript access (XSS protection)
+            Secure = true,                          // Only sent over HTTPS
+            SameSite = SameSiteMode.Strict,         // CSRF protection
+            MaxAge = TimeSpan.FromMinutes(60),      // Match JWT expiration
+            Path = "/"
+        });
 
         context.Response.Headers.Append("HX-Redirect", "/todos");
         return Results.Ok();

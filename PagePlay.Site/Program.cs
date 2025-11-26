@@ -21,6 +21,12 @@ builder.Services.AddRazorPages();
 
 builder.Services.AddOpenApi();
 builder.Services.AddAuthorization();
+
+// Configure antiforgery for HTMX requests
+builder.Services.AddAntiforgery(options =>
+{
+    options.HeaderName = "X-XSRF-TOKEN"; // HTMX will send this header
+});
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -34,6 +40,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidIssuer = jwtSettings.Issuer,
             ValidAudience = jwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+        };
+
+        // Add cookie support for HTMX/browser requests
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                // First check Authorization header (for API calls)
+                if (string.IsNullOrEmpty(context.Token))
+                {
+                    // Fall back to cookie (for HTMX/browser requests)
+                    context.Token = context.Request.Cookies["auth_token"];
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
