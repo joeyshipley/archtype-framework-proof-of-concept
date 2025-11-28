@@ -91,6 +91,7 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseStaticFiles();

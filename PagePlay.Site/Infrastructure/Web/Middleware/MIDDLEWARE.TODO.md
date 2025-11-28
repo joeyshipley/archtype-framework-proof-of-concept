@@ -5,8 +5,13 @@ Production-grade middleware components to implement as the application matures.
 ## High Priority (Must-have for production)
 
 - [ ] **Request Logging / Observability**
-  - Add structured logging for every request (path, method, status, duration)
-  - Consider Serilog request logging or Application Insights
+  - Add HTTP request/response logging middleware (path, method, status, duration)
+  - Add correlation IDs for request tracing
+  - Enrich logs with user context (UserId, IP address)
+  - Add performance metrics (request duration histograms, DB query timing)
+  - Implement business event logging (registration, login attempts, audit trail)
+  - Consider timing helpers for operation performance tracking
+  - Define log aggregation strategy (Application Insights, ELK, Seq, etc.)
   - Essential for debugging production issues
 
 - [x] **Rate Limiting**
