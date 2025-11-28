@@ -10,20 +10,66 @@ public interface ISettingsProvider
 public class SettingsProvider(IConfiguration _configuration)
     : ISettingsProvider
 {
-    public SecuritySettings Security { get; } = _configuration
-        .GetSection("Security")
-        .Get<SecuritySettings>()
-        ?? new SecuritySettings();
+    public SecuritySettings Security { get; } = LoadSecuritySettings(_configuration);
+    public DatabaseSettings Database { get; } = LoadDatabaseSettings(_configuration);
+    public RateLimitingSettings RateLimiting { get; } = LoadRateLimitingSettings(_configuration);
 
-    public DatabaseSettings Database { get; } = _configuration
-        .GetSection("Database")
-        .Get<DatabaseSettings>()
-        ?? new DatabaseSettings();
+    private static SecuritySettings LoadSecuritySettings(IConfiguration configuration)
+    {
+        var settings = configuration.GetSection("Security").Get<SecuritySettings>();
 
-    public RateLimitingSettings RateLimiting { get; } = _configuration
-        .GetSection("RateLimiting")
-        .Get<RateLimitingSettings>()
-        ?? new RateLimitingSettings();
+        if (settings == null)
+            throw new InvalidOperationException("Security settings are missing from configuration. Please ensure 'Security' section exists in appsettings.json.");
+
+        if (string.IsNullOrWhiteSpace(settings.PasswordPepper))
+            throw new InvalidOperationException("Security:PasswordPepper is required but not configured in appsettings.json.");
+
+        if (settings.Jwt == null)
+            throw new InvalidOperationException("Security:Jwt settings are missing from configuration.");
+
+        if (string.IsNullOrWhiteSpace(settings.Jwt.SecretKey))
+            throw new InvalidOperationException("Security:Jwt:SecretKey is required but not configured in appsettings.json.");
+
+        if (settings.Jwt.SecretKey.Length < 32)
+            throw new InvalidOperationException("Security:Jwt:SecretKey must be at least 32 characters long for security reasons.");
+
+        if (string.IsNullOrWhiteSpace(settings.Jwt.Issuer))
+            throw new InvalidOperationException("Security:Jwt:Issuer is required but not configured in appsettings.json.");
+
+        if (string.IsNullOrWhiteSpace(settings.Jwt.Audience))
+            throw new InvalidOperationException("Security:Jwt:Audience is required but not configured in appsettings.json.");
+
+        if (settings.Jwt.ExpirationMinutes <= 0)
+            throw new InvalidOperationException("Security:Jwt:ExpirationMinutes must be greater than 0.");
+
+        return settings;
+    }
+
+    private static DatabaseSettings LoadDatabaseSettings(IConfiguration configuration)
+    {
+        var settings = configuration.GetSection("Database").Get<DatabaseSettings>();
+
+        if (settings == null)
+            throw new InvalidOperationException("Database settings are missing from configuration. Please ensure 'Database' section exists in appsettings.json.");
+
+        if (string.IsNullOrWhiteSpace(settings.ConnectionString))
+            throw new InvalidOperationException("Database:ConnectionString is required but not configured in appsettings.json.");
+
+        return settings;
+    }
+
+    private static RateLimitingSettings LoadRateLimitingSettings(IConfiguration configuration)
+    {
+        // RateLimiting is optional - use defaults if not configured
+        var settings = configuration.GetSection("RateLimiting").Get<RateLimitingSettings>()
+            ?? new RateLimitingSettings();
+
+        // Validate if configured
+        if (settings.RequestsPerMinute <= 0)
+            throw new InvalidOperationException("RateLimiting:RequestsPerMinute must be greater than 0 if configured.");
+
+        return settings;
+    }
 }
 
 public class SecuritySettings
