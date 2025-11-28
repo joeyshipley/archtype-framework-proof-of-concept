@@ -32,22 +32,28 @@ public class TodosPage : ITodosPageView
     """;
 
     // language=html
+    private string RenderCreateFormContent() =>
+    $$"""
+    <form hx-post="/interaction/todos/create"
+          hx-target="#todo-list-ul"
+          hx-swap="afterbegin">
+        <div class="todo-input-group">
+            <input id="title"
+                   name="title"
+                   type="text"
+                   placeholder="What needs to be done?"
+                   required
+                   maxlength="200" />
+            <button type="submit">Add Todo</button>
+        </div>
+    </form>
+    """;
+
+    // language=html
     public string RenderCreateForm() =>
     $$"""
     <div class="todo-create-form" id="todo-create-form">
-        <form hx-post="/interaction/todos/create"
-              hx-target="#todo-list-ul"
-              hx-swap="afterbegin">
-            <div class="todo-input-group">
-                <input id="title"
-                       name="title"
-                       type="text"
-                       placeholder="What needs to be done?"
-                       required
-                       maxlength="200" />
-                <button type="submit">Add Todo</button>
-            </div>
-        </form>
+        {{RenderCreateFormContent()}}
     </div>
     """;
 
@@ -118,19 +124,7 @@ public class TodosPage : ITodosPageView
     $$"""
     {{RenderTodoItem(todo)}}
     <div class="todo-create-form" id="todo-create-form" hx-swap-oob="true">
-        <form hx-post="/interaction/todos/create"
-              hx-target="#todo-list-ul"
-              hx-swap="afterbegin">
-            <div class="todo-input-group">
-                <input id="title"
-                       name="title"
-                       type="text"
-                       placeholder="What needs to be done?"
-                       required
-                       maxlength="200" />
-                <button type="submit">Add Todo</button>
-            </div>
-        </form>
+        {{RenderCreateFormContent()}}
     </div>
     """;
 
