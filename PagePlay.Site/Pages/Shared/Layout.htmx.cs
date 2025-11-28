@@ -24,6 +24,8 @@ public class Layout(IAntiforgeryTokenProvider _antiforgeryTokenProvider) : IPage
             <title>{{title}} - PagePlay</title>
             <script src="https://unpkg.com/htmx.org@1.9.10"></script>
             <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
+            <script src="/js/htmx-config.js"></script>
+            <link rel="stylesheet" href="/css/htmx-lib.css" />
             <link rel="stylesheet" href="/css/site.css" />
         </head>
         <body>

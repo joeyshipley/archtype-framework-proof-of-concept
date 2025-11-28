@@ -1,0 +1,20 @@
+/*
+ * htmx Library Styles
+ *
+ * These styles support htmx functionality and are maintained separately from application styles.
+ * htmx.config.includeIndicatorStyles is set to false to prevent inline style injection.
+ */
+
+/* htmx Request Indicators */
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 500ms ease-in;
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
