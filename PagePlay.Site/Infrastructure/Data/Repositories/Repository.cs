@@ -86,6 +86,19 @@ public class Repository : IRepository
         return scope;
     }
 
+    public async Task<bool> Health()
+    {
+        try
+        {
+            var context = await GetContext();
+            return await context.Database.CanConnectAsync();
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     private IQueryable<T> applySpecification<T>(AppDbContext context, Specification<T> spec) where T : class, IEntity
     {
         var query = context.Set<T>().Where(spec.Criteria);

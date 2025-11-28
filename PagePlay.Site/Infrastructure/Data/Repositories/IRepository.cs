@@ -14,6 +14,7 @@ public interface IRepository
     Task Delete<T>(T entity) where T : class, IEntity;
     Task SaveChanges();
     ITransactionScope BeginTransactionScope();
+    Task<bool> Health();
 }
 
 public interface ITransactionScope : IDisposable, IAsyncDisposable

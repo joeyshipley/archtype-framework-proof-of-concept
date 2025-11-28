@@ -46,10 +46,16 @@ Production-grade middleware components to implement as the application matures.
     - `Pages/Shared/Layout.htmx.cs:33-40` - inline `<script>` for CSRF token
   - **ACTION REQUIRED**: Move all inline JavaScript to external files before enabling in production
 
-- [ ] **Health Checks**
-  - Add health check endpoints (`/health`, `/health/ready`)
-  - Include database connectivity checks
-  - Required for Kubernetes, load balancers, and uptime monitoring
+- [x] **Health Checks**
+  - ~~Add health check endpoints (`/health`, `/health/ready`)~~
+  - ~~Include database connectivity checks~~
+  - ~~Required for Kubernetes, load balancers, and uptime monitoring~~
+  - **STATUS**: ✅ Complete
+  - **IMPLEMENTATION**:
+    - `HealthEndpoints` provides `/systems/health` (basic liveness) and `/systems/health/ready` (readiness with DB check)
+    - `Repository.Health()` method uses `CanConnectAsync()` for performant DB connectivity verification
+    - Excluded from rate limiting for reliable health monitoring
+    - Returns standard HTTP status codes: 200 (healthy), 503 (not ready)
 
 ## Medium Priority (Should have)
 
