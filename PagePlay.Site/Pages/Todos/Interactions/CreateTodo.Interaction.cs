@@ -23,6 +23,6 @@ public class CreateTodoInteraction(ITodosPageView _page) : ITodosPageInteraction
         if (!createResult.Success)
             return Results.Content(_page.RenderErrorNotification("Failed to create todo"), "text/html");
 
-        return Results.Content(_page.RenderTodoItem(createResult.Model.Todo), "text/html");
+        return Results.Content(_page.RenderSuccessfulTodoCreation(createResult.Model.Todo), "text/html");
     }
 }

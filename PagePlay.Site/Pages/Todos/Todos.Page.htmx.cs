@@ -10,6 +10,7 @@ public interface ITodosPageView
     string RenderCreateForm();
     string RenderTodoList(List<TodoListEntry> todos);
     string RenderTodoItem(TodoListEntry todo);
+    string RenderSuccessfulTodoCreation(TodoListEntry todo);
     string RenderError(string error);
     string RenderErrorNotification(string error);
     string RenderDeleteErrorWithNotification(long todoId, string error);
@@ -30,16 +31,13 @@ public class TodosPage : ITodosPageView
     </div>
     """;
 
-    // TODO: look into this input after-request inline javascript.
-    // This is breaking our no JS policy, even though it's minimal.
     // language=html
     public string RenderCreateForm() =>
     $$"""
-    <div class="todo-create-form">
+    <div class="todo-create-form" id="todo-create-form">
         <form hx-post="/interaction/todos/create"
               hx-target="#todo-list-ul"
-              hx-swap="afterbegin"
-              hx-on::after-request="if(event.detail.successful) { this.reset(); document.querySelector('.todo-empty')?.remove(); }">
+              hx-swap="afterbegin">
             <div class="todo-input-group">
                 <input id="title"
                        name="title"
@@ -114,6 +112,27 @@ public class TodosPage : ITodosPageView
         </li>
         """;
     }
+
+    // language=html
+    public string RenderSuccessfulTodoCreation(TodoListEntry todo) =>
+    $$"""
+    {{RenderTodoItem(todo)}}
+    <div class="todo-create-form" id="todo-create-form" hx-swap-oob="true">
+        <form hx-post="/interaction/todos/create"
+              hx-target="#todo-list-ul"
+              hx-swap="afterbegin">
+            <div class="todo-input-group">
+                <input id="title"
+                       name="title"
+                       type="text"
+                       placeholder="What needs to be done?"
+                       required
+                       maxlength="200" />
+                <button type="submit">Add Todo</button>
+            </div>
+        </form>
+    </div>
+    """;
 
     // language=html
     public string RenderError(string error) =>
