@@ -49,9 +49,9 @@ public class RateLimitingSettings
 {
     /// <summary>
     /// Maximum number of requests allowed per minute per user/IP.
-    /// Default: 1000 (very generous for normal users, strict enough to prevent abuse)
+    /// Default: 250 (generous for normal users, provides good protection against abuse)
     /// </summary>
-    public int RequestsPerMinute { get; set; } = 1000;
+    public int RequestsPerMinute { get; set; } = 250;
 
     /// <summary>
     /// Paths to exclude from rate limiting (e.g., health checks, static assets).
