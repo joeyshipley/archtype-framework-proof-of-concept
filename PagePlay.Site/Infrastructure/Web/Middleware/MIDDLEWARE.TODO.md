@@ -9,11 +9,19 @@ Production-grade middleware components to implement as the application matures.
   - Consider Serilog request logging or Application Insights
   - Essential for debugging production issues
 
-- [ ] **Rate Limiting**
-  - Implement rate limiting middleware using .NET 7+ built-in `UseRateLimiter()`
-  - Configure limits for authentication endpoints (`/login`, `/register`)
-  - Protect API endpoints from brute force and DoS attacks
-  - Consider per-IP and per-user rate limits
+- [x] **Rate Limiting**
+  - ~~Implement rate limiting middleware using .NET 7+ built-in `UseRateLimiter()`~~
+  - ~~Configure limits for authentication endpoints (`/login`, `/register`)~~
+  - ~~Protect API endpoints from brute force and DoS attacks~~
+  - ~~Consider per-IP and per-user rate limits~~
+  - **STATUS**: ✅ Implemented with custom in-memory middleware
+  - **IMPLEMENTATION**:
+    - `RateLimitingMiddleware` applies globally to all routes (250 req/min per user/IP)
+    - Per-user rate limiting for authenticated requests (by JWT UserId)
+    - Per-IP rate limiting for anonymous requests
+    - Configurable via `appsettings.json` with excluded paths (/health, static assets)
+    - Automatic cleanup of expired entries, HTTP 429 responses with Retry-After headers
+    - Note: Opted for custom middleware over built-in `UseRateLimiter()` for flexibility
 
 - [x] **Security Headers**
   - ~~Implement security headers middleware (CSP, X-Frame-Options, X-Content-Type-Options, etc.)~~
