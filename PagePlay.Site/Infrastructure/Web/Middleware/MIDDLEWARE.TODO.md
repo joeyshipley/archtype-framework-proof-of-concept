@@ -8,18 +8,14 @@ Production-grade middleware components to implement as the application matures.
   - ~~Add HTTP request/response logging middleware (path, method, status, duration)~~
   - ~~Add correlation IDs for request tracing~~
   - ~~Enrich logs with user context (UserId, IP address)~~
-  - Add performance metrics (request duration histograms, DB query timing)
-  - Implement business event logging (registration, login attempts, audit trail)
-  - Consider timing helpers for operation performance tracking
-  - Define log aggregation strategy (Application Insights, ELK, Seq, etc.)
-  - **STATUS**: ✅ Basic HTTP request logging implemented
+  - **STATUS**: ✅ Complete
   - **IMPLEMENTATION**:
     - `RequestLoggingMiddleware` logs all HTTP requests with method, path, query string, status, duration
     - Correlation ID generation via `X-Correlation-ID` header (auto-generated GUID per request)
     - User context included (UserId from ICurrentUserContext, IP address)
     - Intelligent log levels: INFO (2xx/3xx), WARN (4xx), ERROR (5xx)
     - No body logging for performance (can be added later if needed)
-  - **REMAINING WORK**:
+  - **FUTURE ENHANCEMENTS** (see `/project-docs/context/considerations/`):
     - Performance metrics and histograms
     - Business event logging abstraction
     - Timing helpers for operations
