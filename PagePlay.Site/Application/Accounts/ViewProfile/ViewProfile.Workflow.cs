@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
 public class ViewProfileWorkflow(
     IRepository _repository,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IValidator<ViewProfileWorkflowRequest> _validator
 ) : WorkflowBase<ViewProfileWorkflowRequest, ViewProfileWorkflowResponse>, IWorkflow<ViewProfileWorkflowRequest, ViewProfileWorkflowResponse>
 {
@@ -19,7 +19,7 @@ public class ViewProfileWorkflow(
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var user = await getUserById(_authContext.UserId.Value);
+        var user = await getUserById(currentUserContext.UserId.Value);
         if (user == null)
             return Fail("User not found.");
 

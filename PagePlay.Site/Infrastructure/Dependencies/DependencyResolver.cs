@@ -30,8 +30,8 @@ public static class DependencyResolver
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IUserIdentityService, UserIdentityService>();
-        services.AddScoped<IAuthContext, LoggedInAuthContext>();
-        services.AddScoped(sp => (LoggedInAuthContext)sp.GetRequiredService<IAuthContext>());
+        services.AddScoped<ICurrentUserContext, CurrentUserContext>();
+        services.AddScoped(sp => (CurrentUserContext)sp.GetRequiredService<ICurrentUserContext>());
         services.AddHttpContextAccessor();
         services.AddScoped<ICookieManager, CookieManager>();
         services.AddScoped<IResponseManager, ResponseManager>();

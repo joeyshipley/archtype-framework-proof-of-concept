@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.ListTodos;
 
 public class ListTodosWorkflow(
     IValidator<ListTodosWorkflowRequest> _validator,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IRepository _repository
 ) : WorkflowBase<ListTodosWorkflowRequest, ListTodosWorkflowResponse>, IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse>
 {
@@ -28,7 +28,7 @@ public class ListTodosWorkflow(
         await _validator.ValidateAsync(workflowRequest);
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _repository.List(Todo.ByUserId(_authContext.UserId.Value));
+        await _repository.List(Todo.ByUserId(currentUserContext.UserId.Value));
 
     private ListTodosWorkflowResponse buildResponse(List<Todo> todos) =>
         new ListTodosWorkflowResponse

@@ -1,11 +1,11 @@
 namespace PagePlay.Site.Infrastructure.Security;
 
-public interface IAuthContext
+public interface ICurrentUserContext
 {
     long? UserId { get; }
 }
 
-public class LoggedInAuthContext : IAuthContext
+public class CurrentUserContext : ICurrentUserContext
 {
     public long? UserId { get; set; }
 }

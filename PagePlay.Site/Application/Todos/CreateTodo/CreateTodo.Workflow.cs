@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.CreateTodo;
 
 public class CreateTodoWorkflow(
     IValidator<CreateTodoWorkflowRequest> _validator,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IRepository _repository
 ) : WorkflowBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>, IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>
 {
@@ -29,7 +29,7 @@ public class CreateTodoWorkflow(
 
     private async Task<Todo> createTodo(CreateTodoWorkflowRequest workflowRequest)
     {
-        var todo = Todo.Create(_authContext.UserId.Value, workflowRequest.Title);
+        var todo = Todo.Create(currentUserContext.UserId.Value, workflowRequest.Title);
         await _repository.Add<Todo>(todo);
         await _repository.SaveChanges();
         return todo;

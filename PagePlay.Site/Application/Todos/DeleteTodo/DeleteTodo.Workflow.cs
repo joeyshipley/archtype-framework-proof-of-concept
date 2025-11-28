@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.DeleteTodo;
 
 public class DeleteTodoWorkflow(
     IValidator<DeleteTodoWorkflowRequest> _validator,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IRepository _repository
 ) : WorkflowBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>, IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>
 {
@@ -23,7 +23,7 @@ public class DeleteTodoWorkflow(
         if (todo == null)
             return Fail("Todo not found.");
 
-        if (!todo.IsOwnedBy(_authContext.UserId.Value))
+        if (!todo.IsOwnedBy(currentUserContext.UserId.Value))
             return Fail("You do not have permission to delete this todo.");
 
         await deleteTodo(todo);

@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.UpdateTodo;
 
 public class UpdateTodoWorkflow(
     IValidator<UpdateTodoWorkflowRequest> _validator,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IRepository _repository
 ) : WorkflowBase<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>, IWorkflow<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>
 {
@@ -34,7 +34,7 @@ public class UpdateTodoWorkflow(
         if (todo == null)
             return (null, "Todo not found.");
 
-        if (!todo.IsOwnedBy(_authContext.UserId.Value))
+        if (!todo.IsOwnedBy(currentUserContext.UserId.Value))
             return (null, "You do not have permission to modify this todo.");
 
         return (todo, null);

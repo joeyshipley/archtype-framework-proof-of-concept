@@ -9,7 +9,7 @@ namespace PagePlay.Site.Application.Todos.ToggleTodo;
 
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoWorkflowRequest> _validator,
-    IAuthContext _authContext,
+    ICurrentUserContext currentUserContext,
     IRepository _repository
 ) : WorkflowBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>, IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>
 {
@@ -23,7 +23,7 @@ public class ToggleTodoWorkflow(
         if (todo == null)
             return Fail("Todo not found.");
 
-        if (!todo.IsOwnedBy(_authContext.UserId.Value))
+        if (!todo.IsOwnedBy(currentUserContext.UserId.Value))
             return Fail("You do not have permission to modify this todo.");
 
         toggleTodo(todo);
@@ -46,7 +46,7 @@ public class ToggleTodoWorkflow(
         await _repository.SaveChanges();
 
     private async Task<List<Todo>> getTodosByUserId() =>
-        await _repository.List<Todo>(Todo.ByUserId(_authContext.UserId.Value));
+        await _repository.List<Todo>(Todo.ByUserId(currentUserContext.UserId.Value));
 
     private ToggleTodoWorkflowResponse buildResponse(List<Todo> todos) =>
         new ToggleTodoWorkflowResponse

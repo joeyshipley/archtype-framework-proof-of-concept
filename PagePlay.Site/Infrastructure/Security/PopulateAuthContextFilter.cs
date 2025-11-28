@@ -7,7 +7,7 @@ public class PopulateAuthContextFilter(IUserIdentityService _userIdentityService
         EndpointFilterDelegate next)
     {
         var authContext = context.HttpContext.RequestServices
-            .GetRequiredService<LoggedInAuthContext>();
+            .GetRequiredService<CurrentUserContext>();
 
         var userId = _userIdentityService.GetCurrentUserId();
         if (userId == null)

@@ -33,7 +33,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<LoggedInAuthContext>()
+            .GetSubstituteFor<CurrentUserContext>()
             .UserId
             .Returns(userId);
 
@@ -100,7 +100,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<LoggedInAuthContext>()
+            .GetSubstituteFor<CurrentUserContext>()
             .UserId
             .Returns(userId);
 
@@ -143,7 +143,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<LoggedInAuthContext>()
+            .GetSubstituteFor<CurrentUserContext>()
             .UserId
             .Returns(expectedUserId);
 
@@ -186,7 +186,7 @@ public class ViewProfileWorkflowUnitTests : SetupUnitTestFor<ViewProfileWorkflow
             .Returns(new ValidationResult());
 
         Mocker
-            .GetSubstituteFor<LoggedInAuthContext>()
+            .GetSubstituteFor<CurrentUserContext>()
             .UserId
             .Returns(userId);
 
