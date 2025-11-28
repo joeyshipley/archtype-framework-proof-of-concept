@@ -27,15 +27,13 @@ public class SecurityHeadersMiddleware
             // Development: Fully permissive CSP for ease of development
             // Allows inline scripts, inline styles, eval, and all external sources
             context.Response.Headers["Content-Security-Policy"] =
-                "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:";
+                "default-src * 'Sounsafe-inline' 'unsafe-eval' data: blob:";
         }
         else
         {
-            // Production: Strict CSP
-            // NOTE: 'unsafe-inline' still required for styles (CSS-in-HTML from server)
-            // Remaining blockers for full strictness:
-            // 1. Pages/Todos/Todos.Page.htmx.cs:42 - hx-on::after-request inline handler
-            // 2. Pages/Todos/Todos.Page.htmx.cs:87 - onclick inline handler
+            // Production: Strict CSP - no inline scripts allowed
+            // NOTE: 'unsafe-inline' still required for style-src (CSS-in-HTML from server)
+            // All JavaScript is external (/js/csrf-setup.js loaded from 'self')
             context.Response.Headers["Content-Security-Policy"] =
                 "default-src 'self'; " +
                 "script-src 'self' https://unpkg.com; " +
