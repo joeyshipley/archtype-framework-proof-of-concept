@@ -4,8 +4,9 @@ namespace PagePlay.Site.Infrastructure.Core.Application;
 /// Abstraction for application logging.
 /// Protects the application from direct dependencies on logging infrastructure (Serilog, ILogger, etc.).
 /// Supports structured logging with properties for better observability.
+/// The generic type parameter T is used as the source context for filtering logs by class.
 /// </summary>
-public interface ILogProvider
+public interface ILogProvider<T>
 {
     /// <summary>
     /// Logs informational messages for general application flow.
@@ -56,17 +57,4 @@ public interface ILogProvider
     /// Only logged when Trace level is enabled (typically only in development).
     /// </summary>
     void LogTrace(string message, params object[] args);
-
-    /// <summary>
-    /// Creates a scoped logger that includes a specific type context.
-    /// Useful for logging from services that need type-specific log filtering.
-    /// </summary>
-    ILogProvider ForContext<T>();
-
-    /// <summary>
-    /// Creates a scoped logger with additional properties that will be included in all log messages.
-    /// Use for: correlation IDs, request context, user IDs, tenant IDs, etc.
-    /// Example: logger.WithProperty("RequestId", requestId).LogInformation("Processing request");
-    /// </summary>
-    ILogProvider WithProperty(string propertyName, object value);
 }

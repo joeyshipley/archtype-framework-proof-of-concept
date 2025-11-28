@@ -1,6 +1,6 @@
-# ILogProvider Usage Examples
+# ILogProvider<T> Usage Examples
 
-This document demonstrates how to use the ILogProvider abstraction throughout the application.
+This document demonstrates how to use the ILogProvider<T> abstraction throughout the application.
 
 ## Basic Usage
 
@@ -9,9 +9,9 @@ This document demonstrates how to use the ILogProvider abstraction throughout th
 ```csharp
 public class MyService
 {
-    private readonly ILogProvider _logger;
+    private readonly ILogProvider<MyService> _logger;
 
-    public MyService(ILogProvider logger)
+    public MyService(ILogProvider<MyService> logger)
     {
         _logger = logger;
     }
@@ -19,6 +19,8 @@ public class MyService
     public void DoSomething()
     {
         _logger.LogInformation("Service is doing something");
+        // Log output: [INFO] MyService: Service is doing something
+        //                    ^^^^^^^^^  <- Automatically included via generic parameter
     }
 }
 ```
@@ -70,23 +72,21 @@ _logger.LogInformation(
 // - Total = 99.99
 ```
 
-### 4. Adding Context Properties
+### 4. Filtering Logs by Source Context
+
+Since each logger includes its type via the generic parameter, you can easily filter logs:
 
 ```csharp
-// Create a scoped logger with additional context
-var scopedLogger = _logger.WithProperty("RequestId", requestId);
-scopedLogger.LogInformation("Processing request");
-scopedLogger.LogInformation("Request validation passed");
-
-// All logs from scopedLogger will include RequestId property
-```
-
-### 5. Type-Specific Context
-
-```csharp
-// Create a logger for a specific type (useful for filtering)
-var typedLogger = _logger.ForContext<OrderService>();
-typedLogger.LogInformation("Order processing started");
+// In Serilog configuration (appsettings.json):
+"Serilog": {
+  "MinimumLevel": {
+    "Default": "Information",
+    "Override": {
+      "MyNamespace.OrderService": "Debug",  // Enable Debug logs for OrderService only
+      "MyNamespace.PaymentService": "Warning"  // Only warnings and above for PaymentService
+    }
+  }
+}
 ```
 
 ## Real-World Examples
@@ -96,10 +96,10 @@ typedLogger.LogInformation("Order processing started");
 ```csharp
 public class OrderService
 {
-    private readonly ILogProvider _logger;
+    private readonly ILogProvider<OrderService> _logger;
     private readonly IRepository _repository;
 
-    public OrderService(ILogProvider logger, IRepository repository)
+    public OrderService(ILogProvider<OrderService> logger, IRepository repository)
     {
         _logger = logger;
         _repository = repository;
@@ -160,9 +160,9 @@ public class OrderService
 public class CustomMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly ILogProvider _logger;
+    private readonly ILogProvider<CustomMiddleware> _logger;
 
-    public CustomMiddleware(RequestDelegate next, ILogProvider logger)
+    public CustomMiddleware(RequestDelegate next, ILogProvider<CustomMiddleware> logger)
     {
         _next = next;
         _logger = logger;
@@ -170,10 +170,7 @@ public class CustomMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        var requestId = Guid.NewGuid().ToString();
-        var scopedLogger = _logger.WithProperty("RequestId", requestId);
-
-        scopedLogger.LogDebug(
+        _logger.LogDebug(
             "Processing {Method} request to {Path}",
             context.Request.Method,
             context.Request.Path
@@ -188,7 +185,7 @@ public class CustomMiddleware
         finally
         {
             sw.Stop();
-            scopedLogger.LogInformation(
+            _logger.LogInformation(
                 "Completed {Method} {Path} with {StatusCode} in {ElapsedMs}ms",
                 context.Request.Method,
                 context.Request.Path,
@@ -258,14 +255,14 @@ Logging behavior is configured in `appsettings.json` under the `Serilog` section
    - Be careful with PII (personally identifiable information)
    - Use masking if needed: `_logger.LogInformation("Email: {Email}", MaskEmail(email))`
 
-5. **Use context properties for correlation**:
-   - Request IDs for tracing requests across services
-   - User IDs for filtering user-specific logs
-   - Tenant IDs for multi-tenant applications
+5. **Use structured properties for correlation**:
+   - Add correlation data as parameters: `_logger.LogInformation("Processing {RequestId}", requestId)`
+   - User IDs: `_logger.LogInformation("User {UserId} action", userId)`
+   - Serilog will capture these as queryable properties
 
-## Migrating from ILogger
+## Migrating from ILogger<T>
 
-If you have existing code using `ILogger<T>`, replace it with `ILogProvider`:
+If you have existing code using `ILogger<T>`, replace it with `ILogProvider<T>`:
 
 ```csharp
 // Before
@@ -282,13 +279,13 @@ public class MyService
 // After
 public class MyService
 {
-    private readonly ILogProvider _logger;
+    private readonly ILogProvider<MyService> _logger;
 
-    public MyService(ILogProvider logger)
+    public MyService(ILogProvider<MyService> logger)
     {
         _logger = logger;
     }
 }
 ```
 
-The API is intentionally similar to make migration straightforward.
+The API is intentionally identical to ILogger<T> to make migration straightforward - just change the interface name!

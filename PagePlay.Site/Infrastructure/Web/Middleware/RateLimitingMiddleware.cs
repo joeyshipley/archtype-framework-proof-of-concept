@@ -15,7 +15,7 @@ public class RateLimitingMiddleware(
     RequestDelegate _next,
     ISettingsProvider _settingsProvider,
     IUserIdentityService _userIdentityService,
-    ILogProvider _logger)
+    ILogProvider<RateLimitingMiddleware> _logger)
 {
     // In-memory storage: Key = partition key (user/IP), Value = rate limiter state
     private static readonly ConcurrentDictionary<string, RateLimiterState> _limiters = new();
