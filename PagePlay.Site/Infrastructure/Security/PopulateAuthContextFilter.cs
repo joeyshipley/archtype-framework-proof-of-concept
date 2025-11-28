@@ -1,6 +1,6 @@
 namespace PagePlay.Site.Infrastructure.Security;
 
-public class PopulateAuthContextFilter(IJwtTokenService _jwtTokenService) : IEndpointFilter
+public class PopulateAuthContextFilter(IUserIdentityService _userIdentityService) : IEndpointFilter
 {
     public async ValueTask<object> InvokeAsync(
         EndpointFilterInvocationContext context,
@@ -9,7 +9,7 @@ public class PopulateAuthContextFilter(IJwtTokenService _jwtTokenService) : IEnd
         var authContext = context.HttpContext.RequestServices
             .GetRequiredService<LoggedInAuthContext>();
 
-        var userId = _jwtTokenService.GetCurrentUserId();
+        var userId = _userIdentityService.GetCurrentUserId();
         if (userId == null)
             return Results.Unauthorized();
 
