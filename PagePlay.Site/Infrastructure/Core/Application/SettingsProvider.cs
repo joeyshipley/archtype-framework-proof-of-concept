@@ -5,6 +5,7 @@ public interface ISettingsProvider
     SecuritySettings Security { get; }
     DatabaseSettings Database { get; }
     RateLimitingSettings RateLimiting { get; }
+    RequestSizeLimitSettings RequestSizeLimits { get; }
 }
 
 public class SettingsProvider(IConfiguration _configuration)
@@ -13,6 +14,7 @@ public class SettingsProvider(IConfiguration _configuration)
     public SecuritySettings Security { get; } = LoadSecuritySettings(_configuration);
     public DatabaseSettings Database { get; } = LoadDatabaseSettings(_configuration);
     public RateLimitingSettings RateLimiting { get; } = LoadRateLimitingSettings(_configuration);
+    public RequestSizeLimitSettings RequestSizeLimits { get; } = LoadRequestSizeLimitSettings(_configuration);
 
     private static SecuritySettings LoadSecuritySettings(IConfiguration configuration)
     {
@@ -70,6 +72,28 @@ public class SettingsProvider(IConfiguration _configuration)
 
         return settings;
     }
+
+    private static RequestSizeLimitSettings LoadRequestSizeLimitSettings(IConfiguration configuration)
+    {
+        // RequestSizeLimits is optional - use defaults if not configured
+        var settings = configuration.GetSection("RequestSizeLimits").Get<RequestSizeLimitSettings>()
+            ?? new RequestSizeLimitSettings();
+
+        // Validate if configured
+        if (settings.MaxRequestBodySizeBytes <= 0)
+            throw new InvalidOperationException("RequestSizeLimits:MaxRequestBodySizeBytes must be greater than 0 if configured.");
+
+        if (settings.MaxRequestLineSizeBytes <= 0)
+            throw new InvalidOperationException("RequestSizeLimits:MaxRequestLineSizeBytes must be greater than 0 if configured.");
+
+        if (settings.MaxRequestHeadersTotalSizeBytes <= 0)
+            throw new InvalidOperationException("RequestSizeLimits:MaxRequestHeadersTotalSizeBytes must be greater than 0 if configured.");
+
+        if (settings.RequestHeadersTimeoutSeconds <= 0)
+            throw new InvalidOperationException("RequestSizeLimits:RequestHeadersTimeoutSeconds must be greater than 0 if configured.");
+
+        return settings;
+    }
 }
 
 public class SecuritySettings
@@ -109,4 +133,32 @@ public class RateLimitingSettings
         "/_content",
         "/_framework"
     };
+}
+
+public class RequestSizeLimitSettings
+{
+    /// <summary>
+    /// Maximum size of the entire request body in bytes.
+    /// Default: 5 MB (5,242,880 bytes) - reasonable for forms, JSON, and small file uploads.
+    /// Can be overridden per-endpoint using [RequestSizeLimit] attribute for larger uploads.
+    /// </summary>
+    public long MaxRequestBodySizeBytes { get; set; } = 5_242_880; // 5 MB
+
+    /// <summary>
+    /// Maximum size of the request line (HTTP method + URL + query string) in bytes.
+    /// Default: 16 KB (16,384 bytes) - accommodates complex URLs with query parameters.
+    /// </summary>
+    public int MaxRequestLineSizeBytes { get; set; } = 16_384; // 16 KB
+
+    /// <summary>
+    /// Maximum total size of all request headers combined in bytes.
+    /// Default: 64 KB (65,536 bytes) - generous for cookies, auth tokens, and custom headers.
+    /// </summary>
+    public int MaxRequestHeadersTotalSizeBytes { get; set; } = 65_536; // 64 KB
+
+    /// <summary>
+    /// Maximum time in seconds to wait for request headers to be received.
+    /// Default: 30 seconds - protects against slowloris attacks while allowing slow connections.
+    /// </summary>
+    public int RequestHeadersTimeoutSeconds { get; set; } = 30;
 }

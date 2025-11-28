@@ -59,17 +59,33 @@ Production-grade middleware components to implement as the application matures.
 
 ## Medium Priority (Should have)
 
-- [ ] **Response Compression**
-  - Enable Gzip/Brotli compression for bandwidth optimization
-  - Must be added early in the pipeline
-  - Easy performance win that reduces bandwidth costs
+- [x] **Response Compression**
+  - ~~Enable Gzip/Brotli compression for bandwidth optimization~~
+  - ~~Must be added early in the pipeline~~
+  - ~~Easy performance win that reduces bandwidth costs~~
+  - **STATUS**: ✅ Complete
+  - **IMPLEMENTATION**:
+    - `ResponseCompressionMiddleware` with Brotli (CompressionLevel.Fastest) and Gzip (CompressionLevel.Optimal)
+    - Enabled for HTTPS (safe due to CSRF token and JWT architecture mitigating BREACH attacks)
+    - Comprehensive MIME type coverage: HTML, CSS, JS, JSON, XML, SVG
+    - Positioned early in pipeline (after HTTPS redirection, before static files) for maximum effectiveness
+    - Expected bandwidth savings: 60-70% on text content, 15-20% better compression with Brotli vs Gzip
 
 ## Low Priority (Nice to have)
 
-- [ ] **Request Size Limits**
-  - Configure explicit request body size limits beyond Kestrel defaults
-  - Protect against memory exhaustion from large payloads
-  - Usually configured in Kestrel options
+- [x] **Request Size Limits**
+  - ~~Configure explicit request body size limits beyond Kestrel defaults~~
+  - ~~Protect against memory exhaustion from large payloads~~
+  - ~~Usually configured in Kestrel options~~
+  - **STATUS**: ✅ Complete
+  - **IMPLEMENTATION**:
+    - `RequestSizeLimitMiddleware` configures Kestrel limits from appsettings.json
+    - Max request body: 5 MB (configurable, reasonable for forms/JSON/small uploads)
+    - Max request line: 16 KB (HTTP method + URL + query string)
+    - Max headers total size: 64 KB (generous for cookies, auth tokens, custom headers)
+    - Request headers timeout: 30 seconds (protects against slowloris attacks)
+    - All limits can be overridden per-endpoint using [RequestSizeLimit] attribute
+    - Protects against memory exhaustion, header bombs, and DoS attacks
 
 ## Notes
 

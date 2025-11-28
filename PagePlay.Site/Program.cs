@@ -32,6 +32,8 @@ try
     builder.Host.UseSerilog();
 
 DependencyResolver.Bind(builder.Services);
+builder.Services.AddResponseCompressionMiddleware();
+builder.ConfigureRequestSizeLimits();
 
 // builder.Services.AddScoped<ILoginPageHtmx, LoginPage>();
 // builder.Services.AddScoped<IPageDataLoader<LoginPageData>, LoginPageDataLoader>();
@@ -91,6 +93,7 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseResponseCompressionMiddleware();
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
