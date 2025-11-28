@@ -10,8 +10,26 @@ using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Infrastructure.Web.Middleware;
 using Scalar.AspNetCore;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
+// Configure Serilog early in the application startup
+// This allows us to capture startup errors and logging from the very beginning
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables()
+        .Build())
+    .CreateLogger();
+
+try
+{
+    Log.Information("Starting PagePlay application");
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Replace default logging with Serilog
+    builder.Host.UseSerilog();
 
 DependencyResolver.Bind(builder.Services);
 
@@ -107,4 +125,15 @@ await Task.Run(async () =>
     // TODO: For later - HttpClient warmup would need a background service since server isn't listening yet at this point
 });
 
-app.Run();
+    Log.Information("PagePlay application started successfully");
+    app.Run();
+}
+catch (Exception ex)
+{
+    Log.Fatal(ex, "Application startup failed");
+    throw;
+}
+finally
+{
+    Log.CloseAndFlush();
+}

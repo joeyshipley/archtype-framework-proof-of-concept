@@ -27,6 +27,7 @@ public static class DependencyResolver
     private static void bindApplicationComponents(IServiceCollection services)
     {
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
+        services.AddSingleton<ILogProvider, LogProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
         services.AddSingleton<IUserIdentityService, UserIdentityService>();
