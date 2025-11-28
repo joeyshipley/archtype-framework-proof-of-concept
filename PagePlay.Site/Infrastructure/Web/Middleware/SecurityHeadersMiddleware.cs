@@ -22,28 +22,22 @@ public class SecurityHeadersMiddleware
         context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
         context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
 
-        if (_env.IsDevelopment())
-        {
-            // Development: Fully permissive CSP for ease of development
-            // Allows inline scripts, inline styles, eval, and all external sources
-            context.Response.Headers["Content-Security-Policy"] =
-                "default-src * 'Sounsafe-inline' 'unsafe-eval' data: blob:";
-        }
-        else
-        {
-            // Production: Strict CSP - no inline scripts allowed
-            // NOTE: 'unsafe-inline' still required for style-src (CSS-in-HTML from server)
-            // All JavaScript is external (/js/csrf-setup.js loaded from 'self')
-            context.Response.Headers["Content-Security-Policy"] =
-                "default-src 'self'; " +
-                "script-src 'self' https://unpkg.com; " +
-                "style-src 'self' 'unsafe-inline'; " +
-                "img-src 'self' data:; " +
-                "font-src 'self' data:; " +
-                "connect-src 'self'; " +
-                "frame-ancestors 'self'";
+        // Fully strict CSP in all environments - no inline scripts or styles allowed
+        // This ensures development matches production behavior and prevents accidental inline code
+        // All JavaScript is external (/js/csrf-setup.js loaded from 'self')
+        // All CSS is external (/css/site.css loaded from 'self')
+        context.Response.Headers["Content-Security-Policy"] =
+            "default-src 'self'; " +
+            "script-src 'self' https://unpkg.com; " +
+            "style-src 'self'; " +
+            "img-src 'self' data:; " +
+            "font-src 'self' data:; " +
+            "connect-src 'self'; " +
+            "frame-ancestors 'self'";
 
-            // HSTS: Force HTTPS for 1 year (only in production)
+        // HSTS: Force HTTPS for 1 year (only in production)
+        if (!_env.IsDevelopment())
+        {
             context.Response.Headers["Strict-Transport-Security"] =
                 "max-age=31536000; includeSubDomains";
         }
