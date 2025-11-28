@@ -4,15 +4,26 @@ Production-grade middleware components to implement as the application matures.
 
 ## High Priority (Must-have for production)
 
-- [ ] **Request Logging / Observability**
-  - Add HTTP request/response logging middleware (path, method, status, duration)
-  - Add correlation IDs for request tracing
-  - Enrich logs with user context (UserId, IP address)
+- [x] **Request Logging / Observability**
+  - ~~Add HTTP request/response logging middleware (path, method, status, duration)~~
+  - ~~Add correlation IDs for request tracing~~
+  - ~~Enrich logs with user context (UserId, IP address)~~
   - Add performance metrics (request duration histograms, DB query timing)
   - Implement business event logging (registration, login attempts, audit trail)
   - Consider timing helpers for operation performance tracking
   - Define log aggregation strategy (Application Insights, ELK, Seq, etc.)
-  - Essential for debugging production issues
+  - **STATUS**: ✅ Basic HTTP request logging implemented
+  - **IMPLEMENTATION**:
+    - `RequestLoggingMiddleware` logs all HTTP requests with method, path, query string, status, duration
+    - Correlation ID generation via `X-Correlation-ID` header (auto-generated GUID per request)
+    - User context included (UserId from ICurrentUserContext, IP address)
+    - Intelligent log levels: INFO (2xx/3xx), WARN (4xx), ERROR (5xx)
+    - No body logging for performance (can be added later if needed)
+  - **REMAINING WORK**:
+    - Performance metrics and histograms
+    - Business event logging abstraction
+    - Timing helpers for operations
+    - Production log aggregation setup
 
 - [x] **Rate Limiting**
   - ~~Implement rate limiting middleware using .NET 7+ built-in `UseRateLimiter()`~~
@@ -50,11 +61,6 @@ Production-grade middleware components to implement as the application matures.
   - Enable Gzip/Brotli compression for bandwidth optimization
   - Must be added early in the pipeline
   - Easy performance win that reduces bandwidth costs
-
-- [ ] **Correlation ID / Request Tracing**
-  - Add unique ID per request for distributed tracing
-  - Use Activity.Current or generate GUID
-  - Essential for tracking requests across logs in distributed systems
 
 ## Low Priority (Nice to have)
 
