@@ -31,15 +31,14 @@ public class SecurityHeadersMiddleware
         }
         else
         {
-            // Production: Strict CSP (REQUIRES refactoring inline scripts first!)
-            // WARNING: This will break the app until inline scripts are moved to external files
-            // Current blockers:
+            // Production: Strict CSP
+            // NOTE: 'unsafe-inline' still required for styles (CSS-in-HTML from server)
+            // Remaining blockers for full strictness:
             // 1. Pages/Todos/Todos.Page.htmx.cs:42 - hx-on::after-request inline handler
             // 2. Pages/Todos/Todos.Page.htmx.cs:87 - onclick inline handler
-            // 3. Pages/Shared/Layout.htmx.cs:33-40 - inline <script> for CSRF token
             context.Response.Headers["Content-Security-Policy"] =
                 "default-src 'self'; " +
-                "script-src 'self' 'unsafe-inline' https://unpkg.com; " +
+                "script-src 'self' https://unpkg.com; " +
                 "style-src 'self' 'unsafe-inline'; " +
                 "img-src 'self' data:; " +
                 "font-src 'self' data:; " +

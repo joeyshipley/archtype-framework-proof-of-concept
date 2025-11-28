@@ -30,14 +30,7 @@ public class Layout(IAntiforgeryTokenProvider _antiforgeryTokenProvider) : IPage
             <main>
                 {{bodyContent}}
             </main>
-            <script>
-                document.body.addEventListener('htmx:configRequest', function(evt) {
-                    const token = document.querySelector('meta[name="csrf-token"]')?.content;
-                    if (token) {
-                        evt.detail.headers['X-XSRF-TOKEN'] = token;
-                    }
-                });
-            </script>
+            <script src="/js/csrf-setup.js"></script>
         </body>
         </html>
         """;
