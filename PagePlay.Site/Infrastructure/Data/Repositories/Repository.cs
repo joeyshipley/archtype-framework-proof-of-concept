@@ -2,17 +2,20 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using PagePlay.Site.Infrastructure.Data.Specifications;
 using PagePlay.Site.Infrastructure.Core.Domain;
+using PagePlay.Site.Infrastructure.Core.Application;
 
 namespace PagePlay.Site.Infrastructure.Data.Repositories;
 
 public class Repository : IRepository
 {
     private readonly IDbContextFactory<AppDbContext> _contextFactory;
+    private readonly ILogRecorder<Repository> _log;
     private AppDbContext _context;
 
-    public Repository(IDbContextFactory<AppDbContext> contextFactory)
+    public Repository(IDbContextFactory<AppDbContext> contextFactory, ILogRecorder<Repository> log)
     {
         _contextFactory = contextFactory;
+        _log = log;
     }
 
     private async Task<AppDbContext> GetContext()
@@ -93,7 +96,7 @@ public class Repository : IRepository
         return query;
     }
 
-    internal class TransactionScope : ITransactionScope
+    private class TransactionScope : ITransactionScope
     {
         private readonly Repository _repository;
         private IDbContextTransaction _transaction;
@@ -109,20 +112,20 @@ public class Repository : IRepository
         {
             var context = await _repository.GetContext();
             _transaction = await context.Database.BeginTransactionAsync();
-            // _logger.LogDebug("Transaction started");
+            _repository._log.Debug("Transaction started");
         }
 
         public async Task CompleteTransaction()
         {
             if (_transaction == null)
             {
-                // _logger.LogWarning("CompleteTransaction called but no transaction was started");
+                _repository._log.Warn("CompleteTransaction called but no transaction was started");
                 return;
             }
 
             await _transaction.CommitAsync();
             _completed = true;
-            // _logger.LogDebug("Transaction committed");
+            _repository._log.Debug("Transaction committed");
         }
 
         public void Dispose()
@@ -135,11 +138,11 @@ public class Repository : IRepository
                 try
                 {
                     _transaction.Rollback();
-                    // _logger.LogWarning("Transaction rolled back - CompleteTransaction() was not called");
+                    _repository._log.Warn("Transaction rolled back - CompleteTransaction() was not called");
                 }
                 catch (Exception ex)
                 {
-                    // _logger.LogError(ex, "Failed to rollback transaction");
+                    _repository._log.Error(ex, "Failed to rollback transaction");
                 }
             }
 
@@ -156,11 +159,11 @@ public class Repository : IRepository
                 try
                 {
                     await _transaction.RollbackAsync();
-                    // _logger.LogWarning("Transaction rolled back - CompleteTransaction() was not called");
+                    _repository._log.Warn("Transaction rolled back - CompleteTransaction() was not called");
                 }
                 catch (Exception ex)
                 {
-                    // _logger.LogError(ex, "Failed to rollback transaction");
+                    _repository._log.Error(ex, "Failed to rollback transaction");
                 }
             }
 
