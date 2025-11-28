@@ -15,7 +15,7 @@ public class RateLimitingMiddleware(
     RequestDelegate _next,
     ISettingsProvider _settingsProvider,
     IUserIdentityService _userIdentityService,
-    ILogProvider<RateLimitingMiddleware> _logger)
+    ILogRecorder<RateLimitingMiddleware> _logger)
 {
     // In-memory storage: Key = partition key (user/IP), Value = rate limiter state
     private static readonly ConcurrentDictionary<string, RateLimiterState> _limiters = new();
@@ -41,7 +41,7 @@ public class RateLimitingMiddleware(
         // Check if request is allowed
         if (!limiter.TryAcquire(_settingsProvider.RateLimiting.RequestsPerMinute))
         {
-            _logger.LogWarning(
+            _logger.Warn(
                 "Rate limit exceeded for {PartitionKey}. Path: {Path}",
                 partitionKey,
                 context.Request.Path
