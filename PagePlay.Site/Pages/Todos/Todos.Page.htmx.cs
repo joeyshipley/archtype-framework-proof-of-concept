@@ -71,7 +71,7 @@ public class TodosPage : ITodosPageView
     public string RenderTodoItem(TodoListEntry todo)
     {
         var completedClass = todo.IsCompleted ? "completed" : "";
-        var checkedAttr = todo.IsCompleted ? "checked" : "";
+        var checkboxIcon = todo.IsCompleted ? "☑" : "☐";
 
         return $$"""
         <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}">
@@ -82,10 +82,7 @@ public class TodosPage : ITodosPageView
                       hx-ext="morph"
                       class="todo-toggle-form">
                     <input type="hidden" name="id" value="{{todo.Id}}" />
-                    <input type="checkbox"
-                           {{checkedAttr}}
-                           onclick="event.preventDefault(); this.form.requestSubmit();"
-                           class="todo-checkbox" />
+                    <button type="submit" class="todo-checkbox">{{checkboxIcon}}</button>
                 </form>
                 <span class="todo-title">{{todo.Title.Safe()}}</span>
                 {{Button.Render(
