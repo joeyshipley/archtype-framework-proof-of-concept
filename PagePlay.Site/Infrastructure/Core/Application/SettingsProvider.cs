@@ -4,6 +4,7 @@ public interface ISettingsProvider
 {
     SecuritySettings Security { get; }
     DatabaseSettings Database { get; }
+    RateLimitingSettings RateLimiting { get; }
 }
 
 public class SettingsProvider(IConfiguration _configuration)
@@ -18,6 +19,11 @@ public class SettingsProvider(IConfiguration _configuration)
         .GetSection("Database")
         .Get<DatabaseSettings>()
         ?? new DatabaseSettings();
+
+    public RateLimitingSettings RateLimiting { get; } = _configuration
+        .GetSection("RateLimiting")
+        .Get<RateLimitingSettings>()
+        ?? new RateLimitingSettings();
 }
 
 public class SecuritySettings
@@ -37,4 +43,24 @@ public class JwtSettings
 public class DatabaseSettings
 {
     public string ConnectionString { get; set; } = string.Empty;
+}
+
+public class RateLimitingSettings
+{
+    /// <summary>
+    /// Maximum number of requests allowed per minute per user/IP.
+    /// Default: 1000 (very generous for normal users, strict enough to prevent abuse)
+    /// </summary>
+    public int RequestsPerMinute { get; set; } = 1000;
+
+    /// <summary>
+    /// Paths to exclude from rate limiting (e.g., health checks, static assets).
+    /// Use forward slashes. Example: "/health", "/_content", "/css"
+    /// </summary>
+    public List<string> ExcludedPaths { get; set; } = new()
+    {
+        "/health",
+        "/_content",
+        "/_framework"
+    };
 }

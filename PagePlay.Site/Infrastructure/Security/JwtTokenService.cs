@@ -20,7 +20,7 @@ public class TokenClaims
 
 public class JwtTokenService(
     ISettingsProvider _settings,
-    IHttpContextAccessor _httpContextAccessor
+    IUserIdentityService _userIdentityService
 ) : IJwtTokenService
 {
     public string GenerateToken(TokenClaims tokenClaims)
@@ -75,21 +75,15 @@ public class JwtTokenService(
 
     public long? GetCurrentUserId()
     {
-        var principal = _httpContextAccessor.HttpContext?.User;
-        if (principal == null)
-            return null;
-
-        var tokenClaims = mapClaimsToTokenClaims(principal);
-        return tokenClaims?.UserId;
+        return _userIdentityService.GetCurrentUserId();
     }
 
     private TokenClaims mapClaimsToTokenClaims(ClaimsPrincipal principal)
     {
-        var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? principal.FindFirst(JwtRegisteredClaimNames.Sub);
-
-        if (userIdClaim == null || !long.TryParse(userIdClaim.Value, out var userId))
+        var userId = _userIdentityService.GetUserId(principal);
+        if (userId == null)
             return null;
 
-        return new TokenClaims { UserId = userId };
+        return new TokenClaims { UserId = userId.Value };
     }
 }

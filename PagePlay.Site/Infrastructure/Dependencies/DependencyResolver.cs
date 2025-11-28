@@ -29,6 +29,7 @@ public static class DependencyResolver
         services.AddSingleton<ISettingsProvider, SettingsProvider>();
         services.AddSingleton<IJwtTokenService, JwtTokenService>();
         services.AddSingleton<IPasswordHasher, PasswordHasher>();
+        services.AddSingleton<IUserIdentityService, UserIdentityService>();
         services.AddScoped<IAuthContext, LoggedInAuthContext>();
         services.AddScoped(sp => (LoggedInAuthContext)sp.GetRequiredService<IAuthContext>());
         services.AddHttpContextAccessor();

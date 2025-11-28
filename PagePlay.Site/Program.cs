@@ -73,6 +73,7 @@ else
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<RateLimitingMiddleware>();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 app.UseStaticFiles();
 app.UseRouting();
