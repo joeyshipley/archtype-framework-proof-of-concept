@@ -1,5 +1,6 @@
-using PagePlay.Site.Application.Todos.ListTodos;
-using PagePlay.Site.Infrastructure.Core.Application;
+using Microsoft.Extensions.Logging;
+using PagePlay.Site.Application.Todos.Domain;
+using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
 
@@ -10,7 +11,8 @@ public interface ITodosPageInteraction : IEndpoint {}
 public class TodosPageEndpoints(
     IPageLayout _layout,
     ITodosPageView _page,
-    IEnumerable<ITodosPageInteraction> _interactions
+    IEnumerable<ITodosPageInteraction> _interactions,
+    ILogger<TodosPageEndpoints> _logger
 ) : IClientEndpoint
 {
     public const string PAGE_ROUTE = "todos";
@@ -18,18 +20,26 @@ public class TodosPageEndpoints(
     public void Map(IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet(PAGE_ROUTE, async (
-            IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse> listWorkflow
+            IDataLoader dataLoader
         ) =>
         {
-            // Render todos
-            var result = await listWorkflow.Perform(new ListTodosWorkflowRequest());
-            var bodyContent = !result.Success
-                ? _page.RenderError("Failed to load todos")
-                : _page.RenderPage(result.Model.Todos);
+            try
+            {
+                // Fetch todos via DataDomain (same as components use)
+                var dataContext = await dataLoader.LoadDomainsAsync(new[] { "todos" });
+                var todosData = dataContext.GetDomain<TodosDomainContext>("todos");
 
-            // Layout handles its own component composition
-            var page = await _layout.RenderAsync("Todos", bodyContent);
-            return Results.Content(page, "text/html");
+                var bodyContent = _page.RenderPage(todosData.List);
+                var page = await _layout.RenderAsync("Todos", bodyContent);
+                return Results.Content(page, "text/html");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to load todos page for current user");
+                var bodyContent = _page.RenderError("Failed to load todos");
+                var page = await _layout.RenderAsync("Todos", bodyContent);
+                return Results.Content(page, "text/html");
+            }
         })
         .RequireAuthenticatedUser();
 

@@ -17,11 +17,20 @@ public interface IComponentFactory
 
 public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComponentFactory
 {
-    private static readonly Dictionary<string, Type> _componentTypes = new()
+    // Auto-discover all IServerComponent interfaces at startup
+    private static readonly Dictionary<string, Type> _componentTypes = discoverComponents();
+
+    private static Dictionary<string, Type> discoverComponents()
     {
-        ["WelcomeWidget"] = typeof(IWelcomeWidget),
-        ["AnalyticsStatsWidget"] = typeof(IAnalyticsStatsWidget)
-    };
+        return typeof(IServerComponent).Assembly
+            .GetTypes()
+            .Where(t => t.IsInterface && typeof(IServerComponent).IsAssignableFrom(t))
+            .Where(t => t != typeof(IServerComponent))
+            .ToDictionary(
+                t => t.Name.TrimStart('I'), // "IWelcomeWidget" → "WelcomeWidget"
+                t => t
+            );
+    }
 
     public IServerComponent? Create(string componentTypeName)
     {

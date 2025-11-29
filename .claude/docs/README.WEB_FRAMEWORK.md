@@ -132,6 +132,33 @@ Component data loading:
 
 **Result:** Clean "loading → interactive" transition, predictable performance.
 
+#### Data Pre-Fetching Implementation
+
+**DataDomains are the single source of read operations:**
+
+```
+Page Load:
+├─ Collect required domains (from page + components)
+├─ DataLoader fetches ALL domains in parallel
+├─ No N+1 queries, no waterfalls
+├─ Page and components render from shared DataContext
+└─ Clean "loading → interactive" transition
+
+User Action (Mutation):
+├─ User clicks "Create Todo" → Workflow executes
+├─ Workflow validates, mutates data, returns success
+├─ Framework identifies affected domains ("todos")
+├─ DataLoader re-fetches ONLY affected domains
+├─ Framework re-renders affected components (OOB)
+└─ UI updates, ready for next action
+```
+
+**Key insight:**
+- Workflows = user actions that change state (commands)
+- DataDomains = data fetching for rendering (queries)
+- No "list workflows" - reads happen through DataLoader
+- Clear separation following CQRS principles
+
 ---
 
 ## Philosophical Foundations

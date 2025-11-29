@@ -432,6 +432,87 @@ public class RegisterWorkflow(
 - Is response shaping isolated from business logic?
 - Are implementation details hidden in appropriately-named helper methods?
 
+### Read vs Write Separation
+
+**Clear separation of concerns following CQRS principles:**
+
+**DataDomains handle all reads (queries):**
+- Used by pages for initial data fetching
+- Used by components for rendering
+- Used by framework for OOB updates after mutations
+- Examples: `TodosDomain`, `TodoAnalyticsDomain`
+
+**Workflows handle all writes (commands):**
+- Create, Update, Delete operations
+- Business logic, validation, authorization
+- Examples: `CreateTodo`, `UpdateTodo`, `DeleteTodo`, `ToggleTodo`
+
+**Pattern:**
+- Need to read data? → Use DataDomain via DataLoader
+- Need to mutate data? → Create a Workflow
+- No "read workflows" - reads go through DataDomains
+
+**Why this separation?**
+- Eliminates duplication (one query path, one mutation path)
+- Clear responsibilities (mutations vs queries)
+- Consistent with game-style data pre-fetching pattern
+- Workflows reveal business intent (actions), domains reveal data structure
+- Self-enforcing: obvious which pattern to use for any given task
+
+**Example:**
+
+```csharp
+// ✅ Correct - Reading data through DataDomain
+public class TodosPageEndpoints(
+    IDataLoader _dataLoader,
+    IPageLayout _layout
+) : IClientEndpoint
+{
+    public void Map(IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("todos", async (IDataLoader dataLoader) =>
+        {
+            var dataContext = await dataLoader.LoadDomainsAsync(new[] { "todos" });
+            var todosData = dataContext.GetDomain<TodosDomainContext>("todos");
+
+            var bodyContent = _page.RenderPage(todosData.List);
+            var page = await _layout.RenderAsync("Todos", bodyContent);
+            return Results.Content(page, "text/html");
+        });
+    }
+}
+
+// ✅ Correct - Mutating data through Workflow
+public class CreateTodoWorkflow(
+    ITodoRepository _repository,
+    IValidator<CreateTodoRequest> _validator
+) : IWorkflow<CreateTodoRequest, CreateTodoResponse>
+{
+    public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
+    {
+        var validationResult = await validate(request);
+        if (!validationResult.IsValid)
+            return buildErrorResponse(validationResult);
+
+        var todo = createTodo(request);
+        await saveTodo(todo);
+        return buildSuccessResponse();
+    }
+    // ... helper methods
+}
+
+// ❌ Incorrect - Don't create "ListTodos" workflow
+public class ListTodosWorkflow // Don't do this - use DataDomain instead
+{
+    public async Task<ListTodosResponse> Perform(ListTodosRequest request)
+    {
+        // Reading data doesn't belong in a workflow
+        var todos = await _repository.List(specification);
+        return new ListTodosResponse { Todos = todos };
+    }
+}
+```
+
 ---
 
 ## For AI Agents and Framework Development
@@ -440,9 +521,20 @@ When implementing features, AI should:
 
 1. **Use framework infrastructure** - Tests inherit from `SetupTestFor<T>`, workflows use repositories, DI is centralized
 2. **Start with single operation** - Each feature folder does ONE thing (CreateUser, not UserManagement)
-3. **Look for existing patterns** - Find similar feature, copy structure exactly
-4. **Measure deviation** - If new feature is 2x bigger, ask why
-5. **Flag complexity** - "This feature seems more complex than others, should we extract to framework?"
+3. **Follow read/write separation** - DataDomains for queries, Workflows for commands
+4. **Look for existing patterns** - Find similar feature, copy structure exactly
+5. **Measure deviation** - If new feature is 2x bigger, ask why
+6. **Flag complexity** - "This feature seems more complex than others, should we extract to framework?"
+
+**When implementing reads:**
+- Use DataDomain via DataLoader
+- Never create "List" or "Get" workflows
+- Data fetching happens in DataDomains, not Workflows
+
+**When implementing writes:**
+- Create a Workflow for the mutation (Create, Update, Delete)
+- Workflow names reveal business actions
+- Follow revealing intent pattern
 
 **When infrastructure is missing:**
 - Feature code reveals need for framework support (pagination, file upload, email)
@@ -455,6 +547,7 @@ AI should NOT:
 - Manually mock dependencies in tests (use `SetupTestFor<T>`)
 - Create god classes (UserManager, ProjectService)
 - Put multiple operations in one feature folder
+- Create "List" or "Get" workflows (use DataDomains instead)
 
 ---
 
