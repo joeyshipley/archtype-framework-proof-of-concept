@@ -4,7 +4,7 @@ namespace PagePlay.Site.Pages.Shared;
 
 public interface IPageLayout
 {
-    string Render(string title, string bodyContent);
+    string Render(string title, string bodyContent, string? welcomeWidgetHtml = null);
 }
 
 public class Layout(
@@ -13,7 +13,7 @@ public class Layout(
 ) : IPageLayout
 {
     // language=html
-    public string Render(string title, string bodyContent)
+    public string Render(string title, string bodyContent, string? welcomeWidgetHtml = null)
     {
         var antiforgeryToken = _antiforgeryTokenProvider.GetRequestToken();
 
@@ -33,6 +33,7 @@ public class Layout(
         </head>
         <body>
             {{_nav.Render()}}
+            {{welcomeWidgetHtml ?? ""}}
             <main>
                 {{bodyContent}}
             </main>

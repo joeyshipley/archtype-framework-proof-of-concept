@@ -396,7 +396,7 @@ services.AddScoped<IDataDomain, TodosDomain>();
 
 ---
 
-### **Phase 3: Convert Existing Components** 🔄 In Progress
+### **Phase 3: Convert Existing Components** ✅ Complete
 
 #### **Task 3.1: Convert WelcomeWidget to IServerComponent** ✅
 **File:** `PagePlay.Site/Pages/Shared/WelcomeWidget.htmx.cs` (new file)
@@ -442,7 +442,7 @@ public class WelcomeWidget : IWelcomeWidget
 
 ---
 
-#### **Task 3.2: Update Layout to Include WelcomeWidget** ⬜
+#### **Task 3.2: Update Layout to Include WelcomeWidget** ✅
 **File:** `PagePlay.Site/Pages/Shared/Layout.htmx.cs`
 
 **Changes:**
@@ -484,9 +484,9 @@ public class Layout(
 ```
 
 **Acceptance Criteria:**
-- ✅ Layout accepts optional `welcomeWidgetHtml` parameter
-- ✅ Renders widget HTML between nav and main
-- ✅ Backwards compatible (null = no widget)
+- ✅ Layout accepts optional `welcomeWidgetHtml` parameter - Complete
+- ✅ Renders widget HTML between nav and main - Complete
+- ✅ Backwards compatible (null = no widget) - Complete
 
 ---
 
@@ -1036,10 +1036,10 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 3 - Convert Existing Components (IN PROGRESS)
-**Next Task:** Phase 3 - Task 3.2 - Update Layout to Include WelcomeWidget
+**Active Phase:** Phase 3 - Convert Existing Components (COMPLETE ✅)
+**Next Task:** Phase 4 - Task 4.1 - Create Data Loader Service
 **Blockers:** None
-**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 Task 3.1 ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅
 
 ---
 
@@ -1069,6 +1069,11 @@ htmx.defineExtension('component-context', {
   - Declares dependency on "todos" domain, requires "openCount" key
   - Includes proper data-attributes for HTMX tracking (id, data-component, data-domain)
   - Registered in DI container as IWelcomeWidget
+- Completed Phase 3, Task 3.2: Update Layout to Include WelcomeWidget
+  - Modified IPageLayout.Render() signature to accept optional welcomeWidgetHtml parameter
+  - Updated Layout implementation to render widget HTML between nav and main sections
+  - Uses null-coalescing operator for backwards compatibility (null = no widget)
+  - Build succeeded with no errors, maintaining backwards compatibility
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**
