@@ -41,6 +41,7 @@ public static class DependencyResolver
         services.AddScoped<IResponseManager, ResponseManager>();
         services.AddScoped<IAntiforgeryTokenProvider, AntiforgeryTokenProvider>();
         services.AddScoped<IComponentContextParser, ComponentContextParser>();
+        services.AddScoped<IDataLoader, DataLoader>();
     }
 
     private static void bindData(IServiceCollection services)
