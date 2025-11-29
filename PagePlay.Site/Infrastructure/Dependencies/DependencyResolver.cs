@@ -56,8 +56,10 @@ public static class DependencyResolver
         });
         services.AddScoped<IRepository, Repository>();
 
-        // Data Domains
-        services.AddScoped<IDataDomain, TodosDomain>();
+        // Data Domains - Multiple domains can be registered for different contexts
+        // Pattern: Separate domains by computational cost and usage frequency
+        services.AddScoped<IDataDomain, TodosDomain>();           // Basic CRUD operations
+        services.AddScoped<IDataDomain, TodoAnalyticsDomain>();   // Analytics/reporting (expensive calculations)
     }
 
     private static void bindValidation(IServiceCollection services)
@@ -75,6 +77,7 @@ public static class DependencyResolver
         services.AddScoped<IPageLayout, Layout>();
         services.AddScoped<INavView, Nav>();
         services.AddScoped<IWelcomeWidget, WelcomeWidget>();
+        services.AddScoped<IAnalyticsStatsWidget, AnalyticsStatsWidget>();
         services.AutoRegisterPages(ServiceLifetime.Scoped);
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
