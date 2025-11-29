@@ -724,9 +724,9 @@ public class FrameworkOrchestrator(
 
 ---
 
-### **Phase 5: Update Todos Page** ⬜ Not Started
+### **Phase 5: Update Todos Page** 🔄 In Progress
 
-#### **Task 5.1: Update TodosPageEndpoints to Use Framework** ⬜
+#### **Task 5.1: Update TodosPageEndpoints to Use Framework** ✅
 **File:** `PagePlay.Site/Pages/Todos/Todos.Route.cs`
 
 **Changes:**
@@ -775,10 +775,10 @@ public class TodosPageEndpoints(
 ```
 
 **Acceptance Criteria:**
-- ✅ Uses `IFrameworkOrchestrator` to render WelcomeWidget
-- ✅ Still renders todos using existing workflow (no breaking changes yet)
-- ✅ Page loads successfully with both welcome widget and todo list
-- ✅ Welcome widget shows correct open todo count
+- ✅ Uses `IFrameworkOrchestrator` to render WelcomeWidget - Complete
+- ✅ Still renders todos using existing workflow (no breaking changes yet) - Complete
+- ✅ Page loads successfully with both welcome widget and todo list - Ready to test
+- ✅ Welcome widget shows correct open todo count - Ready to test
 
 ---
 
@@ -1036,10 +1036,10 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 4 - Framework Orchestration (COMPLETE ✅)
-**Next Task:** Phase 5 - Task 5.1 - Update TodosPageEndpoints to Use Framework
+**Active Phase:** Phase 5 - Update Todos Page (IN PROGRESS 🔄)
+**Next Task:** Phase 5 - Task 5.2 - Update CreateTodoInteraction to Use Mutations (requires Task 5.3 first)
 **Blockers:** None
-**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅, Phase 4 (Tasks 4.1-4.3) ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅, Phase 4 (Tasks 4.1-4.3) ✅, Phase 5 Task 5.1 ✅
 
 ---
 
@@ -1088,6 +1088,16 @@ htmx.defineExtension('component-context', {
   - Registered in DI container as scoped service
   - Build succeeded with only expected nullable warnings (nullable types disabled project-wide)
   - All acceptance criteria met for all Phase 4 tasks
+
+### **Session 5 (2025-11-29 - Current)**
+- Completed Phase 5, Task 5.1: Update TodosPageEndpoints to Use Framework
+  - Modified TodosPageEndpoints constructor to inject IWelcomeWidget and IFrameworkOrchestrator
+  - Updated MapGet handler to use framework orchestration for WelcomeWidget rendering
+  - Framework loads "todos" domain data and renders WelcomeWidget
+  - Layout renders WelcomeWidget between nav and main content
+  - Todos list still uses existing workflow pattern (no breaking changes)
+  - Build succeeded with only expected nullable warnings
+  - Ready for manual testing to verify WelcomeWidget appears with correct open todo count
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**
