@@ -15,10 +15,12 @@ public class LoginPageEndpoints(
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(PAGE_ROUTE, () =>
+        endpoints.MapGet(PAGE_ROUTE, async () =>
         {
             var bodyContent = _page.RenderPage();
-            var page = _layout.Render("Login", bodyContent);
+
+            // Layout handles its own component composition
+            var page = await _layout.RenderAsync("Login", bodyContent);
             return Results.Content(page, "text/html");
         });
 

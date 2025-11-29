@@ -1,21 +1,30 @@
+using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Infrastructure.Web.Components;
+using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Http;
 
 namespace PagePlay.Site.Pages.Shared;
 
 public interface IPageLayout
 {
-    string Render(string title, string bodyContent, string? welcomeWidgetHtml = null);
+    Task<string> RenderAsync(string title, string bodyContent);
 }
 
 public class Layout(
     IAntiforgeryTokenProvider _antiforgeryTokenProvider,
-    INavView _nav
+    INavView _nav,
+    IWelcomeWidget _welcomeWidget,
+    IFrameworkOrchestrator _framework,
+    IUserIdentityService _userIdentity
 ) : IPageLayout
 {
     // language=html
-    public string Render(string title, string bodyContent, string? welcomeWidgetHtml = null)
+    public async Task<string> RenderAsync(string title, string bodyContent)
     {
         var antiforgeryToken = _antiforgeryTokenProvider.GetRequestToken();
+
+        // Layout handles its own component composition
+        var welcomeHtml = await renderWelcomeWidget();
 
         return $$"""
         <!DOCTYPE html>
@@ -34,7 +43,7 @@ public class Layout(
         </head>
         <body hx-ext="component-context">
             {{_nav.Render()}}
-            {{welcomeWidgetHtml ?? ""}}
+            {{welcomeHtml}}
             <main>
                 {{bodyContent}}
             </main>
@@ -42,5 +51,20 @@ public class Layout(
         </body>
         </html>
         """;
+    }
+
+    private async Task<string> renderWelcomeWidget()
+    {
+        // Render welcome widget based on authentication status
+        if (_userIdentity.GetCurrentUserId().HasValue)
+        {
+            // Authenticated: render with domain data
+            var components = new IServerComponent[] { _welcomeWidget };
+            var renderedComponents = await _framework.RenderComponentsAsync(components);
+            return renderedComponents[_welcomeWidget.ComponentId];
+        }
+
+        // Not authenticated: render simple welcome message
+        return _welcomeWidget.RenderUnauthenticated();
     }
 }

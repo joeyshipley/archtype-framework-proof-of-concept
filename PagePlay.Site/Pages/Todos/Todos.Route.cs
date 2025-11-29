@@ -1,7 +1,5 @@
 using PagePlay.Site.Application.Todos.ListTodos;
 using PagePlay.Site.Infrastructure.Core.Application;
-using PagePlay.Site.Infrastructure.Web.Components;
-using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
 
@@ -12,9 +10,7 @@ public interface ITodosPageInteraction : IEndpoint {}
 public class TodosPageEndpoints(
     IPageLayout _layout,
     ITodosPageView _page,
-    IEnumerable<ITodosPageInteraction> _interactions,
-    IWelcomeWidget _welcomeWidget,
-    IFrameworkOrchestrator _framework
+    IEnumerable<ITodosPageInteraction> _interactions
 ) : IClientEndpoint
 {
     public const string PAGE_ROUTE = "todos";
@@ -25,21 +21,14 @@ public class TodosPageEndpoints(
             IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse> listWorkflow
         ) =>
         {
-            // Define page components
-            var components = new IServerComponent[] { _welcomeWidget };
-
-            // Framework loads data and renders components
-            var renderedComponents = await _framework.RenderComponentsAsync(components);
-            var welcomeHtml = renderedComponents[_welcomeWidget.ComponentId];
-
-            // Render todos (existing pattern for now)
+            // Render todos
             var result = await listWorkflow.Perform(new ListTodosWorkflowRequest());
-            var todosHtml = !result.Success
+            var bodyContent = !result.Success
                 ? _page.RenderError("Failed to load todos")
                 : _page.RenderPage(result.Model.Todos);
 
-            // Combine everything in layout
-            var page = _layout.Render("Todos", todosHtml, welcomeHtml);
+            // Layout handles its own component composition
+            var page = await _layout.RenderAsync("Todos", bodyContent);
             return Results.Content(page, "text/html");
         })
         .RequireAuthenticatedUser();
