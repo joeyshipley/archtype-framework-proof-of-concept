@@ -89,22 +89,6 @@ public class TodosPage : ITodosPageView
                     <button type="submit" class="todo-checkbox">{{checkboxIcon}}</button>
                 </form>
                 <span class="todo-title">{{todo.Title.Safe()}}</span>
-                {{Button.Render(
-                    route: new()
-                    {
-                        Endpoint = "/interaction/todos/delete",
-                        ModelId = todo.Id,
-                        Target = $"#todo-{todo.Id}",
-                        SwapStrategy = "outerHTML"
-                    },
-                    html: new()
-                    {
-                        ElementId = $"delete-todo-{todo.Id}",
-                        Title = "Delete todo",
-                        CssClass = "todo-delete"
-                    },
-                    content: $$"""X1"""
-                )}}
                 {{ButtonDelete.Render(
                     endpoint: "/interaction/todos/delete",
                     id: todo.Id,
