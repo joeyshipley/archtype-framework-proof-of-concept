@@ -17,6 +17,11 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
     protected readonly TView Page;
 
     /// <summary>
+    /// The HttpContext for the current request. Available in OnSuccess and OnError methods.
+    /// </summary>
+    protected HttpContext HttpContext { get; private set; } = null!;
+
+    /// <summary>
     /// The base route for the page (e.g., "todos", "login")
     /// </summary>
     protected abstract string RouteBase { get; }
@@ -46,9 +51,12 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
 
     private async Task<IResult> Handle(
         [FromForm] TRequest request,
-        IWorkflow<TRequest, TResponse> workflow
+        IWorkflow<TRequest, TResponse> workflow,
+        HttpContext httpContext
     )
     {
+        HttpContext = httpContext;
+
         var result = await workflow.Perform(request);
 
         return result.Success
