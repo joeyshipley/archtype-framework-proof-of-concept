@@ -38,7 +38,6 @@
     <Folder Include="Application\Todos\ToggleTodo\" />
     <Folder Include="Application\Todos\UpdateTodo\" />
     <Folder Include="Infrastructure\Email\" />
-    <Folder Include="Pages\Login_OLD\" />
     <Folder Include="Pages\Profile\" />
     <Folder Include="Pages\Todos\Interactions\" />
   </ItemGroup>
