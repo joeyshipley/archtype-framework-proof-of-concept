@@ -62,32 +62,34 @@ public class DataDependencies
 public interface IDataContext
 {
     /// <summary>
-    /// Gets typed domain context.
+    /// Gets typed domain context by context type.
+    /// No magic strings - the context type uniquely identifies the domain.
     /// </summary>
-    TContext GetDomain<TContext>(string domainName) where TContext : class;
+    TContext GetDomain<TContext>() where TContext : class;
 
     /// <summary>
-    /// Checks if a domain has been loaded.
+    /// Checks if a domain context has been loaded by type.
     /// </summary>
-    bool HasDomain(string domain);
+    bool HasDomain<TContext>() where TContext : class;
 }
 
 public class DataContext : IDataContext
 {
-    private readonly Dictionary<string, object> _typedDomains = new();
+    private readonly Dictionary<Type, object> _typedDomainsByContextType = new();
 
-    public void AddTypedDomain<TContext>(string domainName, TContext typedData) where TContext : class
+    public void AddDomain<TContext>(TContext typedData) where TContext : class
     {
-        _typedDomains[domainName] = typedData;
+        _typedDomainsByContextType[typeof(TContext)] = typedData;
     }
 
-    public TContext GetDomain<TContext>(string domainName) where TContext : class
+    public TContext GetDomain<TContext>() where TContext : class
     {
-        if (!_typedDomains.ContainsKey(domainName))
-            throw new InvalidOperationException($"Typed domain '{domainName}' not loaded");
+        if (!_typedDomainsByContextType.TryGetValue(typeof(TContext), out var data))
+            throw new InvalidOperationException($"Domain context '{typeof(TContext).Name}' not loaded");
 
-        return (TContext)_typedDomains[domainName];
+        return (TContext)data;
     }
 
-    public bool HasDomain(string domain) => _typedDomains.ContainsKey(domain);
+    public bool HasDomain<TContext>() where TContext : class =>
+        _typedDomainsByContextType.ContainsKey(typeof(TContext));
 }

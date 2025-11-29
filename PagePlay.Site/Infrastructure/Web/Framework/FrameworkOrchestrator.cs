@@ -37,14 +37,15 @@ public class FrameworkOrchestrator(
     {
         var componentList = components.ToList();
 
-        // 1. Collect all required domains
-        var requiredDomains = componentList
-            .Select(c => c.Dependencies.Domain)
+        // 1. Collect all required domain context types
+        var requiredContextTypes = componentList
+            .Select(c => c.Dependencies.DomainContextType)
+            .Where(t => t != null)
             .Distinct()
-            .ToList();
+            .ToArray();
 
         // 2. Load all domains in parallel
-        var dataContext = await _dataLoader.LoadDomainsAsync(requiredDomains);
+        var dataContext = await _dataLoader.GetDomainsAsync(requiredContextTypes);
 
         // 3. Render all components
         var renderedComponents = new Dictionary<string, string>();
@@ -72,10 +73,21 @@ public class FrameworkOrchestrator(
         if (affectedComponents.Count == 0)
             return string.Empty; // No components to update
 
-        // 3. Re-fetch mutated domains
-        var dataContext = await _dataLoader.LoadDomainsAsync(mutations.Domains);
+        // 3. Map affected component domain names to context types
+        var affectedContextTypes = affectedComponents
+            .Select(c =>
+            {
+                var component = _componentFactory.Create(c.ComponentType);
+                return component?.Dependencies.DomainContextType;
+            })
+            .Where(t => t != null)
+            .Distinct()
+            .ToArray();
 
-        // 4. Re-render affected components
+        // 4. Re-fetch mutated domains
+        var dataContext = await _dataLoader.GetDomainsAsync(affectedContextTypes);
+
+        // 5. Re-render affected components
         var updates = new List<string>();
         foreach (var componentInfo in affectedComponents)
         {

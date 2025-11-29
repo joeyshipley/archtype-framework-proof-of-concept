@@ -10,12 +10,13 @@ using PagePlay.Site.Infrastructure.Web.Components;
 public interface IDataLoader
 {
     /// <summary>
-    /// Fetches data for all specified domains in parallel.
+    /// Fetches data for all specified domain contexts in parallel.
     /// Returns unified DataContext with all domain data.
+    /// Pass context types (e.g., typeof(TodosDomainContext)) - framework maps to domains automatically.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when user is not authenticated or domain configuration is invalid</exception>
     /// <exception cref="DataLoadException">Thrown when domain data fetching fails</exception>
-    Task<IDataContext> LoadDomainsAsync(IEnumerable<string> domainNames);
+    Task<IDataContext> GetDomainsAsync(params Type[] contextTypes);
 }
 
 public class DataLoader(
@@ -24,7 +25,7 @@ public class DataLoader(
     ILogger<DataLoader> _logger
 ) : IDataLoader
 {
-    public async Task<IDataContext> LoadDomainsAsync(IEnumerable<string> domainNames)
+    public async Task<IDataContext> GetDomainsAsync(params Type[] contextTypes)
     {
         var userId = _userIdentity.GetCurrentUserId();
         if (!userId.HasValue)
@@ -33,39 +34,38 @@ public class DataLoader(
             throw new InvalidOperationException("User must be authenticated to load domain data");
         }
 
-        var domainList = domainNames.Distinct().ToList();
+        var contextTypeList = contextTypes.Distinct().ToList();
         var dataContext = new DataContext();
 
-        _logger.LogDebug("Loading domains: {Domains} for user {UserId}", string.Join(", ", domainList), userId.Value);
+        _logger.LogDebug("Loading {Count} domain contexts for user {UserId}", contextTypeList.Count, userId.Value);
 
-        // Find matching domains
-        var domainsToLoad = _domains
-            .Where(d => domainList.Contains(d.Name))
-            .ToList();
+        // Map context types to domains
+        var domainsToLoad = new List<(IDataDomain domain, Type contextType)>();
+
+        foreach (var contextType in contextTypeList)
+        {
+            var domain = findDomainForContextType(contextType);
+            if (domain == null)
+            {
+                _logger.LogError("No domain found that produces context type '{ContextType}'", contextType.Name);
+                throw new InvalidOperationException($"No domain found that produces context type '{contextType.Name}'");
+            }
+
+            domainsToLoad.Add((domain, contextType));
+        }
 
         // Fetch all typed domains in parallel
-        foreach (var domain in domainsToLoad)
+        foreach (var (domain, contextType) in domainsToLoad)
         {
             try
             {
                 var domainType = domain.GetType();
-                var typedInterface = domainType.GetInterfaces()
-                    .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDataDomain<>));
-
-                if (typedInterface == null)
-                {
-                    _logger.LogError("Domain '{DomainName}' does not implement IDataDomain<TContext>", domain.Name);
-                    throw new InvalidOperationException($"Domain '{domain.Name}' must implement IDataDomain<TContext>");
-                }
-
-                // Fetch typed context
-                var contextType = typedInterface.GetGenericArguments()[0];
                 var fetchTypedMethod = domainType.GetMethod("FetchTypedAsync");
 
                 if (fetchTypedMethod == null)
                 {
-                    _logger.LogError("Domain '{DomainName}' does not implement FetchTypedAsync method", domain.Name);
-                    throw new InvalidOperationException($"Domain '{domain.Name}' does not implement FetchTypedAsync");
+                    _logger.LogError("Domain '{DomainType}' does not implement FetchTypedAsync method", domainType.Name);
+                    throw new InvalidOperationException($"Domain '{domainType.Name}' does not implement FetchTypedAsync");
                 }
 
                 var typedTask = (Task)fetchTypedMethod.Invoke(domain, new object[] { userId.Value });
@@ -74,26 +74,42 @@ public class DataLoader(
 
                 if (typedResult == null)
                 {
-                    _logger.LogError("Domain '{DomainName}' returned null from FetchTypedAsync for user {UserId}", domain.Name, userId.Value);
-                    throw new DataLoadException($"Domain '{domain.Name}' returned null from FetchTypedAsync");
+                    _logger.LogError("Domain '{DomainType}' returned null from FetchTypedAsync for user {UserId}", domainType.Name, userId.Value);
+                    throw new DataLoadException($"Domain '{domainType.Name}' returned null from FetchTypedAsync");
                 }
 
-                // Add typed context
-                var addTypedMethod = typeof(DataContext).GetMethod("AddTypedDomain")
+                // Add typed context (keyed by context type, not string)
+                var addDomainMethod = typeof(DataContext).GetMethod("AddDomain")
                     ?.MakeGenericMethod(contextType);
-                addTypedMethod?.Invoke(dataContext, new[] { domain.Name, typedResult });
+                addDomainMethod?.Invoke(dataContext, new[] { typedResult });
 
-                _logger.LogDebug("Successfully loaded domain '{DomainName}' for user {UserId}", domain.Name, userId.Value);
+                _logger.LogDebug("Successfully loaded context '{ContextType}' for user {UserId}", contextType.Name, userId.Value);
             }
             catch (Exception ex) when (ex is not InvalidOperationException and not DataLoadException)
             {
-                _logger.LogError(ex, "Failed to load domain '{DomainName}' for user {UserId}", domain.Name, userId.Value);
-                throw new DataLoadException($"Failed to load domain '{domain.Name}': {ex.Message}", ex);
+                _logger.LogError(ex, "Failed to load context '{ContextType}' for user {UserId}", contextType.Name, userId.Value);
+                throw new DataLoadException($"Failed to load context '{contextType.Name}': {ex.Message}", ex);
             }
         }
 
-        _logger.LogDebug("Successfully loaded {Count} domains for user {UserId}", domainsToLoad.Count, userId.Value);
+        _logger.LogDebug("Successfully loaded {Count} domain contexts for user {UserId}", domainsToLoad.Count, userId.Value);
         return dataContext;
+    }
+
+    private IDataDomain findDomainForContextType(Type contextType)
+    {
+        // Find domain that implements IDataDomain<TContext> where TContext = contextType
+        return _domains.FirstOrDefault(d =>
+        {
+            var domainType = d.GetType();
+            var typedInterface = domainType.GetInterfaces()
+                .FirstOrDefault(i =>
+                    i.IsGenericType &&
+                    i.GetGenericTypeDefinition() == typeof(IDataDomain<>) &&
+                    i.GetGenericArguments()[0] == contextType);
+
+            return typedInterface != null;
+        });
     }
 }
 

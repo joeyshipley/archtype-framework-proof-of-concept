@@ -18,8 +18,8 @@ public class WelcomeWidget : IWelcomeWidget
 
     public string Render(IDataContext data)
     {
-        // Typed access - IntelliSense works, compiler checks property names
-        var todosData = data.GetDomain<TodosDomainContext>("todos");
+        // Typed access - no magic strings!
+        var todosData = data.GetDomain<TodosDomainContext>();
         var count = todosData.OpenCount;
 
         // language=html

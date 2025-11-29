@@ -30,7 +30,7 @@ public class AnalyticsStatsWidget : IAnalyticsStatsWidget
 
     public string Render(IDataContext data)
     {
-        var analytics = data.GetDomain<TodoAnalyticsDomainContext>("todoAnalytics");
+        var analytics = data.GetDomain<TodoAnalyticsDomainContext>();
         var productivityScore = analytics.ProductivityScore;
         var longestStreak = analytics.LongestStreak;
         var avgCompletionTime = analytics.AverageCompletionTime;
