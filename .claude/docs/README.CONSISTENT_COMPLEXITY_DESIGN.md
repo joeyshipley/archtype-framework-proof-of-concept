@@ -274,6 +274,25 @@ public interface IRepository<T>
 ✅ Every repository follows same contract
 ❌ Never write custom repository without good reason
 
+### Domain Loading - Fluent API
+```csharp
+// Single domain
+var ctx = await dataLoader.With<TodosDomainContext>().Load();
+var todos = ctx.Get<TodosDomainContext>();
+
+// Multiple domains (same pattern!)
+var ctx = await dataLoader
+    .With<TodosDomainContext>()
+    .With<AnalyticsDomainContext>()
+    .Load();
+var todos = ctx.Get<TodosDomainContext>();
+var analytics = ctx.Get<AnalyticsDomainContext>();
+```
+✅ Single consistent pattern for 1-N domains
+✅ No magic strings, compile-time safety
+✅ Self-documenting, chainable
+❌ Never use `typeof()` - use generic type parameters
+
 ### Migrations - Auto-discovered
 ```csharp
 // AppDbContextFactory reads from appsettings.json
@@ -462,7 +481,7 @@ public class RegisterWorkflow(
 **Example:**
 
 ```csharp
-// ✅ Correct - Reading data through DataDomain
+// ✅ Correct - Reading data through DataDomain with fluent API
 public class TodosPageEndpoints(
     IDataLoader _dataLoader,
     IPageLayout _layout
@@ -472,8 +491,8 @@ public class TodosPageEndpoints(
     {
         endpoints.MapGet("todos", async (IDataLoader dataLoader) =>
         {
-            var dataContext = await dataLoader.LoadDomainsAsync(new[] { "todos" });
-            var todosData = dataContext.GetDomain<TodosDomainContext>("todos");
+            var ctx = await dataLoader.With<TodosDomainContext>().Load();
+            var todosData = ctx.Get<TodosDomainContext>();
 
             var bodyContent = _page.RenderPage(todosData.List);
             var page = await _layout.RenderAsync("Todos", bodyContent);
@@ -527,7 +546,9 @@ When implementing features, AI should:
 6. **Flag complexity** - "This feature seems more complex than others, should we extract to framework?"
 
 **When implementing reads:**
-- Use DataDomain via DataLoader
+- Use DataDomain via DataLoader with fluent API: `dataLoader.With<TContext>().Load()`
+- Access data with `ctx.Get<TContext>()` (no magic strings)
+- Single consistent pattern for 1 or multiple domains
 - Never create "List" or "Get" workflows
 - Data fetching happens in DataDomains, not Workflows
 

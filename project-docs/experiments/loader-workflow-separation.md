@@ -155,8 +155,8 @@ endpoints.MapGet(PAGE_ROUTE, async (
     try
     {
         // Fetch todos via DataDomain (same as components use)
-        var dataContext = await dataLoader.LoadDomainsAsync(new[] { "todos" });
-        var todosData = dataContext.GetDomain<TodosDomainContext>("todos");
+        var ctx = await dataLoader.With<TodosDomainContext>().Load();
+        var todosData = ctx.Get<TodosDomainContext>();
 
         var bodyContent = _page.RenderPage(todosData.List);
         var page = await _layout.RenderAsync("Todos", bodyContent);
@@ -176,7 +176,7 @@ endpoints.MapGet(PAGE_ROUTE, async (
 **Changes:**
 - [ ] Replace `IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse>` parameter with `IDataLoader`
 - [ ] Remove workflow invocation
-- [ ] Call `dataLoader.LoadDomainsAsync(new[] { "todos" })`
+- [ ] Call `dataLoader.With<TodosDomainContext>().Load()` (fluent API)
 - [ ] Get todos from `TodosDomainContext`: `todosData.List`
 - [ ] Add error handling (try/catch)
 - [ ] Add logging for failures
