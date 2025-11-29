@@ -60,14 +60,14 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
         var result = await workflow.Perform(request);
 
         return result.Success
-            ? OnSuccess(result.Model)
+            ? await OnSuccess(result.Model)
             : OnError(result.Errors);
     }
 
     /// <summary>
     /// Override this to define what HTML should be returned on successful workflow execution.
     /// </summary>
-    protected abstract IResult OnSuccess(TResponse response);
+    protected abstract Task<IResult> OnSuccess(TResponse response);
 
     /// <summary>
     /// Override this to customize error handling. Default implementation uses the first error message

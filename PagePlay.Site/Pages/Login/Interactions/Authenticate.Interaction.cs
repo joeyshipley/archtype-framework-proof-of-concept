@@ -15,11 +15,11 @@ public class AuthenticateInteraction(
     protected override string Action => "authenticate";
     protected override bool RequireAuth => false;
 
-    protected override IResult OnSuccess(LoginWorkflowResponse response)
+    protected override Task<IResult> OnSuccess(LoginWorkflowResponse response)
     {
         cookieManager.SetAuthCookie(response.Token);
         responseManager.SetRedirectHeader("/todos");
-        return Results.Ok();
+        return Task.FromResult(Results.Ok());
     }
 
     protected override IResult RenderError(string message) =>

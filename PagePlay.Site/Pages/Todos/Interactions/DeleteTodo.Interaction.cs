@@ -11,8 +11,8 @@ public class DeleteTodoInteraction(ITodosPageView page)
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string Action => "delete";
 
-    protected override IResult OnSuccess(DeleteTodoWorkflowResponse response) =>
-        Results.Content(string.Empty, "text/html");
+    protected override Task<IResult> OnSuccess(DeleteTodoWorkflowResponse response) =>
+        Task.FromResult(Results.Content(string.Empty, "text/html"));
 
     // TODO: fetch the task from DB and send back a row with error state instead of using OH NOES!!! in html
     // This will be needed for better UX in other places.
