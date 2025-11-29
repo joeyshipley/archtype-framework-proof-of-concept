@@ -1,4 +1,3 @@
-using Microsoft.Extensions.Logging;
 using PagePlay.Site.Application.Todos.Domain;
 using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Routing;
@@ -25,7 +24,6 @@ public class TodosPageEndpoints(
         {
             try
             {
-                // Fetch todos via DataDomain (no magic strings!)
                 var ctx = await dataLoader.With<TodosDomainContext>().Load();
                 var todosData = ctx.Get<TodosDomainContext>();
 
