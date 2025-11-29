@@ -1,3 +1,4 @@
+using PagePlay.Site.Application.Todos.Domain;
 using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Shared;
@@ -11,13 +12,15 @@ public class WelcomeWidget : IWelcomeWidget
 {
     public string ComponentId => "welcome-widget";
 
+    // New typed API - compile-time safe, no magic strings!
     public DataDependencies Dependencies => DataDependencies
-        .From("todos")
-        .Require<int>("openCount");
+        .From<TodosDomain, TodosDomainContext>();
 
     public string Render(IDataContext data)
     {
-        var count = data.Get<int>("todos", "openCount");
+        // Typed access - IntelliSense works, compiler checks property names
+        var todosData = data.GetDomain<TodosDomainContext>("todos");
+        var count = todosData.OpenCount;
 
         // language=html
         return $$"""

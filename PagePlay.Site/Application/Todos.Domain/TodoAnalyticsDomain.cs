@@ -12,23 +12,44 @@ namespace PagePlay.Site.Application.Todos.Domain;
 /// - TodosDomain: Fast queries for CRUD operations (list, counts, basic stats)
 /// - TodoAnalyticsDomain: Expensive analytics for dashboard/reporting pages
 ///
-/// Components declare which domain they need, avoiding unnecessary computation.
+/// Components declare which domain they need (typed API):
+///   AnalyticsWidget: DataDependencies.From<TodoAnalyticsDomain, TodoAnalyticsDomainContext>()
 /// </summary>
-public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain
+public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnalyticsDomainContext>
 {
     public string Name => "todoAnalytics";
 
-    // Entry point reveals analytics data structure - readable without implementation details
-    public async Task<DomainDataContext> FetchAllAsync(long userId)
+    // Typed API - compile-time safe access
+    public async Task<TodoAnalyticsDomainContext> FetchTypedAsync(long userId)
     {
         var todos = await fetchTodos(userId);
-        var completionTrend = calculateCompletionTrend(todos);
-        var longestStreak = calculateLongestStreak(todos);
-        var averageCompletionTime = calculateAverageCompletionTime(todos);
-        var productivityScore = calculateProductivityScore(todos);
-        var weeklyBreakdown = calculateWeeklyBreakdown(todos);
 
-        return buildContext(completionTrend, longestStreak, averageCompletionTime, productivityScore, weeklyBreakdown);
+        return new TodoAnalyticsDomainContext
+        {
+            CompletionTrend = calculateCompletionTrend(todos),
+            LongestStreak = calculateLongestStreak(todos),
+            AverageCompletionTime = calculateAverageCompletionTime(todos),
+            ProductivityScore = calculateProductivityScore(todos),
+            WeeklyBreakdown = calculateWeeklyBreakdown(todos)
+        };
+    }
+
+    // Legacy API - delegates to typed implementation for consistency
+    public async Task<DomainDataContext> FetchAllAsync(long userId)
+    {
+        var typedContext = await FetchTypedAsync(userId);
+        return buildLegacyContext(typedContext);
+    }
+
+    private DomainDataContext buildLegacyContext(TodoAnalyticsDomainContext typed)
+    {
+        var context = new DomainDataContext();
+        context["completionTrend"] = typed.CompletionTrend;
+        context["longestStreak"] = typed.LongestStreak;
+        context["averageCompletionTime"] = typed.AverageCompletionTime;
+        context["productivityScore"] = typed.ProductivityScore;
+        context["weeklyBreakdown"] = typed.WeeklyBreakdown;
+        return context;
     }
 
     // Data fetching - single query to prevent N+1
@@ -131,20 +152,4 @@ public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain
         };
     }
 
-    // Context assembly - defines analytics domain data shape
-    private DomainDataContext buildContext(
-        Dictionary<string, int> completionTrend,
-        int longestStreak,
-        double averageCompletionTime,
-        int productivityScore,
-        Dictionary<string, object> weeklyBreakdown)
-    {
-        var context = new DomainDataContext();
-        context["completionTrend"] = completionTrend;
-        context["longestStreak"] = longestStreak;
-        context["averageCompletionTime"] = averageCompletionTime;
-        context["productivityScore"] = productivityScore;
-        context["weeklyBreakdown"] = weeklyBreakdown;
-        return context;
-    }
 }

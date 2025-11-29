@@ -17,28 +17,46 @@ namespace PagePlay.Site.Application.Todos.Domain;
 /// 2. Different pages need different data (CRUD page vs analytics dashboard)
 /// 3. Independent mutation concerns (basic operations vs analytics recalculation)
 ///
-/// Components declare domain dependency:
-///   WelcomeWidget: DataDependencies.From("todos") - uses this domain
-///   AnalyticsStatsWidget: DataDependencies.From("todoAnalytics") - uses analytics domain
+/// Components declare domain dependency (typed API):
+///   WelcomeWidget: DataDependencies.From<TodosDomain, TodosDomainContext>()
 ///
 /// Interactions declare which domains are affected:
 ///   CreateTodo: DataMutations.For("todos") - only WelcomeWidget updates
 ///   AnalyticsRefresh: DataMutations.For("todos", "todoAnalytics") - both domains update
 /// </summary>
-public class TodosDomain(IRepository _repository) : IDataDomain
+public class TodosDomain(IRepository _repository) : IDataDomain<TodosDomainContext>
 {
     public string Name => "todos";
 
-    // Entry point reveals domain data structure - readable without implementation details
-    public async Task<DomainDataContext> FetchAllAsync(long userId)
+    // Typed API - compile-time safe access
+    public async Task<TodosDomainContext> FetchTypedAsync(long userId)
     {
         var todos = await fetchTodos(userId);
-        var todoList = transformToListEntries(todos);
-        var openCount = calculateOpenCount(todos);
-        var totalCount = calculateTotalCount(todos);
-        var completionRate = calculateCompletionRate(todos);
 
-        return buildContext(todoList, openCount, totalCount, completionRate);
+        return new TodosDomainContext
+        {
+            List = transformToListEntries(todos),
+            OpenCount = calculateOpenCount(todos),
+            TotalCount = calculateTotalCount(todos),
+            CompletionRate = calculateCompletionRate(todos)
+        };
+    }
+
+    // Legacy API - delegates to typed implementation for consistency
+    public async Task<DomainDataContext> FetchAllAsync(long userId)
+    {
+        var typedContext = await FetchTypedAsync(userId);
+        return buildLegacyContext(typedContext);
+    }
+
+    private DomainDataContext buildLegacyContext(TodosDomainContext typed)
+    {
+        var context = new DomainDataContext();
+        context["list"] = typed.List;
+        context["openCount"] = typed.OpenCount;
+        context["totalCount"] = typed.TotalCount;
+        context["completionRate"] = typed.CompletionRate;
+        return context;
     }
 
     // Data fetching - single query to prevent N+1
@@ -68,18 +86,4 @@ public class TodosDomain(IRepository _repository) : IDataDomain
             : 0.0;
     }
 
-    // Context assembly - defines domain data shape
-    private DomainDataContext buildContext(
-        List<TodoListEntry> todoList,
-        int openCount,
-        int totalCount,
-        double completionRate)
-    {
-        var context = new DomainDataContext();
-        context["list"] = todoList;
-        context["openCount"] = openCount;
-        context["totalCount"] = totalCount;
-        context["completionRate"] = completionRate;
-        return context;
-    }
 }

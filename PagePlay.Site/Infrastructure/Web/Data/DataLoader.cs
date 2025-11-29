@@ -35,15 +35,44 @@ public class DataLoader(
             .ToList();
 
         // Fetch all domains in parallel
-        var fetchTasks = domainsToLoad.Select(domain =>
-            domain.FetchAllAsync(userId.Value)
-        );
-        var results = await Task.WhenAll(fetchTasks);
-
-        // Add to context
-        for (int i = 0; i < domainsToLoad.Count; i++)
+        foreach (var domain in domainsToLoad)
         {
-            dataContext.AddDomain(domainsToLoad[i].Name, results[i]);
+            // Check if this is a typed domain
+            var domainType = domain.GetType();
+            var typedInterface = domainType.GetInterfaces()
+                .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDataDomain<>));
+
+            if (typedInterface != null)
+            {
+                // Typed domain - fetch both typed and legacy contexts
+                var contextType = typedInterface.GetGenericArguments()[0];
+                var fetchTypedMethod = domainType.GetMethod("FetchTypedAsync");
+
+                if (fetchTypedMethod != null)
+                {
+                    var typedTask = (Task)fetchTypedMethod.Invoke(domain, new object[] { userId.Value });
+                    await typedTask;
+                    var typedResult = typedTask.GetType().GetProperty("Result")?.GetValue(typedTask);
+
+                    if (typedResult != null)
+                    {
+                        // Add typed context
+                        var addTypedMethod = typeof(DataContext).GetMethod("AddTypedDomain")
+                            ?.MakeGenericMethod(contextType);
+                        addTypedMethod?.Invoke(dataContext, new[] { domain.Name, typedResult });
+                    }
+                }
+
+                // Also fetch legacy context for backward compatibility
+                var legacyContext = await domain.FetchAllAsync(userId.Value);
+                dataContext.AddDomain(domain.Name, legacyContext);
+            }
+            else
+            {
+                // Legacy domain - only fetch legacy context
+                var legacyContext = await domain.FetchAllAsync(userId.Value);
+                dataContext.AddDomain(domain.Name, legacyContext);
+            }
         }
 
         return dataContext;

@@ -1,8 +1,8 @@
 namespace PagePlay.Site.Infrastructure.Web.Data;
 
 /// <summary>
-/// Represents a bounded context that provides related data.
-/// Examples: "todos", "accounts", "notifications"
+/// Non-generic interface for domain registration and discovery.
+/// All domains must implement this for DI container scanning.
 /// </summary>
 public interface IDataDomain
 {
@@ -19,8 +19,22 @@ public interface IDataDomain
 }
 
 /// <summary>
-/// Container for all data a domain provides.
-/// Components access data by key: context["openCount"]
+/// Typed interface for domains that provide strongly-typed context.
+/// Enables compile-time safety for domain data access.
+/// </summary>
+/// <typeparam name="TContext">The typed context this domain provides</typeparam>
+public interface IDataDomain<TContext> : IDataDomain where TContext : class, new()
+{
+    /// <summary>
+    /// Fetches domain data as a strongly-typed context.
+    /// Replaces dictionary-based access with type-safe properties.
+    /// </summary>
+    Task<TContext> FetchTypedAsync(long userId);
+}
+
+/// <summary>
+/// Container for all data a domain provides (legacy string-based access).
+/// For new code, prefer IDataDomain&lt;TContext&gt; with typed contexts.
 /// </summary>
 public class DomainDataContext
 {
