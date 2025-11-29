@@ -84,12 +84,9 @@ public class FrameworkOrchestrator(
 
             var html = component.Render(dataContext);
 
-            // Wrap with OOB swap directive
-            var oobHtml = $$"""
-            <div id="{{componentInfo.Id}}" hx-swap-oob="true">
-                {{html}}
-            </div>
-            """;
+            // Insert hx-swap-oob attribute into the component's root element
+            // The component already has id="..." so we just need to add the OOB attribute
+            var oobHtml = html.Replace($"id=\"{componentInfo.Id}\"", $"id=\"{componentInfo.Id}\" hx-swap-oob=\"true\"");
 
             updates.Add(oobHtml);
         }
