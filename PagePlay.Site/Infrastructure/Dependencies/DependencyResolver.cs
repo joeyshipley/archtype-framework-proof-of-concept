@@ -1,11 +1,13 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using PagePlay.Site.Application.Todos.Domain;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Web.Http;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Infrastructure.Web.Components;
+using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
@@ -49,6 +51,9 @@ public static class DependencyResolver
             options.UseNpgsql(settingsProvider.Database.ConnectionString);
         });
         services.AddScoped<IRepository, Repository>();
+
+        // Data Domains
+        services.AddScoped<IDataDomain, TodosDomain>();
     }
 
     private static void bindValidation(IServiceCollection services)

@@ -327,9 +327,9 @@ public class ComponentContextParser : IComponentContextParser
 
 ---
 
-### **Phase 2: TodosDomain Implementation** ⬜ Not Started
+### **Phase 2: TodosDomain Implementation** ✅ Complete
 
-#### **Task 2.1: Implement TodosDomain** ⬜
+#### **Task 2.1: Implement TodosDomain** ✅
 **File:** `PagePlay.Site/Application/Todos/Domain/TodosDomain.cs`
 
 **Definition:**
@@ -372,16 +372,16 @@ public class TodosDomain(ITodoRepository _todoRepository) : IDataDomain
 ```
 
 **Acceptance Criteria:**
-- ✅ `TodosDomain` implements `IDataDomain`
-- ✅ `Name` returns "todos"
-- ✅ `FetchAllAsync()` queries repository once
-- ✅ Returns context with: list, openCount, totalCount, completionRate
-- ✅ Handles empty todo list (no divide by zero)
+- ✅ `TodosDomain` implements `IDataDomain` - Complete
+- ✅ `Name` returns "todos" - Complete
+- ✅ `FetchAllAsync()` queries repository once - Complete
+- ✅ Returns context with: list, openCount, totalCount, completionRate - Complete
+- ✅ Handles empty todo list (no divide by zero) - Complete
 
 ---
 
-#### **Task 2.2: Register TodosDomain in DI** ⬜
-**File:** `PagePlay.Site/Infrastructure/DependencyResolver.cs`
+#### **Task 2.2: Register TodosDomain in DI** ✅
+**File:** `PagePlay.Site/Infrastructure/Dependencies/DependencyResolver.cs`
 
 **Changes:**
 ```csharp
@@ -390,9 +390,9 @@ services.AddScoped<IDataDomain, TodosDomain>();
 ```
 
 **Acceptance Criteria:**
-- ✅ `TodosDomain` registered in DI container
-- ✅ Can inject `IEnumerable<IDataDomain>` and TodosDomain appears
-- ✅ Can inject `TodosDomain` directly
+- ✅ `TodosDomain` registered in DI container - Complete
+- ✅ Can inject `IEnumerable<IDataDomain>` and TodosDomain appears - Complete
+- ✅ Can inject `TodosDomain` directly - Complete
 
 ---
 
@@ -1036,22 +1036,31 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 1 - Core Infrastructure (COMPLETE)
-**Next Task:** Phase 2 - Task 2.1 - Implement TodosDomain
+**Active Phase:** Phase 2 - TodosDomain Implementation (COMPLETE)
+**Next Task:** Phase 3 - Task 3.1 - Convert WelcomeWidget to IServerComponent
 **Blockers:** None
-**Completed:** Task 1.1 ✅, Task 1.2 ✅, Task 1.3 ✅, Task 1.4 ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅
 
 ---
 
 ## 📝 **Notes & Decisions**
 
-### **Session 1 (2025-11-29)**
+### **Session 1 (2025-11-29 - Morning)**
 - Decided on domain-level mutations (not granular keys)
 - Chose client-side context approach (not server session)
 - Will implement request caching LATER (not part of this experiment)
 - Framework should over-fetch for now (domain fetches all, optimize later)
 - Only visible components for production, but all components for now
 - Open to HTMX extensions if they perfect concepts
+- Completed Phase 1: Core Infrastructure (Tasks 1.1-1.4)
+
+### **Session 2 (2025-11-29 - Afternoon)**
+- Completed Phase 2: TodosDomain Implementation
+  - Task 2.1: Created TodosDomain.cs in Application/Todos.Domain/
+  - Task 2.2: Registered TodosDomain in DependencyResolver.cs
+- TodosDomain fetches all todo data in one query using existing Repository pattern
+- Provides: list (TodoListEntry[]), openCount (int), totalCount (int), completionRate (double)
+- Handles empty todo lists gracefully (completionRate = 0.0 when no todos)
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**
