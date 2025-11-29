@@ -18,8 +18,9 @@ public interface IFrameworkOrchestrator
     /// <summary>
     /// Handles mutation response by re-rendering affected components.
     /// Used for interaction responses.
+    /// Returns HTML string of OOB updates (empty string if no components affected).
     /// </summary>
-    Task<IResult> RenderMutationResponseAsync(
+    Task<string> RenderMutationResponseAsync(
         DataMutations mutations,
         string? componentContextJson
     );
@@ -56,7 +57,7 @@ public class FrameworkOrchestrator(
         return renderedComponents;
     }
 
-    public async Task<IResult> RenderMutationResponseAsync(
+    public async Task<string> RenderMutationResponseAsync(
         DataMutations mutations,
         string? componentContextJson)
     {
@@ -69,7 +70,7 @@ public class FrameworkOrchestrator(
             .ToList();
 
         if (affectedComponents.Count == 0)
-            return Results.Ok(); // No components to update
+            return string.Empty; // No components to update
 
         // 3. Re-fetch mutated domains
         var dataContext = await _dataLoader.LoadDomainsAsync(mutations.Domains);
@@ -93,6 +94,6 @@ public class FrameworkOrchestrator(
             updates.Add(oobHtml);
         }
 
-        return Results.Content(string.Join("\n", updates), "text/html");
+        return string.Join("\n", updates);
     }
 }
