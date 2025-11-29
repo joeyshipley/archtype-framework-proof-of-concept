@@ -33,21 +33,25 @@ public class TodosPage : ITodosPageView
 
     // language=html
     private string RenderCreateFormContent() =>
-    $$"""
-    <form hx-post="/interaction/todos/create"
-          hx-target="#todo-list-ul"
-          hx-swap="afterbegin">
-        <div class="todo-input-group">
-            <input id="title"
-                   name="title"
-                   type="text"
-                   placeholder="What needs to be done?"
-                   required
-                   maxlength="200" />
-            <button type="submit">Add Todo</button>
-        </div>
-    </form>
-    """;
+        HtmxForm.Render(
+            new()
+            {
+                Action = "/interaction/todos/create",
+                Target = "#todo-list-ul",
+                SwapStrategy = "afterbegin"
+            },
+            $$"""
+            <div class="todo-input-group">
+                <input id="title"
+                       name="title"
+                       type="text"
+                       placeholder="What needs to be done?"
+                       required
+                       maxlength="200" />
+                <button type="submit">Add Todo</button>
+            </div>
+            """
+        );
 
     // language=html
     public string RenderCreateForm() =>
@@ -80,14 +84,20 @@ public class TodosPage : ITodosPageView
         return $$"""
         <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}">
             <div class="todo-content">
-                <form hx-post="/interaction/todos/toggle"
-                      hx-target="#todo-list"
-                      hx-swap="morph:innerHTML"
-                      hx-ext="morph"
-                      class="todo-toggle-form">
+                {{HtmxForm.Render(
+                    new()
+                    {
+                        Action = "/interaction/todos/toggle",
+                        Target = "#todo-list",
+                        SwapStrategy = "morph:innerHTML",
+                        HxExt = "morph",
+                        CssClass = "todo-toggle-form"
+                    },
+                    $$"""
                     <input type="hidden" name="id" value="{{todo.Id}}" />
                     <button type="submit" class="todo-checkbox">{{checkboxIcon}}</button>
-                </form>
+                    """
+                )}}
                 <span class="todo-title">{{todo.Title.Safe()}}</span>
                 {{ButtonDelete.Render(
                     endpoint: "/interaction/todos/delete",
