@@ -62,6 +62,7 @@ public static class DependencyResolver
     private static void bindClient(IServiceCollection services)
     {
         services.AddScoped<IPageLayout, Layout>();
+        services.AddScoped<INavView, Nav>();
         services.AutoRegisterPages(ServiceLifetime.Scoped);
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);

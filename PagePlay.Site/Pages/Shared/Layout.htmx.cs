@@ -7,7 +7,10 @@ public interface IPageLayout
     string Render(string title, string bodyContent);
 }
 
-public class Layout(IAntiforgeryTokenProvider _antiforgeryTokenProvider) : IPageLayout
+public class Layout(
+    IAntiforgeryTokenProvider _antiforgeryTokenProvider,
+    INavView _nav
+) : IPageLayout
 {
     // language=html
     public string Render(string title, string bodyContent)
@@ -29,6 +32,7 @@ public class Layout(IAntiforgeryTokenProvider _antiforgeryTokenProvider) : IPage
             <link rel="stylesheet" href="/css/site.css" />
         </head>
         <body>
+            {{_nav.Render()}}
             <main>
                 {{bodyContent}}
             </main>

@@ -13,11 +13,11 @@ public class TodosPageEndpoints(
     IEnumerable<ITodosPageInteraction> _interactions
 ) : IClientEndpoint
 {
-    public const string ROUTE_BASE = "todos";
+    public const string PAGE_ROUTE = "todos";
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(ROUTE_BASE, async (
+        endpoints.MapGet(PAGE_ROUTE, async (
             IWorkflow<ListTodosWorkflowRequest, ListTodosWorkflowResponse> listWorkflow
         ) =>
         {

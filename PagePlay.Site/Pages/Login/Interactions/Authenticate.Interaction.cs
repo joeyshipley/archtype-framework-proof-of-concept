@@ -11,7 +11,7 @@ public class AuthenticateInteraction(
 ) : PageInteractionBase<LoginWorkflowRequest, LoginWorkflowResponse, ILoginPageView>(page),
     ILoginPageInteraction
 {
-    protected override string RouteBase => LoginPageEndpoints.ROUTE_BASE;
+    protected override string RouteBase => LoginPageEndpoints.PAGE_ROUTE;
     protected override string Action => "authenticate";
     protected override bool RequireAuth => false;
 

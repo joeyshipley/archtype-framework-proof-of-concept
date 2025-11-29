@@ -8,11 +8,11 @@ public class HomePageEndpoints(
     IHomePageView _page
 ) : IClientEndpoint
 {
-    public const string ROUTE_BASE = "";
+    public const string PAGE_ROUTE = "";
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(ROUTE_BASE, () =>
+        endpoints.MapGet(PAGE_ROUTE, () =>
         {
             var bodyContent = _page.RenderPage();
             var page = _layout.Render("Home", bodyContent);

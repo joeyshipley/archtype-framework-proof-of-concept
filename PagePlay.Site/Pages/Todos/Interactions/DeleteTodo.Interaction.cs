@@ -8,7 +8,7 @@ public class DeleteTodoInteraction(ITodosPageView page)
     : PageInteractionBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse, ITodosPageView>(page),
       ITodosPageInteraction
 {
-    protected override string RouteBase => TodosPageEndpoints.ROUTE_BASE;
+    protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string Action => "delete";
 
     protected override IResult OnSuccess(DeleteTodoWorkflowResponse response) =>

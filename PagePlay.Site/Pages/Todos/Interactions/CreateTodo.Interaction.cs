@@ -7,7 +7,7 @@ public class CreateTodoInteraction(ITodosPageView page)
     : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page),
       ITodosPageInteraction
 {
-    protected override string RouteBase => TodosPageEndpoints.ROUTE_BASE;
+    protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string Action => "create";
 
     protected override IResult OnSuccess(CreateTodoWorkflowResponse response) =>

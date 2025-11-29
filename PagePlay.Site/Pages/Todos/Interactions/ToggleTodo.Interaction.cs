@@ -7,7 +7,7 @@ public class ToggleTodoInteraction(ITodosPageView page)
     : PageInteractionBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse, ITodosPageView>(page),
       ITodosPageInteraction
 {
-    protected override string RouteBase => TodosPageEndpoints.ROUTE_BASE;
+    protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string Action => "toggle";
 
     protected override IResult OnSuccess(ToggleTodoWorkflowResponse response) =>

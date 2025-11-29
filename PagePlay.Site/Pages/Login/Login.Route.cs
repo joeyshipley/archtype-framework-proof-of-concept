@@ -11,11 +11,11 @@ public class LoginPageEndpoints(
     IEnumerable<ILoginPageInteraction> _interactions
 ) : IClientEndpoint
 {
-    public const string ROUTE_BASE = "login";
+    public const string PAGE_ROUTE = "login";
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(ROUTE_BASE, () =>
+        endpoints.MapGet(PAGE_ROUTE, () =>
         {
             var bodyContent = _page.RenderPage();
             var page = _layout.Render("Login", bodyContent);
