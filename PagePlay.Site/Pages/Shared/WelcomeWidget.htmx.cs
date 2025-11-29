@@ -2,7 +2,10 @@ using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Shared;
 
-public interface IWelcomeWidget : IServerComponent { }
+public interface IWelcomeWidget : IServerComponent
+{
+    string RenderUnauthenticated();
+}
 
 public class WelcomeWidget : IWelcomeWidget
 {
@@ -23,6 +26,17 @@ public class WelcomeWidget : IWelcomeWidget
              data-domain="todos"
              class="welcome-widget">
             <p>Welcome, you have {{count}} open Todos to look at.</p>
+        </div>
+        """;
+    }
+
+    public string RenderUnauthenticated()
+    {
+        // language=html
+        return $$"""
+        <div id="{{ComponentId}}"
+             class="welcome-widget">
+            <p>Welcome</p>
         </div>
         """;
     }
