@@ -23,7 +23,7 @@ public static class ButtonDelete
                 Endpoint = endpoint,
                 ModelId = id,
                 Target = target,
-                SwapStrategy = swapStrategy ?? "morph:innerHTML",
+                SwapStrategy = swapStrategy ?? "outerHTML",
                 HxExt = hxExt
             },
             html: new HtmlData

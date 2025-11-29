@@ -18,7 +18,9 @@ public class HtmxFormData
 
     /// <summary>
     /// How to swap the response into the target. Defaults to "innerHTML".
-    /// Common values: "innerHTML", "outerHTML", "afterbegin", "beforeend", "morph:innerHTML"
+    /// Common values: "innerHTML", "outerHTML", "afterbegin", "beforeend"
+    /// Note: "morph:innerHTML" requires idiomorph extension and client-side sorting for
+    /// server-authoritative list ordering. Use standard swap strategies for simplicity.
     /// </summary>
     public string SwapStrategy { get; init; } = "innerHTML";
 

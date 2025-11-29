@@ -6,7 +6,7 @@ public class RouteData
     public long? ModelId { get; init; }
     public required string Target { get; init; }
     public string HttpMethod { get; init; } = "post";
-    public string SwapStrategy { get; init; } = "morph:innerHTML";
+    public string SwapStrategy { get; init; } = "innerHTML";
     public string? HxExt { get; init; }
     public List<(string name, object value)>? AdditionalValues { get; init; }
 }

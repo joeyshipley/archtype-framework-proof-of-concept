@@ -89,8 +89,6 @@ public class TodosPage : ITodosPageView
                     {
                         Action = "/interaction/todos/toggle",
                         Target = "#todo-list",
-                        SwapStrategy = "morph:innerHTML",
-                        HxExt = "morph",
                         CssClass = "todo-toggle-form"
                     },
                     $$"""
