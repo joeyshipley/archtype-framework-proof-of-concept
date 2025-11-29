@@ -45,7 +45,7 @@ public class FrameworkOrchestrator(
             .ToArray();
 
         // 2. Load all domains in parallel
-        var dataContext = await _dataLoader.GetDomainsAsync(requiredContextTypes);
+        var dataContext = await buildFluentChain(requiredContextTypes).Load();
 
         // 3. Render all components
         var renderedComponents = new Dictionary<string, string>();
@@ -85,7 +85,7 @@ public class FrameworkOrchestrator(
             .ToArray();
 
         // 4. Re-fetch mutated domains
-        var dataContext = await _dataLoader.GetDomainsAsync(affectedContextTypes);
+        var dataContext = await buildFluentChain(affectedContextTypes).Load();
 
         // 5. Re-render affected components
         var updates = new List<string>();
@@ -104,5 +104,36 @@ public class FrameworkOrchestrator(
         }
 
         return string.Join("\n", updates);
+    }
+
+    private IDomainLoaderBuilder buildFluentChain(Type[] contextTypes)
+    {
+        if (contextTypes.Length == 0)
+            throw new InvalidOperationException("Cannot build fluent chain with no context types");
+
+        IDomainLoaderBuilder builder = null!;
+
+        foreach (var contextType in contextTypes)
+        {
+            // Reflection to call With<T>() for each type
+            var withMethod = builder == null
+                ? typeof(IDataLoader).GetMethod("With")
+                : typeof(IDomainLoaderBuilder).GetMethod("With");
+
+            var genericMethod = withMethod!.MakeGenericMethod(contextType);
+
+            if (builder == null)
+            {
+                // First call: dataLoader.With<T>()
+                builder = (IDomainLoaderBuilder)genericMethod.Invoke(_dataLoader, null)!;
+            }
+            else
+            {
+                // Subsequent calls: builder.With<T>()
+                builder = (IDomainLoaderBuilder)genericMethod.Invoke(builder, null)!;
+            }
+        }
+
+        return builder;
     }
 }

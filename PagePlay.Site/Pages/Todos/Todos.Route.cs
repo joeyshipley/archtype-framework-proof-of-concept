@@ -26,8 +26,8 @@ public class TodosPageEndpoints(
             try
             {
                 // Fetch todos via DataDomain (no magic strings!)
-                var dataContext = await dataLoader.GetDomainsAsync(typeof(TodosDomainContext));
-                var todosData = dataContext.GetDomain<TodosDomainContext>();
+                var ctx = await dataLoader.With<TodosDomainContext>().Load();
+                var todosData = ctx.Get<TodosDomainContext>();
 
                 var bodyContent = _page.RenderPage(todosData.List);
                 var page = await _layout.RenderAsync("Todos", bodyContent);

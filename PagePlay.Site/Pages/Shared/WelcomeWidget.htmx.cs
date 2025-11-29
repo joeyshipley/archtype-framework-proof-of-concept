@@ -19,7 +19,7 @@ public class WelcomeWidget : IWelcomeWidget
     public string Render(IDataContext data)
     {
         // Typed access - no magic strings!
-        var todosData = data.GetDomain<TodosDomainContext>();
+        var todosData = data.Get<TodosDomainContext>();
         var count = todosData.OpenCount;
 
         // language=html

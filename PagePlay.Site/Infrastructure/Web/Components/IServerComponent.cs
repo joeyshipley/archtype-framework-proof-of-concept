@@ -65,7 +65,7 @@ public interface IDataContext
     /// Gets typed domain context by context type.
     /// No magic strings - the context type uniquely identifies the domain.
     /// </summary>
-    TContext GetDomain<TContext>() where TContext : class;
+    TContext Get<TContext>() where TContext : class;
 
     /// <summary>
     /// Checks if a domain context has been loaded by type.
@@ -82,7 +82,7 @@ public class DataContext : IDataContext
         _typedDomainsByContextType[typeof(TContext)] = typedData;
     }
 
-    public TContext GetDomain<TContext>() where TContext : class
+    public TContext Get<TContext>() where TContext : class
     {
         if (!_typedDomainsByContextType.TryGetValue(typeof(TContext), out var data))
             throw new InvalidOperationException($"Domain context '{typeof(TContext).Name}' not loaded");

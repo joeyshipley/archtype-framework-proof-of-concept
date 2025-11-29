@@ -10,13 +10,18 @@ using PagePlay.Site.Infrastructure.Web.Components;
 public interface IDataLoader
 {
     /// <summary>
-    /// Fetches data for all specified domain contexts in parallel.
-    /// Returns unified DataContext with all domain data.
-    /// Pass context types (e.g., typeof(TodosDomainContext)) - framework maps to domains automatically.
+    /// Begins fluent domain loading.
+    /// Chain .With&lt;TContext&gt;() for each domain, then .Load() to execute.
+    /// </summary>
+    IDomainLoaderBuilder With<TContext>() where TContext : class;
+
+    /// <summary>
+    /// Internal method called by builder.
+    /// Do not call directly - use fluent API instead.
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when user is not authenticated or domain configuration is invalid</exception>
     /// <exception cref="DataLoadException">Thrown when domain data fetching fails</exception>
-    Task<IDataContext> GetDomainsAsync(params Type[] contextTypes);
+    Task<IDataContext> GetDomainsInternal(params Type[] contextTypes);
 }
 
 public class DataLoader(
@@ -25,7 +30,13 @@ public class DataLoader(
     ILogger<DataLoader> _logger
 ) : IDataLoader
 {
-    public async Task<IDataContext> GetDomainsAsync(params Type[] contextTypes)
+    public IDomainLoaderBuilder With<TContext>() where TContext : class
+    {
+        var builder = new DomainLoaderBuilder(this);
+        return builder.With<TContext>();
+    }
+
+    public async Task<IDataContext> GetDomainsInternal(params Type[] contextTypes)
     {
         var userId = _userIdentity.GetCurrentUserId();
         if (!userId.HasValue)
