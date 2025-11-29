@@ -396,9 +396,9 @@ services.AddScoped<IDataDomain, TodosDomain>();
 
 ---
 
-### **Phase 3: Convert Existing Components** ⬜ Not Started
+### **Phase 3: Convert Existing Components** 🔄 In Progress
 
-#### **Task 3.1: Convert WelcomeWidget to IServerComponent** ⬜
+#### **Task 3.1: Convert WelcomeWidget to IServerComponent** ✅
 **File:** `PagePlay.Site/Pages/Shared/WelcomeWidget.htmx.cs` (new file)
 
 **Implementation:**
@@ -434,11 +434,11 @@ public class WelcomeWidget : IWelcomeWidget
 ```
 
 **Acceptance Criteria:**
-- ✅ `WelcomeWidget` implements `IServerComponent`
-- ✅ Declares dependency on "todos" domain, "openCount" key
-- ✅ Renders HTML with correct data-attributes
-- ✅ Gets data from `IDataContext`
-- ✅ Registered in DI as `IWelcomeWidget`
+- ✅ `WelcomeWidget` implements `IServerComponent` - Complete
+- ✅ Declares dependency on "todos" domain, "openCount" key - Complete
+- ✅ Renders HTML with correct data-attributes - Complete
+- ✅ Gets data from `IDataContext` - Complete
+- ✅ Registered in DI as `IWelcomeWidget` - Complete
 
 ---
 
@@ -1036,10 +1036,10 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 2 - TodosDomain Implementation (COMPLETE)
-**Next Task:** Phase 3 - Task 3.1 - Convert WelcomeWidget to IServerComponent
+**Active Phase:** Phase 3 - Convert Existing Components (IN PROGRESS)
+**Next Task:** Phase 3 - Task 3.2 - Update Layout to Include WelcomeWidget
 **Blockers:** None
-**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 Task 3.1 ✅
 
 ---
 
@@ -1061,6 +1061,14 @@ htmx.defineExtension('component-context', {
 - TodosDomain fetches all todo data in one query using existing Repository pattern
 - Provides: list (TodoListEntry[]), openCount (int), totalCount (int), completionRate (double)
 - Handles empty todo lists gracefully (completionRate = 0.0 when no todos)
+
+### **Session 3 (2025-11-29 - Evening)**
+- Completed Phase 3, Task 3.1: Convert WelcomeWidget to IServerComponent
+  - Created WelcomeWidget.htmx.cs implementing IServerComponent
+  - Component displays: "Welcome, you have # open Todos to look at."
+  - Declares dependency on "todos" domain, requires "openCount" key
+  - Includes proper data-attributes for HTMX tracking (id, data-component, data-domain)
+  - Registered in DI container as IWelcomeWidget
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**

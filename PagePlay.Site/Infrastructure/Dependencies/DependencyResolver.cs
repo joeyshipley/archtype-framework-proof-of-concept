@@ -70,6 +70,7 @@ public static class DependencyResolver
     {
         services.AddScoped<IPageLayout, Layout>();
         services.AddScoped<INavView, Nav>();
+        services.AddScoped<IWelcomeWidget, WelcomeWidget>();
         services.AutoRegisterPages(ServiceLifetime.Scoped);
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
