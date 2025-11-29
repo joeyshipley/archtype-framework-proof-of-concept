@@ -34,7 +34,11 @@ public class ComponentContextParser : IComponentContextParser
 
         try
         {
-            var components = JsonSerializer.Deserialize<List<ComponentInfo>>(contextJson);
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            var components = JsonSerializer.Deserialize<List<ComponentInfo>>(contextJson, options);
             return components ?? new List<ComponentInfo>();
         }
         catch (JsonException)

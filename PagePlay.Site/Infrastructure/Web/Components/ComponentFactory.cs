@@ -15,7 +15,7 @@ public interface IComponentFactory
     IServerComponent? Create(string componentTypeName);
 }
 
-public class ComponentFactory(IServiceProvider _serviceProvider) : IComponentFactory
+public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComponentFactory
 {
     private static readonly Dictionary<string, Type> _componentTypes = new()
     {
@@ -28,7 +28,9 @@ public class ComponentFactory(IServiceProvider _serviceProvider) : IComponentFac
         if (!_componentTypes.TryGetValue(componentTypeName, out var componentType))
             return null;
 
-        var instance = _serviceProvider.GetService(componentType);
+        // Create a new scope to resolve the component
+        using var scope = _serviceScopeFactory.CreateScope();
+        var instance = scope.ServiceProvider.GetService(componentType);
         return instance as IServerComponent;
     }
 }
