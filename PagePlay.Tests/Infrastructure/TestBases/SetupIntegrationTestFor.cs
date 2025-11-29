@@ -1,7 +1,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Dependencies;
 using PagePlay.Tests.Infrastructure.Dependencies;
+using PagePlay.Tests.Infrastructure.Logging;
 
 namespace PagePlay.Tests.Infrastructure.TestBases;
 
@@ -31,6 +33,18 @@ public class SetupIntegrationTestFor<T> where T : class
         _services.AddSingleton<IConfiguration>(configuration);
 
         DependencyResolver.Bind(_services);
+
+        // Override real logger with fake logger (must be after DependencyResolver.Bind)
+        // Remove the real LogRecorder registration and replace with fake
+        var logRecorderDescriptor = _services.FirstOrDefault(d =>
+            d.ServiceType.IsGenericType &&
+            d.ServiceType.GetGenericTypeDefinition() == typeof(ILogRecorder<>));
+        if (logRecorderDescriptor != null)
+        {
+            _services.Remove(logRecorderDescriptor);
+        }
+        _services.AddSingleton(typeof(ILogRecorder<>), typeof(FakeLogRecorder<>));
+
         BuildSUT(_services);
     }
 
