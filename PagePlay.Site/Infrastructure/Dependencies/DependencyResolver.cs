@@ -5,6 +5,7 @@ using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Web.Http;
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Infrastructure.Web.Components;
 using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
@@ -37,6 +38,7 @@ public static class DependencyResolver
         services.AddScoped<ICookieManager, CookieManager>();
         services.AddScoped<IResponseManager, ResponseManager>();
         services.AddScoped<IAntiforgeryTokenProvider, AntiforgeryTokenProvider>();
+        services.AddScoped<IComponentContextParser, ComponentContextParser>();
     }
 
     private static void bindData(IServiceCollection services)
