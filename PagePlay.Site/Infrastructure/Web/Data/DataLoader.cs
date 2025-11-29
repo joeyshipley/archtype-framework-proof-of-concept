@@ -34,45 +34,34 @@ public class DataLoader(
             .Where(d => domainList.Contains(d.Name))
             .ToList();
 
-        // Fetch all domains in parallel
+        // Fetch all typed domains in parallel
         foreach (var domain in domainsToLoad)
         {
-            // Check if this is a typed domain
             var domainType = domain.GetType();
             var typedInterface = domainType.GetInterfaces()
                 .FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IDataDomain<>));
 
-            if (typedInterface != null)
-            {
-                // Typed domain - fetch both typed and legacy contexts
-                var contextType = typedInterface.GetGenericArguments()[0];
-                var fetchTypedMethod = domainType.GetMethod("FetchTypedAsync");
+            if (typedInterface == null)
+                throw new InvalidOperationException($"Domain '{domain.Name}' must implement IDataDomain<TContext>");
 
-                if (fetchTypedMethod != null)
-                {
-                    var typedTask = (Task)fetchTypedMethod.Invoke(domain, new object[] { userId.Value });
-                    await typedTask;
-                    var typedResult = typedTask.GetType().GetProperty("Result")?.GetValue(typedTask);
+            // Fetch typed context
+            var contextType = typedInterface.GetGenericArguments()[0];
+            var fetchTypedMethod = domainType.GetMethod("FetchTypedAsync");
 
-                    if (typedResult != null)
-                    {
-                        // Add typed context
-                        var addTypedMethod = typeof(DataContext).GetMethod("AddTypedDomain")
-                            ?.MakeGenericMethod(contextType);
-                        addTypedMethod?.Invoke(dataContext, new[] { domain.Name, typedResult });
-                    }
-                }
+            if (fetchTypedMethod == null)
+                throw new InvalidOperationException($"Domain '{domain.Name}' does not implement FetchTypedAsync");
 
-                // Also fetch legacy context for backward compatibility
-                var legacyContext = await domain.FetchAllAsync(userId.Value);
-                dataContext.AddDomain(domain.Name, legacyContext);
-            }
-            else
-            {
-                // Legacy domain - only fetch legacy context
-                var legacyContext = await domain.FetchAllAsync(userId.Value);
-                dataContext.AddDomain(domain.Name, legacyContext);
-            }
+            var typedTask = (Task)fetchTypedMethod.Invoke(domain, new object[] { userId.Value });
+            await typedTask;
+            var typedResult = typedTask.GetType().GetProperty("Result")?.GetValue(typedTask);
+
+            if (typedResult == null)
+                throw new InvalidOperationException($"Domain '{domain.Name}' returned null from FetchTypedAsync");
+
+            // Add typed context
+            var addTypedMethod = typeof(DataContext).GetMethod("AddTypedDomain")
+                ?.MakeGenericMethod(contextType);
+            addTypedMethod?.Invoke(dataContext, new[] { domain.Name, typedResult });
         }
 
         return dataContext;

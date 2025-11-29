@@ -27,25 +27,13 @@ public interface IServerComponent
 }
 
 /// <summary>
-/// Declares which domain(s) a component depends on.
-/// Supports both legacy string-based and typed domain access.
+/// Declares which domain(s) a component depends on using strongly-typed domain references.
 /// </summary>
 public class DataDependencies
 {
     public string Domain { get; private set; } = string.Empty;
-    public List<string> RequiredKeys { get; private set; } = new();
     public Type? DomainContextType { get; private set; }
 
-    // Legacy string-based API (backward compatible)
-    public static DataDependencies From(string domain) => new() { Domain = domain };
-
-    public DataDependencies Require<T>(string key)
-    {
-        RequiredKeys.Add(key);
-        return this;
-    }
-
-    // New typed API
     public static DataDependencies From<TDomain, TContext>()
         where TDomain : IDataDomain<TContext>
         where TContext : class, new()
@@ -69,18 +57,12 @@ public class DataDependencies
 }
 
 /// <summary>
-/// Provides access to all loaded domain data.
-/// Supports both legacy string-based and typed domain access.
+/// Provides access to all loaded domain data via strongly-typed contexts.
 /// </summary>
 public interface IDataContext
 {
     /// <summary>
-    /// Gets data from a specific domain by key (legacy API).
-    /// </summary>
-    T Get<T>(string domain, string key);
-
-    /// <summary>
-    /// Gets typed domain context (new API).
+    /// Gets typed domain context.
     /// </summary>
     TContext GetDomain<TContext>(string domainName) where TContext : class;
 
@@ -92,25 +74,11 @@ public interface IDataContext
 
 public class DataContext : IDataContext
 {
-    private readonly Dictionary<string, DomainDataContext> _domains = new();
     private readonly Dictionary<string, object> _typedDomains = new();
-
-    public void AddDomain(string domainName, DomainDataContext domainData)
-    {
-        _domains[domainName] = domainData;
-    }
 
     public void AddTypedDomain<TContext>(string domainName, TContext typedData) where TContext : class
     {
         _typedDomains[domainName] = typedData;
-    }
-
-    public T Get<T>(string domain, string key)
-    {
-        if (!_domains.ContainsKey(domain))
-            throw new InvalidOperationException($"Domain '{domain}' not loaded");
-
-        return _domains[domain].Get<T>(key);
     }
 
     public TContext GetDomain<TContext>(string domainName) where TContext : class
@@ -121,5 +89,5 @@ public class DataContext : IDataContext
         return (TContext)_typedDomains[domainName];
     }
 
-    public bool HasDomain(string domain) => _domains.ContainsKey(domain) || _typedDomains.ContainsKey(domain);
+    public bool HasDomain(string domain) => _typedDomains.ContainsKey(domain);
 }

@@ -42,23 +42,6 @@ public class TodosDomain(IRepository _repository) : IDataDomain<TodosDomainConte
         };
     }
 
-    // Legacy API - delegates to typed implementation for consistency
-    public async Task<DomainDataContext> FetchAllAsync(long userId)
-    {
-        var typedContext = await FetchTypedAsync(userId);
-        return buildLegacyContext(typedContext);
-    }
-
-    private DomainDataContext buildLegacyContext(TodosDomainContext typed)
-    {
-        var context = new DomainDataContext();
-        context["list"] = typed.List;
-        context["openCount"] = typed.OpenCount;
-        context["totalCount"] = typed.TotalCount;
-        context["completionRate"] = typed.CompletionRate;
-        return context;
-    }
-
     // Data fetching - single query to prevent N+1
     private async Task<List<Todo>> fetchTodos(long userId) =>
         await _repository.List(Todo.ByUserId(userId));

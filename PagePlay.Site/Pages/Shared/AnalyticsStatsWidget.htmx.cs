@@ -1,3 +1,4 @@
+using PagePlay.Site.Application.Todos.Domain;
 using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Shared;
@@ -25,16 +26,14 @@ public class AnalyticsStatsWidget : IAnalyticsStatsWidget
     public string ComponentId => "analytics-stats-widget";
 
     public DataDependencies Dependencies => DataDependencies
-        .From("todoAnalytics")
-        .Require<int>("productivityScore")
-        .Require<int>("longestStreak")
-        .Require<double>("averageCompletionTime");
+        .From<TodoAnalyticsDomain, TodoAnalyticsDomainContext>();
 
     public string Render(IDataContext data)
     {
-        var productivityScore = data.Get<int>("todoAnalytics", "productivityScore");
-        var longestStreak = data.Get<int>("todoAnalytics", "longestStreak");
-        var avgCompletionTime = data.Get<double>("todoAnalytics", "averageCompletionTime");
+        var analytics = data.GetDomain<TodoAnalyticsDomainContext>("todoAnalytics");
+        var productivityScore = analytics.ProductivityScore;
+        var longestStreak = analytics.LongestStreak;
+        var avgCompletionTime = analytics.AverageCompletionTime;
 
         // language=html
         return $$"""

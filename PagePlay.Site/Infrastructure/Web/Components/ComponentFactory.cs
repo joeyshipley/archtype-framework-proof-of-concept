@@ -20,7 +20,7 @@ public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComp
     private static readonly Dictionary<string, Type> _componentTypes = new()
     {
         ["WelcomeWidget"] = typeof(IWelcomeWidget),
-        // More components will be added as they're converted
+        ["AnalyticsStatsWidget"] = typeof(IAnalyticsStatsWidget)
     };
 
     public IServerComponent? Create(string componentTypeName)

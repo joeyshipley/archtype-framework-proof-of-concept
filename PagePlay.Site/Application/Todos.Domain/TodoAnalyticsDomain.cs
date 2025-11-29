@@ -34,24 +34,6 @@ public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnal
         };
     }
 
-    // Legacy API - delegates to typed implementation for consistency
-    public async Task<DomainDataContext> FetchAllAsync(long userId)
-    {
-        var typedContext = await FetchTypedAsync(userId);
-        return buildLegacyContext(typedContext);
-    }
-
-    private DomainDataContext buildLegacyContext(TodoAnalyticsDomainContext typed)
-    {
-        var context = new DomainDataContext();
-        context["completionTrend"] = typed.CompletionTrend;
-        context["longestStreak"] = typed.LongestStreak;
-        context["averageCompletionTime"] = typed.AverageCompletionTime;
-        context["productivityScore"] = typed.ProductivityScore;
-        context["weeklyBreakdown"] = typed.WeeklyBreakdown;
-        return context;
-    }
-
     // Data fetching - single query to prevent N+1
     private async Task<List<Todo>> fetchTodos(long userId) =>
         await _repository.List(Todo.ByUserId(userId));
