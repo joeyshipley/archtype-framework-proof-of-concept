@@ -32,7 +32,7 @@ public class TodosPage : ITodosPageView
     """;
 
     // language=html
-    private string RenderCreateFormContent() =>
+    private string renderCreateFormContent() =>
         HtmxForm.Render(
             new()
             {
@@ -57,7 +57,7 @@ public class TodosPage : ITodosPageView
     public string RenderCreateForm() =>
     $$"""
     <div class="todo-create-form" id="todo-create-form">
-        {{RenderCreateFormContent()}}
+        {{renderCreateFormContent()}}
     </div>
     """;
 
@@ -102,7 +102,7 @@ public class TodosPage : ITodosPageView
                     id: todo.Id,
                     tag: "todo",
                     target: $"#todo-{todo.Id}",
-                    content: $$"""X2""",
+                    content: $$"""×""",
                     swapStrategy: "outerHTML"
                 )}}
                 <hr />
@@ -116,7 +116,7 @@ public class TodosPage : ITodosPageView
     $$"""
     {{RenderTodoItem(todo)}}
     <div class="todo-create-form" id="todo-create-form" hx-swap-oob="true">
-        {{RenderCreateFormContent()}}
+        {{renderCreateFormContent()}}
     </div>
     """;
 
