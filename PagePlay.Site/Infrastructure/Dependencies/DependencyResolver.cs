@@ -8,6 +8,7 @@ using PagePlay.Site.Infrastructure.Web.Http;
 using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Infrastructure.Web.Components;
 using PagePlay.Site.Infrastructure.Web.Data;
+using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
@@ -43,6 +44,7 @@ public static class DependencyResolver
         services.AddScoped<IComponentContextParser, ComponentContextParser>();
         services.AddScoped<IDataLoader, DataLoader>();
         services.AddScoped<IComponentFactory, ComponentFactory>();
+        services.AddScoped<IFrameworkOrchestrator, FrameworkOrchestrator>();
     }
 
     private static void bindData(IServiceCollection services)

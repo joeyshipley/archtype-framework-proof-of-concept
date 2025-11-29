@@ -1,0 +1,98 @@
+namespace PagePlay.Site.Infrastructure.Web.Framework;
+
+using PagePlay.Site.Infrastructure.Web.Components;
+using PagePlay.Site.Infrastructure.Web.Data;
+using PagePlay.Site.Infrastructure.Web.Mutations;
+
+/// <summary>
+/// Orchestrates framework operations: data loading, component rendering, OOB updates.
+/// </summary>
+public interface IFrameworkOrchestrator
+{
+    /// <summary>
+    /// Loads data for all components and renders them.
+    /// Used for initial page load.
+    /// </summary>
+    Task<Dictionary<string, string>> RenderComponentsAsync(IEnumerable<IServerComponent> components);
+
+    /// <summary>
+    /// Handles mutation response by re-rendering affected components.
+    /// Used for interaction responses.
+    /// </summary>
+    Task<IResult> RenderMutationResponseAsync(
+        DataMutations mutations,
+        string? componentContextJson
+    );
+}
+
+public class FrameworkOrchestrator(
+    IDataLoader _dataLoader,
+    IComponentContextParser _contextParser,
+    IComponentFactory _componentFactory
+) : IFrameworkOrchestrator
+{
+    public async Task<Dictionary<string, string>> RenderComponentsAsync(
+        IEnumerable<IServerComponent> components)
+    {
+        var componentList = components.ToList();
+
+        // 1. Collect all required domains
+        var requiredDomains = componentList
+            .Select(c => c.Dependencies.Domain)
+            .Distinct()
+            .ToList();
+
+        // 2. Load all domains in parallel
+        var dataContext = await _dataLoader.LoadDomainsAsync(requiredDomains);
+
+        // 3. Render all components
+        var renderedComponents = new Dictionary<string, string>();
+        foreach (var component in componentList)
+        {
+            var html = component.Render(dataContext);
+            renderedComponents[component.ComponentId] = html;
+        }
+
+        return renderedComponents;
+    }
+
+    public async Task<IResult> RenderMutationResponseAsync(
+        DataMutations mutations,
+        string? componentContextJson)
+    {
+        // 1. Parse component context from client
+        var pageComponents = _contextParser.Parse(componentContextJson);
+
+        // 2. Find components affected by mutation
+        var affectedComponents = pageComponents
+            .Where(c => mutations.Domains.Contains(c.Domain))
+            .ToList();
+
+        if (affectedComponents.Count == 0)
+            return Results.Ok(); // No components to update
+
+        // 3. Re-fetch mutated domains
+        var dataContext = await _dataLoader.LoadDomainsAsync(mutations.Domains);
+
+        // 4. Re-render affected components
+        var updates = new List<string>();
+        foreach (var componentInfo in affectedComponents)
+        {
+            var component = _componentFactory.Create(componentInfo.ComponentType);
+            if (component == null) continue;
+
+            var html = component.Render(dataContext);
+
+            // Wrap with OOB swap directive
+            var oobHtml = $$"""
+            <div id="{{componentInfo.Id}}" hx-swap-oob="true">
+                {{html}}
+            </div>
+            """;
+
+            updates.Add(oobHtml);
+        }
+
+        return Results.Content(string.Join("\n", updates), "text/html");
+    }
+}

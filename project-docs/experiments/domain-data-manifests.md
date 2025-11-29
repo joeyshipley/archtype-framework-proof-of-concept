@@ -490,9 +490,9 @@ public class Layout(
 
 ---
 
-### **Phase 4: Framework Orchestration** ⬜ Not Started
+### **Phase 4: Framework Orchestration** ✅ Complete
 
-#### **Task 4.1: Create Data Loader Service** ⬜
+#### **Task 4.1: Create Data Loader Service** ✅
 **File:** `PagePlay.Site/Infrastructure/Web/Data/DataLoader.cs`
 
 **Definition:**
@@ -550,16 +550,16 @@ public class DataLoader(
 ```
 
 **Acceptance Criteria:**
-- ✅ `IDataLoader` interface defined
-- ✅ Fetches multiple domains in parallel (Task.WhenAll)
-- ✅ Returns unified `IDataContext`
-- ✅ Throws exception if user not authenticated
-- ✅ Handles duplicate domain names (Distinct)
-- ✅ Registered in DI
+- ✅ `IDataLoader` interface defined - Complete
+- ✅ Fetches multiple domains in parallel (Task.WhenAll) - Complete
+- ✅ Returns unified `IDataContext` - Complete
+- ✅ Throws exception if user not authenticated - Complete
+- ✅ Handles duplicate domain names (Distinct) - Complete
+- ✅ Registered in DI - Complete
 
 ---
 
-#### **Task 4.2: Create Component Factory** ⬜
+#### **Task 4.2: Create Component Factory** ✅
 **File:** `PagePlay.Site/Infrastructure/Web/Components/ComponentFactory.cs`
 
 **Definition:**
@@ -599,17 +599,17 @@ public class ComponentFactory(IServiceProvider _serviceProvider) : IComponentFac
 ```
 
 **Acceptance Criteria:**
-- ✅ `IComponentFactory` interface defined
-- ✅ Can create component by string name
-- ✅ Returns null for unknown types
-- ✅ Uses DI to resolve component instances
-- ✅ Registered in DI
+- ✅ `IComponentFactory` interface defined - Complete
+- ✅ Can create component by string name - Complete
+- ✅ Returns null for unknown types - Complete
+- ✅ Uses DI to resolve component instances - Complete
+- ✅ Registered in DI - Complete
 
 **Note:** This registry approach is temporary. Future: use reflection or source generation.
 
 ---
 
-#### **Task 4.3: Create Framework Orchestration Service** ⬜
+#### **Task 4.3: Create Framework Orchestration Service** ✅
 **File:** `PagePlay.Site/Infrastructure/Web/Framework/FrameworkOrchestrator.cs`
 
 **Definition:**
@@ -715,12 +715,12 @@ public class FrameworkOrchestrator(
 ```
 
 **Acceptance Criteria:**
-- ✅ `IFrameworkOrchestrator` interface defined
-- ✅ `RenderComponentsAsync()` loads domains and renders components
-- ✅ `RenderMutationResponseAsync()` handles OOB updates
-- ✅ Wraps updated HTML with `hx-swap-oob="true"`
-- ✅ Returns empty OK if no components affected
-- ✅ Registered in DI
+- ✅ `IFrameworkOrchestrator` interface defined - Complete
+- ✅ `RenderComponentsAsync()` loads domains and renders components - Complete
+- ✅ `RenderMutationResponseAsync()` handles OOB updates - Complete
+- ✅ Wraps updated HTML with `hx-swap-oob="true"` - Complete
+- ✅ Returns empty OK if no components affected - Complete
+- ✅ Registered in DI - Complete
 
 ---
 
@@ -1036,10 +1036,10 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 3 - Convert Existing Components (COMPLETE ✅)
-**Next Task:** Phase 4 - Task 4.1 - Create Data Loader Service
+**Active Phase:** Phase 4 - Framework Orchestration (COMPLETE ✅)
+**Next Task:** Phase 5 - Task 5.1 - Update TodosPageEndpoints to Use Framework
 **Blockers:** None
-**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅, Phase 4 (Tasks 4.1-4.3) ✅
 
 ---
 
@@ -1074,6 +1074,20 @@ htmx.defineExtension('component-context', {
   - Updated Layout implementation to render widget HTML between nav and main sections
   - Uses null-coalescing operator for backwards compatibility (null = no widget)
   - Build succeeded with no errors, maintaining backwards compatibility
+
+### **Session 4 (2025-11-29 - Late Evening)**
+- Completed Phase 4: Framework Orchestration (All Tasks 4.1-4.3)
+- Note: Tasks 4.1 and 4.2 were already implemented in previous commits
+  - Task 4.1: DataLoader.cs was already present and complete
+  - Task 4.2: ComponentFactory.cs was already present and complete
+- Completed Phase 4, Task 4.3: Create Framework Orchestration Service
+  - Created FrameworkOrchestrator.cs in new Infrastructure/Web/Framework/ namespace
+  - Implements IFrameworkOrchestrator with two core methods:
+    - RenderComponentsAsync(): Orchestrates initial page load (collect domains, parallel load, render components)
+    - RenderMutationResponseAsync(): Handles OOB updates after mutations (parse context, find affected, re-render with hx-swap-oob)
+  - Registered in DI container as scoped service
+  - Build succeeded with only expected nullable warnings (nullable types disabled project-wide)
+  - All acceptance criteria met for all Phase 4 tasks
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**
