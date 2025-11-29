@@ -105,31 +105,10 @@ app.UseAntiforgery();
 app.MapRazorPages();
 app.MapEndpoints();
 
-
-// TODO: delete this after updating login for new patterns.
-// app.MapLoginRoutes();
-
-// TODO: clean this up.
 // Warm up services to avoid cold start penalty on first request
-await Task.Run(async () =>
-{
-    // Warm up BCrypt password hasher
-    var passwordHasher = app.Services.GetRequiredService<IPasswordHasher>();
-    _ = passwordHasher.VerifyPassword("warmup", "$2a$12$dummy.hash.for.warmup.only...................");
+await app.Services.WarmupAsync();
 
-    // Warm up EF Core query compilation and database connection pool
-    using var scope = app.Services.CreateScope();
-    var dbContextFactory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<AppDbContext>>();
-    await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-    _ = await dbContext.Set<User>()
-        .Where(u => u.Email == "warmup@example.com")
-        .AsNoTracking()
-        .FirstOrDefaultAsync();
-
-    // TODO: For later - HttpClient warmup would need a background service since server isn't listening yet at this point
-});
-
-    Log.Information("PagePlay application started successfully");
+Log.Information("PagePlay application started successfully");
     app.Run();
 }
 catch (Exception ex)
