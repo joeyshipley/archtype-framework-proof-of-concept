@@ -890,9 +890,9 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
 
 ---
 
-### **Phase 6: Client-Side HTMX Extension** ⬜ Not Started
+### **Phase 6: Client-Side HTMX Extension** ✅ Complete
 
-#### **Task 6.1: Create Component Context Extension** ⬜
+#### **Task 6.1: Create Component Context Extension** ✅
 **File:** `PagePlay.Site/wwwroot/js/component-context.js` (new file)
 
 **Implementation:**
@@ -919,15 +919,15 @@ htmx.defineExtension('component-context', {
 ```
 
 **Acceptance Criteria:**
-- ✅ Extension defined and loaded
-- ✅ Finds all `[data-component]` elements
-- ✅ Extracts id, type, domain from data attributes
-- ✅ Sends as `X-Component-Context` header
-- ✅ JSON is valid and parseable
+- ✅ Extension defined and loaded - Complete
+- ✅ Finds all `[data-component]` elements - Complete
+- ✅ Extracts id, type, domain from data attributes - Complete
+- ✅ Sends as `X-Component-Context` header - Complete
+- ✅ JSON is valid and parseable - Complete
 
 ---
 
-#### **Task 6.2: Load Extension in Layout** ⬜
+#### **Task 6.2: Load Extension in Layout** ✅
 **File:** `PagePlay.Site/Pages/Shared/Layout.htmx.cs`
 
 **Changes:**
@@ -943,42 +943,42 @@ htmx.defineExtension('component-context', {
 ```
 
 **Acceptance Criteria:**
-- ✅ Extension script loaded before htmx-config.js
-- ✅ Extension enabled on body tag
-- ✅ All HTMX requests include X-Component-Context header
-- ✅ Can see header in browser dev tools
+- ✅ Extension script loaded before htmx-config.js - Complete
+- ✅ Extension enabled on body tag - Complete
+- ✅ All HTMX requests include X-Component-Context header - Complete
+- ✅ Can see header in browser dev tools - Complete
 
 ---
 
 ### **Phase 7: Testing & Validation** ⬜ Not Started
 
-#### **Task 7.1: Manual Testing Checklist** ⬜
+#### **Task 7.1: Manual Testing Checklist** ✅
 
 **Test Cases:**
 1. ✅ Load /todos page
-   - Welcome widget appears
-   - Shows correct open todo count
-   - Todo list displays
+   - Welcome widget appears ✅
+   - Shows correct open todo count ✅
+   - Todo list displays ✅
 
 2. ✅ Create new todo
-   - Todo appears in list
-   - Welcome widget count increments (OOB update)
-   - No full page refresh
+   - Todo appears in list ✅
+   - Welcome widget count increments (OOB update) ✅
+   - No full page refresh ✅
 
 3. ✅ Toggle todo completion
-   - Todo visual state updates
-   - Welcome widget count decrements (OOB update)
+   - Todo visual state updates ✅
+   - Welcome widget count updates (OOB update) ✅
 
 4. ✅ Delete todo
-   - Todo removed from list
-   - Welcome widget count updates (OOB update)
+   - Todo removed from list ✅
+   - Welcome widget count updates (OOB update) ✅
 
 5. ✅ Open browser dev tools
-   - Verify `X-Component-Context` header on POST requests
-   - Verify OOB responses contain updated component HTML
-   - Verify `hx-swap-oob="true"` in responses
+   - Verify `X-Component-Context` header on POST requests ✅
+   - Verify OOB responses contain updated component HTML ✅
+   - Verify `hx-swap-oob="true"` in responses ✅
 
-6. ✅ Test with authentication
+6. ⬜ Test with authentication (optional - not critical for experiment validation)
    - Logged out: welcome widget shows generic message (or doesn't appear)
    - Logged in: shows personalized count
 
@@ -1058,10 +1058,10 @@ htmx.defineExtension('component-context', {
 
 ## 🚦 **Current Status**
 
-**Active Phase:** Phase 5 - Update Todos Page (COMPLETE ✅)
-**Next Task:** Phase 6 - Client-Side HTMX Extension (Task 6.1)
+**Active Phase:** Phase 7 - Testing & Validation
+**Next Task:** Phase 7 - Testing & Validation (Task 7.1 - Manual Testing)
 **Blockers:** None
-**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅, Phase 4 (Tasks 4.1-4.3) ✅, Phase 5 (All Tasks 5.1-5.3) ✅
+**Completed:** Phase 1 (Tasks 1.1-1.4) ✅, Phase 2 (Tasks 2.1-2.2) ✅, Phase 3 (Tasks 3.1-3.2) ✅, Phase 4 (Tasks 4.1-4.3) ✅, Phase 5 (All Tasks 5.1-5.3) ✅, Phase 6 (Tasks 6.1-6.2) ✅
 
 ---
 
@@ -1141,6 +1141,43 @@ htmx.defineExtension('component-context', {
     - Note: Used synchronous waiting since `OnSuccess()` must return `IResult` (not `Task<IResult>`)
   - Build succeeded with only expected nullable warnings
   - Phase 5 now complete - ready for Phase 6 (Client-Side HTMX Extension)
+
+### **Session 6 (2025-11-29)**
+- Completed Phase 6: Client-Side HTMX Extension (All Tasks 6.1-6.2)
+- Task 6.1: Created component-context.js HTMX extension
+  - Extension finds all [data-component] elements on page
+  - Extracts id, componentType (from data-component), and domain (from data-domain)
+  - Serializes to JSON and sends as X-Component-Context header with every HTMX request
+  - Uses htmx:configRequest event to inject header before requests are sent
+- Task 6.2: Loaded extension in Layout
+  - Added script tag for component-context.js (loaded after htmx, before htmx-config)
+  - Enabled extension on body tag with hx-ext="component-context"
+  - All HTMX requests now include component context automatically
+- Phase 6 complete - ready for Phase 7 (Testing & Validation)
+
+### **Session 7 (2025-11-29 - Current)**
+- Manual Testing Phase 7, Task 7.1 revealed missing OOB updates for Toggle and Delete
+- Updated ToggleTodoInteraction to use framework orchestration:
+  - Injected IFrameworkOrchestrator
+  - Added Mutates property declaring "todos" domain
+  - Modified OnSuccess to extract X-Component-Context header
+  - Combined todo list HTML with OOB updates from framework
+- Updated DeleteTodoInteraction to use framework orchestration:
+  - Injected IFrameworkOrchestrator
+  - Added Mutates property declaring "todos" domain
+  - Modified OnSuccess to extract X-Component-Context header
+  - Returns only OOB updates (no primary content since item is deleted)
+- Build succeeded with only expected nullable warnings
+- Completed Manual Testing Phase 7, Task 7.1 - ALL TESTS PASS ✅
+  - Test 1: Page load works correctly (widget appears with correct count)
+  - Test 2: Create todo triggers OOB update (count increments)
+  - Test 3: Toggle todo triggers OOB update (count updates)
+  - Test 4: Delete todo triggers OOB update (count updates)
+  - Test 5: Verified in browser dev tools:
+    - X-Component-Context header present: [{"id":"welcome-widget","componentType":"WelcomeWidget","domain":"todos"}]
+    - OOB response contains updated widget HTML
+    - hx-swap-oob="true" attribute present in response
+  - **Architecture validated: Domain-level data manifests with OOB updates working as designed**
 
 ### **Design Decisions**
 1. **Why domains, not granular keys?**
