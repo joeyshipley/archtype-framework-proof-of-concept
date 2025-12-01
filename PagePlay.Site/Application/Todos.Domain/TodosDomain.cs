@@ -27,12 +27,11 @@ namespace PagePlay.Site.Application.Todos.Domain;
 public class TodosDomain(IRepository _repository) : IDataDomain<TodosDomainContext>
 {
     public const string DomainName = "todos";
-    public string Name => DomainName;
 
     // Typed API - compile-time safe access
     public async Task<TodosDomainContext> FetchTypedAsync(long userId)
     {
-        var todos = await fetchTodos(userId);
+        var todos = await fetchData(userId);
 
         return new TodosDomainContext
         {
@@ -44,7 +43,7 @@ public class TodosDomain(IRepository _repository) : IDataDomain<TodosDomainConte
     }
 
     // Data fetching - single query to prevent N+1
-    private async Task<List<Todo>> fetchTodos(long userId) =>
+    private async Task<List<Todo>> fetchData(long userId) =>
         await _repository.List(Todo.ByUserId(userId));
 
     // Data transformation - domain model to presentation model

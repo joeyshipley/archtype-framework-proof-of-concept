@@ -18,12 +18,10 @@ namespace PagePlay.Site.Application.Todos.Domain;
 public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnalyticsDomainContext>
 {
     public const string DomainName = "todoAnalytics";
-    public string Name => DomainName;
 
-    // Typed API - compile-time safe access
     public async Task<TodoAnalyticsDomainContext> FetchTypedAsync(long userId)
     {
-        var todos = await fetchTodos(userId);
+        var todos = await fetchData(userId);
 
         return new TodoAnalyticsDomainContext
         {
@@ -36,7 +34,7 @@ public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnal
     }
 
     // Data fetching - single query to prevent N+1
-    private async Task<List<Todo>> fetchTodos(long userId) =>
+    private async Task<List<Todo>> fetchData(long userId) =>
         await _repository.List(Todo.ByUserId(userId));
 
     // Example analytics calculation: completion trend over last 7 days
@@ -134,5 +132,4 @@ public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnal
             ["weekEnd"] = weekEnd.AddDays(-1).ToString("MMM dd")
         };
     }
-
 }

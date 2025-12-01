@@ -4,13 +4,7 @@ namespace PagePlay.Site.Infrastructure.Web.Data;
 /// Non-generic interface for domain registration and discovery.
 /// All domains must implement this for DI container scanning.
 /// </summary>
-public interface IDataDomain
-{
-    /// <summary>
-    /// Unique name for this domain (e.g., "todos")
-    /// </summary>
-    string Name { get; }
-}
+public interface IDataDomain {}
 
 /// <summary>
 /// Typed interface for domains that provide strongly-typed context.
