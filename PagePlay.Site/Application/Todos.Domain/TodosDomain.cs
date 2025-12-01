@@ -21,12 +21,13 @@ namespace PagePlay.Site.Application.Todos.Domain;
 ///   WelcomeWidget: DataDependencies.From<TodosDomain, TodosDomainContext>()
 ///
 /// Interactions declare which domains are affected:
-///   CreateTodo: DataMutations.For("todos") - only WelcomeWidget updates
-///   AnalyticsRefresh: DataMutations.For("todos", "todoAnalytics") - both domains update
+///   CreateTodo: DataMutations.For(TodosDomain.DomainName) - only WelcomeWidget updates
+///   AnalyticsRefresh: DataMutations.For(TodosDomain.DomainName, TodoAnalyticsDomain.DomainName) - both domains update
 /// </summary>
 public class TodosDomain(IRepository _repository) : IDataDomain<TodosDomainContext>
 {
-    public string Name => "todos";
+    public const string DomainName = "todos";
+    public string Name => DomainName;
 
     // Typed API - compile-time safe access
     public async Task<TodosDomainContext> FetchTypedAsync(long userId)

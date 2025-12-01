@@ -1,4 +1,5 @@
 using PagePlay.Site.Application.Todos.CreateTodo;
+using PagePlay.Site.Application.Todos.Domain;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Mutations;
@@ -14,7 +15,7 @@ public class CreateTodoInteraction(
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string RouteAction => "create";
 
-    protected override DataMutations Mutates => DataMutations.For("todos");
+    protected override DataMutations Mutates => DataMutations.For(TodosDomain.DomainName);
 
     protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
     {

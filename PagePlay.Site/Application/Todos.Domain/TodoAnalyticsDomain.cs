@@ -17,7 +17,8 @@ namespace PagePlay.Site.Application.Todos.Domain;
 /// </summary>
 public class TodoAnalyticsDomain(IRepository _repository) : IDataDomain<TodoAnalyticsDomainContext>
 {
-    public string Name => "todoAnalytics";
+    public const string DomainName = "todoAnalytics";
+    public string Name => DomainName;
 
     // Typed API - compile-time safe access
     public async Task<TodoAnalyticsDomainContext> FetchTypedAsync(long userId)
