@@ -27,7 +27,7 @@ public class WelcomeWidget : IWelcomeWidget
         return $$"""
         <div id="{{ComponentId}}"
              data-component="WelcomeWidget"
-             data-domain="todos"
+             data-domain="todosList"
              class="welcome-widget">
             <p>Welcome, you have {{count}} open Todos to look at.</p>
         </div>

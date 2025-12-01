@@ -4,7 +4,7 @@ namespace PagePlay.Site.Application.Todos.Perspectives.List;
 
 public class TodosListDomainView
 {
-    public const string DomainName = "todos";
+    public const string DomainName = "todosList";
     
     public List<TodoListEntry> List { get; set; } = new();
 
