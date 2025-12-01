@@ -1,4 +1,4 @@
-using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.Web.Html;
 using PagePlay.Site.Pages.Shared.Elements;
 

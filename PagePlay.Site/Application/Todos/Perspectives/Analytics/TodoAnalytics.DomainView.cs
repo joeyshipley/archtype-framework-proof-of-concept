@@ -1,10 +1,10 @@
-namespace PagePlay.Site.Application.Todos.Domain;
+namespace PagePlay.Site.Application.Todos.Perspectives.Analytics;
 
 /// <summary>
 /// Strongly-typed context for the TodoAnalytics domain.
 /// Provides compile-time safe access to analytics data.
 /// </summary>
-public class TodoAnalyticsDomainContext
+public class TodoAnalyticsDomainView
 {
     /// <summary>
     /// Completion trend over the last 7 days.
@@ -26,10 +26,4 @@ public class TodoAnalyticsDomainContext
     /// Productivity score (0-100) based on completion rate.
     /// </summary>
     public int ProductivityScore { get; set; }
-
-    /// <summary>
-    /// Weekly breakdown showing created vs completed todos.
-    /// Keys: "created", "completed", "weekStart", "weekEnd"
-    /// </summary>
-    public Dictionary<string, object> WeeklyBreakdown { get; set; } = new();
 }

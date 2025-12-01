@@ -1,8 +1,8 @@
 using FluentValidation;
-using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.CreateTodo;
+namespace PagePlay.Site.Application.Todos.Workflows.CreateTodo;
 
 public class CreateTodoWorkflowResponse : IWorkflowResponse
 {

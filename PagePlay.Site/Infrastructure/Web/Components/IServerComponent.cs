@@ -35,7 +35,7 @@ public class DataDependencies
     public Type? DomainContextType { get; private set; }
 
     public static DataDependencies From<TDomain, TContext>()
-        where TDomain : IDataDomain<TContext>
+        where TDomain : IDataProvider<TContext>
         where TContext : class, new()
     {
         // Use the domain type name as the domain identifier

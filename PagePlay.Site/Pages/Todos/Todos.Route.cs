@@ -1,4 +1,5 @@
-using PagePlay.Site.Application.Todos.Domain;
+using PagePlay.Site.Application.Todos.Perspectives;
+using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
@@ -24,8 +25,8 @@ public class TodosPageEndpoints(
         {
             try
             {
-                var ctx = await dataLoader.With<TodosDomainContext>().Load();
-                var todosData = ctx.Get<TodosDomainContext>();
+                var ctx = await dataLoader.With<TodosListDomainView>().Load();
+                var todosData = ctx.Get<TodosListDomainView>();
 
                 var bodyContent = _page.RenderPage(todosData.List);
                 var page = await _layout.RenderAsync("Todos", bodyContent);

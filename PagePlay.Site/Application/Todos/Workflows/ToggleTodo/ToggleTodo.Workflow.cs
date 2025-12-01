@@ -1,11 +1,12 @@
 using FluentValidation;
 using FluentValidation.Results;
-using PagePlay.Site.Application.Todos.Domain.Models;
+using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
+using Todo = PagePlay.Site.Application.Todos.Models.Todo;
 
-namespace PagePlay.Site.Application.Todos.ToggleTodo;
+namespace PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
 
 public class ToggleTodoWorkflow(
     IValidator<ToggleTodoWorkflowRequest> _validator,

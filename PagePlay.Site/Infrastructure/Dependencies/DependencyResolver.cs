@@ -1,6 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using PagePlay.Site.Application.Todos.Domain;
+using PagePlay.Site.Application.Todos.Perspectives;
+using PagePlay.Site.Application.Todos.Perspectives.Analytics;
+using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Data.Repositories;
@@ -58,8 +60,8 @@ public static class DependencyResolver
 
         // Data Domains - Multiple domains can be registered for different contexts
         // Pattern: Separate domains by computational cost and usage frequency
-        services.AddScoped<IDataDomain, TodosDomain>();           // Basic CRUD operations
-        services.AddScoped<IDataDomain, TodoAnalyticsDomain>();   // Analytics/reporting (expensive calculations)
+        services.AddScoped<IDataProvider, TodosListProvider>();           // Basic CRUD operations
+        services.AddScoped<IDataProvider, TodoAnalyticsProvider>();   // Analytics/reporting (expensive calculations)
     }
 
     private static void bindValidation(IServiceCollection services)

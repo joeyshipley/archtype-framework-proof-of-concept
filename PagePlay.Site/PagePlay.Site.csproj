@@ -33,10 +33,7 @@
     <Folder Include="Application\Reading\" />
     <Folder Include="Application\Browsing\" />
     <Folder Include="Application\Common\" />
-    <Folder Include="Application\Todos\CreateTodo\" />
-    <Folder Include="Application\Todos\DeleteTodo\" />
-    <Folder Include="Application\Todos\ToggleTodo\" />
-    <Folder Include="Application\Todos\UpdateTodo\" />
+    <Folder Include="Application\Todos\Workflows\" />
     <Folder Include="Infrastructure\Email\" />
     <Folder Include="Pages\Profile\" />
     <Folder Include="Pages\Todos\Interactions\" />

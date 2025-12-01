@@ -1,4 +1,5 @@
-using PagePlay.Site.Application.Todos.Domain;
+using PagePlay.Site.Application.Todos.Perspectives;
+using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Shared;
@@ -14,12 +15,12 @@ public class WelcomeWidget : IWelcomeWidget
 
     // New typed API - compile-time safe, no magic strings!
     public DataDependencies Dependencies => DataDependencies
-        .From<TodosDomain, TodosDomainContext>();
+        .From<TodosListProvider, TodosListDomainView>();
 
     public string Render(IDataContext data)
     {
         // Typed access - no magic strings!
-        var todosData = data.Get<TodosDomainContext>();
+        var todosData = data.Get<TodosListDomainView>();
         var count = todosData.OpenCount;
 
         // language=html

@@ -1,11 +1,11 @@
 using FluentValidation;
 using FluentValidation.Results;
-using PagePlay.Site.Application.Todos.Domain.Models;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
+using Todo = PagePlay.Site.Application.Todos.Models.Todo;
 
-namespace PagePlay.Site.Application.Todos.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.Workflows.UpdateTodo;
 
 public class UpdateTodoWorkflow(
     IValidator<UpdateTodoWorkflowRequest> _validator,

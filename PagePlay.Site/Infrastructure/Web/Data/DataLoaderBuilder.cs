@@ -6,12 +6,12 @@ using PagePlay.Site.Infrastructure.Web.Components;
 /// Builder for fluent domain loading.
 /// Collects context types, then loads all domains in parallel.
 /// </summary>
-public interface IDomainLoaderBuilder
+public interface IDataLoaderBuilder
 {
     /// <summary>
     /// Adds another domain context to the load operation.
     /// </summary>
-    IDomainLoaderBuilder With<TContext>() where TContext : class;
+    IDataLoaderBuilder With<TContext>() where TContext : class;
 
     /// <summary>
     /// Executes the load operation for all specified domains in parallel.
@@ -20,11 +20,11 @@ public interface IDomainLoaderBuilder
     Task<IDataContext> Load();
 }
 
-public class DomainLoaderBuilder(IDataLoader _dataLoader) : IDomainLoaderBuilder
+public class DataLoaderBuilder(IDataLoader _dataLoader) : IDataLoaderBuilder
 {
     private readonly List<Type> _contextTypes = new();
 
-    public IDomainLoaderBuilder With<TContext>() where TContext : class
+    public IDataLoaderBuilder With<TContext>() where TContext : class
     {
         _contextTypes.Add(typeof(TContext));
         return this;
@@ -33,6 +33,6 @@ public class DomainLoaderBuilder(IDataLoader _dataLoader) : IDomainLoaderBuilder
     public async Task<IDataContext> Load()
     {
         // Delegate to actual data loader
-        return await _dataLoader.GetDomainsInternal(_contextTypes.ToArray());
+        return await _dataLoader.GetDataProvidersInternal(_contextTypes.ToArray());
     }
 }

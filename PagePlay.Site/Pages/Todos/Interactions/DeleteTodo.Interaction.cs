@@ -1,5 +1,6 @@
-using PagePlay.Site.Application.Todos.DeleteTodo;
-using PagePlay.Site.Application.Todos.Domain;
+using PagePlay.Site.Application.Todos.Perspectives;
+using PagePlay.Site.Application.Todos.Perspectives.List;
+using PagePlay.Site.Application.Todos.Workflows.DeleteTodo;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
@@ -15,7 +16,7 @@ public class DeleteTodoInteraction(
 {
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string RouteAction => "delete";
-    protected override DataMutations Mutates => DataMutations.For(TodosDomain.DomainName);
+    protected override DataMutations Mutates => DataMutations.For(TodosListDomainView.DomainName);
 
     protected override async Task<IResult> OnSuccess(DeleteTodoWorkflowResponse response)
     {

@@ -1,7 +1,7 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.Workflows.UpdateTodo;
 
 public class UpdateTodoWorkflowResponse : IWorkflowResponse
 {

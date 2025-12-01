@@ -5,15 +5,15 @@ using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Infrastructure.Web.Components;
 
 /// <summary>
-/// Loads data for specified domains in parallel.
+/// Loads data for specified data providers in parallel.
 /// </summary>
 public interface IDataLoader
 {
     /// <summary>
-    /// Begins fluent domain loading.
-    /// Chain .With&lt;TContext&gt;() for each domain, then .Load() to execute.
+    /// Begins fluent provider loading.
+    /// Chain .With&lt;TContext&gt;() for each provider, then .Load() to execute.
     /// </summary>
-    IDomainLoaderBuilder With<TContext>() where TContext : class;
+    IDataLoaderBuilder With<TContext>() where TContext : class;
 
     /// <summary>
     /// Internal method called by builder.
@@ -21,22 +21,23 @@ public interface IDataLoader
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when user is not authenticated or domain configuration is invalid</exception>
     /// <exception cref="DataLoadException">Thrown when domain data fetching fails</exception>
-    Task<IDataContext> GetDomainsInternal(params Type[] contextTypes);
+    Task<IDataContext> GetDataProvidersInternal(params Type[] contextTypes);
 }
 
 public class DataLoader(
-    IEnumerable<IDataDomain> _domains,
+    IEnumerable<IDataProvider> _domains,
     IUserIdentityService _userIdentity,
     ILogger<DataLoader> _logger
 ) : IDataLoader
 {
-    public IDomainLoaderBuilder With<TContext>() where TContext : class
+    public IDataLoaderBuilder With<TContext>() where TContext : class
     {
-        var builder = new DomainLoaderBuilder(this);
+        var builder = new DataLoaderBuilder(this);
         return builder.With<TContext>();
     }
 
-    public async Task<IDataContext> GetDomainsInternal(params Type[] contextTypes)
+    // TODO: clean up veribage, it's no longer domain or domain context anymore.
+    public async Task<IDataContext> GetDataProvidersInternal(params Type[] contextTypes)
     {
         var userId = _userIdentity.GetCurrentUserId();
         if (!userId.HasValue)
@@ -51,7 +52,7 @@ public class DataLoader(
         _logger.LogDebug("Loading {Count} domain contexts for user {UserId}", contextTypeList.Count, userId.Value);
 
         // Map context types to domains
-        var domainsToLoad = new List<(IDataDomain domain, Type contextType)>();
+        var domainsToLoad = new List<(IDataProvider domain, Type contextType)>();
 
         foreach (var contextType in contextTypeList)
         {
@@ -71,7 +72,7 @@ public class DataLoader(
             try
             {
                 var domainType = domain.GetType();
-                var fetchTypedMethod = domainType.GetMethod("FetchTypedAsync");
+                var fetchTypedMethod = domainType.GetMethod("FetchTyped");
 
                 if (fetchTypedMethod == null)
                 {
@@ -107,16 +108,15 @@ public class DataLoader(
         return dataContext;
     }
 
-    private IDataDomain findDomainForContextType(Type contextType)
+    private IDataProvider findDomainForContextType(Type contextType)
     {
-        // Find domain that implements IDataDomain<TContext> where TContext = contextType
         return _domains.FirstOrDefault(d =>
         {
             var domainType = d.GetType();
             var typedInterface = domainType.GetInterfaces()
                 .FirstOrDefault(i =>
                     i.IsGenericType &&
-                    i.GetGenericTypeDefinition() == typeof(IDataDomain<>) &&
+                    i.GetGenericTypeDefinition() == typeof(IDataProvider<>) &&
                     i.GetGenericArguments()[0] == contextType);
 
             return typedInterface != null;

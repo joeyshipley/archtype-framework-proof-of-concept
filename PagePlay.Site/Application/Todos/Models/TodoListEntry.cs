@@ -1,4 +1,4 @@
-namespace PagePlay.Site.Application.Todos.Domain.Models;
+namespace PagePlay.Site.Application.Todos.Models;
 
 public class TodoListEntry
 {
