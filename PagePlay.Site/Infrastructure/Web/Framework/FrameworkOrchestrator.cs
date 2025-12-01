@@ -66,9 +66,11 @@ public class FrameworkOrchestrator(
         var pageComponents = _contextParser.Parse(componentContextJson);
 
         // 2. Find components affected by mutation
-        var affectedComponents = pageComponents
-            .Where(c => mutations.Domains.Contains(c.Domain))
-            .ToList();
+        var affectedComponents = (mutations != null)
+            ? pageComponents
+                .Where(c => mutations.Domains.Contains(c.Domain))
+                .ToList()
+            : [];
 
         if (affectedComponents.Count == 0)
             return string.Empty; // No components to update

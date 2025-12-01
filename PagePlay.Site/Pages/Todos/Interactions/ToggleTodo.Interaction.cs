@@ -7,31 +7,18 @@ namespace PagePlay.Site.Pages.Todos.Interactions;
 
 public class ToggleTodoInteraction(
     ITodosPageView page,
-    IFrameworkOrchestrator _framework
-) : PageInteractionBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse, ITodosPageView>(page),
+    IFrameworkOrchestrator framework
+) : PageInteractionBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse, ITodosPageView>(page, framework),
       ITodosPageInteraction
 {
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
-    protected override string Action => "toggle";
-
-    // Declare what this interaction mutates
-    protected virtual DataMutations Mutates => DataMutations.For("todos");
+    protected override string RouteAction => "toggle";
+    protected override DataMutations Mutates => DataMutations.For("todos");
 
     protected override async Task<IResult> OnSuccess(ToggleTodoWorkflowResponse response)
     {
-        // Get component context from request header
-        var contextHeader = HttpContext.Request.Headers["X-Component-Context"].ToString();
-
-        // Render the updated todo list
-        var todoListHtml = Page.RenderTodoList(response.Todos);
-
-        // Framework handles re-rendering affected components (returns HTML string)
-        var oobHtml = await _framework.RenderMutationResponseAsync(Mutates, contextHeader);
-
-        // Combine todo list HTML with OOB updates
-        var combinedHtml = todoListHtml + "\n" + oobHtml;
-
-        return Results.Content(combinedHtml, "text/html");
+        var content = Page.RenderTodoList(response.Todos);
+        return await BuildHtmlFragmentResult(content);
     }
 
     protected override IResult RenderError(string message) =>

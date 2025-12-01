@@ -8,30 +8,18 @@ namespace PagePlay.Site.Pages.Todos.Interactions;
 public class CreateTodoInteraction(
     ITodosPageView page,
     IFrameworkOrchestrator _framework
-) : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page),
+) : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page, _framework),
       ITodosPageInteraction
 {
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
-    protected override string Action => "create";
+    protected override string RouteAction => "create";
 
-    // Declare what this interaction mutates
-    protected virtual DataMutations Mutates => DataMutations.For("todos");
+    protected override DataMutations Mutates => DataMutations.For("todos");
 
     protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
     {
-        // Get component context from request header
-        var contextHeader = HttpContext.Request.Headers["X-Component-Context"].ToString();
-
-        // Render the new todo item
-        var todoHtml = Page.RenderSuccessfulTodoCreation(response.Todo);
-
-        // Framework handles re-rendering affected components (returns HTML string)
-        var oobHtml = await _framework.RenderMutationResponseAsync(Mutates, contextHeader);
-
-        // Combine todo HTML with OOB updates
-        var combinedHtml = todoHtml + "\n" + oobHtml;
-
-        return Results.Content(combinedHtml, "text/html");
+        var content = Page.RenderSuccessfulTodoCreation(response.Todo);
+        return await BuildHtmlFragmentResult(content);
     }
 
     protected override IResult RenderError(string message) =>

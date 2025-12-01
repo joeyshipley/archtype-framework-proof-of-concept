@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PagePlay.Site.Infrastructure.Core.Application;
+using PagePlay.Site.Infrastructure.Web.Framework;
+using PagePlay.Site.Infrastructure.Web.Mutations;
 using PagePlay.Site.Infrastructure.Web.Routing;
 
 namespace PagePlay.Site.Infrastructure.Web.Pages;
@@ -29,19 +31,39 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
     /// <summary>
     /// The action name for this interaction (e.g., "create", "delete", "toggle")
     /// </summary>
-    protected abstract string Action { get; }
+    protected abstract string RouteAction { get; }
 
     /// <summary>
     /// Whether this interaction requires an authenticated user. Defaults to true.
     /// </summary>
     protected virtual bool RequireAuth => true;
-
-    protected PageInteractionBase(TView page) => Page = page;
-
+    
+    protected virtual DataMutations Mutates => null;
+    
+    private readonly IFrameworkOrchestrator _framework;
+    
+    protected PageInteractionBase(
+        TView page,
+        IFrameworkOrchestrator framework
+    ) 
+    {
+        Page = page;
+        _framework = framework;
+    }
+    
+    protected async Task<IResult> BuildHtmlFragmentResult(string mainContent = null)
+    {
+        var oobHtml = await OobHtml();
+        var combinedHtml = string.IsNullOrEmpty(mainContent)
+            ? oobHtml
+            : mainContent + "\n" + oobHtml;
+        return Results.Content(combinedHtml, "text/html");
+    }
+    
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var builder = endpoints.MapPost(
-            PageInteraction.GetRoute(RouteBase, Action),
+            PageInteraction.GetRoute(RouteBase, RouteAction),
             Handle
         );
 
@@ -64,6 +86,12 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
             : OnError(result.Errors);
     }
 
+    private async Task<string> OobHtml()
+    {
+        var contextHeader = HttpContext.Request.Headers["X-Component-Context"].ToString();
+        return await _framework.RenderMutationResponseAsync(Mutates, contextHeader);
+    }
+    
     /// <summary>
     /// Override this to define what HTML should be returned on successful workflow execution.
     /// </summary>
