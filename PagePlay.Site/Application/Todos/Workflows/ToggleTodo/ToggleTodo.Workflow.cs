@@ -30,8 +30,7 @@ public class ToggleTodoWorkflow(
         toggleTodo(todo);
         await saveTodo(todo);
 
-        var todos = await getTodosByUserId();
-        return Succeed(buildResponse(todos));
+        return Succeed(new ToggleTodoWorkflowResponse());
     }
 
     private async Task<ValidationResult> validate(ToggleTodoWorkflowRequest workflowRequest) =>
@@ -45,17 +44,4 @@ public class ToggleTodoWorkflow(
 
     private async Task saveTodo(Todo todo) =>
         await _repository.SaveChanges();
-
-    private async Task<List<Todo>> getTodosByUserId() =>
-        await _repository.List<Todo>(Todo.ByUserId(currentUserContext.UserId.Value));
-
-    private ToggleTodoWorkflowResponse buildResponse(List<Todo> todos) =>
-        new ToggleTodoWorkflowResponse
-        {
-            Todos = todos
-                .OrderBy(t => t.IsCompleted)
-                .ThenByDescending(t => t.CreatedAt)
-                .Select(TodoListEntry.FromTodo)
-                .ToList()
-        };
 }

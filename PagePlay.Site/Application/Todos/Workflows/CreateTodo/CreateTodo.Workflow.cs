@@ -39,6 +39,6 @@ public class CreateTodoWorkflow(
     private CreateTodoWorkflowResponse buildResponse(Todo todo) =>
         new CreateTodoWorkflowResponse
         {
-            Todo = TodoListEntry.FromTodo(todo)
+            CreatedId = todo.Id
         };
 }

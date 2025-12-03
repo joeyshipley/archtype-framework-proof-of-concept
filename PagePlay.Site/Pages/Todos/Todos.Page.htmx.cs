@@ -7,6 +7,7 @@ namespace PagePlay.Site.Pages.Todos;
 public interface ITodosPageView
 {
     string RenderPage(List<TodoListEntry> todos);
+    string RenderPageWithComponent(string todoListComponentHtml);
     string RenderCreateForm();
     string RenderTodoList(List<TodoListEntry> todos);
     string RenderTodoItem(TodoListEntry todo);
@@ -32,13 +33,23 @@ public class TodosPage : ITodosPageView
     """;
 
     // language=html
+    public string RenderPageWithComponent(string todoListComponentHtml) =>
+    $$"""
+    <div class="todo-page">
+        <h1>My Todos</h1>
+        <div id="notifications"></div>
+        {{RenderCreateForm()}}
+        {{todoListComponentHtml}}
+    </div>
+    """;
+
+    // language=html
     private string renderCreateFormContent() =>
         HtmxForm.Render(
             new()
             {
-                Action = "/interaction/todos/create",
-                Target = "#todo-list-ul",
-                SwapStrategy = "afterbegin"
+                Action = "/interaction/todos/create"
+                // No Target - pure OOB response from component
             },
             $$"""
             <div class="todo-input-group">
@@ -88,8 +99,8 @@ public class TodosPage : ITodosPageView
                     new()
                     {
                         Action = "/interaction/todos/toggle",
-                        Target = "#todo-list",
                         CssClass = "todo-toggle-form"
+                        // No Target - pure OOB response from component
                     },
                     $$"""
                     <input type="hidden" name="id" value="{{todo.Id}}" />
@@ -101,9 +112,8 @@ public class TodosPage : ITodosPageView
                     endpoint: "/interaction/todos/delete",
                     id: todo.Id,
                     tag: "todo",
-                    content: $$"""×""",
-                    target: $"#todo-{todo.Id}",
-                    swapStrategy: "outerHTML"
+                    content: $$"""×"""
+                    // No target/swap - pure OOB response from component
                 )}}
                 <hr />
             </div>

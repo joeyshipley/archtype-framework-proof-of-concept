@@ -6,7 +6,8 @@ namespace PagePlay.Site.Application.Todos.Workflows.CreateTodo;
 
 public class CreateTodoWorkflowResponse : IWorkflowResponse
 {
-    public required TodoListEntry Todo { get; set; }
+    public long CreatedId { get; set; }
+    // Metadata only - query data comes from TodosListProvider
 }
 
 public class CreateTodoWorkflowRequest : IWorkflowRequest

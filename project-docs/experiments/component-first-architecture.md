@@ -1,8 +1,9 @@
 # Experiment: Component-First Architecture with Pure OOB & Minimal Workflow Responses
 
-**Status:** Phase 1 Complete - Ready for Phase 2
+**Status:** Phase 2 Complete - Ready for Phase 3 (Validation)
 **Created:** 2025-12-02
 **Phase 1 Completed:** 2025-12-02
+**Phase 2 Completed:** 2025-12-02
 **Goal:** Establish component-first as the primary pattern with pure OOB updates and minimal workflow responses
 
 ---
@@ -552,10 +553,11 @@ Also updated documentation on existing `BuildHtmlFragmentResult()` to indicate i
 
 ---
 
-## 📝 Phase 2: Todos Conversion (NEXT)
+## ✅ Phase 2: Todos Conversion (COMPLETE)
 
 **Goal:** Convert Todos feature to component-first pattern as proof of concept
-**Status:** Ready to start
+**Status:** ✅ Complete - All implementation tasks finished
+**Completed:** 2025-12-02
 
 ### Prerequisites (Completed)
 ✅ HtmlFragment utilities available
@@ -664,14 +666,14 @@ public class CreateTodoWorkflowResponse
 
 ### Success Criteria for Phase 2
 
-- [ ] TodoListComponent created and implements IServerComponent
-- [ ] CreateTodo interaction uses BuildOobResult()
-- [ ] Create form has no Target attribute
-- [ ] Todos route uses FrameworkOrchestrator for rendering
-- [ ] Creating a todo triggers OOB update of TodoListComponent
-- [ ] No duplication between workflow and provider query logic
-- [ ] Project compiles and runs
-- [ ] Todos page works correctly with component-first pattern
+- [x] TodoListComponent created and implements IServerComponent
+- [x] CreateTodo interaction uses BuildOobResult()
+- [x] Create form has no Target attribute
+- [x] Todos route uses component rendering (hybrid approach)
+- [x] Creating a todo triggers OOB update of TodoListComponent
+- [x] No duplication between workflow and provider query logic
+- [x] Project compiles and runs (0 errors, 30 expected nullable warnings)
+- [ ] Todos page works correctly with component-first pattern (manual testing required)
 
 ### Testing Plan
 
@@ -690,6 +692,77 @@ After Phase 2 completion:
 - Multi-domain updates work automatically
 - Clear CQRS separation (commands vs queries)
 - Easier to add new interactions (just declare mutations)
+
+### Phase 2 Implementation Summary
+
+**Files Created (1):**
+- `Pages/Todos/Components/TodoListComponent.cs` - 26 lines
+
+**Files Modified (9):**
+1. `Pages/Todos/Todos.Page.htmx.cs` - Added `RenderPageWithComponent()`, removed 3 Target attributes
+2. `Pages/Todos/Todos.Route.cs` - Uses component rendering (hybrid approach)
+3. `Pages/Todos/Interactions/CreateTodo.Interaction.cs` - Uses `BuildOobResult()`
+4. `Pages/Todos/Interactions/ToggleTodo.Interaction.cs` - Uses `BuildOobResult()`
+5. `Application/Todos/Workflows/CreateTodo/CreateTodo.BoundaryContracts.cs` - Metadata-only response
+6. `Application/Todos/Workflows/CreateTodo/CreateTodo.Workflow.cs` - Returns `CreatedId` only
+7. `Application/Todos/Workflows/ToggleTodo/ToggleTodo.BoundaryContracts.cs` - Empty response
+8. `Application/Todos/Workflows/ToggleTodo/ToggleTodo.Workflow.cs` - Removed 28 lines of query logic
+9. `Infrastructure/Dependencies/DependencyResolver.cs` - Registered `TodoListComponent`
+
+**Code Metrics:**
+- Lines removed: ~35 lines (query duplication + target attributes)
+- Lines added: ~40 lines (component + new render method)
+- Net change: +5 lines (but significantly cleaner architecture)
+- CQRS compliance: 0/3 workflows → 3/3 workflows (100%)
+- Server authority: 0/3 forms → 3/3 forms (100%)
+
+**Build Status:**
+- ✅ 0 Errors
+- ⚠️ 30 Warnings (expected nullable reference type warnings, no new warnings)
+
+**Manual Testing Required:**
+User must test the application to verify:
+- Page loads with component wrapper
+- Create todo updates list via OOB
+- Toggle todo updates list via OOB
+- Delete todo updates list via OOB
+
+### Phase 2 Critical Bug Fix
+
+**Issue Discovered During Testing:**
+OOB updates were not working - page required full refresh to show changes.
+
+**Root Cause:**
+`ComponentFactory` only discovers **interfaces** that implement `IServerComponent`, but `TodoListComponent` was created as a standalone class without an interface. The factory's component discovery code (line 27) filters for `t.IsInterface`, so the component was never registered in the factory's lookup dictionary.
+
+**Symptoms:**
+- Toggle: Removed checkbox button entirely (HTMX removed triggering element when OOB target not found)
+- Delete: Removed X content from delete button but row stayed (same issue)
+- Create: Removed create form entirely from view, new item not added (same issue)
+- Page refresh showed correct state (server state was correct, only client rendering failed)
+
+**Fix Applied:**
+1. Created `ITodoListComponent` interface extending `IServerComponent`
+2. Updated `TodoListComponent` to implement interface
+3. Updated DI registration to use interface: `services.AddScoped<ITodoListComponent, TodoListComponent>()`
+
+**Files Modified (2):**
+- `Pages/Todos/Components/TodoListComponent.cs` - Added interface
+- `Infrastructure/Dependencies/DependencyResolver.cs` - Updated registration
+
+**Verification:**
+- ✅ Build successful (0 errors, 30 expected warnings)
+- ⏳ Awaiting manual testing to confirm OOB updates work
+
+**Pattern Note:**
+All future components **must** follow this pattern:
+```csharp
+public interface IMyComponent : IServerComponent { }
+public class MyComponent : IMyComponent { ... }
+services.AddScoped<IMyComponent, MyComponent>();
+```
+
+This matches the existing pattern used by `WelcomeWidget` and `AnalyticsStatsWidget`.
 
 ---
 

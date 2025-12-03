@@ -6,7 +6,8 @@ namespace PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
 
 public class ToggleTodoWorkflowResponse : IWorkflowResponse
 {
-    public List<TodoListEntry> Todos { get; set; } = new();
+    // Empty response - no metadata needed for toggle
+    // Query data comes from TodosListProvider via component update
 }
 
 public class ToggleTodoWorkflowRequest : IWorkflowRequest

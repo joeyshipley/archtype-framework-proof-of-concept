@@ -3,6 +3,7 @@ using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
+using PagePlay.Site.Pages.Todos.Components;
 
 namespace PagePlay.Site.Pages.Todos;
 
@@ -26,9 +27,13 @@ public class TodosPageEndpoints(
             try
             {
                 var ctx = await dataLoader.With<TodosListDomainView>().Load();
-                var todosData = ctx.Get<TodosListDomainView>();
 
-                var bodyContent = _page.RenderPage(todosData.List);
+                // Create component and render with pre-loaded data
+                var todoListComponent = new TodoListComponent(_page);
+                var todoListHtml = todoListComponent.Render(ctx);
+
+                // Compose page with component HTML
+                var bodyContent = _page.RenderPageWithComponent(todoListHtml);
                 var page = await _layout.RenderAsync("Todos", bodyContent);
                 return Results.Content(page, "text/html");
             }

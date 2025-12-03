@@ -19,8 +19,7 @@ public class CreateTodoInteraction(
 
     protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
     {
-        var content = Page.RenderSuccessfulTodoCreation(response.Todo);
-        return await BuildHtmlFragmentResult(content);
+        return await BuildOobResult();
     }
 
     protected override IResult RenderError(string message) =>

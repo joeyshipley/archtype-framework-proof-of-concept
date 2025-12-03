@@ -18,8 +18,7 @@ public class ToggleTodoInteraction(
 
     protected override async Task<IResult> OnSuccess(ToggleTodoWorkflowResponse response)
     {
-        var content = Page.RenderTodoList(response.Todos);
-        return await BuildHtmlFragmentResult(content);
+        return await BuildOobResult();
     }
 
     protected override IResult RenderError(string message) =>
