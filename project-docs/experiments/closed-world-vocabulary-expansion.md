@@ -1016,10 +1016,11 @@ list-item:
 
 ---
 
-### Phase 4: Login Page Conversion
+### Phase 4.1: Login Page Conversion (Initial)
 **Status:** ✅ Complete
-**Goal:** Convert Login page to Closed-World UI
+**Goal:** Convert Login page to Closed-World UI (initial flat implementation)
 **Completed:** 2025-12-03
+**Commit:** `44cfa9c`
 
 **Tasks:**
 1. Update `Pages/Login/Login.Page.htmx.cs`
@@ -1057,7 +1058,285 @@ list-item:
 - ✅ Code follows syntax style guide (lower camel case private methods, primary constructor)
 - ⏳ Manual testing pending
 
-**Blocked By:** None
+**Blocked By:** Phase 1, Phase 2
+**Blocks:** Phase 4.2
+
+**Issues Discovered:**
+- Flat `.Add()` syntax breaks visual mental model (see Phase 4.2)
+
+---
+
+### Phase 4.2: Fluent Builder Pattern Implementation
+**Status:** 🔲 Not Started
+**Goal:** Restore visual nesting through fluent builder API
+**Estimated Effort:** 1-2 days
+
+**Context - The C# Constraint:**
+
+C# does not allow combining object initializers with collection initializers:
+
+```csharp
+// ❌ This doesn't compile:
+new Form { Action = "...", Swap = SwapStrategy.None }  // Object initializer
+{
+    new Stack(...),  // Collection initializer - ERROR!
+    new Button(...)
+}
+```
+
+C# parses the first `{ }` as object initialization, then fails when it encounters the second `{ }` for collection initialization.
+
+**Current Problem:**
+
+Phase 4.1 used flat `.Add()` calls to work around this:
+
+```csharp
+var form = new Form { Action = "...", Swap = SwapStrategy.None };
+form.Add(fieldsStack);
+form.Add(loginButton);
+section.Add(form);
+```
+
+**Issue:** Reading the code requires mentally reconstructing the visual hierarchy. Code structure doesn't match DOM structure.
+
+**Solution - Fluent Builder Pattern:**
+
+Implement `With*()` methods that return `this` for chaining:
+
+```csharp
+return new Section()
+    .WithId("login-form")
+    .WithChildren(
+        new Form()
+            .WithAction("/interaction/login/authenticate")
+            .WithSwap(SwapStrategy.None)
+            .WithChildren(
+                new Stack(For.Fields)
+                    .WithChildren(
+                        new Field().WithLabel(...).WithInput(...),
+                        new Field().WithLabel(...).WithInput(...)
+                    ),
+                new Button(Importance.Primary, "Login")
+                    .WithType(ButtonType.Submit)
+            )
+    );
+```
+
+**Why Fluent Builders (for now):**
+
+1. **Flexibility during exploration** - Still figuring out vocabulary patterns, builder allows changes without breaking existing code
+2. **Consistency** - Everything is a method call (no mixing constructors/init/collection syntax)
+3. **Postpones hard decisions** - Don't need to decide "required vs optional" yet
+4. **Easier to refactor later** - Once patterns solidify, can optimize without major refactor
+5. **Restores visual nesting** - Code structure matches DOM structure
+
+**Trade-offs (accepted for Phase 4.2):**
+
+- ⚠️ Loses compile-time requirement enforcement (okay during exploration)
+- ⚠️ Slightly more verbose (but gains consistency and clarity)
+- ⚠️ Temporary solution - will revisit optimization in Phase 6
+
+---
+
+#### Part A: Pattern Design & Documentation
+
+**Tasks:**
+1. [ ] Document C# constraint in experiment doc (this section)
+2. [ ] Document fluent builder decision and rationale (this section)
+3. [ ] Define canonical pattern template using Form as example
+4. [ ] Create implementation checklist for all 19 components
+
+**Pattern Template (Form as canonical example):**
+
+```csharp
+public record Form : ComponentBase, IBodyContent
+{
+    // Properties remain as init-only (remove 'required' for builder pattern)
+    public string Action { get; init; }
+    public string Method { get; init; } = "post";
+    public string Id { get; init; }
+    public string Target { get; init; }
+    public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
+
+    // Fluent builder methods (all return this)
+    public Form WithAction(string action) => this with { Action = action };
+    public Form WithMethod(string method) => this with { Method = method };
+    public Form WithId(string id) => this with { Id = id };
+    public Form WithTarget(string target) => this with { Target = target };
+    public Form WithSwap(SwapStrategy swap) => this with { Swap = swap };
+
+    // WithChildren for collection building
+    public Form WithChildren(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
+    }
+}
+```
+
+**Components Requiring Fluent Builders (19 total):**
+
+**Tier 1 - Skip for now (constructor params already good):**
+- `PageTitle`, `SectionTitle`, `Text` (3 components)
+
+**Tier 2 - Medium complexity (2-4 properties + children):**
+- `Section`, `Page`, `Stack`, `Row`, `Grid`, `List`, `ListItem` (7 components)
+
+**Tier 3 - High complexity (5+ properties):**
+- `Form`, `Field`, `Input`, `Button`, `Checkbox`, `Alert`, `EmptyState` (7 components)
+
+**Tier 4 - Special (slot-based):**
+- `Card` (1 component - needs `WithHeader()`, `WithBody()`, `WithFooter()`)
+- `Label` (1 component - constructor param + optional properties)
+
+**Success Criteria:**
+- [x] C# constraint documented
+- [x] Fluent builder rationale documented
+- [x] Pattern template defined
+- [x] Component implementation checklist created
+
+---
+
+#### Part B: Core Implementation (Login-used components)
+
+**Tasks:**
+1. [ ] Implement fluent builders for `Form`
+2. [ ] Implement fluent builders for `Field`
+3. [ ] Implement fluent builders for `Input`
+4. [ ] Implement fluent builders for `Label`
+5. [ ] Implement fluent builders for `Button`
+6. [ ] Implement fluent builders for `Section`
+7. [ ] Implement fluent builders for `Alert`
+8. [ ] Implement fluent builders for `Stack`
+
+**Implementation Order (by Login page usage):**
+1. Form → Field → Input → Label (form structure)
+2. Button (form submission)
+3. Section (page structure)
+4. Alert (feedback)
+5. Stack (layout)
+
+**Success Criteria:**
+- [ ] All 8 Login-used components have fluent builders
+- [ ] Builders follow canonical pattern template
+- [ ] All `With*()` methods return `this`
+- [ ] `WithChildren()` uses params for clean nesting
+- [ ] Properties lose `required` keyword where applicable
+- [ ] Code compiles successfully
+
+---
+
+#### Part C: Login Page Refactor
+
+**Tasks:**
+1. [ ] Refactor `renderLoginFormComponent()` to use fluent builders
+2. [ ] Refactor `RenderPage()` to use fluent builders
+3. [ ] Build and verify zero errors
+4. [ ] Visual code inspection - verify nesting is readable
+
+**Before (Phase 4.1 - Flat):**
+```csharp
+private Section renderLoginFormComponent()
+{
+    var section = new Section { Id = "login-form" };
+    var form = new Form { Action = "...", Swap = SwapStrategy.None };
+    var emailField = new Field { Label = ..., Input = ... };
+    var passwordField = new Field { Label = ..., Input = ... };
+    var fieldsStack = new Stack(For.Fields);
+    fieldsStack.Add(emailField);
+    fieldsStack.Add(passwordField);
+    var loginButton = new Button(...) { Type = ButtonType.Submit };
+    form.Add(fieldsStack);
+    form.Add(loginButton);
+    section.Add(form);
+    return section;
+}
+```
+
+**After (Phase 4.2 - Nested):**
+```csharp
+private Section renderLoginFormComponent() =>
+    new Section()
+        .WithId("login-form")
+        .WithChildren(
+            new Form()
+                .WithAction("/interaction/login/authenticate")
+                .WithSwap(SwapStrategy.None)
+                .WithChildren(
+                    new Stack(For.Fields)
+                        .WithChildren(
+                            new Field()
+                                .WithLabel(new Label("Email").WithFor("email"))
+                                .WithInput(new Input()
+                                    .WithName("email")
+                                    .WithType(InputType.Email)
+                                    .WithPlaceholder("Enter email")
+                                    .WithId("email")
+                                ),
+                            new Field()
+                                .WithLabel(new Label("Password").WithFor("password"))
+                                .WithInput(new Input()
+                                    .WithName("password")
+                                    .WithType(InputType.Password)
+                                    .WithPlaceholder("Enter password")
+                                    .WithId("password")
+                                )
+                        ),
+                    new Button(Importance.Primary, "Login")
+                        .WithType(ButtonType.Submit)
+                )
+        );
+```
+
+**Success Criteria:**
+- [ ] Login page uses fluent builders consistently
+- [ ] Visual nesting restored (code structure matches DOM)
+- [ ] Build succeeds with zero warnings
+- [ ] No breaking changes to existing functionality
+
+---
+
+#### Part D: Remaining Components (Optional)
+
+**Tasks:**
+1. [ ] Implement fluent builders for `Page`
+2. [ ] Implement fluent builders for `Row`
+3. [ ] Implement fluent builders for `Grid`
+4. [ ] Implement fluent builders for `List`
+5. [ ] Implement fluent builders for `ListItem`
+6. [ ] Implement fluent builders for `Checkbox`
+7. [ ] Implement fluent builders for `EmptyState`
+8. [ ] Implement fluent builders for `Card` (slot-based)
+9. [ ] Implement fluent builders for `PageTitle` (if needed)
+10. [ ] Implement fluent builders for `SectionTitle` (if needed)
+11. [ ] Implement fluent builders for `Text` (if needed)
+
+**Success Criteria:**
+- [ ] All 19 components have fluent builders
+- [ ] Pattern documented for future component additions
+- [ ] Consistent API across all components
+
+---
+
+#### Part E: Documentation & Commit
+
+**Tasks:**
+1. [x] Rename Phase 4 to Phase 4.1 in experiment doc
+2. [x] Create Phase 4.2 section with builder implementation plan
+3. [ ] Update Phase 4.2 status as work progresses
+4. [ ] Document lessons learned
+5. [ ] Commit Phase 4.2 completion with detailed message
+
+**Success Criteria:**
+- [x] Phase 4.1 clearly marked as "initial flat implementation"
+- [x] Phase 4.2 documents constraint, decision, and implementation plan
+- [ ] Commit message explains why fluent builders were chosen
+- [ ] Future developers understand this is temporary/exploratory
+
+---
+
+**Blocked By:** Phase 4.1
 **Blocks:** Phase 5
 
 ---
