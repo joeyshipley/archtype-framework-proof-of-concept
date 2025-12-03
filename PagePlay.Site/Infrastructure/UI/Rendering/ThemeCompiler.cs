@@ -215,6 +215,9 @@ public class ThemeCompiler
         // Feedback element styling
         generateFeedbackStyles(theme, css);
 
+        // List element styling
+        generateListStyles(theme, css);
+
         // Page structure styling
         generatePageStructureStyles(css);
 
@@ -520,6 +523,63 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .empty-state--large .empty-state__message {");
         css.AppendLine("    font-size: var(--text-lg);");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateListStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        css.AppendLine("  /* List elements */");
+
+        // List base
+        css.AppendLine("  .list {");
+        css.AppendLine("    margin: 0;");
+        css.AppendLine("    padding: 0;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // List style variants
+        css.AppendLine("  .list--unordered {");
+        css.AppendLine("    list-style: disc;");
+        css.AppendLine("    padding-left: var(--spacing-5);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .list--ordered {");
+        css.AppendLine("    list-style: decimal;");
+        css.AppendLine("    padding-left: var(--spacing-5);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .list--plain {");
+        css.AppendLine("    list-style: none;");
+        css.AppendLine("    padding-left: 0;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // ListItem base
+        css.AppendLine("  .list-item {");
+        css.AppendLine("    padding: var(--spacing-2) 0;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // ListItem state variants
+        css.AppendLine("  .list-item--normal {");
+        css.AppendLine("    opacity: 1;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .list-item--completed {");
+        css.AppendLine("    opacity: 0.6;");
+        css.AppendLine("    text-decoration: line-through;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .list-item--disabled {");
+        css.AppendLine("    opacity: 0.4;");
+        css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .list-item--error {");
+        css.AppendLine("    background: var(--color-critical-subtle);");
+        css.AppendLine("    border-left: 2px solid var(--color-critical);");
+        css.AppendLine("    padding-left: var(--spacing-3);");
         css.AppendLine("  }");
         css.AppendLine();
     }

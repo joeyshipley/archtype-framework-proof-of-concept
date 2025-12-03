@@ -85,6 +85,12 @@ public class HtmlRenderer : IHtmlRenderer
             case EmptyState emptyState:
                 renderEmptyState(emptyState, sb);
                 break;
+            case List list:
+                renderList(list, sb);
+                break;
+            case ListItem listItem:
+                renderListItem(listItem, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown component type: {component.GetType().Name}");
         }
@@ -466,6 +472,50 @@ public class HtmlRenderer : IHtmlRenderer
         }
 
         sb.Append("</div>");
+    }
+
+    private void renderList(List list, StringBuilder sb)
+    {
+        var styleClass = list.Style switch
+        {
+            ListStyle.Unordered => "list--unordered",
+            ListStyle.Ordered => "list--ordered",
+            ListStyle.Plain => "list--plain",
+            _ => "list--unordered"
+        };
+
+        var classes = $"list {styleClass}";
+        var idAttr = !string.IsNullOrEmpty(list.Id) ? $" id=\"{htmlEncode(list.Id)}\"" : "";
+        var tagName = list.Style == ListStyle.Ordered ? "ol" : "ul";
+
+        sb.Append($"<{tagName} class=\"{classes}\"{idAttr}>");
+
+        foreach (var child in list.Children)
+            renderComponent(child, sb);
+
+        sb.Append($"</{tagName}>");
+    }
+
+    private void renderListItem(ListItem listItem, StringBuilder sb)
+    {
+        var stateClass = listItem.State switch
+        {
+            ListItemState.Normal => "list-item--normal",
+            ListItemState.Completed => "list-item--completed",
+            ListItemState.Disabled => "list-item--disabled",
+            ListItemState.Error => "list-item--error",
+            _ => "list-item--normal"
+        };
+
+        var classes = $"list-item {stateClass}";
+        var idAttr = !string.IsNullOrEmpty(listItem.Id) ? $" id=\"{htmlEncode(listItem.Id)}\"" : "";
+
+        sb.Append($"<li class=\"{classes}\"{idAttr}>");
+
+        foreach (var child in listItem.Children)
+            renderComponent(child, sb);
+
+        sb.Append("</li>");
     }
 
     private string htmlEncode(string text)

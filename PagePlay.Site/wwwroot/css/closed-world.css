@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2025-12-03 14:35:14 UTC
+ * Generated: 2025-12-03 14:47:16 UTC
  */
 
 @layer tokens, base, components;
@@ -393,6 +393,51 @@
 
   .empty-state--large .empty-state__message {
     font-size: var(--text-lg);
+  }
+
+  /* List elements */
+  .list {
+    margin: 0;
+    padding: 0;
+  }
+
+  .list--unordered {
+    list-style: disc;
+    padding-left: var(--spacing-5);
+  }
+
+  .list--ordered {
+    list-style: decimal;
+    padding-left: var(--spacing-5);
+  }
+
+  .list--plain {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .list-item {
+    padding: var(--spacing-2) 0;
+  }
+
+  .list-item--normal {
+    opacity: 1;
+  }
+
+  .list-item--completed {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+
+  .list-item--disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .list-item--error {
+    background: var(--color-critical-subtle);
+    border-left: 2px solid var(--color-critical);
+    padding-left: var(--spacing-3);
   }
 
   /* Page structure */
