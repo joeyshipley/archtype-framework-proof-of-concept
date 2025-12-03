@@ -77,7 +77,8 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
                         {
                             Action = "/interaction/style-test/random",
                             Id = "random-number-button",
-                            Target = "#random-result"
+                            Target = "#random-result",
+                            ModelId = 0
                         }
                     )
                 }
@@ -87,7 +88,7 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
         var pageHtml = _renderer.Render(page);
 
         // Add result container (not in vocabulary yet, so raw HTML for now)
-        return pageHtml + "\n<div id=\"random-result\" style=\"padding: 1rem;\"></div>";
+        return pageHtml + "\n<div id=\"random-result\"></div>";
     }
 
     public string RenderRandomNumber(int number)

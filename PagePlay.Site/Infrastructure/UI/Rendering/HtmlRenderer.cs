@@ -125,7 +125,38 @@ public class HtmlRenderer : IHtmlRenderer
 
         var disabledAttr = button.Disabled ? " disabled" : "";
 
-        sb.Append($"<button class=\"{classes}\"{disabledAttr}>");
+        // Build HTMX attributes if Action is specified
+        var htmxAttrs = "";
+        if (!string.IsNullOrEmpty(button.Action))
+        {
+            htmxAttrs = $" hx-post=\"{htmlEncode(button.Action)}\"";
+
+            if (!string.IsNullOrEmpty(button.Target))
+                htmxAttrs += $" hx-target=\"{htmlEncode(button.Target)}\"";
+
+            var swapValue = button.Swap switch
+            {
+                SwapStrategy.InnerHTML => "innerHTML",
+                SwapStrategy.OuterHTML => "outerHTML",
+                SwapStrategy.BeforeBegin => "beforebegin",
+                SwapStrategy.AfterBegin => "afterbegin",
+                SwapStrategy.BeforeEnd => "beforeend",
+                SwapStrategy.AfterEnd => "afterend",
+                _ => "innerHTML"
+            };
+            htmxAttrs += $" hx-swap=\"{swapValue}\"";
+
+            // Always include hx-vals to ensure POST has a body (required for [FromForm] binding)
+            // Include ModelId if specified, otherwise send dummy field to create non-empty body
+            var hxValsContent = button.ModelId.HasValue
+                ? $"{{\"id\": {button.ModelId.Value}}}"
+                : "{\"_\":\"\"}";
+            htmxAttrs += $" hx-vals='{hxValsContent}'";
+        }
+
+        var idAttr = !string.IsNullOrEmpty(button.Id) ? $" id=\"{htmlEncode(button.Id)}\"" : "";
+
+        sb.Append($"<button class=\"{classes}\"{idAttr}{htmxAttrs}{disabledAttr}>");
         sb.Append(htmlEncode(button.Label));
         sb.Append("</button>");
     }

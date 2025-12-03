@@ -9,5 +9,5 @@ public class GetRandomNumberWorkflowResponse : IWorkflowResponse
 
 public class GetRandomNumberWorkflowRequest : IWorkflowRequest
 {
-    // Empty request - no input needed for random number generation
+    public long Id { get; set; }
 }
