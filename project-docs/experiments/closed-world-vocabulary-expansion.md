@@ -1566,7 +1566,7 @@ All builder methods lose "With" prefix:
 **Status:** ✅ Complete
 **Goal:** Implement direct content builder pattern for Card slots (hide slot abstraction)
 **Completed:** 2025-12-03
-**Commit:** (pending commit)
+**Commit:** `2d955cd`
 
 **Problem:**
 Card currently uses object initializer syntax which can't combine with collection initializers or fluent builders:
