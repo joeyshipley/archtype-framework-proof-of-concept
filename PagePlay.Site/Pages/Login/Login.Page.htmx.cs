@@ -25,10 +25,8 @@ public class LoginPage : ILoginPageView
     // language=html
     public string RenderLoginForm() =>
     $$"""
-    <div class="login-form">
-        <form hx-post="/interaction/login/authenticate"
-              hx-target="#notifications"
-              hx-swap="innerHTML">
+    <div id="login-form" class="login-form">
+        <form hx-post="/interaction/login/authenticate">
             <div class="login-input-group">
                 <label for="email">Email</label>
                 <input id="email"
