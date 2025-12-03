@@ -27,12 +27,8 @@ public class AuthenticateInteraction(
 
     protected override IResult RenderError(string message)
     {
-        // Need to return both: error notification + form preservation
-        // Otherwise HTMX removes the form (triggering element) when it doesn't receive an update for it
+        // Only return error notification OOB - form stays as-is with user's values
         var errorNotification = HtmlFragment.WithOob("notifications", Page.RenderError(message));
-        var formReset = HtmlFragment.InjectOob(Page.RenderLoginForm());
-
-        var combinedResponse = $"{formReset}\n{errorNotification}";
-        return Results.Content(combinedResponse, "text/html");
+        return Results.Content(errorNotification, "text/html");
     }
 }
