@@ -667,13 +667,13 @@ public class CreateTodoWorkflowResponse
 ### Success Criteria for Phase 2
 
 - [x] TodoListComponent created and implements IServerComponent
-- [x] CreateTodo interaction uses BuildOobResult()
+- [x] CreateTodo interaction uses BuildOobResult() (later changed to BuildHtmlFragmentResult for form reset)
 - [x] Create form has no Target attribute
 - [x] Todos route uses component rendering (hybrid approach)
 - [x] Creating a todo triggers OOB update of TodoListComponent
 - [x] No duplication between workflow and provider query logic
 - [x] Project compiles and runs (0 errors, 30 expected nullable warnings)
-- [ ] Todos page works correctly with component-first pattern (manual testing required)
+- [x] Todos page works correctly with component-first pattern (verified via manual testing)
 
 ### Testing Plan
 
@@ -698,16 +698,17 @@ After Phase 2 completion:
 **Files Created (1):**
 - `Pages/Todos/Components/TodoListComponent.cs` - 26 lines
 
-**Files Modified (9):**
+**Files Modified (9 + 1 bug fix = 10 total):**
 1. `Pages/Todos/Todos.Page.htmx.cs` - Added `RenderPageWithComponent()`, removed 3 Target attributes
 2. `Pages/Todos/Todos.Route.cs` - Uses component rendering (hybrid approach)
-3. `Pages/Todos/Interactions/CreateTodo.Interaction.cs` - Uses `BuildOobResult()`
+3. `Pages/Todos/Interactions/CreateTodo.Interaction.cs` - Uses `BuildHtmlFragmentResult(formReset)` with OOB
 4. `Pages/Todos/Interactions/ToggleTodo.Interaction.cs` - Uses `BuildOobResult()`
 5. `Application/Todos/Workflows/CreateTodo/CreateTodo.BoundaryContracts.cs` - Metadata-only response
 6. `Application/Todos/Workflows/CreateTodo/CreateTodo.Workflow.cs` - Returns `CreatedId` only
 7. `Application/Todos/Workflows/ToggleTodo/ToggleTodo.BoundaryContracts.cs` - Empty response
 8. `Application/Todos/Workflows/ToggleTodo/ToggleTodo.Workflow.cs` - Removed 28 lines of query logic
-9. `Infrastructure/Dependencies/DependencyResolver.cs` - Registered `TodoListComponent`
+9. `Infrastructure/Dependencies/DependencyResolver.cs` - Registered `ITodoListComponent` interface
+10. `Pages/Todos/Components/TodoListComponent.cs` - Added `ITodoListComponent` interface (bug fix)
 
 **Code Metrics:**
 - Lines removed: ~35 lines (query duplication + target attributes)
@@ -763,6 +764,60 @@ services.AddScoped<IMyComponent, MyComponent>();
 ```
 
 This matches the existing pattern used by `WelcomeWidget` and `AnalyticsStatsWidget`.
+
+### Phase 2 Form Reset Bug Fix
+
+**Issue Discovered During Testing:**
+After fixing the component factory issue, toggle and delete worked correctly, but **create form disappeared** after adding a todo.
+
+**Root Cause:**
+Only the `TodoListComponent` OOB update was being sent in the response. The create form (`#todo-create-form`) wasn't being updated, so HTMX removed it when it couldn't find a matching OOB target.
+
+**Symptoms:**
+- Create todo: New item appeared in list ✅
+- Create todo: Form completely disappeared ❌
+- Required page refresh to get form back
+
+**Fix Applied:**
+Changed `CreateTodo.Interaction.cs` from `BuildOobResult()` to `BuildHtmlFragmentResult(formReset)`:
+
+```csharp
+// BEFORE:
+protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+{
+    return await BuildOobResult();
+}
+
+// AFTER:
+protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+{
+    var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
+    return await BuildHtmlFragmentResult(formReset);
+}
+```
+
+**How It Works:**
+1. `HtmlFragment.InjectOob()` adds `hx-swap-oob="true"` to the form HTML
+2. `BuildHtmlFragmentResult()` combines form reset + component OOB updates
+3. Response now contains **two OOB updates**:
+   - Form reset (main content with OOB attribute)
+   - TodoListComponent update (automatic from framework)
+
+**Verification:**
+- ✅ Create todo adds item to list
+- ✅ Form stays visible and clears input
+- ✅ Toggle todo works correctly
+- ✅ Delete todo works correctly
+- ✅ No page refresh needed for any operation
+
+**Files Modified (1):**
+- `Pages/Todos/Interactions/CreateTodo.Interaction.cs`
+
+**Pattern Note:**
+When an interaction needs to update both components AND non-component elements:
+- Use `BuildHtmlFragmentResult(additionalOobHtml)` instead of `BuildOobResult()`
+- Framework automatically appends component OOB updates
+- Allows hybrid: components for data-driven areas, manual OOB for static elements
 
 ---
 
