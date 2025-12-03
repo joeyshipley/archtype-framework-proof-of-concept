@@ -12,6 +12,9 @@ using PagePlay.Site.Infrastructure.Web.Middleware;
 using Scalar.AspNetCore;
 using Serilog;
 
+// Check for theme compilation mode
+ThemeCompilerCli.CompileThemeFromArgs(args);
+
 // Configure Serilog early in the application startup
 // This allows us to capture startup errors and logging from the very beginning
 Log.Logger = new LoggerConfiguration()
