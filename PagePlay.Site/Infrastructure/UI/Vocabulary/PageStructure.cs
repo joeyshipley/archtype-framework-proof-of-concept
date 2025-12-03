@@ -6,6 +6,8 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 /// </summary>
 public record Page : ComponentBase
 {
+    public string Id { get; init; }
+
     public Page() { }
 
     public Page(params IComponent[] content)
@@ -21,6 +23,8 @@ public record Page : ComponentBase
 /// </summary>
 public record Section : ComponentBase, IBodyContent
 {
+    public string Id { get; init; }
+
     public Section() { }
 
     public Section(params IComponent[] content)

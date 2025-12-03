@@ -23,7 +23,8 @@ public enum SwapStrategy
     BeforeBegin,
     AfterBegin,
     BeforeEnd,
-    AfterEnd
+    AfterEnd,
+    None
 }
 
 /// <summary>

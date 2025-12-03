@@ -169,6 +169,7 @@ public class HtmlRenderer : IHtmlRenderer
                 SwapStrategy.AfterBegin => "afterbegin",
                 SwapStrategy.BeforeEnd => "beforeend",
                 SwapStrategy.AfterEnd => "afterend",
+                SwapStrategy.None => "none",
                 _ => "innerHTML"
             };
             htmxAttrs += $" hx-swap=\"{swapValue}\"";
@@ -198,7 +199,8 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderPage(Page page, StringBuilder sb)
     {
-        sb.Append("<div class=\"page\">");
+        var idAttr = !string.IsNullOrEmpty(page.Id) ? $" id=\"{htmlEncode(page.Id)}\"" : "";
+        sb.Append($"<div class=\"page\"{idAttr}>");
 
         foreach (var child in page.Children)
             renderComponent(child, sb);
@@ -208,7 +210,8 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderSection(Section section, StringBuilder sb)
     {
-        sb.Append("<section class=\"section\">");
+        var idAttr = !string.IsNullOrEmpty(section.Id) ? $" id=\"{htmlEncode(section.Id)}\"" : "";
+        sb.Append($"<section class=\"section\"{idAttr}>");
 
         foreach (var child in section.Children)
             renderComponent(child, sb);
@@ -371,6 +374,7 @@ public class HtmlRenderer : IHtmlRenderer
             SwapStrategy.AfterBegin => "afterbegin",
             SwapStrategy.BeforeEnd => "beforeend",
             SwapStrategy.AfterEnd => "afterend",
+            SwapStrategy.None => "none",
             _ => "innerHTML"
         };
         htmxAttrs += $" hx-swap=\"{swapValue}\"";
@@ -408,6 +412,7 @@ public class HtmlRenderer : IHtmlRenderer
                 SwapStrategy.AfterBegin => "afterbegin",
                 SwapStrategy.BeforeEnd => "beforeend",
                 SwapStrategy.AfterEnd => "afterend",
+                SwapStrategy.None => "none",
                 _ => "innerHTML"
             };
             htmxAttrs += $" hx-swap=\"{swapValue}\"";
