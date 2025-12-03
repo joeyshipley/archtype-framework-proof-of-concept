@@ -74,12 +74,10 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
                     ),
                     Footer = new Footer(
                         new Button(Importance.Primary, "Get Random Number")
-                        {
-                            Action = "/interaction/style-test/random",
-                            Id = "random-number-button",
-                            Target = "#random-result",
-                            ModelId = 0
-                        }
+                            .Action("/interaction/style-test/random")
+                            .Id("random-number-button")
+                            .Target("#random-result")
+                            .ModelId(0)
                     )
                 }
             )

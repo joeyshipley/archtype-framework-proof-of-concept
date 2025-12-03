@@ -21,25 +21,25 @@ public record Alert : IComponent, IBodyContent
     private readonly string _message;
 
     public string Message => _message;
-    public AlertTone Tone { get; init; }
-    public bool Dismissible { get; init; }
-    public string Id { get; init; }
+    public AlertTone ElementTone { get; init; }
+    public bool ElementDismissible { get; init; }
+    public string ElementId { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
 
     public Alert(string message, AlertTone tone = AlertTone.Neutral)
     {
         _message = message;
-        Tone = tone;
+        ElementTone = tone;
     }
 
     // Fluent builder methods
 
     /// <summary>Sets dismissible state. Returns new instance (immutable).</summary>
-    public Alert WithDismissible(bool dismissible) => this with { Dismissible = dismissible };
+    public Alert Dismissible(bool dismissible) => this with { ElementDismissible = dismissible };
 
     /// <summary>Sets element ID. Returns new instance (immutable).</summary>
-    public Alert WithId(string id) => this with { Id = id };
+    public Alert Id(string id) => this with { ElementId = id };
 }
 
 /// <summary>
@@ -61,9 +61,9 @@ public record EmptyState : IComponent, IBodyContent
     private readonly string _message;
 
     public string Message => _message;
-    public EmptyStateSize Size { get; init; } = EmptyStateSize.Medium;
-    public string ActionLabel { get; init; }
-    public string ActionUrl { get; init; }
+    public EmptyStateSize ElementSize { get; init; } = EmptyStateSize.Medium;
+    public string ElementActionLabel { get; init; }
+    public string ElementActionUrl { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
 
@@ -71,4 +71,15 @@ public record EmptyState : IComponent, IBodyContent
     {
         _message = message;
     }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the size variant. Returns new instance (immutable).</summary>
+    public EmptyState Size(EmptyStateSize size) => this with { ElementSize = size };
+
+    /// <summary>Sets the action label. Returns new instance (immutable).</summary>
+    public EmptyState ActionLabel(string actionLabel) => this with { ElementActionLabel = actionLabel };
+
+    /// <summary>Sets the action URL. Returns new instance (immutable).</summary>
+    public EmptyState ActionUrl(string actionUrl) => this with { ElementActionUrl = actionUrl };
 }

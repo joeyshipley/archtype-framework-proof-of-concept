@@ -144,24 +144,24 @@ public class HtmlRenderer : IHtmlRenderer
 
         classes = $"{classes} {importanceModifier}";
 
-        if (button.Disabled)
+        if (button.ElementDisabled)
             classes += " button--disabled";
 
-        if (button.Loading)
+        if (button.ElementLoading)
             classes += " button--loading";
 
-        var disabledAttr = button.Disabled ? " disabled" : "";
+        var disabledAttr = button.ElementDisabled ? " disabled" : "";
 
         // Build HTMX attributes if Action is specified
         var htmxAttrs = "";
-        if (!string.IsNullOrEmpty(button.Action))
+        if (!string.IsNullOrEmpty(button.ElementAction))
         {
-            htmxAttrs = $" hx-post=\"{htmlEncode(button.Action)}\"";
+            htmxAttrs = $" hx-post=\"{htmlEncode(button.ElementAction)}\"";
 
-            if (!string.IsNullOrEmpty(button.Target))
-                htmxAttrs += $" hx-target=\"{htmlEncode(button.Target)}\"";
+            if (!string.IsNullOrEmpty(button.ElementTarget))
+                htmxAttrs += $" hx-target=\"{htmlEncode(button.ElementTarget)}\"";
 
-            var swapValue = button.Swap switch
+            var swapValue = button.ElementSwap switch
             {
                 SwapStrategy.InnerHTML => "innerHTML",
                 SwapStrategy.OuterHTML => "outerHTML",
@@ -176,15 +176,15 @@ public class HtmlRenderer : IHtmlRenderer
 
             // Always include hx-vals to ensure POST has a body (required for [FromForm] binding)
             // Include ModelId if specified, otherwise send dummy field to create non-empty body
-            var hxValsContent = button.ModelId.HasValue
-                ? $"{{\"id\": {button.ModelId.Value}}}"
+            var hxValsContent = button.ElementModelId.HasValue
+                ? $"{{\"id\": {button.ElementModelId.Value}}}"
                 : "{\"_\":\"\"}";
             htmxAttrs += $" hx-vals='{hxValsContent}'";
         }
 
-        var idAttr = !string.IsNullOrEmpty(button.Id) ? $" id=\"{htmlEncode(button.Id)}\"" : "";
+        var idAttr = !string.IsNullOrEmpty(button.ElementId) ? $" id=\"{htmlEncode(button.ElementId)}\"" : "";
 
-        var typeAttr = button.Type switch
+        var typeAttr = button.ElementType switch
         {
             ButtonType.Submit => " type=\"submit\"",
             ButtonType.Reset => " type=\"reset\"",
@@ -199,10 +199,10 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderPage(Page page, StringBuilder sb)
     {
-        var idAttr = !string.IsNullOrEmpty(page.Id) ? $" id=\"{htmlEncode(page.Id)}\"" : "";
+        var idAttr = !string.IsNullOrEmpty(page.ElementId) ? $" id=\"{htmlEncode(page.ElementId)}\"" : "";
         sb.Append($"<div class=\"page\"{idAttr}>");
 
-        foreach (var child in page.Children)
+        foreach (var child in ((IComponent)page).Children)
             renderComponent(child, sb);
 
         sb.Append("</div>");
@@ -210,10 +210,10 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderSection(Section section, StringBuilder sb)
     {
-        var idAttr = !string.IsNullOrEmpty(section.Id) ? $" id=\"{htmlEncode(section.Id)}\"" : "";
+        var idAttr = !string.IsNullOrEmpty(section.ElementId) ? $" id=\"{htmlEncode(section.ElementId)}\"" : "";
         sb.Append($"<section class=\"section\"{idAttr}>");
 
-        foreach (var child in section.Children)
+        foreach (var child in ((IComponent)section).Children)
             renderComponent(child, sb);
 
         sb.Append("</section>");
@@ -235,10 +235,10 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderStack(Stack stack, StringBuilder sb)
     {
-        var purposeClass = getPurposeClass(stack.Purpose);
+        var purposeClass = getPurposeClass(stack.ElementPurpose);
         sb.Append($"<div class=\"stack stack--{purposeClass}\">");
 
-        foreach (var child in stack.Children)
+        foreach (var child in ((IComponent)stack).Children)
             renderComponent(child, sb);
 
         sb.Append("</div>");
@@ -246,10 +246,10 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderRow(Row row, StringBuilder sb)
     {
-        var purposeClass = getPurposeClass(row.Purpose);
+        var purposeClass = getPurposeClass(row.ElementPurpose);
         sb.Append($"<div class=\"row row--{purposeClass}\">");
 
-        foreach (var child in row.Children)
+        foreach (var child in ((IComponent)row).Children)
             renderComponent(child, sb);
 
         sb.Append("</div>");
@@ -257,11 +257,11 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderGrid(Grid grid, StringBuilder sb)
     {
-        var purposeClass = getPurposeClass(grid.Purpose);
-        var columnsClass = getColumnsClass(grid.Columns);
+        var purposeClass = getPurposeClass(grid.ElementPurpose);
+        var columnsClass = getColumnsClass(grid.ElementColumns);
         sb.Append($"<div class=\"grid grid--{purposeClass} grid--{columnsClass}\">");
 
-        foreach (var child in grid.Children)
+        foreach (var child in ((IComponent)grid).Children)
             renderComponent(child, sb);
 
         sb.Append("</div>");
@@ -291,7 +291,7 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderInput(Input input, StringBuilder sb)
     {
-        var typeValue = input.Type switch
+        var typeValue = input.ElementType switch
         {
             InputType.Text => "text",
             InputType.Email => "email",
@@ -306,20 +306,20 @@ public class HtmlRenderer : IHtmlRenderer
         };
 
         var classes = $"input input--{typeValue}";
-        var nameAttr = $" name=\"{htmlEncode(input.Name)}\"";
+        var nameAttr = $" name=\"{htmlEncode(input.ElementName)}\"";
         var typeAttr = $" type=\"{typeValue}\"";
-        var placeholderAttr = !string.IsNullOrEmpty(input.Placeholder) ? $" placeholder=\"{htmlEncode(input.Placeholder)}\"" : "";
-        var valueAttr = !string.IsNullOrEmpty(input.Value) ? $" value=\"{htmlEncode(input.Value)}\"" : "";
-        var disabledAttr = input.Disabled ? " disabled" : "";
-        var readonlyAttr = input.ReadOnly ? " readonly" : "";
-        var idAttr = !string.IsNullOrEmpty(input.Id) ? $" id=\"{htmlEncode(input.Id)}\"" : "";
+        var placeholderAttr = !string.IsNullOrEmpty(input.ElementPlaceholder) ? $" placeholder=\"{htmlEncode(input.ElementPlaceholder)}\"" : "";
+        var valueAttr = !string.IsNullOrEmpty(input.ElementValue) ? $" value=\"{htmlEncode(input.ElementValue)}\"" : "";
+        var disabledAttr = input.ElementDisabled ? " disabled" : "";
+        var readonlyAttr = input.ElementReadOnly ? " readonly" : "";
+        var idAttr = !string.IsNullOrEmpty(input.ElementId) ? $" id=\"{htmlEncode(input.ElementId)}\"" : "";
 
         sb.Append($"<input class=\"{classes}\"{idAttr}{nameAttr}{typeAttr}{placeholderAttr}{valueAttr}{disabledAttr}{readonlyAttr} />");
     }
 
     private void renderLabel(Label label, StringBuilder sb)
     {
-        var forAttr = !string.IsNullOrEmpty(label.For) ? $" for=\"{htmlEncode(label.For)}\"" : "";
+        var forAttr = !string.IsNullOrEmpty(label.ElementFor) ? $" for=\"{htmlEncode(label.ElementFor)}\"" : "";
 
         sb.Append($"<label class=\"label\"{forAttr}>");
         sb.Append(htmlEncode(label.Text));
@@ -328,26 +328,26 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderField(Field field, StringBuilder sb)
     {
-        var classes = field.HasError ? "field field--error" : "field";
+        var classes = field.ElementHasError ? "field field--error" : "field";
 
         sb.Append($"<div class=\"{classes}\">");
 
-        if (field.Label != null)
-            renderComponent(field.Label, sb);
+        if (field.ElementLabel != null)
+            renderComponent(field.ElementLabel, sb);
 
-        renderComponent(field.Input, sb);
+        renderComponent(field.ElementInput, sb);
 
-        if (field.HelpText != null && !field.HasError)
+        if (field.ElementHelpText != null && !field.ElementHasError)
         {
             sb.Append("<p class=\"field__help\">");
-            sb.Append(htmlEncode(field.HelpText.Content));
+            sb.Append(htmlEncode(field.ElementHelpText.Content));
             sb.Append("</p>");
         }
 
-        if (field.HasError && !string.IsNullOrEmpty(field.ErrorMessage))
+        if (field.ElementHasError && !string.IsNullOrEmpty(field.ElementErrorMessage))
         {
             sb.Append("<p class=\"field__error\">");
-            sb.Append(htmlEncode(field.ErrorMessage));
+            sb.Append(htmlEncode(field.ElementErrorMessage));
             sb.Append("</p>");
         }
 
@@ -356,17 +356,17 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderForm(Form form, StringBuilder sb)
     {
-        var idAttr = !string.IsNullOrEmpty(form.Id) ? $" id=\"{htmlEncode(form.Id)}\"" : "";
-        var methodAttr = $" method=\"{form.Method}\"";
+        var idAttr = !string.IsNullOrEmpty(form.ElementId) ? $" id=\"{htmlEncode(form.ElementId)}\"" : "";
+        var methodAttr = $" method=\"{form.ElementMethod}\"";
 
         // Build HTMX attributes
-        var htmxMethod = form.Method.ToLower() == "post" ? "hx-post" : "hx-get";
-        var htmxAttrs = $" {htmxMethod}=\"{htmlEncode(form.Action)}\"";
+        var htmxMethod = form.ElementMethod.ToLower() == "post" ? "hx-post" : "hx-get";
+        var htmxAttrs = $" {htmxMethod}=\"{htmlEncode(form.ElementAction)}\"";
 
-        if (!string.IsNullOrEmpty(form.Target))
-            htmxAttrs += $" hx-target=\"{htmlEncode(form.Target)}\"";
+        if (!string.IsNullOrEmpty(form.ElementTarget))
+            htmxAttrs += $" hx-target=\"{htmlEncode(form.ElementTarget)}\"";
 
-        var swapValue = form.Swap switch
+        var swapValue = form.ElementSwap switch
         {
             SwapStrategy.InnerHTML => "innerHTML",
             SwapStrategy.OuterHTML => "outerHTML",
@@ -381,7 +381,7 @@ public class HtmlRenderer : IHtmlRenderer
 
         sb.Append($"<form class=\"form\"{idAttr}{htmxAttrs}>");
 
-        foreach (var child in form.Children)
+        foreach (var child in ((IComponent)form).Children)
             renderComponent(child, sb);
 
         sb.Append("</form>");
@@ -389,22 +389,22 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderCheckbox(Checkbox checkbox, StringBuilder sb)
     {
-        var nameAttr = $" name=\"{htmlEncode(checkbox.Name)}\"";
-        var checkedAttr = checkbox.Checked ? " checked" : "";
-        var valueAttr = !string.IsNullOrEmpty(checkbox.Value) ? $" value=\"{htmlEncode(checkbox.Value)}\"" : "";
-        var disabledAttr = checkbox.Disabled ? " disabled" : "";
-        var idAttr = !string.IsNullOrEmpty(checkbox.Id) ? $" id=\"{htmlEncode(checkbox.Id)}\"" : "";
+        var nameAttr = $" name=\"{htmlEncode(checkbox.ElementName)}\"";
+        var checkedAttr = checkbox.ElementChecked ? " checked" : "";
+        var valueAttr = !string.IsNullOrEmpty(checkbox.ElementValue) ? $" value=\"{htmlEncode(checkbox.ElementValue)}\"" : "";
+        var disabledAttr = checkbox.ElementDisabled ? " disabled" : "";
+        var idAttr = !string.IsNullOrEmpty(checkbox.ElementId) ? $" id=\"{htmlEncode(checkbox.ElementId)}\"" : "";
 
         // Build HTMX attributes if Action is specified
         var htmxAttrs = "";
-        if (!string.IsNullOrEmpty(checkbox.Action))
+        if (!string.IsNullOrEmpty(checkbox.ElementAction))
         {
-            htmxAttrs = $" hx-post=\"{htmlEncode(checkbox.Action)}\"";
+            htmxAttrs = $" hx-post=\"{htmlEncode(checkbox.ElementAction)}\"";
 
-            if (!string.IsNullOrEmpty(checkbox.Target))
-                htmxAttrs += $" hx-target=\"{htmlEncode(checkbox.Target)}\"";
+            if (!string.IsNullOrEmpty(checkbox.ElementTarget))
+                htmxAttrs += $" hx-target=\"{htmlEncode(checkbox.ElementTarget)}\"";
 
-            var swapValue = checkbox.Swap switch
+            var swapValue = checkbox.ElementSwap switch
             {
                 SwapStrategy.InnerHTML => "innerHTML",
                 SwapStrategy.OuterHTML => "outerHTML",
@@ -418,8 +418,8 @@ public class HtmlRenderer : IHtmlRenderer
             htmxAttrs += $" hx-swap=\"{swapValue}\"";
 
             // Always include hx-vals for ModelId
-            var hxValsContent = checkbox.ModelId.HasValue
-                ? $"{{\"id\": {checkbox.ModelId.Value}}}"
+            var hxValsContent = checkbox.ElementModelId.HasValue
+                ? $"{{\"id\": {checkbox.ElementModelId.Value}}}"
                 : "{\"_\":\"\"}";
             htmxAttrs += $" hx-vals='{hxValsContent}'";
 
@@ -432,7 +432,7 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderAlert(Alert alert, StringBuilder sb)
     {
-        var toneClass = alert.Tone switch
+        var toneClass = alert.ElementTone switch
         {
             AlertTone.Neutral => "alert--neutral",
             AlertTone.Positive => "alert--positive",
@@ -442,7 +442,7 @@ public class HtmlRenderer : IHtmlRenderer
         };
 
         var classes = $"alert {toneClass}";
-        var idAttr = !string.IsNullOrEmpty(alert.Id) ? $" id=\"{htmlEncode(alert.Id)}\"" : "";
+        var idAttr = !string.IsNullOrEmpty(alert.ElementId) ? $" id=\"{htmlEncode(alert.ElementId)}\"" : "";
         var roleAttr = " role=\"alert\"";
 
         sb.Append($"<div class=\"{classes}\"{idAttr}{roleAttr}>");
@@ -454,7 +454,7 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderEmptyState(EmptyState emptyState, StringBuilder sb)
     {
-        var sizeClass = emptyState.Size switch
+        var sizeClass = emptyState.ElementSize switch
         {
             EmptyStateSize.Small => "empty-state--small",
             EmptyStateSize.Medium => "empty-state--medium",
@@ -469,10 +469,10 @@ public class HtmlRenderer : IHtmlRenderer
         sb.Append(htmlEncode(emptyState.Message));
         sb.Append("</p>");
 
-        if (!string.IsNullOrEmpty(emptyState.ActionLabel) && !string.IsNullOrEmpty(emptyState.ActionUrl))
+        if (!string.IsNullOrEmpty(emptyState.ElementActionLabel) && !string.IsNullOrEmpty(emptyState.ElementActionUrl))
         {
-            sb.Append($"<a class=\"empty-state__action\" href=\"{htmlEncode(emptyState.ActionUrl)}\">");
-            sb.Append(htmlEncode(emptyState.ActionLabel));
+            sb.Append($"<a class=\"empty-state__action\" href=\"{htmlEncode(emptyState.ElementActionUrl)}\">");
+            sb.Append(htmlEncode(emptyState.ElementActionLabel));
             sb.Append("</a>");
         }
 
@@ -481,7 +481,7 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderList(List list, StringBuilder sb)
     {
-        var styleClass = list.Style switch
+        var styleClass = list.ElementStyle switch
         {
             ListStyle.Unordered => "list--unordered",
             ListStyle.Ordered => "list--ordered",
@@ -490,12 +490,12 @@ public class HtmlRenderer : IHtmlRenderer
         };
 
         var classes = $"list {styleClass}";
-        var idAttr = !string.IsNullOrEmpty(list.Id) ? $" id=\"{htmlEncode(list.Id)}\"" : "";
-        var tagName = list.Style == ListStyle.Ordered ? "ol" : "ul";
+        var idAttr = !string.IsNullOrEmpty(list.ElementId) ? $" id=\"{htmlEncode(list.ElementId)}\"" : "";
+        var tagName = list.ElementStyle == ListStyle.Ordered ? "ol" : "ul";
 
         sb.Append($"<{tagName} class=\"{classes}\"{idAttr}>");
 
-        foreach (var child in list.Children)
+        foreach (var child in ((IComponent)list).Children)
             renderComponent(child, sb);
 
         sb.Append($"</{tagName}>");
@@ -503,7 +503,7 @@ public class HtmlRenderer : IHtmlRenderer
 
     private void renderListItem(ListItem listItem, StringBuilder sb)
     {
-        var stateClass = listItem.State switch
+        var stateClass = listItem.ElementState switch
         {
             ListItemState.Normal => "list-item--normal",
             ListItemState.Completed => "list-item--completed",
@@ -513,11 +513,11 @@ public class HtmlRenderer : IHtmlRenderer
         };
 
         var classes = $"list-item {stateClass}";
-        var idAttr = !string.IsNullOrEmpty(listItem.Id) ? $" id=\"{htmlEncode(listItem.Id)}\"" : "";
+        var idAttr = !string.IsNullOrEmpty(listItem.ElementId) ? $" id=\"{htmlEncode(listItem.ElementId)}\"" : "";
 
         sb.Append($"<li class=\"{classes}\"{idAttr}>");
 
-        foreach (var child in listItem.Children)
+        foreach (var child in ((IComponent)listItem).Children)
             renderComponent(child, sb);
 
         sb.Append("</li>");

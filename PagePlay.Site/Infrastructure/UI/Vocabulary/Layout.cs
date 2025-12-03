@@ -46,11 +46,11 @@ public enum Columns
 /// </summary>
 public record Stack : ComponentBase, IBodyContent
 {
-    public For Purpose { get; }
+    public For ElementPurpose { get; }
 
     public Stack(For purpose)
     {
-        Purpose = purpose;
+        ElementPurpose = purpose;
     }
 
     public Stack(For purpose, params IComponent[] content) : this(purpose)
@@ -62,7 +62,7 @@ public record Stack : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Stack WithChildren(params IComponent[] children)
+    public Stack Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -75,17 +75,27 @@ public record Stack : ComponentBase, IBodyContent
 /// </summary>
 public record Row : ComponentBase, IBodyContent, IFooterContent
 {
-    public For Purpose { get; }
+    public For ElementPurpose { get; }
 
     public Row(For purpose)
     {
-        Purpose = purpose;
+        ElementPurpose = purpose;
     }
 
     public Row(For purpose, params IComponent[] content) : this(purpose)
     {
         foreach (var item in content)
             Add(item);
+    }
+
+    // Fluent builder methods
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Row Children(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
     }
 }
 
@@ -94,18 +104,28 @@ public record Row : ComponentBase, IBodyContent, IFooterContent
 /// </summary>
 public record Grid : ComponentBase, IBodyContent
 {
-    public For Purpose { get; }
-    public Columns Columns { get; }
+    public For ElementPurpose { get; }
+    public Columns ElementColumns { get; }
 
     public Grid(For purpose, Columns columns = Columns.Auto)
     {
-        Purpose = purpose;
-        Columns = columns;
+        ElementPurpose = purpose;
+        ElementColumns = columns;
     }
 
     public Grid(For purpose, Columns columns, params IComponent[] content) : this(purpose, columns)
     {
         foreach (var item in content)
             Add(item);
+    }
+
+    // Fluent builder methods
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Grid Children(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
     }
 }

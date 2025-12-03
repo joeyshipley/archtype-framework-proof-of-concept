@@ -24,38 +24,38 @@ public enum InputType
 /// </summary>
 public record Input : IFieldContent, IBodyContent
 {
-    public string Name { get; init; }
-    public InputType Type { get; init; } = InputType.Text;
-    public string Placeholder { get; init; }
-    public string Value { get; init; }
-    public bool Disabled { get; init; }
-    public bool ReadOnly { get; init; }
-    public string Id { get; init; }
+    public string ElementName { get; init; }
+    public InputType ElementType { get; init; } = InputType.Text;
+    public string ElementPlaceholder { get; init; }
+    public string ElementValue { get; init; }
+    public bool ElementDisabled { get; init; }
+    public bool ElementReadOnly { get; init; }
+    public string ElementId { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
 
     // Fluent builder methods
 
     /// <summary>Sets the input name. Returns new instance (immutable).</summary>
-    public Input WithName(string name) => this with { Name = name };
+    public Input Name(string name) => this with { ElementName = name };
 
     /// <summary>Sets the input type. Returns new instance (immutable).</summary>
-    public Input WithType(InputType type) => this with { Type = type };
+    public Input Type(InputType type) => this with { ElementType = type };
 
     /// <summary>Sets the placeholder text. Returns new instance (immutable).</summary>
-    public Input WithPlaceholder(string placeholder) => this with { Placeholder = placeholder };
+    public Input Placeholder(string placeholder) => this with { ElementPlaceholder = placeholder };
 
     /// <summary>Sets the input value. Returns new instance (immutable).</summary>
-    public Input WithValue(string value) => this with { Value = value };
+    public Input Value(string value) => this with { ElementValue = value };
 
     /// <summary>Sets disabled state. Returns new instance (immutable).</summary>
-    public Input WithDisabled(bool disabled) => this with { Disabled = disabled };
+    public Input Disabled(bool disabled) => this with { ElementDisabled = disabled };
 
     /// <summary>Sets readonly state. Returns new instance (immutable).</summary>
-    public Input WithReadOnly(bool readOnly) => this with { ReadOnly = readOnly };
+    public Input ReadOnly(bool readOnly) => this with { ElementReadOnly = readOnly };
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
-    public Input WithId(string id) => this with { Id = id };
+    public Input Id(string id) => this with { ElementId = id };
 }
 
 /// <summary>
@@ -67,7 +67,7 @@ public record Label : IFieldContent, IBodyContent
     private readonly string _text;
 
     public string Text => _text;
-    public string For { get; init; }
+    public string ElementFor { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
 
@@ -79,7 +79,7 @@ public record Label : IFieldContent, IBodyContent
     // Fluent builder methods
 
     /// <summary>Sets the 'for' attribute to associate with input. Returns new instance (immutable).</summary>
-    public Label WithFor(string forAttribute) => this with { For = forAttribute };
+    public Label For(string forAttribute) => this with { ElementFor = forAttribute };
 }
 
 /// <summary>
@@ -88,28 +88,28 @@ public record Label : IFieldContent, IBodyContent
 /// </summary>
 public record Field : ComponentBase, IBodyContent
 {
-    public Label Label { get; init; }
-    public Input Input { get; init; }
-    public Text HelpText { get; init; }
-    public string ErrorMessage { get; init; }
-    public bool HasError { get; init; }
+    public Label ElementLabel { get; init; }
+    public Input ElementInput { get; init; }
+    public Text ElementHelpText { get; init; }
+    public string ElementErrorMessage { get; init; }
+    public bool ElementHasError { get; init; }
 
     // Fluent builder methods
 
     /// <summary>Sets the label. Returns new instance (immutable).</summary>
-    public Field WithLabel(Label label) => this with { Label = label };
+    public Field Label(Label label) => this with { ElementLabel = label };
 
     /// <summary>Sets the input. Returns new instance (immutable).</summary>
-    public Field WithInput(Input input) => this with { Input = input };
+    public Field Input(Input input) => this with { ElementInput = input };
 
     /// <summary>Sets the help text. Returns new instance (immutable).</summary>
-    public Field WithHelpText(Text helpText) => this with { HelpText = helpText };
+    public Field HelpText(Text helpText) => this with { ElementHelpText = helpText };
 
     /// <summary>Sets the error message. Returns new instance (immutable).</summary>
-    public Field WithErrorMessage(string errorMessage) => this with { ErrorMessage = errorMessage };
+    public Field ErrorMessage(string errorMessage) => this with { ElementErrorMessage = errorMessage };
 
     /// <summary>Sets the error state. Returns new instance (immutable).</summary>
-    public Field WithHasError(bool hasError) => this with { HasError = hasError };
+    public Field HasError(bool hasError) => this with { ElementHasError = hasError };
 }
 
 /// <summary>
@@ -117,31 +117,31 @@ public record Field : ComponentBase, IBodyContent
 /// </summary>
 public record Form : ComponentBase, IBodyContent
 {
-    public string Action { get; init; }
-    public string Method { get; init; } = "post";
-    public string Id { get; init; }
-    public string Target { get; init; }
-    public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
+    public string ElementAction { get; init; }
+    public string ElementMethod { get; init; } = "post";
+    public string ElementId { get; init; }
+    public string ElementTarget { get; init; }
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
 
     // Fluent builder methods
 
     /// <summary>Sets the form action URL. Returns new instance (immutable).</summary>
-    public Form WithAction(string action) => this with { Action = action };
+    public Form Action(string action) => this with { ElementAction = action };
 
     /// <summary>Sets the HTTP method. Returns new instance (immutable).</summary>
-    public Form WithMethod(string method) => this with { Method = method };
+    public Form Method(string method) => this with { ElementMethod = method };
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
-    public Form WithId(string id) => this with { Id = id };
+    public Form Id(string id) => this with { ElementId = id };
 
     /// <summary>Sets the HTMX target selector. Returns new instance (immutable).</summary>
-    public Form WithTarget(string target) => this with { Target = target };
+    public Form Target(string target) => this with { ElementTarget = target };
 
     /// <summary>Sets the HTMX swap strategy. Returns new instance (immutable).</summary>
-    public Form WithSwap(SwapStrategy swap) => this with { Swap = swap };
+    public Form Swap(SwapStrategy swap) => this with { ElementSwap = swap };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Form WithChildren(params IComponent[] children)
+    public Form Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -155,17 +155,46 @@ public record Form : ComponentBase, IBodyContent
 /// </summary>
 public record Checkbox : IFieldContent, IBodyContent
 {
-    public required string Name { get; init; }
-    public bool Checked { get; init; }
-    public string Value { get; init; }
-    public bool Disabled { get; init; }
-    public string Id { get; init; }
+    public string ElementName { get; init; }
+    public bool ElementChecked { get; init; }
+    public string ElementValue { get; init; }
+    public bool ElementDisabled { get; init; }
+    public string ElementId { get; init; }
 
     // HTMX support for interactive checkboxes (e.g., todo toggle)
-    public string Action { get; init; }
-    public string Target { get; init; }
-    public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
-    public long? ModelId { get; init; }
+    public string ElementAction { get; init; }
+    public string ElementTarget { get; init; }
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
+    public long? ElementModelId { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+
+    // Fluent builder methods
+
+    /// <summary>Sets the checkbox name. Returns new instance (immutable).</summary>
+    public Checkbox Name(string name) => this with { ElementName = name };
+
+    /// <summary>Sets the checked state. Returns new instance (immutable).</summary>
+    public Checkbox Checked(bool checked_) => this with { ElementChecked = checked_ };
+
+    /// <summary>Sets the checkbox value. Returns new instance (immutable).</summary>
+    public Checkbox Value(string value) => this with { ElementValue = value };
+
+    /// <summary>Sets disabled state. Returns new instance (immutable).</summary>
+    public Checkbox Disabled(bool disabled) => this with { ElementDisabled = disabled };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public Checkbox Id(string id) => this with { ElementId = id };
+
+    /// <summary>Sets the HTMX action URL. Returns new instance (immutable).</summary>
+    public Checkbox Action(string action) => this with { ElementAction = action };
+
+    /// <summary>Sets the HTMX target selector. Returns new instance (immutable).</summary>
+    public Checkbox Target(string target) => this with { ElementTarget = target };
+
+    /// <summary>Sets the HTMX swap strategy. Returns new instance (immutable).</summary>
+    public Checkbox Swap(SwapStrategy swap) => this with { ElementSwap = swap };
+
+    /// <summary>Sets the model ID for HTMX interactions. Returns new instance (immutable).</summary>
+    public Checkbox ModelId(long? modelId) => this with { ElementModelId = modelId };
 }

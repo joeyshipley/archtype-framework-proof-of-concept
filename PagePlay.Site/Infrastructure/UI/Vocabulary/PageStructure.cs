@@ -6,7 +6,7 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 /// </summary>
 public record Page : ComponentBase
 {
-    public string Id { get; init; }
+    public string ElementId { get; init; }
 
     public Page() { }
 
@@ -14,6 +14,19 @@ public record Page : ComponentBase
     {
         foreach (var item in content)
             Add(item);
+    }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public Page Id(string id) => this with { ElementId = id };
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Page Children(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
     }
 }
 
@@ -23,7 +36,7 @@ public record Page : ComponentBase
 /// </summary>
 public record Section : ComponentBase, IBodyContent
 {
-    public string Id { get; init; }
+    public string ElementId { get; init; }
 
     public Section() { }
 
@@ -36,10 +49,10 @@ public record Section : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
-    public Section WithId(string id) => this with { Id = id };
+    public Section Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Section WithChildren(params IComponent[] children)
+    public Section Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);

@@ -17,7 +17,7 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
     {
         var page = new Section();
         page.Add(new PageTitle("Login"));
-        page.Add(new Section { Id = "notifications" });
+        page.Add(new Section().Id("notifications"));
         page.Add(renderLoginFormComponent());
 
         return _renderer.Render(page);
@@ -43,33 +43,33 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
 
     private Section renderLoginFormComponent() =>
         new Section()
-            .WithId("login-form")
-            .WithChildren(
+            .Id("login-form")
+            .Children(
                 new Form()
-                    .WithAction("/interaction/login/authenticate")
-                    .WithSwap(SwapStrategy.None)
-                    .WithChildren(
+                    .Action("/interaction/login/authenticate")
+                    .Swap(SwapStrategy.None)
+                    .Children(
                         new Stack(For.Fields)
-                            .WithChildren(
+                            .Children(
                                 new Field()
-                                    .WithLabel(new Label("Email").WithFor("email"))
-                                    .WithInput(new Input()
-                                        .WithName("email")
-                                        .WithType(InputType.Email)
-                                        .WithPlaceholder("Enter email")
-                                        .WithId("email")
+                                    .Label(new Label("Email").For("email"))
+                                    .Input(new Input()
+                                        .Name("email")
+                                        .Type(InputType.Email)
+                                        .Placeholder("Enter email")
+                                        .Id("email")
                                     ),
                                 new Field()
-                                    .WithLabel(new Label("Password").WithFor("password"))
-                                    .WithInput(new Input()
-                                        .WithName("password")
-                                        .WithType(InputType.Password)
-                                        .WithPlaceholder("Enter password")
-                                        .WithId("password")
+                                    .Label(new Label("Password").For("password"))
+                                    .Input(new Input()
+                                        .Name("password")
+                                        .Type(InputType.Password)
+                                        .Placeholder("Enter password")
+                                        .Id("password")
                                     )
                             ),
                         new Button(Importance.Primary, "Login")
-                            .WithType(ButtonType.Submit)
+                            .Type(ButtonType.Submit)
                     )
             );
 }

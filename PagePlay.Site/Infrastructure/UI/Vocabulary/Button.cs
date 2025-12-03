@@ -51,18 +51,18 @@ public record Button : IHeaderContent, IFooterContent, IFieldContent
     // Visual properties
     public Importance Importance { get; }
     public string Label => _label;
-    public bool Disabled { get; init; }
-    public bool Loading { get; init; }
+    public bool ElementDisabled { get; init; }
+    public bool ElementLoading { get; init; }
 
     // Button type (submit, reset, button)
-    public ButtonType Type { get; init; } = ButtonType.Button;
+    public ButtonType ElementType { get; init; } = ButtonType.Button;
 
     // Interactive properties (HTMX)
-    public string Action { get; init; }
-    public string Id { get; init; }
-    public string Target { get; init; }
-    public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
-    public long? ModelId { get; init; }
+    public string ElementAction { get; init; }
+    public string ElementId { get; init; }
+    public string ElementTarget { get; init; }
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
+    public long? ElementModelId { get; init; }
 
     public Button(Importance importance, string label)
     {
@@ -78,26 +78,26 @@ public record Button : IHeaderContent, IFooterContent, IFieldContent
     // Fluent builder methods
 
     /// <summary>Sets disabled state. Returns new instance (immutable).</summary>
-    public Button WithDisabled(bool disabled) => this with { Disabled = disabled };
+    public Button Disabled(bool disabled) => this with { ElementDisabled = disabled };
 
     /// <summary>Sets loading state. Returns new instance (immutable).</summary>
-    public Button WithLoading(bool loading) => this with { Loading = loading };
+    public Button Loading(bool loading) => this with { ElementLoading = loading };
 
     /// <summary>Sets button type (submit, reset, button). Returns new instance (immutable).</summary>
-    public Button WithType(ButtonType type) => this with { Type = type };
+    public Button Type(ButtonType type) => this with { ElementType = type };
 
     /// <summary>Sets HTMX action URL. Returns new instance (immutable).</summary>
-    public Button WithAction(string action) => this with { Action = action };
+    public Button Action(string action) => this with { ElementAction = action };
 
     /// <summary>Sets element ID. Returns new instance (immutable).</summary>
-    public Button WithId(string id) => this with { Id = id };
+    public Button Id(string id) => this with { ElementId = id };
 
     /// <summary>Sets HTMX target selector. Returns new instance (immutable).</summary>
-    public Button WithTarget(string target) => this with { Target = target };
+    public Button Target(string target) => this with { ElementTarget = target };
 
     /// <summary>Sets HTMX swap strategy. Returns new instance (immutable).</summary>
-    public Button WithSwap(SwapStrategy swap) => this with { Swap = swap };
+    public Button Swap(SwapStrategy swap) => this with { ElementSwap = swap };
 
     /// <summary>Sets model ID for HTMX requests. Returns new instance (immutable).</summary>
-    public Button WithModelId(long? modelId) => this with { ModelId = modelId };
+    public Button ModelId(long? modelId) => this with { ElementModelId = modelId };
 }

@@ -17,8 +17,8 @@ public enum ListStyle
 /// </summary>
 public record List : ComponentBase, IBodyContent
 {
-    public ListStyle Style { get; init; } = ListStyle.Unordered;
-    public string Id { get; init; }
+    public ListStyle ElementStyle { get; init; } = ListStyle.Unordered;
+    public string ElementId { get; init; }
 
     public List()
     {
@@ -28,6 +28,22 @@ public record List : ComponentBase, IBodyContent
     {
         foreach (var item in items)
             Add(item);
+    }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the list style. Returns new instance (immutable).</summary>
+    public List Style(ListStyle style) => this with { ElementStyle = style };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public List Id(string id) => this with { ElementId = id };
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public List Children(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
     }
 }
 
@@ -49,8 +65,8 @@ public enum ListItemState
 /// </summary>
 public record ListItem : ComponentBase
 {
-    public ListItemState State { get; init; } = ListItemState.Normal;
-    public string Id { get; init; }
+    public ListItemState ElementState { get; init; } = ListItemState.Normal;
+    public string ElementId { get; init; }
 
     public ListItem()
     {
@@ -60,5 +76,21 @@ public record ListItem : ComponentBase
     {
         foreach (var item in content)
             Add(item);
+    }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the list item state. Returns new instance (immutable).</summary>
+    public ListItem State(ListItemState state) => this with { ElementState = state };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public ListItem Id(string id) => this with { ElementId = id };
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public ListItem Children(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
     }
 }
