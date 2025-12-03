@@ -10,11 +10,11 @@ public static class ButtonDelete
         long id,
         string tag,
         string content,
-        string? target = null,
-        string? cssClass = null,
-        string? title = null,
-        string? swapStrategy = null,
-        string? hxExt = null
+        string target = null,
+        string cssClass = null,
+        string title = null,
+        string swapStrategy = null,
+        string hxExt = null
     )
     {
         return Button.Render(

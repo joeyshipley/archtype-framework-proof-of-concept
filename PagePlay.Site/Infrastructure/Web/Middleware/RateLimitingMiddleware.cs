@@ -92,7 +92,7 @@ public class RateLimitingMiddleware(
         return false;
     }
 
-    private static void CleanupExpiredEntries(object? state)
+    private static void CleanupExpiredEntries(object state)
     {
         var now = DateTime.UtcNow;
         var expiredKeys = _limiters

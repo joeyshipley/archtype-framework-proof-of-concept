@@ -22,7 +22,7 @@ public interface IFrameworkOrchestrator
     /// </summary>
     Task<string> RenderMutationResponseAsync(
         DataMutations mutations,
-        string? componentContextJson
+        string componentContextJson
     );
 }
 
@@ -60,7 +60,7 @@ public class FrameworkOrchestrator(
 
     public async Task<string> RenderMutationResponseAsync(
         DataMutations mutations,
-        string? componentContextJson)
+        string componentContextJson)
     {
         // 1. Parse component context from client
         var pageComponents = _contextParser.Parse(componentContextJson);

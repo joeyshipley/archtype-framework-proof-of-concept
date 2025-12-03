@@ -22,12 +22,12 @@ public interface IComponentContextParser
     /// Parses X-Component-Context header into component info list.
     /// Returns empty list if header missing or invalid.
     /// </summary>
-    List<ComponentInfo> Parse(string? contextJson);
+    List<ComponentInfo> Parse(string contextJson);
 }
 
 public class ComponentContextParser : IComponentContextParser
 {
-    public List<ComponentInfo> Parse(string? contextJson)
+    public List<ComponentInfo> Parse(string contextJson)
     {
         if (string.IsNullOrWhiteSpace(contextJson))
             return new List<ComponentInfo>();

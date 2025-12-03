@@ -209,6 +209,9 @@ public class ThemeCompiler
         // Text styling
         generateTextStyles(theme, css);
 
+        // Form element styling
+        generateFormStyles(theme, css);
+
         // Page structure styling
         generatePageStructureStyles(css);
 
@@ -335,6 +338,96 @@ public class ThemeCompiler
         css.AppendLine("    font-size: var(--text-md);");
         css.AppendLine("    color: var(--color-text-primary);");
         css.AppendLine("    line-height: 1.5;");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateFormStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        css.AppendLine("  /* Form elements */");
+
+        // Input
+        css.AppendLine("  .input {");
+        css.AppendLine("    display: block;");
+        css.AppendLine("    width: 100%;");
+        css.AppendLine("    padding: var(--spacing-2) var(--spacing-3);");
+        css.AppendLine("    border: 1px solid var(--color-border);");
+        css.AppendLine("    border-radius: var(--radius-md);");
+        css.AppendLine("    font-size: var(--text-md);");
+        css.AppendLine("    font-family: inherit;");
+        css.AppendLine("    line-height: 1.5;");
+        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine("    background: var(--color-surface);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .input:focus {");
+        css.AppendLine("    outline: 2px solid var(--color-accent);");
+        css.AppendLine("    outline-offset: 2px;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .input:disabled {");
+        css.AppendLine("    opacity: 0.5;");
+        css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Label
+        css.AppendLine("  .label {");
+        css.AppendLine("    display: block;");
+        css.AppendLine("    font-size: var(--text-sm);");
+        css.AppendLine("    font-weight: 500;");
+        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine("    margin-bottom: var(--spacing-1);");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Field
+        css.AppendLine("  .field {");
+        css.AppendLine("    display: block;");
+        css.AppendLine("    margin-bottom: var(--spacing-4);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .field--error .input {");
+        css.AppendLine("    border-color: var(--color-critical);");
+        css.AppendLine("    background: var(--color-critical-subtle);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .field__help {");
+        css.AppendLine("    margin: var(--spacing-1) 0 0 0;");
+        css.AppendLine("    font-size: var(--text-sm);");
+        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .field__error {");
+        css.AppendLine("    margin: var(--spacing-1) 0 0 0;");
+        css.AppendLine("    font-size: var(--text-sm);");
+        css.AppendLine("    color: var(--color-critical);");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Form
+        css.AppendLine("  .form {");
+        css.AppendLine("    display: block;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Checkbox
+        css.AppendLine("  .checkbox {");
+        css.AppendLine("    width: var(--spacing-4);");
+        css.AppendLine("    height: var(--spacing-4);");
+        css.AppendLine("    border: 1px solid var(--color-border);");
+        css.AppendLine("    border-radius: var(--radius-sm);");
+        css.AppendLine("    cursor: pointer;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .checkbox:checked {");
+        css.AppendLine("    background: var(--color-accent);");
+        css.AppendLine("    border-color: var(--color-accent);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .checkbox:disabled {");
+        css.AppendLine("    opacity: 0.5;");
+        css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
     }

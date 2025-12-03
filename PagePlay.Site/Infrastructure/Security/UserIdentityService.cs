@@ -25,7 +25,7 @@ public interface IUserIdentityService
     /// Extracts the user ID as a string from a ClaimsPrincipal.
     /// Returns null if claim is missing or cannot be parsed.
     /// </summary>
-    string? GetUserIdString(ClaimsPrincipal principal);
+    string GetUserIdString(ClaimsPrincipal principal);
 
     /// <summary>
     /// Checks if the principal represents an authenticated user.
@@ -52,7 +52,7 @@ public class UserIdentityService(IHttpContextAccessor _httpContextAccessor) : IU
         return null;
     }
 
-    public string? GetUserIdString(ClaimsPrincipal principal)
+    public string GetUserIdString(ClaimsPrincipal principal)
     {
         return GetUserId(principal)?.ToString();
     }

@@ -27,10 +27,21 @@ public enum SwapStrategy
 }
 
 /// <summary>
-/// Button - Interactive element for user actions.
-/// Can appear in Header or Footer slots.
+/// Button type - Semantic button purpose.
+/// Maps to HTML button type attribute.
 /// </summary>
-public record Button : IHeaderContent, IFooterContent
+public enum ButtonType
+{
+    Button,   // type="button" (default)
+    Submit,   // type="submit"
+    Reset     // type="reset"
+}
+
+/// <summary>
+/// Button - Interactive element for user actions.
+/// Can appear in Header, Footer, or Field slots.
+/// </summary>
+public record Button : IHeaderContent, IFooterContent, IFieldContent
 {
     private readonly string _label;
 
@@ -42,10 +53,13 @@ public record Button : IHeaderContent, IFooterContent
     public bool Disabled { get; init; }
     public bool Loading { get; init; }
 
+    // Button type (submit, reset, button)
+    public ButtonType Type { get; init; } = ButtonType.Button;
+
     // Interactive properties (HTMX)
-    public string? Action { get; init; }
-    public string? Id { get; init; }
-    public string? Target { get; init; }
+    public string Action { get; init; }
+    public string Id { get; init; }
+    public string Target { get; init; }
     public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
     public long? ModelId { get; init; }
 

@@ -28,6 +28,12 @@ public interface IBodyContent : IComponent { }
 public interface IFooterContent : IComponent { }
 
 /// <summary>
+/// Marker interface for content that can appear in form fields.
+/// Includes inputs, labels, buttons, and other form elements.
+/// </summary>
+public interface IFieldContent : IComponent { }
+
+/// <summary>
 /// Base class for components with children.
 /// Supports collection initializer syntax.
 /// </summary>

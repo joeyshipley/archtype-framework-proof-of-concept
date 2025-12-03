@@ -32,7 +32,7 @@ public interface IServerComponent
 public class DataDependencies
 {
     public string Domain { get; private set; } = string.Empty;
-    public Type? DomainContextType { get; private set; }
+    public Type DomainContextType { get; private set; }
 
     public static DataDependencies From<TDomain, TContext>()
         where TDomain : IDataProvider<TContext>

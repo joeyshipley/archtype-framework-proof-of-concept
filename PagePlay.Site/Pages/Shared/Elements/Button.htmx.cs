@@ -4,19 +4,19 @@ public class RouteData
 {
     public required string Endpoint { get; init; }
     public long? ModelId { get; init; }
-    public string? Target { get; init; }
+    public string Target { get; init; }
     public string HttpMethod { get; init; } = "post";
     public string SwapStrategy { get; init; } = "innerHTML";
-    public string? HxExt { get; init; }
-    public List<(string name, object value)>? AdditionalValues { get; init; }
+    public string HxExt { get; init; }
+    public List<(string name, object value)> AdditionalValues { get; init; }
 }
 
 public class HtmlData
 {
     public required string ElementId { get; init; }
-    public string? CssClass { get; init; }
-    public string? Title { get; init; }
-    public List<(string attribute, object value)>? DataAttributes { get; init; }
+    public string CssClass { get; init; }
+    public string Title { get; init; }
+    public List<(string attribute, object value)> DataAttributes { get; init; }
 }
 
 public class Button

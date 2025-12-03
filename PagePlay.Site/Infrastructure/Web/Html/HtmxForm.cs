@@ -14,7 +14,7 @@ public class HtmxFormData
     /// <summary>
     /// The CSS selector for the target element (optional - omit for OOB-only responses)
     /// </summary>
-    public string? Target { get; init; }
+    public string Target { get; init; }
 
     /// <summary>
     /// How to swap the response into the target. Defaults to "innerHTML".
@@ -27,17 +27,17 @@ public class HtmxFormData
     /// <summary>
     /// HTMX extensions to enable (e.g., "morph" for morphdom support)
     /// </summary>
-    public string? HxExt { get; init; }
+    public string HxExt { get; init; }
 
     /// <summary>
     /// The form's HTML id attribute
     /// </summary>
-    public string? Id { get; init; }
+    public string Id { get; init; }
 
     /// <summary>
     /// CSS class(es) to apply to the form
     /// </summary>
-    public string? CssClass { get; init; }
+    public string CssClass { get; init; }
 }
 
 /// <summary>

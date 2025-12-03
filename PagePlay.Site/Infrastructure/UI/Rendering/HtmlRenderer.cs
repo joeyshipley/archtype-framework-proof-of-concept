@@ -64,6 +64,21 @@ public class HtmlRenderer : IHtmlRenderer
             case Button button:
                 renderButton(button, sb);
                 break;
+            case Input input:
+                renderInput(input, sb);
+                break;
+            case Label label:
+                renderLabel(label, sb);
+                break;
+            case Field field:
+                renderField(field, sb);
+                break;
+            case Form form:
+                renderForm(form, sb);
+                break;
+            case Checkbox checkbox:
+                renderCheckbox(checkbox, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown component type: {component.GetType().Name}");
         }
@@ -156,7 +171,15 @@ public class HtmlRenderer : IHtmlRenderer
 
         var idAttr = !string.IsNullOrEmpty(button.Id) ? $" id=\"{htmlEncode(button.Id)}\"" : "";
 
-        sb.Append($"<button class=\"{classes}\"{idAttr}{htmxAttrs}{disabledAttr}>");
+        var typeAttr = button.Type switch
+        {
+            ButtonType.Submit => " type=\"submit\"",
+            ButtonType.Reset => " type=\"reset\"",
+            ButtonType.Button => " type=\"button\"",
+            _ => " type=\"button\""
+        };
+
+        sb.Append($"<button class=\"{classes}\"{idAttr}{typeAttr}{htmxAttrs}{disabledAttr}>");
         sb.Append(htmlEncode(button.Label));
         sb.Append("</button>");
     }
@@ -250,6 +273,145 @@ public class HtmlRenderer : IHtmlRenderer
         Columns.Auto => "cols-auto",
         _ => "cols-auto"
     };
+
+    private void renderInput(Input input, StringBuilder sb)
+    {
+        var typeValue = input.Type switch
+        {
+            InputType.Text => "text",
+            InputType.Email => "email",
+            InputType.Password => "password",
+            InputType.Hidden => "hidden",
+            InputType.Number => "number",
+            InputType.Date => "date",
+            InputType.Tel => "tel",
+            InputType.Url => "url",
+            InputType.Search => "search",
+            _ => "text"
+        };
+
+        var classes = $"input input--{typeValue}";
+        var nameAttr = $" name=\"{htmlEncode(input.Name)}\"";
+        var typeAttr = $" type=\"{typeValue}\"";
+        var placeholderAttr = !string.IsNullOrEmpty(input.Placeholder) ? $" placeholder=\"{htmlEncode(input.Placeholder)}\"" : "";
+        var valueAttr = !string.IsNullOrEmpty(input.Value) ? $" value=\"{htmlEncode(input.Value)}\"" : "";
+        var disabledAttr = input.Disabled ? " disabled" : "";
+        var readonlyAttr = input.ReadOnly ? " readonly" : "";
+        var idAttr = !string.IsNullOrEmpty(input.Id) ? $" id=\"{htmlEncode(input.Id)}\"" : "";
+
+        sb.Append($"<input class=\"{classes}\"{idAttr}{nameAttr}{typeAttr}{placeholderAttr}{valueAttr}{disabledAttr}{readonlyAttr} />");
+    }
+
+    private void renderLabel(Label label, StringBuilder sb)
+    {
+        var forAttr = !string.IsNullOrEmpty(label.For) ? $" for=\"{htmlEncode(label.For)}\"" : "";
+
+        sb.Append($"<label class=\"label\"{forAttr}>");
+        sb.Append(htmlEncode(label.Text));
+        sb.Append("</label>");
+    }
+
+    private void renderField(Field field, StringBuilder sb)
+    {
+        var classes = field.HasError ? "field field--error" : "field";
+
+        sb.Append($"<div class=\"{classes}\">");
+
+        if (field.Label != null)
+            renderComponent(field.Label, sb);
+
+        renderComponent(field.Input, sb);
+
+        if (field.HelpText != null && !field.HasError)
+        {
+            sb.Append("<p class=\"field__help\">");
+            sb.Append(htmlEncode(field.HelpText.Content));
+            sb.Append("</p>");
+        }
+
+        if (field.HasError && !string.IsNullOrEmpty(field.ErrorMessage))
+        {
+            sb.Append("<p class=\"field__error\">");
+            sb.Append(htmlEncode(field.ErrorMessage));
+            sb.Append("</p>");
+        }
+
+        sb.Append("</div>");
+    }
+
+    private void renderForm(Form form, StringBuilder sb)
+    {
+        var idAttr = !string.IsNullOrEmpty(form.Id) ? $" id=\"{htmlEncode(form.Id)}\"" : "";
+        var methodAttr = $" method=\"{form.Method}\"";
+
+        // Build HTMX attributes
+        var htmxMethod = form.Method.ToLower() == "post" ? "hx-post" : "hx-get";
+        var htmxAttrs = $" {htmxMethod}=\"{htmlEncode(form.Action)}\"";
+
+        if (!string.IsNullOrEmpty(form.Target))
+            htmxAttrs += $" hx-target=\"{htmlEncode(form.Target)}\"";
+
+        var swapValue = form.Swap switch
+        {
+            SwapStrategy.InnerHTML => "innerHTML",
+            SwapStrategy.OuterHTML => "outerHTML",
+            SwapStrategy.BeforeBegin => "beforebegin",
+            SwapStrategy.AfterBegin => "afterbegin",
+            SwapStrategy.BeforeEnd => "beforeend",
+            SwapStrategy.AfterEnd => "afterend",
+            _ => "innerHTML"
+        };
+        htmxAttrs += $" hx-swap=\"{swapValue}\"";
+
+        sb.Append($"<form class=\"form\"{idAttr}{htmxAttrs}>");
+
+        foreach (var child in form.Children)
+            renderComponent(child, sb);
+
+        sb.Append("</form>");
+    }
+
+    private void renderCheckbox(Checkbox checkbox, StringBuilder sb)
+    {
+        var nameAttr = $" name=\"{htmlEncode(checkbox.Name)}\"";
+        var checkedAttr = checkbox.Checked ? " checked" : "";
+        var valueAttr = !string.IsNullOrEmpty(checkbox.Value) ? $" value=\"{htmlEncode(checkbox.Value)}\"" : "";
+        var disabledAttr = checkbox.Disabled ? " disabled" : "";
+        var idAttr = !string.IsNullOrEmpty(checkbox.Id) ? $" id=\"{htmlEncode(checkbox.Id)}\"" : "";
+
+        // Build HTMX attributes if Action is specified
+        var htmxAttrs = "";
+        if (!string.IsNullOrEmpty(checkbox.Action))
+        {
+            htmxAttrs = $" hx-post=\"{htmlEncode(checkbox.Action)}\"";
+
+            if (!string.IsNullOrEmpty(checkbox.Target))
+                htmxAttrs += $" hx-target=\"{htmlEncode(checkbox.Target)}\"";
+
+            var swapValue = checkbox.Swap switch
+            {
+                SwapStrategy.InnerHTML => "innerHTML",
+                SwapStrategy.OuterHTML => "outerHTML",
+                SwapStrategy.BeforeBegin => "beforebegin",
+                SwapStrategy.AfterBegin => "afterbegin",
+                SwapStrategy.BeforeEnd => "beforeend",
+                SwapStrategy.AfterEnd => "afterend",
+                _ => "innerHTML"
+            };
+            htmxAttrs += $" hx-swap=\"{swapValue}\"";
+
+            // Always include hx-vals for ModelId
+            var hxValsContent = checkbox.ModelId.HasValue
+                ? $"{{\"id\": {checkbox.ModelId.Value}}}"
+                : "{\"_\":\"\"}";
+            htmxAttrs += $" hx-vals='{hxValsContent}'";
+
+            // Trigger on change for checkboxes
+            htmxAttrs += " hx-trigger=\"change\"";
+        }
+
+        sb.Append($"<input type=\"checkbox\" class=\"checkbox\"{idAttr}{nameAttr}{checkedAttr}{valueAttr}{htmxAttrs}{disabledAttr} />");
+    }
 
     private string htmlEncode(string text)
     {

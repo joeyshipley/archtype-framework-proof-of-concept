@@ -12,7 +12,7 @@ public interface IComponentFactory
     /// Creates component instance by type name.
     /// Returns null if type not found or not a valid component.
     /// </summary>
-    IServerComponent? Create(string componentTypeName);
+    IServerComponent Create(string componentTypeName);
 }
 
 public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComponentFactory
@@ -32,7 +32,7 @@ public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComp
             );
     }
 
-    public IServerComponent? Create(string componentTypeName)
+    public IServerComponent Create(string componentTypeName)
     {
         if (!_componentTypes.TryGetValue(componentTypeName, out var componentType))
             return null;
