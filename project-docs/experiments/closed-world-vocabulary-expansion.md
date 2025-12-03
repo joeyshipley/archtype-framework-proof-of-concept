@@ -1749,7 +1749,7 @@ new Dialog()
 **Status:** ✅ Complete
 **Goal:** Convert Todos page to Closed-World UI
 **Completed:** 2025-12-03
-**Commit:** (pending)
+**Commit:** `9aeffe0`
 
 **Tasks:**
 1. Update `Pages/Todos/Todos.Page.htmx.cs`
@@ -1762,20 +1762,20 @@ new Dialog()
    - [x] Remove all raw HTML strings (except OOB `.Replace()` workarounds)
 
 2. Test todos functionality
-   - [ ] Manual test: add todo
-   - [ ] Manual test: toggle todo completion
-   - [ ] Manual test: delete todo
-   - [ ] Manual test: empty list state
-   - [ ] Manual test: error notifications
-   - [ ] Visual regression test
+   - [x] Manual test: add todo
+   - [x] Manual test: toggle todo completion
+   - [x] Manual test: delete todo
+   - [x] Manual test: empty list state
+   - [x] Manual test: error notifications
+   - [x] Visual regression test
 
 **Success Criteria:**
 - [x] Zero raw HTML template strings in Todos.Page.htmx.cs
 - [x] Zero CSS class names in page code (all handled by vocabulary/theme)
 - [x] Build succeeds with zero errors (8 pre-existing warnings unrelated)
-- [ ] All todo operations work correctly (manual testing pending)
-- [ ] Completion state styling works (manual testing pending)
-- [ ] Visual appearance unchanged (manual testing pending)
+- [x] All todo operations work correctly
+- [x] Completion state styling works
+- [x] Visual appearance unchanged
 
 **Results:**
 - ✅ TodosPage fully converted to semantic vocabulary
@@ -1788,7 +1788,7 @@ new Dialog()
 - ✅ OOB swaps handled with temporary `.Replace()` workaround (can be improved in Phase 6)
 - ✅ Build successful: 0 errors, 8 pre-existing warnings
 - ✅ Code follows syntax style guide (lower camel case private methods, primary constructor)
-- ⏳ Manual testing pending
+- ✅ Manual testing complete: All functionality verified working
 
 **Design Decisions:**
 1. **Toggle Implementation:** Used Form with hidden input + Button (submit type) showing Unicode checkbox icons (☐/☑) instead of real Checkbox element. This maintains current UX while using semantic vocabulary.
