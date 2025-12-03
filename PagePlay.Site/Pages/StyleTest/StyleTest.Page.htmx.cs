@@ -7,6 +7,8 @@ namespace PagePlay.Site.Pages.StyleTest;
 public interface IStyleTestPageView
 {
     string RenderPage();
+    string RenderRandomNumber(int number);
+    string RenderError(string message);
 }
 
 public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
@@ -66,5 +68,21 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
         };
 
         return _renderer.Render(page);
+    }
+
+    public string RenderRandomNumber(int number)
+    {
+        var content = new Stack(For.Content,
+            new Text($"Random Number: {number}")
+        );
+        return _renderer.Render(content);
+    }
+
+    public string RenderError(string message)
+    {
+        var content = new Stack(For.Content,
+            new Text($"Error: {message}")
+        );
+        return _renderer.Render(content);
     }
 }
