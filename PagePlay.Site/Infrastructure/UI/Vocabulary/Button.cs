@@ -74,4 +74,30 @@ public record Button : IHeaderContent, IFooterContent, IFieldContent
     public Button(string label) : this(Importance.Secondary, label)
     {
     }
+
+    // Fluent builder methods
+
+    /// <summary>Sets disabled state. Returns new instance (immutable).</summary>
+    public Button WithDisabled(bool disabled) => this with { Disabled = disabled };
+
+    /// <summary>Sets loading state. Returns new instance (immutable).</summary>
+    public Button WithLoading(bool loading) => this with { Loading = loading };
+
+    /// <summary>Sets button type (submit, reset, button). Returns new instance (immutable).</summary>
+    public Button WithType(ButtonType type) => this with { Type = type };
+
+    /// <summary>Sets HTMX action URL. Returns new instance (immutable).</summary>
+    public Button WithAction(string action) => this with { Action = action };
+
+    /// <summary>Sets element ID. Returns new instance (immutable).</summary>
+    public Button WithId(string id) => this with { Id = id };
+
+    /// <summary>Sets HTMX target selector. Returns new instance (immutable).</summary>
+    public Button WithTarget(string target) => this with { Target = target };
+
+    /// <summary>Sets HTMX swap strategy. Returns new instance (immutable).</summary>
+    public Button WithSwap(SwapStrategy swap) => this with { Swap = swap };
+
+    /// <summary>Sets model ID for HTMX requests. Returns new instance (immutable).</summary>
+    public Button WithModelId(long? modelId) => this with { ModelId = modelId };
 }

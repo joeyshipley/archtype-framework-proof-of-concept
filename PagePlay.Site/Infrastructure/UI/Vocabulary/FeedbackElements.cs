@@ -32,6 +32,14 @@ public record Alert : IComponent, IBodyContent
         _message = message;
         Tone = tone;
     }
+
+    // Fluent builder methods
+
+    /// <summary>Sets dismissible state. Returns new instance (immutable).</summary>
+    public Alert WithDismissible(bool dismissible) => this with { Dismissible = dismissible };
+
+    /// <summary>Sets element ID. Returns new instance (immutable).</summary>
+    public Alert WithId(string id) => this with { Id = id };
 }
 
 /// <summary>

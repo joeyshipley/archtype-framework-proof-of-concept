@@ -24,7 +24,7 @@ public enum InputType
 /// </summary>
 public record Input : IFieldContent, IBodyContent
 {
-    public required string Name { get; init; }
+    public string Name { get; init; }
     public InputType Type { get; init; } = InputType.Text;
     public string Placeholder { get; init; }
     public string Value { get; init; }
@@ -33,6 +33,29 @@ public record Input : IFieldContent, IBodyContent
     public string Id { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+
+    // Fluent builder methods
+
+    /// <summary>Sets the input name. Returns new instance (immutable).</summary>
+    public Input WithName(string name) => this with { Name = name };
+
+    /// <summary>Sets the input type. Returns new instance (immutable).</summary>
+    public Input WithType(InputType type) => this with { Type = type };
+
+    /// <summary>Sets the placeholder text. Returns new instance (immutable).</summary>
+    public Input WithPlaceholder(string placeholder) => this with { Placeholder = placeholder };
+
+    /// <summary>Sets the input value. Returns new instance (immutable).</summary>
+    public Input WithValue(string value) => this with { Value = value };
+
+    /// <summary>Sets disabled state. Returns new instance (immutable).</summary>
+    public Input WithDisabled(bool disabled) => this with { Disabled = disabled };
+
+    /// <summary>Sets readonly state. Returns new instance (immutable).</summary>
+    public Input WithReadOnly(bool readOnly) => this with { ReadOnly = readOnly };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public Input WithId(string id) => this with { Id = id };
 }
 
 /// <summary>
@@ -52,6 +75,11 @@ public record Label : IFieldContent, IBodyContent
     {
         _text = text;
     }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the 'for' attribute to associate with input. Returns new instance (immutable).</summary>
+    public Label WithFor(string forAttribute) => this with { For = forAttribute };
 }
 
 /// <summary>
@@ -61,10 +89,27 @@ public record Label : IFieldContent, IBodyContent
 public record Field : ComponentBase, IBodyContent
 {
     public Label Label { get; init; }
-    public required Input Input { get; init; }
+    public Input Input { get; init; }
     public Text HelpText { get; init; }
     public string ErrorMessage { get; init; }
     public bool HasError { get; init; }
+
+    // Fluent builder methods
+
+    /// <summary>Sets the label. Returns new instance (immutable).</summary>
+    public Field WithLabel(Label label) => this with { Label = label };
+
+    /// <summary>Sets the input. Returns new instance (immutable).</summary>
+    public Field WithInput(Input input) => this with { Input = input };
+
+    /// <summary>Sets the help text. Returns new instance (immutable).</summary>
+    public Field WithHelpText(Text helpText) => this with { HelpText = helpText };
+
+    /// <summary>Sets the error message. Returns new instance (immutable).</summary>
+    public Field WithErrorMessage(string errorMessage) => this with { ErrorMessage = errorMessage };
+
+    /// <summary>Sets the error state. Returns new instance (immutable).</summary>
+    public Field WithHasError(bool hasError) => this with { HasError = hasError };
 }
 
 /// <summary>
@@ -72,11 +117,36 @@ public record Field : ComponentBase, IBodyContent
 /// </summary>
 public record Form : ComponentBase, IBodyContent
 {
-    public required string Action { get; init; }
+    public string Action { get; init; }
     public string Method { get; init; } = "post";
     public string Id { get; init; }
     public string Target { get; init; }
     public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
+
+    // Fluent builder methods
+
+    /// <summary>Sets the form action URL. Returns new instance (immutable).</summary>
+    public Form WithAction(string action) => this with { Action = action };
+
+    /// <summary>Sets the HTTP method. Returns new instance (immutable).</summary>
+    public Form WithMethod(string method) => this with { Method = method };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public Form WithId(string id) => this with { Id = id };
+
+    /// <summary>Sets the HTMX target selector. Returns new instance (immutable).</summary>
+    public Form WithTarget(string target) => this with { Target = target };
+
+    /// <summary>Sets the HTMX swap strategy. Returns new instance (immutable).</summary>
+    public Form WithSwap(SwapStrategy swap) => this with { Swap = swap };
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Form WithChildren(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
+    }
 }
 
 /// <summary>

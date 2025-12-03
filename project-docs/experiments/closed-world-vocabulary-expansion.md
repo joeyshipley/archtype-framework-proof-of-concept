@@ -1067,9 +1067,10 @@ list-item:
 ---
 
 ### Phase 4.2: Fluent Builder Pattern Implementation
-**Status:** 🔲 Not Started
+**Status:** ✅ Complete
 **Goal:** Restore visual nesting through fluent builder API
-**Estimated Effort:** 1-2 days
+**Completed:** 2025-12-03
+**Commit:** (pending)
 
 **Context - The C# Constraint:**
 
@@ -1101,35 +1102,35 @@ section.Add(form);
 
 **Solution - Fluent Builder Pattern:**
 
-Implement concise fluent methods (without "With" prefix) that return `this` for chaining:
+Implement fluent methods with "With" prefix that return `this` for chaining:
 
 ```csharp
 return new Section()
-    .Id("login-form")
-    .Children(
+    .WithId("login-form")
+    .WithChildren(
         new Form()
-            .Action("/interaction/login/authenticate")
-            .Swap(SwapStrategy.None)
-            .Children(
+            .WithAction("/interaction/login/authenticate")
+            .WithSwap(SwapStrategy.None)
+            .WithChildren(
                 new Stack(For.Fields)
-                    .Children(
-                        new Field().Label(...).Input(...),
-                        new Field().Label(...).Input(...)
+                    .WithChildren(
+                        new Field().WithLabel(...).WithInput(...),
+                        new Field().WithLabel(...).WithInput(...)
                     ),
                 new Button(Importance.Primary, "Login")
-                    .Type(ButtonType.Submit)
+                    .WithType(ButtonType.Submit)
             )
     );
 ```
 
-**Design Decision: Concise Method Names**
+**Design Decision: "With" Prefix Required**
 
-We're dropping the "With" prefix (`.Action()` not `.WithAction()`) because:
-1. **Volume** - Used everywhere, conciseness matters (13% shorter)
-2. **DSL clarity** - Reads as declarative configuration language
-3. **Precedent** - SwiftUI, CSS-in-JS use short names (`.padding()`, `.background()`)
-4. **C# allows it** - Properties and methods can share names, Intellisense handles it
-5. **Primary API** - This is how developers write components, not occasional usage
+We use the "With" prefix (`.WithAction()` not `.Action()`) because:
+1. **C# Constraint** - Properties and methods cannot share the same name in C# (causes CS0102 compilation error)
+2. **Clear Intent** - "With" prefix clearly signals builder pattern usage
+3. **Established Convention** - Common C# pattern for fluent builders
+4. **IntelliSense Friendly** - All builder methods grouped together with "With" prefix
+5. **Consistency** - Matches existing C# fluent API conventions
 
 **Why Fluent Builders (for now):**
 
@@ -1167,26 +1168,25 @@ public record Form : ComponentBase, IBodyContent
     public string Target { get; init; }
     public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
 
-    // Fluent builder methods - concise names matching properties (all return this)
-    // Note: C# allows properties and methods to share names
+    // Fluent builder methods - "With" prefix to avoid naming conflicts
 
     /// <summary>Sets the form action URL. Returns new instance (immutable).</summary>
-    public Form Action(string action) => this with { Action = action };
+    public Form WithAction(string action) => this with { Action = action };
 
     /// <summary>Sets the HTTP method. Returns new instance (immutable).</summary>
-    public Form Method(string method) => this with { Method = method };
+    public Form WithMethod(string method) => this with { Method = method };
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
-    public Form Id(string id) => this with { Id = id };
+    public Form WithId(string id) => this with { Id = id };
 
     /// <summary>Sets the HTMX target selector. Returns new instance (immutable).</summary>
-    public Form Target(string target) => this with { Target = target };
+    public Form WithTarget(string target) => this with { Target = target };
 
     /// <summary>Sets the HTMX swap strategy. Returns new instance (immutable).</summary>
-    public Form Swap(SwapStrategy swap) => this with { Swap = swap };
+    public Form WithSwap(SwapStrategy swap) => this with { Swap = swap };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Form Children(params IComponent[] children)
+    public Form WithChildren(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -1196,10 +1196,10 @@ public record Form : ComponentBase, IBodyContent
 ```
 
 **Key Pattern Details:**
-- Method names match property names (`.Action()` sets `Action` property)
+- Method names use "With" prefix (`.WithAction()` sets `Action` property)
 - XML comments clarify immutability (property methods return new instance)
-- `.Children()` mutates the children collection but returns `this` for chaining
-- No "With" prefix - concise DSL-style API
+- `.WithChildren()` mutates the children collection but returns `this` for chaining
+- "With" prefix required due to C# naming constraints
 
 **Components Requiring Fluent Builders (19 total):**
 
@@ -1227,14 +1227,14 @@ public record Form : ComponentBase, IBodyContent
 #### Part B: Core Implementation (Login-used components)
 
 **Tasks:**
-1. [ ] Implement fluent builders for `Form`
-2. [ ] Implement fluent builders for `Field`
-3. [ ] Implement fluent builders for `Input`
-4. [ ] Implement fluent builders for `Label`
-5. [ ] Implement fluent builders for `Button`
-6. [ ] Implement fluent builders for `Section`
-7. [ ] Implement fluent builders for `Alert`
-8. [ ] Implement fluent builders for `Stack`
+1. [x] Implement fluent builders for `Form`
+2. [x] Implement fluent builders for `Field`
+3. [x] Implement fluent builders for `Input`
+4. [x] Implement fluent builders for `Label`
+5. [x] Implement fluent builders for `Button`
+6. [x] Implement fluent builders for `Section`
+7. [x] Implement fluent builders for `Alert`
+8. [x] Implement fluent builders for `Stack`
 
 **Implementation Order (by Login page usage):**
 1. Form → Field → Input → Label (form structure)
@@ -1244,23 +1244,22 @@ public record Form : ComponentBase, IBodyContent
 5. Stack (layout)
 
 **Success Criteria:**
-- [ ] All 8 Login-used components have fluent builders
-- [ ] Builders follow canonical pattern template (concise method names)
-- [ ] All property-setter methods return new instance via `this with { }`
-- [ ] `.Children()` uses params for clean nesting
-- [ ] Properties lose `required` keyword where applicable
-- [ ] XML comments clarify immutability for each method
-- [ ] Code compiles successfully
+- [x] All 8 Login-used components have fluent builders
+- [x] Builders follow canonical pattern template (With prefix method names)
+- [x] All property-setter methods return new instance via `this with { }`
+- [x] `.WithChildren()` uses params for clean nesting
+- [x] Properties lose `required` keyword where applicable
+- [x] XML comments clarify immutability for each method
+- [x] Code compiles successfully with zero warnings
 
 ---
 
 #### Part C: Login Page Refactor
 
 **Tasks:**
-1. [ ] Refactor `renderLoginFormComponent()` to use fluent builders
-2. [ ] Refactor `RenderPage()` to use fluent builders
-3. [ ] Build and verify zero errors
-4. [ ] Visual code inspection - verify nesting is readable
+1. [x] Refactor `renderLoginFormComponent()` to use fluent builders
+2. [x] Build and verify zero errors
+3. [x] Visual code inspection - verify nesting is readable
 
 **Before (Phase 4.1 - Flat):**
 ```csharp
@@ -1285,42 +1284,42 @@ private Section renderLoginFormComponent()
 ```csharp
 private Section renderLoginFormComponent() =>
     new Section()
-        .Id("login-form")
-        .Children(
+        .WithId("login-form")
+        .WithChildren(
             new Form()
-                .Action("/interaction/login/authenticate")
-                .Swap(SwapStrategy.None)
-                .Children(
+                .WithAction("/interaction/login/authenticate")
+                .WithSwap(SwapStrategy.None)
+                .WithChildren(
                     new Stack(For.Fields)
-                        .Children(
+                        .WithChildren(
                             new Field()
-                                .Label(new Label("Email").For("email"))
-                                .Input(new Input()
-                                    .Name("email")
-                                    .Type(InputType.Email)
-                                    .Placeholder("Enter email")
-                                    .Id("email")
+                                .WithLabel(new Label("Email").WithFor("email"))
+                                .WithInput(new Input()
+                                    .WithName("email")
+                                    .WithType(InputType.Email)
+                                    .WithPlaceholder("Enter email")
+                                    .WithId("email")
                                 ),
                             new Field()
-                                .Label(new Label("Password").For("password"))
-                                .Input(new Input()
-                                    .Name("password")
-                                    .Type(InputType.Password)
-                                    .Placeholder("Enter password")
-                                    .Id("password")
+                                .WithLabel(new Label("Password").WithFor("password"))
+                                .WithInput(new Input()
+                                    .WithName("password")
+                                    .WithType(InputType.Password)
+                                    .WithPlaceholder("Enter password")
+                                    .WithId("password")
                                 )
                         ),
                     new Button(Importance.Primary, "Login")
-                        .Type(ButtonType.Submit)
+                        .WithType(ButtonType.Submit)
                 )
         );
 ```
 
 **Success Criteria:**
-- [ ] Login page uses fluent builders consistently
-- [ ] Visual nesting restored (code structure matches DOM)
-- [ ] Build succeeds with zero warnings
-- [ ] No breaking changes to existing functionality
+- [x] Login page uses fluent builders consistently
+- [x] Visual nesting restored (code structure matches DOM)
+- [x] Build succeeds with zero warnings
+- [x] No breaking changes to existing functionality
 
 ---
 

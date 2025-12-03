@@ -58,6 +58,16 @@ public record Stack : ComponentBase, IBodyContent
         foreach (var item in content)
             Add(item);
     }
+
+    // Fluent builder methods
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Stack WithChildren(params IComponent[] children)
+    {
+        foreach (var child in children)
+            Add(child);
+        return this;
+    }
 }
 
 /// <summary>
