@@ -908,6 +908,7 @@ list-item:
 **Status:** ✅ Complete
 **Goal:** Add error/success notifications
 **Completed:** 2025-12-03
+**Commit:** `20cc12e`
 
 **Tasks:**
 1. Create `Infrastructure/UI/Vocabulary/FeedbackElements.cs`
