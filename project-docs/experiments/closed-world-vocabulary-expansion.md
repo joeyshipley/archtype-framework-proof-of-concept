@@ -1323,6 +1323,190 @@ private Section renderLoginFormComponent() =>
 
 ---
 
+### Phase 4.3: Element-Prefixed Properties with Concise Builders
+**Status:** 🔲 Not Started
+**Goal:** Unlock concise builder API by renaming properties with "Element" prefix
+**Estimated Effort:** 2-3 hours
+
+**Problem:**
+Phase 4.2 required "With" prefix on builder methods due to C# naming constraint (properties and methods cannot share names). This makes the builder API more verbose than desired.
+
+**Solution:**
+Rename properties to use descriptive "Element" prefix, freeing up concise names for builder methods:
+
+```csharp
+// Before (Phase 4.2)
+public record Input : IFieldContent, IBodyContent
+{
+    public string Name { get; init; }
+    public Input WithName(string name) => this with { Name = name };
+}
+
+// After (Phase 4.3)
+public record Input : IFieldContent, IBodyContent
+{
+    public string ElementName { get; init; }  // Property (internal data)
+    public Input Name(string name) => this with { ElementName = name };  // Builder (public API)
+}
+
+// Usage becomes cleaner
+new Input().WithName("email")  // Phase 4.2
+new Input().Name("email")      // Phase 4.3 ✨
+```
+
+**Rationale:**
+1. **Concise builder API** - Matches DSL patterns (SwiftUI, CSS-in-JS)
+2. **Clear separation** - Properties are internal data, builders are public API
+3. **Self-documenting** - "Element" prefix clarifies "this is the HTML element's attribute"
+4. **Renderer clarity** - `input.ElementName` in renderer is very clear
+
+---
+
+#### Property Renaming Map
+
+**FormElements.cs:**
+- `Input.Name` → `Input.ElementName`
+- `Input.Type` → `Input.ElementType`
+- `Input.Placeholder` → `Input.ElementPlaceholder`
+- `Input.Value` → `Input.ElementValue`
+- `Input.Disabled` → `Input.ElementDisabled`
+- `Input.ReadOnly` → `Input.ElementReadOnly`
+- `Input.Id` → `Input.ElementId`
+- `Label.For` → `Label.ElementFor`
+- `Field.Label` → `Field.ElementLabel`
+- `Field.Input` → `Field.ElementInput`
+- `Field.HelpText` → `Field.ElementHelpText`
+- `Field.ErrorMessage` → `Field.ElementErrorMessage`
+- `Field.HasError` → `Field.ElementHasError`
+- `Form.Action` → `Form.ElementAction`
+- `Form.Method` → `Form.ElementMethod`
+- `Form.Id` → `Form.ElementId`
+- `Form.Target` → `Form.ElementTarget`
+- `Form.Swap` → `Form.ElementSwap`
+- `Checkbox.Name` → `Checkbox.ElementName`
+- `Checkbox.Checked` → `Checkbox.ElementChecked`
+- `Checkbox.Value` → `Checkbox.ElementValue`
+- `Checkbox.Disabled` → `Checkbox.ElementDisabled`
+- `Checkbox.Id` → `Checkbox.ElementId`
+- `Checkbox.Action` → `Checkbox.ElementAction`
+- `Checkbox.Target` → `Checkbox.ElementTarget`
+- `Checkbox.Swap` → `Checkbox.ElementSwap`
+- `Checkbox.ModelId` → `Checkbox.ElementModelId`
+
+**Button.cs:**
+- `Button.Disabled` → `Button.ElementDisabled`
+- `Button.Loading` → `Button.ElementLoading`
+- `Button.Type` → `Button.ElementType`
+- `Button.Action` → `Button.ElementAction`
+- `Button.Id` → `Button.ElementId`
+- `Button.Target` → `Button.ElementTarget`
+- `Button.Swap` → `Button.ElementSwap`
+- `Button.ModelId` → `Button.ElementModelId`
+
+**PageStructure.cs:**
+- `Page.Id` → `Page.ElementId`
+- `Section.Id` → `Section.ElementId`
+
+**FeedbackElements.cs:**
+- `Alert.Tone` → `Alert.ElementTone`
+- `Alert.Dismissible` → `Alert.ElementDismissible`
+- `Alert.Id` → `Alert.ElementId`
+- `EmptyState.Size` → `EmptyState.ElementSize`
+- `EmptyState.ActionLabel` → `EmptyState.ElementActionLabel`
+- `EmptyState.ActionUrl` → `EmptyState.ElementActionUrl`
+
+**ListElements.cs:**
+- `List.Style` → `List.ElementStyle`
+- `List.Id` → `List.ElementId`
+- `ListItem.State` → `ListItem.ElementState`
+- `ListItem.Id` → `ListItem.ElementId`
+
+**Layout.cs:**
+- `Stack.Purpose` → `Stack.ElementPurpose`
+- `Row.Purpose` → `Row.ElementPurpose`
+- `Grid.Purpose` → `Grid.ElementPurpose`
+- `Grid.Columns` → `Grid.ElementColumns`
+
+**Total Properties to Rename:** 52 properties across 16 components
+
+**Note:** Readonly fields with underscore prefix (like `_text`, `_message`, `_label`) remain unchanged - they already follow internal naming convention.
+
+---
+
+#### Builder Method Renaming Map
+
+All builder methods lose "With" prefix:
+
+- `.WithName()` → `.Name()`
+- `.WithType()` → `.Type()`
+- `.WithId()` → `.Id()`
+- `.WithAction()` → `.Action()`
+- `.WithChildren()` → `.Children()`
+- etc. (52 builder methods updated)
+
+---
+
+#### Files Impacted
+
+**Vocabulary Files (7):**
+1. `FormElements.cs` - 24 properties, 24 builders
+2. `Button.cs` - 8 properties, 8 builders
+3. `PageStructure.cs` - 2 properties, 2 builders + Children
+4. `FeedbackElements.cs` - 6 properties, 6 builders
+5. `ListElements.cs` - 4 properties, 4 builders + Children (need to add)
+6. `Layout.cs` - 4 properties, 1 builder (Stack.Children)
+7. `Card.cs` - Check if any properties need builders
+
+**Renderer File (1):**
+- `HtmlRenderer.cs` - ~15 render methods reading 52 properties
+
+**Test Files (~10-15):**
+- All test files asserting on properties need updates
+
+**Page Files (2):**
+- `Login.Page.htmx.cs` - Update to use concise builders
+- `Todos.Page.htmx.cs` - (Phase 5, but will benefit from concise API)
+
+---
+
+#### Implementation Plan
+
+**Step 1: Update Vocabulary Files**
+- Rename all 52 properties with "Element" prefix
+- Update all 52 builder methods to remove "With" prefix
+- Update builder method bodies to use new property names
+
+**Step 2: Update HtmlRenderer**
+- Search/replace property accesses in all render methods
+- Example: `input.Name` → `input.ElementName`
+
+**Step 3: Update Tests**
+- Run build to find all broken test assertions
+- Update test assertions to use new property names
+
+**Step 4: Update Login Page**
+- Change `.WithName()` → `.Name()` etc.
+- Verify visual hierarchy still clean
+
+**Step 5: Build, Test, Commit**
+- Ensure zero errors, zero warnings
+- Run all tests
+- Commit with detailed message
+
+---
+
+#### Success Criteria
+
+- [ ] All 52 properties renamed with "Element" prefix
+- [ ] All 52 builder methods use concise names (no "With")
+- [ ] HtmlRenderer updated for all property accesses
+- [ ] All tests updated and passing
+- [ ] Login page uses concise builder API
+- [ ] Build succeeds with zero warnings
+- [ ] No breaking changes to HTML output
+
+---
+
 #### Part D: Remaining Components (Optional)
 
 **Tasks:**
