@@ -101,8 +101,8 @@ public class TodosPage : ITodosPageView
                     endpoint: "/interaction/todos/delete",
                     id: todo.Id,
                     tag: "todo",
-                    target: $"#todo-{todo.Id}",
                     content: $$"""×""",
+                    target: $"#todo-{todo.Id}",
                     swapStrategy: "outerHTML"
                 )}}
                 <hr />

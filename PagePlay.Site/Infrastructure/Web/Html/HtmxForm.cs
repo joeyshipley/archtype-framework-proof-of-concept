@@ -12,9 +12,9 @@ public class HtmxFormData
     public required string Action { get; init; }
 
     /// <summary>
-    /// The CSS selector for the target element (required)
+    /// The CSS selector for the target element (optional - omit for OOB-only responses)
     /// </summary>
-    public required string Target { get; init; }
+    public string? Target { get; init; }
 
     /// <summary>
     /// How to swap the response into the target. Defaults to "innerHTML".
@@ -59,12 +59,20 @@ public static class HtmxForm
         var classAttr = !string.IsNullOrEmpty(data.CssClass) ? $"class=\"{data.CssClass}\"" : "";
         var extAttr = !string.IsNullOrEmpty(data.HxExt) ? $"hx-ext=\"{data.HxExt}\"" : "";
 
+        // Conditionally render target and swap - omit for OOB-only responses
+        var targetAttr = !string.IsNullOrEmpty(data.Target)
+            ? $"hx-target=\"{data.Target}\""
+            : "";
+        var swapAttr = !string.IsNullOrEmpty(data.Target)
+            ? $"hx-swap=\"{data.SwapStrategy}\""
+            : "";
+
         return $$"""
         <form {{idAttr}}
               {{classAttr}}
               hx-post="{{data.Action}}"
-              hx-target="{{data.Target}}"
-              hx-swap="{{data.SwapStrategy}}"
+              {{targetAttr}}
+              {{swapAttr}}
               {{extAttr}}>
             {{content}}
         </form>

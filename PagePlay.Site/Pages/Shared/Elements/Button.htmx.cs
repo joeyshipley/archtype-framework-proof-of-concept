@@ -4,7 +4,7 @@ public class RouteData
 {
     public required string Endpoint { get; init; }
     public long? ModelId { get; init; }
-    public required string Target { get; init; }
+    public string? Target { get; init; }
     public string HttpMethod { get; init; } = "post";
     public string SwapStrategy { get; init; } = "innerHTML";
     public string? HxExt { get; init; }
@@ -59,11 +59,19 @@ public class Button
 
         var hxExtAttr = !string.IsNullOrEmpty(route.HxExt) ? $"hx-ext=\"{route.HxExt}\"" : "";
 
+        // Conditionally render target and swap - omit for OOB-only responses
+        var targetAttr = !string.IsNullOrEmpty(route.Target)
+            ? $"hx-target=\"{route.Target}\""
+            : "";
+        var swapAttr = !string.IsNullOrEmpty(route.Target)
+            ? $"hx-swap=\"{route.SwapStrategy}\""
+            : "";
+
         return $$"""
         <button id="{{html.ElementId}}"
                 hx-{{route.HttpMethod}}="{{route.Endpoint}}"
-                hx-target="{{route.Target}}"
-                hx-swap="{{route.SwapStrategy}}"
+                {{targetAttr}}
+                {{swapAttr}}
                 {{hxExtAttr}}
                 {{hxValsAttr}}
                 {{classAttr}}

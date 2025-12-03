@@ -51,6 +51,12 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
         _framework = framework;
     }
     
+    /// <summary>
+    /// Builds a result containing targeted HTML content plus OOB component updates.
+    /// Traditional pattern - prefer BuildOobResult() for component-first architecture.
+    /// Use this only when you need explicit control over targeted content.
+    /// </summary>
+    /// <param name="mainContent">HTML to return as main response (targeted via hx-target)</param>
     protected async Task<IResult> BuildHtmlFragmentResult(string mainContent = null)
     {
         var oobHtml = await OobHtml();
@@ -58,6 +64,17 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
             ? oobHtml
             : mainContent + "\n" + oobHtml;
         return Results.Content(combinedHtml, "text/html");
+    }
+
+    /// <summary>
+    /// Builds a result containing only OOB component updates based on declared mutations.
+    /// Use this for component-first interactions that don't return targeted HTML.
+    /// The framework automatically re-renders all components affected by your Mutates declaration.
+    /// </summary>
+    protected async Task<IResult> BuildOobResult()
+    {
+        var oobHtml = await OobHtml();
+        return Results.Content(oobHtml, "text/html");
     }
     
     public void Map(IEndpointRouteBuilder endpoints)
