@@ -1101,26 +1101,35 @@ section.Add(form);
 
 **Solution - Fluent Builder Pattern:**
 
-Implement `With*()` methods that return `this` for chaining:
+Implement concise fluent methods (without "With" prefix) that return `this` for chaining:
 
 ```csharp
 return new Section()
-    .WithId("login-form")
-    .WithChildren(
+    .Id("login-form")
+    .Children(
         new Form()
-            .WithAction("/interaction/login/authenticate")
-            .WithSwap(SwapStrategy.None)
-            .WithChildren(
+            .Action("/interaction/login/authenticate")
+            .Swap(SwapStrategy.None)
+            .Children(
                 new Stack(For.Fields)
-                    .WithChildren(
-                        new Field().WithLabel(...).WithInput(...),
-                        new Field().WithLabel(...).WithInput(...)
+                    .Children(
+                        new Field().Label(...).Input(...),
+                        new Field().Label(...).Input(...)
                     ),
                 new Button(Importance.Primary, "Login")
-                    .WithType(ButtonType.Submit)
+                    .Type(ButtonType.Submit)
             )
     );
 ```
+
+**Design Decision: Concise Method Names**
+
+We're dropping the "With" prefix (`.Action()` not `.WithAction()`) because:
+1. **Volume** - Used everywhere, conciseness matters (13% shorter)
+2. **DSL clarity** - Reads as declarative configuration language
+3. **Precedent** - SwiftUI, CSS-in-JS use short names (`.padding()`, `.background()`)
+4. **C# allows it** - Properties and methods can share names, Intellisense handles it
+5. **Primary API** - This is how developers write components, not occasional usage
 
 **Why Fluent Builders (for now):**
 
@@ -1158,15 +1167,26 @@ public record Form : ComponentBase, IBodyContent
     public string Target { get; init; }
     public SwapStrategy Swap { get; init; } = SwapStrategy.InnerHTML;
 
-    // Fluent builder methods (all return this)
-    public Form WithAction(string action) => this with { Action = action };
-    public Form WithMethod(string method) => this with { Method = method };
-    public Form WithId(string id) => this with { Id = id };
-    public Form WithTarget(string target) => this with { Target = target };
-    public Form WithSwap(SwapStrategy swap) => this with { Swap = swap };
+    // Fluent builder methods - concise names matching properties (all return this)
+    // Note: C# allows properties and methods to share names
 
-    // WithChildren for collection building
-    public Form WithChildren(params IComponent[] children)
+    /// <summary>Sets the form action URL. Returns new instance (immutable).</summary>
+    public Form Action(string action) => this with { Action = action };
+
+    /// <summary>Sets the HTTP method. Returns new instance (immutable).</summary>
+    public Form Method(string method) => this with { Method = method };
+
+    /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
+    public Form Id(string id) => this with { Id = id };
+
+    /// <summary>Sets the HTMX target selector. Returns new instance (immutable).</summary>
+    public Form Target(string target) => this with { Target = target };
+
+    /// <summary>Sets the HTMX swap strategy. Returns new instance (immutable).</summary>
+    public Form Swap(SwapStrategy swap) => this with { Swap = swap };
+
+    /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
+    public Form Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -1174,6 +1194,12 @@ public record Form : ComponentBase, IBodyContent
     }
 }
 ```
+
+**Key Pattern Details:**
+- Method names match property names (`.Action()` sets `Action` property)
+- XML comments clarify immutability (property methods return new instance)
+- `.Children()` mutates the children collection but returns `this` for chaining
+- No "With" prefix - concise DSL-style API
 
 **Components Requiring Fluent Builders (19 total):**
 
@@ -1219,10 +1245,11 @@ public record Form : ComponentBase, IBodyContent
 
 **Success Criteria:**
 - [ ] All 8 Login-used components have fluent builders
-- [ ] Builders follow canonical pattern template
-- [ ] All `With*()` methods return `this`
-- [ ] `WithChildren()` uses params for clean nesting
+- [ ] Builders follow canonical pattern template (concise method names)
+- [ ] All property-setter methods return new instance via `this with { }`
+- [ ] `.Children()` uses params for clean nesting
 - [ ] Properties lose `required` keyword where applicable
+- [ ] XML comments clarify immutability for each method
 - [ ] Code compiles successfully
 
 ---
@@ -1254,37 +1281,37 @@ private Section renderLoginFormComponent()
 }
 ```
 
-**After (Phase 4.2 - Nested):**
+**After (Phase 4.2 - Nested with Fluent Builders):**
 ```csharp
 private Section renderLoginFormComponent() =>
     new Section()
-        .WithId("login-form")
-        .WithChildren(
+        .Id("login-form")
+        .Children(
             new Form()
-                .WithAction("/interaction/login/authenticate")
-                .WithSwap(SwapStrategy.None)
-                .WithChildren(
+                .Action("/interaction/login/authenticate")
+                .Swap(SwapStrategy.None)
+                .Children(
                     new Stack(For.Fields)
-                        .WithChildren(
+                        .Children(
                             new Field()
-                                .WithLabel(new Label("Email").WithFor("email"))
-                                .WithInput(new Input()
-                                    .WithName("email")
-                                    .WithType(InputType.Email)
-                                    .WithPlaceholder("Enter email")
-                                    .WithId("email")
+                                .Label(new Label("Email").For("email"))
+                                .Input(new Input()
+                                    .Name("email")
+                                    .Type(InputType.Email)
+                                    .Placeholder("Enter email")
+                                    .Id("email")
                                 ),
                             new Field()
-                                .WithLabel(new Label("Password").WithFor("password"))
-                                .WithInput(new Input()
-                                    .WithName("password")
-                                    .WithType(InputType.Password)
-                                    .WithPlaceholder("Enter password")
-                                    .WithId("password")
+                                .Label(new Label("Password").For("password"))
+                                .Input(new Input()
+                                    .Name("password")
+                                    .Type(InputType.Password)
+                                    .Placeholder("Enter password")
+                                    .Id("password")
                                 )
                         ),
                     new Button(Importance.Primary, "Login")
-                        .WithType(ButtonType.Submit)
+                        .Type(ButtonType.Submit)
                 )
         );
 ```
