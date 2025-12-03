@@ -1741,12 +1741,157 @@ new Dialog()
 ---
 
 **Blocked By:** Phase 4.3
-**Blocks:** Phase 5
+**Blocks:** Phase 4.5
+
+---
+
+### Phase 4.5: OOB Response Layering Cleanup
+**Status:** 🔲 Not Started
+**Goal:** Fix architectural layering of OOB (Out-of-Band) response composition
+**Estimated Effort:** 1-2 hours
+
+**Context:**
+
+Phase 5 revealed architectural layering issues with OOB swap handling:
+
+1. **Pages inject OOB attributes** - Wrong layer (pages should be HTTP-agnostic)
+2. **`RenderSuccessfulTodoCreation()` combines fragments** - Wrong abstraction (interaction's job)
+3. **Brittle `.Replace()` string manipulation** - Should use `HtmlFragment.InjectOob()`
+
+**Root Cause:** Pages are handling HTTP transport concerns (OOB) when they should only render semantic vocabulary. OOB composition belongs in the interaction layer.
+
+**Architecture Principles:**
+- **Pages**: Render semantic vocabulary types → Return HTML strings (no OOB)
+- **Interactions**: Compose HTTP responses → Use `HtmlFragment.InjectOob()` → Call framework methods
+- **Framework**: Track components → Re-render on mutations → Inject OOB automatically
+- **Vocabulary**: HTTP-agnostic → No HTMX attributes → Pure semantic structure
+
+---
+
+#### Tasks
+
+**1. Remove Page-Layer OOB Methods**
+- [ ] Remove `RenderSuccessfulTodoCreation()` from `ITodosPageView` interface
+- [ ] Remove `RenderSuccessfulTodoCreation()` from `TodosPage` implementation
+- [ ] Keep `RenderTodoItem()` and `RenderCreateForm()` as simple renders
+
+**2. Fix CreateTodo Interaction**
+- [ ] Update `CreateTodoInteraction.OnSuccess()` to compose response
+- [ ] Use `HtmlFragment.InjectOob(Page.RenderCreateForm())` for form reset
+- [ ] Rely on framework's `BuildHtmlFragmentResult()` for component OOB
+
+**3. Improve Error Notification Pattern**
+- [ ] Update `RenderErrorNotification()` to return plain HTML (no OOB injection)
+- [ ] Update all interactions to use `HtmlFragment.InjectOob()` when calling error methods
+- [ ] Example: `HtmlFragment.InjectOob(Page.RenderErrorNotification(...))`
+
+**4. Verify Interaction Patterns**
+- [ ] `ToggleTodoInteraction` - Verify uses `BuildOobResult()` (correct)
+- [ ] `DeleteTodoInteraction` - Verify uses `BuildHtmlFragmentResult()` (correct)
+- [ ] `CreateTodoInteraction` - Verify updated to compose properly
+
+**5. Update Login Page (if needed)**
+- [ ] Review `Login.Page.htmx.cs` for similar OOB patterns
+- [ ] Apply same fixes if found
+
+---
+
+#### Before & After Examples
+
+**Before (Phase 5 - Wrong Layer):**
+```csharp
+// Page doing OOB injection (WRONG)
+public string RenderErrorNotification(string error)
+{
+    var notification = new Section()
+        .Id("notifications")
+        .Children(new Alert(error, AlertTone.Critical));
+
+    return _renderer.Render(notification)
+        .Replace("<div", "<div hx-swap-oob=\"true\"");  // ❌ Page layer
+}
+
+// Page combining fragments (WRONG)
+public string RenderSuccessfulTodoCreation(TodoListEntry todo)
+{
+    var newTodoItem = RenderTodoItem(todo);
+    var resetFormHtml = _renderer.Render(resetForm)
+        .Replace("<div", "<div hx-swap-oob=\"true\"");  // ❌ Page layer
+    return newTodoItem + resetFormHtml;
+}
+```
+
+**After (Phase 4.5 - Correct Layer):**
+```csharp
+// Page renders plain HTML (CORRECT)
+public string RenderErrorNotification(string error) =>
+    _renderer.Render(
+        new Section()
+            .Id("notifications")
+            .Children(new Alert(error, AlertTone.Critical))
+    );
+
+// Method removed - interaction composes instead
+// public string RenderSuccessfulTodoCreation() - DELETED
+
+// Interaction composes response (CORRECT)
+protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+{
+    // Framework handles todo list component OOB automatically
+    // Just need to reset form as additional OOB
+    var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
+    return await BuildHtmlFragmentResult(formReset);
+}
+
+// Interaction adds OOB to errors (CORRECT)
+protected override IResult RenderError(string message)
+{
+    var errorHtml = Page.RenderErrorNotification(message);
+    return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+}
+```
+
+---
+
+#### Success Criteria
+
+- [x] Architecture review documented (analysis complete)
+- [ ] `RenderSuccessfulTodoCreation()` removed from interface
+- [ ] All page methods return plain HTML (no OOB injection)
+- [ ] All interactions use `HtmlFragment.InjectOob()` consistently
+- [ ] Zero `.Replace()` string manipulation in page layer
+- [ ] Build succeeds with zero errors
+- [ ] All manual tests still pass (add, toggle, delete, errors)
+
+---
+
+#### Design Rationale
+
+**Why NOT add `.Oob()` to vocabulary?**
+
+OOB is an HTTP transport concern, not semantic UI structure. Vocabulary should be HTTP-agnostic:
+
+- ✅ `Section().Id("notifications")` - Semantic structure (HTTP-agnostic)
+- ❌ `Section().Id("notifications").Oob(true)` - Couples to HTMX transport
+- ✅ `HtmlFragment.InjectOob(html)` - Transport layer utility (correct place)
+
+**Separation of concerns:**
+- **Vocabulary Layer**: Semantic UI types (Button, Form, Alert)
+- **Page Layer**: Render vocabulary to HTML strings
+- **Interaction Layer**: Compose HTTP responses with OOB
+- **Framework Layer**: Orchestrate component updates
+
+This keeps vocabulary reusable across different transport mechanisms (HTTP, WebSocket future, etc.).
+
+---
+
+**Blocked By:** Phase 4.4, Phase 5 (discovery)
+**Blocks:** Phase 5 completion
 
 ---
 
 ### Phase 5: Todos Page Conversion
-**Status:** ✅ Complete
+**Status:** ⚠️ Complete (with Phase 4.5 cleanup pending)
 **Goal:** Convert Todos page to Closed-World UI
 **Completed:** 2025-12-03
 **Commit:** `9aeffe0`
@@ -2055,9 +2200,9 @@ _(To be filled in after completion)_
 
 ## Conclusion
 
-**Status:** Phase 5 Complete - Ready for Phase 6 (Polish & Documentation)
+**Status:** Phase 5 Complete - Phase 4.5 OOB Cleanup Ready
 
-This experiment has successfully proven that the Closed-World UI philosophy scales beyond simple cards and buttons to support real-world forms and interactive lists.
+This experiment has successfully proven that the Closed-World UI philosophy scales beyond simple cards and buttons to support real-world forms and interactive lists. Phase 5 also revealed important architectural insights about OOB response layering.
 
 **Progress Summary:**
 - ✅ Phase 0: Planning complete (experiment document created)
@@ -2068,7 +2213,8 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 - ✅ Phase 4.2: Fluent Builder Pattern for Closed-World UI
 - ✅ Phase 4.3: Element-Prefixed Properties with Concise Builders
 - ✅ Phase 4.4: Card Slot Builder Pattern (hide slot abstraction)
-- ✅ Phase 5: Todos Page Conversion (all render methods converted)
+- ✅ Phase 5: Todos Page Conversion (vocabulary complete, OOB issues discovered)
+- 🔜 Phase 4.5: OOB Response Layering Cleanup (fix architectural issues)
 - 🔜 Phase 6: Polish & Documentation
 
 **Key Design Decision:** We've chosen server-authority over client-validation duplication. The Input element declares semantic type (email, password, etc.) but doesn't duplicate validation rules (Required, MaxLength). Server validates via workflow commands, returns errors via HTMX. This keeps the vocabulary simple, prevents drift, and maintains single source of truth.
@@ -2117,16 +2263,26 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 - Delete uses Button.Action() with ModelId and SwapStrategy.OuterHTML
 - Build successful: 0 errors, 8 pre-existing warnings
 - Code follows all style guide conventions
+- **Architectural Discovery:** Revealed OOB layering issues → Phase 4.5 created
 
-**Next Step:** Phase 6 - Polish & Documentation (optional Tier 2 elements, cleanup, examples)
+**Phase 4.5 Architectural Insights:**
+- Pages should not inject OOB attributes (HTTP transport concern)
+- `RenderSuccessfulTodoCreation()` wrong abstraction (interaction's job to compose)
+- `HtmlFragment.InjectOob()` utility should be used consistently in interaction layer
+- Vocabulary must remain HTTP-agnostic (no `.Oob()` method)
+- Proper separation: Vocabulary → Page → Interaction → Framework layers
+- Error path needs OOB injection (bypasses framework component system)
+
+**Next Step:** Phase 4.5 - Fix OOB Response Layering (1-2 hours, then Phase 6)
 
 ---
 
-**Document Version:** 1.9
+**Document Version:** 2.0
 **Last Updated:** 2025-12-03
 **Maintained By:** Development Team
 **Changelog:**
-- v1.9 (2025-12-03): Phase 5 complete - Todos Page converted to Closed-World UI vocabulary (commit pending)
+- v2.0 (2025-12-03): Phase 4.5 planned - OOB architectural layering cleanup (discovery from Phase 5)
+- v1.9 (2025-12-03): Phase 5 complete - Todos Page converted to Closed-World UI vocabulary (commit 9aeffe0)
 - v1.8 (2025-12-03): Login.RenderPage() refactored to use fluent builder pattern (commit bb93613)
 - v1.7 (2025-12-03): Phase 4.4 complete - Card Slot Builder Pattern implemented (commit 2d955cd)
 - v1.6 (2025-12-03): Added Phase 4.4 plan - Card Slot Builder Pattern (direct content API, hide slot objects)
