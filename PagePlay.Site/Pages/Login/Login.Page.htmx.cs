@@ -13,15 +13,15 @@ public interface ILoginPageView
 
 public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
 {
-    public string RenderPage()
-    {
-        var page = new Section();
-        page.Add(new PageTitle("Login"));
-        page.Add(new Section().Id("notifications"));
-        page.Add(renderLoginFormComponent());
-
-        return _renderer.Render(page);
-    }
+    public string RenderPage() =>
+        _renderer.Render(
+            new Section()
+                .Children(
+                    new PageTitle("Login"),
+                    new Section().Id("notifications"),
+                    renderLoginFormComponent()
+                )
+        );
 
     public string RenderLoginForm()
     {
