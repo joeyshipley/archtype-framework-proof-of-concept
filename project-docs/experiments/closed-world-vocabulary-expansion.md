@@ -1012,7 +1012,7 @@ list-item:
 - ✅ Ready for Phase 5
 
 **Blocked By:** None
-**Blocks:** Phase 5
+**Blocks:** Phase 4.1
 
 ---
 
@@ -1558,6 +1558,177 @@ All builder methods lose "With" prefix:
 ---
 
 **Blocked By:** Phase 4.1
+**Blocks:** Phase 4.4
+
+---
+
+### Phase 4.4: Card Slot Builder Pattern
+**Status:** 🔲 Not Started
+**Goal:** Implement direct content builder pattern for Card slots (hide slot abstraction)
+**Estimated Effort:** 2-3 hours
+
+**Problem:**
+Card currently uses object initializer syntax which can't combine with collection initializers or fluent builders:
+
+```csharp
+// Current - mixed API, doesn't allow fluent composition
+new Card
+{
+    Header = new Header(new Text("Title")),
+    Body = new Body(new Text("Content")),
+    Footer = new Footer(new Button(...))
+}
+```
+
+**Solution - Direct Content Builder Pattern:**
+
+Instead of exposing slot objects (Header/Body/Footer) in the builder API, Card should accept content directly and create slots internally:
+
+```csharp
+// Proposed API - slots hidden, content direct
+new Card()
+    .Header(new Text("Closed-World UI Demo"))
+    .Body(
+        new Text("This card is built with semantic types."),
+        new Text("No className. No inline styles.")
+    )
+    .Footer(
+        new Button(Importance.Secondary, "Learn More"),
+        new Button(Importance.Primary, "Get Started")
+    )
+```
+
+**Design Rationale:**
+
+1. **Slots are implementation details** - Developers think "card with header content" not "card with header slot containing content"
+2. **Type safety preserved** - Methods typed as `params IHeaderContent[]`, `params IBodyContent[]`, `params IFooterContent[]`
+3. **Simplest API** - Fewest objects to construct, most readable
+4. **Matches mental model** - Similar to how `Stack(For.Content, ...)` takes children directly
+5. **Hides complexity** - Slot abstraction exists for type safety and rendering, not as user-facing concept
+
+**Alternative Considered (Rejected):**
+
+```csharp
+// Explicit slot objects - more verbose, exposes implementation
+new Card()
+    .WithHeader(new Header().Children(...))
+    .WithBody(new Body().Children(...))
+    .WithFooter(new Footer().Children(...))
+```
+
+Rejected because it forces developers to understand slot concept and creates unnecessary nesting.
+
+---
+
+#### Implementation Tasks
+
+**Step 1: Update Card.cs**
+- [ ] Rename `Header`/`Body`/`Footer` properties → `_headerSlot`/`_bodySlot`/`_footerSlot` (private fields)
+- [ ] Remove `required` keyword from Body (builder pattern can't enforce at compile-time)
+- [ ] Implement `.Header(params IHeaderContent[] content)` builder method
+- [ ] Implement `.Body(params IBodyContent[] content)` builder method
+- [ ] Implement `.Footer(params IFooterContent[] content)` builder method
+- [ ] Each builder creates slot internally: `new Header(content)` and assigns to field
+- [ ] Return new instance via record `with` syntax for immutability
+
+**Implementation Pattern:**
+```csharp
+public record Card : ComponentBase
+{
+    // Internal slot storage (not exposed as public properties)
+    internal Header _headerSlot;
+    internal Body _bodySlot;
+    internal Footer _footerSlot;
+
+    /// <summary>Sets header content. Creates Header slot internally. Returns new instance (immutable).</summary>
+    public Card Header(params IHeaderContent[] content)
+    {
+        var header = new Header(content);
+        var newCard = this with { };
+        newCard._headerSlot = header;
+        return newCard;
+    }
+
+    /// <summary>Sets body content. Creates Body slot internally. Returns new instance (immutable).</summary>
+    public Card Body(params IBodyContent[] content)
+    {
+        var body = new Body(content);
+        var newCard = this with { };
+        newCard._bodySlot = body;
+        return newCard;
+    }
+
+    /// <summary>Sets footer content. Creates Footer slot internally. Returns new instance (immutable).</summary>
+    public Card Footer(params IFooterContent[] content)
+    {
+        var footer = new Footer(content);
+        var newCard = this with { };
+        newCard._footerSlot = footer;
+        return newCard;
+    }
+}
+```
+
+**Step 2: Update HtmlRenderer.cs**
+- [ ] Update `renderCard()` method to access `_headerSlot`, `_bodySlot`, `_footerSlot` instead of public properties
+- [ ] Ensure null checks work for optional slots (header and footer)
+
+**Step 3: Update StyleTest.Page.htmx.cs**
+- [ ] Convert all Card instances to use new builder API
+- [ ] Remove explicit Header/Body/Footer construction
+- [ ] Verify visual nesting is clean and readable
+
+**Step 4: Build, Test, Verify**
+- [ ] Build succeeds with zero warnings
+- [ ] StyleTest page renders correctly (visual inspection)
+- [ ] All card slots render in correct order
+- [ ] Optional slots (header, footer) work when omitted
+
+---
+
+#### Success Criteria
+
+- [ ] Card has `.Header()`, `.Body()`, `.Footer()` fluent builder methods
+- [ ] Builder methods take `params IXContent[]` directly (no manual slot construction)
+- [ ] Slot objects (Header/Body/Footer) hidden as internal implementation detail
+- [ ] Type safety enforced via params types
+- [ ] StyleTest.Page.htmx.cs uses new API consistently
+- [ ] Build successful with zero warnings
+- [ ] Visual appearance unchanged from current
+- [ ] Code is more concise and readable than before
+
+---
+
+#### Design Pattern Established
+
+This pattern becomes the standard for **all slot-based components**:
+
+```csharp
+// Future components follow same pattern
+new Modal()
+    .Header(new Text("Confirm Delete"))
+    .Body(new Text("Are you sure?"))
+    .Footer(
+        new Button(Importance.Secondary, "Cancel"),
+        new Button(Importance.Primary, "Delete")
+    )
+
+new Dialog()
+    .Header(new Text("Settings"))
+    .Body(/* settings form */)
+    .Footer(new Button(Importance.Primary, "Save"))
+```
+
+**Pattern Summary:**
+- Slot-based components hide slot construction
+- Builder methods accept content directly via params
+- Type safety through typed params (IHeaderContent, IBodyContent, IFooterContent)
+- Slots created internally, not exposed in public API
+- Concise, readable, matches mental model
+
+---
+
+**Blocked By:** Phase 4.3
 **Blocks:** Phase 5
 
 ---
@@ -1851,7 +2022,7 @@ _(To be filled in after completion)_
 
 ## Conclusion
 
-**Status:** Phase 3 Complete - Ready for Phase 4 & Phase 5
+**Status:** Phase 4.3 Complete - Ready for Phase 4.4 (Card Slot Builders)
 
 This experiment is proving that the Closed-World UI philosophy can scale beyond simple cards and buttons to support real-world forms and interactive lists.
 
@@ -1860,7 +2031,10 @@ This experiment is proving that the Closed-World UI philosophy can scale beyond 
 - ✅ Phase 1: Core Form Elements complete (5 vocabulary elements + Button enhancement)
 - ✅ Phase 2: Feedback Elements complete (Alert, EmptyState)
 - ✅ Phase 3: List Elements complete (List, ListItem)
-- 🔜 Phase 4: Login Page Conversion
+- ✅ Phase 4.1: Login Page Conversion (initial flat implementation)
+- ✅ Phase 4.2: Fluent Builder Pattern for Closed-World UI
+- ✅ Phase 4.3: Element-Prefixed Properties with Concise Builders
+- 🔜 Phase 4.4: Card Slot Builder Pattern (hide slot abstraction)
 - 🔜 Phase 5: Todos Page Conversion
 
 **Key Design Decision:** We've chosen server-authority over client-validation duplication. The Input element declares semantic type (email, password, etc.) but doesn't duplicate validation rules (Required, MaxLength). Server validates via workflow commands, returns errors via HTMX. This keeps the vocabulary simple, prevents drift, and maintains single source of truth.
@@ -1890,14 +2064,15 @@ This experiment is proving that the Closed-World UI philosophy can scale beyond 
 - 15 comprehensive unit tests created
 - All tests passing, build successful
 
-**Next Step:** Begin Phase 4 (Login Page Conversion) or Phase 5 (Todos Page Conversion)
+**Next Step:** Phase 4.4 - Implement Card Slot Builder Pattern (hide slot abstraction, enable fluent composition)
 
 ---
 
-**Document Version:** 1.5
+**Document Version:** 1.6
 **Last Updated:** 2025-12-03
 **Maintained By:** Development Team
 **Changelog:**
+- v1.6 (2025-12-03): Added Phase 4.4 plan - Card Slot Builder Pattern (direct content API, hide slot objects)
 - v1.5 (2025-12-03): Phase 3 complete - List Elements implemented with 15 passing tests (commit 5ccd4d5)
 - v1.4 (2025-12-03): Phase 2 complete - Feedback Elements implemented with 13 passing tests
 - v1.3 (2025-12-03): Phase 1 complete - Core Form Elements implemented and committed (b5d06f0)
