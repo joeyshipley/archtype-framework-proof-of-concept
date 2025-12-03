@@ -41,4 +41,14 @@
     <Folder Include="Pages\Todos\Interactions\" />
   </ItemGroup>
 
+  <!-- Auto-compile theme YAML to CSS (only when YAML changes) -->
+  <Target Name="CompileTheme"
+          AfterTargets="Build"
+          Inputs="Infrastructure/UI/Themes/default.theme.yaml"
+          Outputs="wwwroot/css/closed-world.css">
+    <Message Text="Compiling theme..." Importance="high" />
+    <Exec Command="dotnet exec &quot;$(OutputPath)$(AssemblyName).dll&quot; compile-theme &quot;Infrastructure/UI/Themes/default.theme.yaml&quot; &quot;wwwroot/css/closed-world.css&quot;"
+          WorkingDirectory="$(MSBuildProjectDirectory)" />
+  </Target>
+
 </Project>
