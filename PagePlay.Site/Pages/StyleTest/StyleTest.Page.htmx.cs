@@ -63,11 +63,31 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
                         new Button(Importance.Tertiary, "Tertiary"),
                         new Button(Importance.Ghost, "Ghost")
                     )
+                },
+                new Card
+                {
+                    Header = new Header(
+                        new Text("Interactive Button Test")
+                    ),
+                    Body = new Body(
+                        new Text("Click the button to get a random number:")
+                    ),
+                    Footer = new Footer(
+                        new Button(Importance.Primary, "Get Random Number")
+                        {
+                            Action = "/interaction/style-test/random",
+                            Id = "random-number-button",
+                            Target = "#random-result"
+                        }
+                    )
                 }
             )
         };
 
-        return _renderer.Render(page);
+        var pageHtml = _renderer.Render(page);
+
+        // Add result container (not in vocabulary yet, so raw HTML for now)
+        return pageHtml + "\n<div id=\"random-result\" style=\"padding: 1rem;\"></div>";
     }
 
     public string RenderRandomNumber(int number)
