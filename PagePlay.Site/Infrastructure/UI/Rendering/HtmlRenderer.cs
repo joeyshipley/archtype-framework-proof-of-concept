@@ -79,6 +79,12 @@ public class HtmlRenderer : IHtmlRenderer
             case Checkbox checkbox:
                 renderCheckbox(checkbox, sb);
                 break;
+            case Alert alert:
+                renderAlert(alert, sb);
+                break;
+            case EmptyState emptyState:
+                renderEmptyState(emptyState, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown component type: {component.GetType().Name}");
         }
@@ -411,6 +417,55 @@ public class HtmlRenderer : IHtmlRenderer
         }
 
         sb.Append($"<input type=\"checkbox\" class=\"checkbox\"{idAttr}{nameAttr}{checkedAttr}{valueAttr}{htmxAttrs}{disabledAttr} />");
+    }
+
+    private void renderAlert(Alert alert, StringBuilder sb)
+    {
+        var toneClass = alert.Tone switch
+        {
+            AlertTone.Neutral => "alert--neutral",
+            AlertTone.Positive => "alert--positive",
+            AlertTone.Warning => "alert--warning",
+            AlertTone.Critical => "alert--critical",
+            _ => "alert--neutral"
+        };
+
+        var classes = $"alert {toneClass}";
+        var idAttr = !string.IsNullOrEmpty(alert.Id) ? $" id=\"{htmlEncode(alert.Id)}\"" : "";
+        var roleAttr = " role=\"alert\"";
+
+        sb.Append($"<div class=\"{classes}\"{idAttr}{roleAttr}>");
+        sb.Append("<p class=\"alert__message\">");
+        sb.Append(htmlEncode(alert.Message));
+        sb.Append("</p>");
+        sb.Append("</div>");
+    }
+
+    private void renderEmptyState(EmptyState emptyState, StringBuilder sb)
+    {
+        var sizeClass = emptyState.Size switch
+        {
+            EmptyStateSize.Small => "empty-state--small",
+            EmptyStateSize.Medium => "empty-state--medium",
+            EmptyStateSize.Large => "empty-state--large",
+            _ => "empty-state--medium"
+        };
+
+        var classes = $"empty-state {sizeClass}";
+
+        sb.Append($"<div class=\"{classes}\">");
+        sb.Append("<p class=\"empty-state__message\">");
+        sb.Append(htmlEncode(emptyState.Message));
+        sb.Append("</p>");
+
+        if (!string.IsNullOrEmpty(emptyState.ActionLabel) && !string.IsNullOrEmpty(emptyState.ActionUrl))
+        {
+            sb.Append($"<a class=\"empty-state__action\" href=\"{htmlEncode(emptyState.ActionUrl)}\">");
+            sb.Append(htmlEncode(emptyState.ActionLabel));
+            sb.Append("</a>");
+        }
+
+        sb.Append("</div>");
     }
 
     private string htmlEncode(string text)

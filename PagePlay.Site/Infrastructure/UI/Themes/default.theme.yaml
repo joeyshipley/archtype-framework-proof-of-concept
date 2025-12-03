@@ -25,6 +25,12 @@ tokens:
     text-secondary: "#525252"
     accent: "#2563eb"
     accent-hover: "#1d4ed8"
+    positive: "#16a34a"
+    positive-subtle: "#f0fdf4"
+    positive-dark: "#15803d"
+    warning: "#d97706"
+    warning-subtle: "#fffbeb"
+    warning-dark: "#b45309"
     critical: "#dc2626"
     critical-subtle: "#fef2f2"
     critical-dark: "#991b1b"
@@ -148,3 +154,50 @@ checkbox:
   disabled:
     opacity: 0.5
     cursor: not-allowed
+
+# Feedback elements
+alert:
+  base:
+    padding-x: 4
+    padding-y: 3
+    radius: md
+    border-width: 1
+  tone-neutral:
+    background: surface-raised
+    border-color: border
+    text: text-primary
+  tone-positive:
+    background: positive-subtle
+    border-color: positive
+    text: positive-dark
+  tone-warning:
+    background: warning-subtle
+    border-color: warning
+    text: warning-dark
+  tone-critical:
+    background: critical-subtle
+    border-color: critical
+    text: critical-dark
+  message:
+    size: md
+    margin: 0
+
+empty-state:
+  base:
+    text-align: center
+    color: text-secondary
+  size-small:
+    padding: 3
+    text-size: sm
+  size-medium:
+    padding: 6
+    text-size: md
+  size-large:
+    padding: 8
+    text-size: lg
+  message:
+    margin-bottom: 0
+  action:
+    margin-top: 3
+    color: accent
+    text-decoration: underline

@@ -212,6 +212,9 @@ public class ThemeCompiler
         // Form element styling
         generateFormStyles(theme, css);
 
+        // Feedback element styling
+        generateFeedbackStyles(theme, css);
+
         // Page structure styling
         generatePageStructureStyles(css);
 
@@ -428,6 +431,95 @@ public class ThemeCompiler
         css.AppendLine("  .checkbox:disabled {");
         css.AppendLine("    opacity: 0.5;");
         css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateFeedbackStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        css.AppendLine("  /* Feedback elements */");
+
+        // Alert base
+        css.AppendLine("  .alert {");
+        css.AppendLine("    padding: var(--spacing-3) var(--spacing-4);");
+        css.AppendLine("    border-radius: var(--radius-md);");
+        css.AppendLine("    border-width: 1px;");
+        css.AppendLine("    border-style: solid;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .alert__message {");
+        css.AppendLine("    margin: 0;");
+        css.AppendLine("    font-size: var(--text-md);");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Alert tone variants
+        css.AppendLine("  .alert--neutral {");
+        css.AppendLine("    background: var(--color-surface-raised);");
+        css.AppendLine("    border-color: var(--color-border);");
+        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .alert--positive {");
+        css.AppendLine("    background: var(--color-positive-subtle);");
+        css.AppendLine("    border-color: var(--color-positive);");
+        css.AppendLine("    color: var(--color-positive-dark);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .alert--warning {");
+        css.AppendLine("    background: var(--color-warning-subtle);");
+        css.AppendLine("    border-color: var(--color-warning);");
+        css.AppendLine("    color: var(--color-warning-dark);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .alert--critical {");
+        css.AppendLine("    background: var(--color-critical-subtle);");
+        css.AppendLine("    border-color: var(--color-critical);");
+        css.AppendLine("    color: var(--color-critical-dark);");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // EmptyState base
+        css.AppendLine("  .empty-state {");
+        css.AppendLine("    text-align: center;");
+        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state__message {");
+        css.AppendLine("    margin: 0;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state__action {");
+        css.AppendLine("    display: inline-block;");
+        css.AppendLine("    margin-top: var(--spacing-3);");
+        css.AppendLine("    color: var(--color-accent);");
+        css.AppendLine("    text-decoration: underline;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // EmptyState size variants
+        css.AppendLine("  .empty-state--small {");
+        css.AppendLine("    padding: var(--spacing-3);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state--small .empty-state__message {");
+        css.AppendLine("    font-size: var(--text-sm);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state--medium {");
+        css.AppendLine("    padding: var(--spacing-6);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state--medium .empty-state__message {");
+        css.AppendLine("    font-size: var(--text-md);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state--large {");
+        css.AppendLine("    padding: var(--spacing-8);");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .empty-state--large .empty-state__message {");
+        css.AppendLine("    font-size: var(--text-lg);");
         css.AppendLine("  }");
         css.AppendLine();
     }
