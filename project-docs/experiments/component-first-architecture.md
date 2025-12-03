@@ -1120,6 +1120,211 @@ The component-first architecture pattern **works as designed** and delivers on a
 
 ---
 
+## 🎯 Phase 5: Apply Pattern to Login Page
+
+**Goal:** Convert Login page to component-first architecture as additional validation
+**Status:** ⏳ Pending
+
+### Current State Analysis
+
+**Login Page Structure:**
+```
+Pages/Login/
+├── Login.Page.htmx.cs          - Page view with rendering methods
+├── Login.Route.cs              - Endpoint (simple, no data loading)
+├── Interactions/
+│   └── Authenticate.Interaction.cs - Login interaction
+Application/Accounts/Login/
+├── Login.Workflow.cs           - Authentication workflow
+└── Login.BoundaryContracts.cs  - Request/Response contracts
+```
+
+**Current Pattern (Fragment-Based):**
+
+**Login.Page.htmx.cs:**
+- `RenderPage()` - Full page with form
+- `RenderLoginForm()` - Form with hardcoded `hx-target="#notifications"`
+- `RenderError(string error)` - Error notification fragment
+- `RenderSuccess(string message)` - Success notification fragment
+
+**Authenticate.Interaction.cs:20-24:**
+```csharp
+protected override Task<IResult> OnSuccess(LoginWorkflowResponse response)
+{
+    cookieManager.SetAuthCookie(response.Token);
+    responseManager.SetRedirectHeader("/todos");
+    return Task.FromResult(Results.Ok());
+}
+```
+
+**Authenticate.Interaction.cs:27-28:**
+```csharp
+protected override IResult RenderError(string message) =>
+    Results.Content(Page.RenderError(message), "text/html");
+```
+
+**Login.Workflow.cs:47-48:**
+```csharp
+private LoginWorkflowResponse buildResponse(long userId, string token) =>
+    new LoginWorkflowResponse { UserId = userId, Token = token };
+```
+
+### Analysis: Component-First Applicability
+
+**Key Observations:**
+
+1. **No Data Dependencies** ✅
+   - Login page is stateless (no data to fetch)
+   - Form is static HTML
+   - No components needed for initial render
+
+2. **Workflow Response is Metadata-Only** ✅
+   - Returns `UserId` and `Token` (metadata)
+   - No query data
+   - Already CQRS compliant!
+
+3. **Target Attribute Present** ⚠️
+   - Form hardcodes `hx-target="#notifications"` (line 30)
+   - Violates server authority
+   - Should be removed for OOB pattern
+
+4. **Notification Pattern** 🤔
+   - Error renders notification fragment to `#notifications` div
+   - Success would set cookie + redirect (no notification shown)
+   - Could use OOB for error notifications
+
+5. **Redirect Pattern** ✅
+   - Uses `IResponseManager.SetRedirectHeader()` for client-side redirect
+   - Clean separation (not HTML rendering)
+   - No changes needed
+
+### Proposed Changes
+
+#### Change 1: Remove Target from Login Form
+
+**File:** `Login.Page.htmx.cs:29-31`
+
+**BEFORE:**
+```csharp
+<form hx-post="/interaction/login/authenticate"
+      hx-target="#notifications"
+      hx-swap="innerHTML">
+```
+
+**AFTER:**
+```csharp
+<form hx-post="/interaction/login/authenticate">
+```
+
+**Impact:** Server decides where error notifications go via OOB.
+
+#### Change 2: Use OOB for Error Notifications
+
+**File:** `Authenticate.Interaction.cs:27-28`
+
+**BEFORE:**
+```csharp
+protected override IResult RenderError(string message) =>
+    Results.Content(Page.RenderError(message), "text/html");
+```
+
+**AFTER:**
+```csharp
+protected override IResult RenderError(string message)
+{
+    var errorNotification = HtmlFragment.WithOob("notifications", Page.RenderError(message));
+    return Results.Content(errorNotification, "text/html");
+}
+```
+
+**Impact:** Error notification explicitly targets `#notifications` via OOB attribute.
+
+#### Change 3: Add ID to Notifications Container
+
+**File:** `Login.Page.htmx.cs:20`
+
+**BEFORE:**
+```csharp
+<div id="notifications"></div>
+```
+
+**AFTER:**
+```csharp
+<div id="notifications"></div>  // Already has ID - no change needed!
+```
+
+**Impact:** None - already correctly structured.
+
+### Success Criteria
+
+- [ ] Login form has no `hx-target` attribute (server authority)
+- [ ] Error notifications use OOB pattern (`hx-swap-oob="true"`)
+- [ ] Login workflow response remains metadata-only (already compliant)
+- [ ] Authentication flow works correctly (cookie + redirect)
+- [ ] Error messages display in notifications area via OOB
+- [ ] Code compiles with 0 errors
+- [ ] Manual testing confirms login/error flows work
+
+### Implementation Steps
+
+**Step 1: Remove Target from Form**
+- Edit `Login.Page.htmx.cs:29-31`
+- Remove `hx-target` and `hx-swap` attributes
+- Keep `hx-post` attribute
+
+**Step 2: Update Error Rendering**
+- Edit `Authenticate.Interaction.cs:27-28`
+- Use `HtmlFragment.WithOob("notifications", ...)` to wrap error
+- Inject OOB attribute for server-driven updates
+
+**Step 3: Build and Test**
+- Run `dotnet build` to verify compilation
+- Manual test: Invalid login → verify error shows in notifications
+- Manual test: Valid login → verify redirect to /todos
+
+### Expected Outcome
+
+**Before (Fragment Pattern):**
+- Form specifies target: `hx-target="#notifications"`
+- Client decides where error goes
+- 1 Target attribute
+
+**After (Component-First Pattern):**
+- Form has no target
+- Server response includes OOB fragment: `<div id="notifications" hx-swap-oob="true">...</div>`
+- Server decides where error goes
+- 0 Target attributes
+
+**Code Changes:**
+- Lines modified: ~3 lines (remove target, add OOB wrapper)
+- Files changed: 2 files (Login.Page.htmx.cs, Authenticate.Interaction.cs)
+- Net impact: -2 lines (remove hx-target/hx-swap, add 1 line OOB wrapper)
+
+**Benefits:**
+- Server authority preserved (consistent with Todos pattern)
+- No workflow changes needed (already metadata-only)
+- Simple page benefits from pattern consistency
+- Prepares Login for potential future components (e.g., password strength widget, recent login history)
+
+### Notes
+
+**Why Convert Login?**
+1. **Pattern consistency** - All pages follow same pattern
+2. **Validation** - Proves pattern works for both stateful (Todos) and stateless (Login) pages
+3. **Future-proofing** - Easy to add components later (password hints, login history, etc.)
+4. **Team learning** - Another example for developers to reference
+
+**What Makes Login Different from Todos?**
+- **No data dependencies** - Login has no initial data to load
+- **No components needed** - Static form doesn't benefit from components YET
+- **Simpler** - Only one interaction, no multi-domain complexity
+- **Good test case** - Validates pattern works for simple pages too
+
+**Pattern Insight:**
+Component-first architecture scales DOWN to simple pages, not just UP to complex pages. The pattern is consistent regardless of page complexity.
+
+---
+
 ## 🔗 Related Patterns
 
 ### CQRS (Command Query Responsibility Segregation)
