@@ -1,6 +1,9 @@
 using PagePlay.Site.Application.Todos.Models;
+using PagePlay.Site.Infrastructure.UI;
+using PagePlay.Site.Infrastructure.UI.Rendering;
+using PagePlay.Site.Infrastructure.UI.Vocabulary;
 using PagePlay.Site.Infrastructure.Web.Html;
-using PagePlay.Site.Pages.Shared.Elements;
+using VocabularyButton = PagePlay.Site.Infrastructure.UI.Vocabulary.Button;
 
 namespace PagePlay.Site.Pages.Todos;
 
@@ -17,145 +20,153 @@ public interface ITodosPageView
     string RenderDeleteErrorWithNotification(long todoId, string error);
 }
 
-public class TodosPage : ITodosPageView
+public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
 {
-    // language=html
     public string RenderPage(List<TodoListEntry> todos) =>
-    $$"""
-    <div class="todo-page">
-        <h1>My Todos</h1>
-        <div id="notifications"></div>
-        {{RenderCreateForm()}}
-        <div id="todo-list">
-            {{RenderTodoList(todos)}}
-        </div>
-    </div>
-    """;
-
-    // language=html
-    public string RenderPageWithComponent(string todoListComponentHtml) =>
-    $$"""
-    <div class="todo-page">
-        <h1>My Todos</h1>
-        <div id="notifications"></div>
-        {{RenderCreateForm()}}
-        {{todoListComponentHtml}}
-    </div>
-    """;
-
-    // language=html
-    private string renderCreateFormContent() =>
-        HtmxForm.Render(
-            new()
-            {
-                Action = "/interaction/todos/create"
-                // No Target - pure OOB response from component
-            },
-            $$"""
-            <div class="todo-input-group">
-                <input id="title"
-                       name="title"
-                       type="text"
-                       placeholder="What needs to be done?"
-                       required
-                       maxlength="200" />
-                <button type="submit">Add Todo</button>
-            </div>
-            """
+        _renderer.Render(
+            new Section()
+                .Id("todo-page")
+                .Children(
+                    new PageTitle("My Todos"),
+                    new Section().Id("notifications"),
+                    renderCreateFormComponent(),
+                    new Section()
+                        .Id("todo-list")
+                        .Children(renderTodoListComponent(todos))
+                )
         );
 
-    // language=html
+    public string RenderPageWithComponent(string todoListComponentHtml)
+    {
+        // Note: This method accepts raw HTML from component rendering system
+        // Once components are converted to semantic types, this can be refactored
+        var page = new Section()
+            .Id("todo-page")
+            .Children(
+                new PageTitle("My Todos"),
+                new Section().Id("notifications"),
+                renderCreateFormComponent()
+            );
+
+        // Append raw HTML component (temporary until components use semantic types)
+        return _renderer.Render(page) + todoListComponentHtml;
+    }
+
+    private Form renderCreateFormContent() =>
+        new Form()
+            .Action("/interaction/todos/create")
+            .Children(
+                new Row(For.Items,
+                    new Input()
+                        .Name("title")
+                        .Type(InputType.Text)
+                        .Placeholder("What needs to be done?")
+                        .Id("title"),
+                    new VocabularyButton(Importance.Primary, "Add Todo")
+                        .Type(ButtonType.Submit)
+                )
+            );
+
+    private Section renderCreateFormComponent() =>
+        new Section()
+            .Id("todo-create-form")
+            .Children(renderCreateFormContent());
+
     public string RenderCreateForm() =>
-    $$"""
-    <div class="todo-create-form" id="todo-create-form">
-        {{renderCreateFormContent()}}
-    </div>
-    """;
+        _renderer.Render(renderCreateFormComponent());
 
-    // language=html
-    public string RenderTodoList(List<TodoListEntry> todos)
+    private IComponent renderTodoListComponent(List<TodoListEntry> todos)
     {
-        var todosHtml = todos.Count == 0
-            ? """<li class="todo-empty"><p>No todos yet. Add one above to get started!</p></li>"""
-            : string.Join("\n", todos.Select(RenderTodoItem));
+        if (todos.Count == 0)
+        {
+            return new EmptyState("No todos yet. Add one above to get started!")
+            {
+                ElementSize = EmptyStateSize.Small
+            };
+        }
 
-        return $$"""
-        <ul class="todo-list" id="todo-list-ul">
-            {{todosHtml}}
-        </ul>
-        """;
+        var list = new List()
+            .Style(ListStyle.Plain)
+            .Id("todo-list-ul");
+
+        foreach (var todo in todos)
+        {
+            list.Add(renderTodoItemComponent(todo));
+        }
+
+        return list;
     }
 
-    // language=html
-    public string RenderTodoItem(TodoListEntry todo)
-    {
-        var completedClass = todo.IsCompleted ? "completed" : "";
-        var checkboxIcon = todo.IsCompleted ? "☑" : "☐";
+    public string RenderTodoList(List<TodoListEntry> todos) =>
+        _renderer.Render(renderTodoListComponent(todos));
 
-        return $$"""
-        <li class="todo-item {{completedClass}}" id="todo-{{todo.Id}}">
-            <div class="todo-content">
-                {{HtmxForm.Render(
-                    new()
-                    {
-                        Action = "/interaction/todos/toggle",
-                        CssClass = "todo-toggle-form"
-                        // No Target - pure OOB response from component
-                    },
-                    $$"""
-                    <input type="hidden" name="id" value="{{todo.Id}}" />
-                    <button type="submit" class="todo-checkbox">{{checkboxIcon}}</button>
-                    """
-                )}}
-                <span class="todo-title">{{todo.Title.Safe()}}</span>
-                {{ButtonDelete.Render(
-                    endpoint: "/interaction/todos/delete",
-                    id: todo.Id,
-                    tag: "todo",
-                    content: $$"""×"""
-                    // No target/swap - pure OOB response from component
-                )}}
-                <hr />
-            </div>
-        </li>
-        """;
+    private ListItem renderTodoItemComponent(TodoListEntry todo) =>
+        new ListItem()
+            .State(todo.IsCompleted ? ListItemState.Completed : ListItemState.Normal)
+            .Id($"todo-{todo.Id}")
+            .Children(
+                new Row(For.Items,
+                    // Toggle form with checkbox button
+                    new Form()
+                        .Action("/interaction/todos/toggle")
+                        .Children(
+                            new Input()
+                                .Name("id")
+                                .Type(InputType.Hidden)
+                                .Value(todo.Id.ToString()),
+                            new VocabularyButton(Importance.Ghost, todo.IsCompleted ? "☑" : "☐")
+                                .Type(ButtonType.Submit)
+                        ),
+                    new Text(todo.Title),
+                    // Delete button
+                    new VocabularyButton(Importance.Ghost, "×")
+                        .Action("/interaction/todos/delete")
+                        .ModelId(todo.Id)
+                        .Swap(SwapStrategy.OuterHTML)
+                )
+            );
+
+    public string RenderTodoItem(TodoListEntry todo) =>
+        _renderer.Render(renderTodoItemComponent(todo));
+
+    public string RenderSuccessfulTodoCreation(TodoListEntry todo)
+    {
+        var newTodoItem = RenderTodoItem(todo);
+
+        var resetForm = renderCreateFormComponent();
+        var resetFormHtml = _renderer.Render(resetForm)
+            .Replace("<div", "<div hx-swap-oob=\"true\"");
+
+        return newTodoItem + resetFormHtml;
     }
 
-    // language=html
-    public string RenderSuccessfulTodoCreation(TodoListEntry todo) =>
-    $$"""
-    {{RenderTodoItem(todo)}}
-    <div class="todo-create-form" id="todo-create-form" hx-swap-oob="true">
-        {{renderCreateFormContent()}}
-    </div>
-    """;
-
-    // language=html
     public string RenderError(string error) =>
-    $$"""
-    <div class="error" role="alert">
-        {{error.Safe()}}
-    </div>
-    """;
+        _renderer.Render(
+            new Alert(error, AlertTone.Critical)
+        );
 
-    // language=html
-    public string RenderErrorNotification(string error) =>
-    $$"""
-    <div id="notifications" hx-swap-oob="true">
-        <div class="error" role="alert">
-            {{error.Safe()}}
-        </div>
-    </div>
-    """;
+    public string RenderErrorNotification(string error)
+    {
+        var notification = new Section()
+            .Id("notifications")
+            .Children(
+                new Alert(error, AlertTone.Critical)
+            );
 
-    // language=html
-    public string RenderDeleteErrorWithNotification(long todoId, string error) =>
-    $$"""
-    <li class="todo-item todo-error" id="todo-{{todoId}}">
-        <div class="todo-content">
-            OH NOES!!!
-        </div>
-    </li>
-    {{RenderErrorNotification(error)}}
-    """;
+        // Render with OOB swap attribute
+        return _renderer.Render(notification)
+            .Replace("<div", "<div hx-swap-oob=\"true\"");
+    }
+
+    public string RenderDeleteErrorWithNotification(long todoId, string error)
+    {
+        var errorItem = new ListItem()
+            .State(ListItemState.Error)
+            .Id($"todo-{todoId}")
+            .Children(
+                new Text("OH NOES!!!")
+            );
+
+        return _renderer.Render(errorItem) + RenderErrorNotification(error);
+    }
 }
