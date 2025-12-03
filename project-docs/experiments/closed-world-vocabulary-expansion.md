@@ -1070,7 +1070,7 @@ list-item:
 **Status:** ✅ Complete
 **Goal:** Restore visual nesting through fluent builder API
 **Completed:** 2025-12-03
-**Commit:** (pending)
+**Commit:** `15d6b50`
 
 **Context - The C# Constraint:**
 
@@ -1151,10 +1151,10 @@ We use the "With" prefix (`.WithAction()` not `.Action()`) because:
 #### Part A: Pattern Design & Documentation
 
 **Tasks:**
-1. [ ] Document C# constraint in experiment doc (this section)
-2. [ ] Document fluent builder decision and rationale (this section)
-3. [ ] Define canonical pattern template using Form as example
-4. [ ] Create implementation checklist for all 19 components
+1. [x] Document C# constraint in experiment doc (this section)
+2. [x] Document fluent builder decision and rationale (this section)
+3. [x] Define canonical pattern template using Form as example
+4. [x] Create implementation checklist for all 19 components
 
 **Pattern Template (Form as canonical example):**
 
