@@ -2,26 +2,49 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 
 /// <summary>
 /// Card - A bounded visual unit for grouping related content.
+/// Uses direct content builder pattern - slots hidden as implementation detail.
 /// </summary>
 public record Card : ComponentBase
 {
     /// <summary>
-    /// Optional header region for title and metadata.
+    /// Internal header slot storage. Use .Header() builder method to set content.
     /// </summary>
-    public Header Header { get; init; }
+    internal Header _headerSlot { get; init; }
 
     /// <summary>
-    /// Required main content area.
+    /// Internal body slot storage. Use .Body() builder method to set content.
     /// </summary>
-    public required Body Body { get; init; }
+    internal Body _bodySlot { get; init; }
 
     /// <summary>
-    /// Optional footer region for actions.
+    /// Internal footer slot storage. Use .Footer() builder method to set content.
     /// </summary>
-    public Footer Footer { get; init; }
+    internal Footer _footerSlot { get; init; }
 
-    public Card()
+    /// <summary>
+    /// Sets header content. Creates Header slot internally. Returns new instance (immutable).
+    /// </summary>
+    public Card Header(params IHeaderContent[] content)
     {
-        // Required property enforcement happens via required keyword
+        var header = new Header(content);
+        return this with { _headerSlot = header };
+    }
+
+    /// <summary>
+    /// Sets body content. Creates Body slot internally. Returns new instance (immutable).
+    /// </summary>
+    public Card Body(params IBodyContent[] content)
+    {
+        var body = new Body(content);
+        return this with { _bodySlot = body };
+    }
+
+    /// <summary>
+    /// Sets footer content. Creates Footer slot internally. Returns new instance (immutable).
+    /// </summary>
+    public Card Footer(params IFooterContent[] content)
+    {
+        var footer = new Footer(content);
+        return this with { _footerSlot = footer };
     }
 }

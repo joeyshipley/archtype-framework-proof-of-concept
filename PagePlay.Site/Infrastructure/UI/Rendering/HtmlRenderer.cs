@@ -100,13 +100,14 @@ public class HtmlRenderer : IHtmlRenderer
     {
         sb.Append("<div class=\"card\">");
 
-        if (card.Header != null)
-            renderComponent(card.Header, sb);
+        if (card._headerSlot != null)
+            renderComponent(card._headerSlot, sb);
 
-        renderComponent(card.Body, sb);
+        if (card._bodySlot != null)
+            renderComponent(card._bodySlot, sb);
 
-        if (card.Footer != null)
-            renderComponent(card.Footer, sb);
+        if (card._footerSlot != null)
+            renderComponent(card._footerSlot, sb);
 
         sb.Append("</div>");
     }

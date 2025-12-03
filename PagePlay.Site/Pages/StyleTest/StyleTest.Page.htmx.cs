@@ -23,63 +23,55 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
                 new Text("A vertical slice demonstrating semantic types → HTML + CSS with zero escape hatches.")
             ),
             new Grid(For.Cards, Columns.Auto,
-                new Card
-                {
-                    Header = new Header(
+                new Card()
+                    .Header(
                         new Text("Closed-World UI Demo")
-                    ),
-                    Body = new Body(
+                    )
+                    .Body(
                         new Text("This card is built with semantic types. Developers declare WHAT things are, not HOW they look."),
                         new Text("No className. No inline styles. No escape hatches.")
-                    ),
-                    Footer = new Footer(
+                    )
+                    .Footer(
                         new Button(Importance.Secondary, "Learn More"),
                         new Button(Importance.Primary, "Get Started")
-                    )
-                },
-                new Card
-                {
-                    Header = new Header(
-                        new Text("Key Features")
                     ),
-                    Body = new Body(
+                new Card()
+                    .Header(
+                        new Text("Key Features")
+                    )
+                    .Body(
                         new Text("✓ Type system enforces validity"),
                         new Text("✓ Theme controls all appearance"),
                         new Text("✓ Invalid output is impossible"),
                         new Text("✓ Designer-owned styling")
-                    )
-                },
-                new Card
-                {
-                    Header = new Header(
+                    ),
+                new Card()
+                    .Header(
                         new Text("Button States")
-                    ),
-                    Body = new Body(
+                    )
+                    .Body(
                         new Text("All button importance levels:")
-                    ),
-                    Footer = new Footer(
+                    )
+                    .Footer(
                         new Button(Importance.Primary, "Primary"),
                         new Button(Importance.Secondary, "Secondary"),
                         new Button(Importance.Tertiary, "Tertiary"),
                         new Button(Importance.Ghost, "Ghost")
-                    )
-                },
-                new Card
-                {
-                    Header = new Header(
+                    ),
+                new Card()
+                    .Header(
                         new Text("Interactive Button Test")
-                    ),
-                    Body = new Body(
+                    )
+                    .Body(
                         new Text("Click the button to get a random number:")
-                    ),
-                    Footer = new Footer(
+                    )
+                    .Footer(
                         new Button(Importance.Primary, "Get Random Number")
                             .Action("/interaction/style-test/random")
                             .Id("random-number-button")
                             .Target("#random-result")
                             .ModelId(0)
                     )
-                }
             )
         };
 
