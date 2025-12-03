@@ -29,12 +29,16 @@ public interface IFooterContent : IComponent { }
 
 /// <summary>
 /// Base class for components with children.
+/// Supports collection initializer syntax.
 /// </summary>
-public abstract record ComponentBase : IComponent
+public abstract record ComponentBase : IComponent, System.Collections.IEnumerable
 {
     private readonly List<IComponent> _children = new();
 
     public IEnumerable<IComponent> Children => _children;
 
     public void Add(IComponent component) => _children.Add(component);
+
+    // Required for collection initializer syntax
+    public System.Collections.IEnumerator GetEnumerator() => _children.GetEnumerator();
 }

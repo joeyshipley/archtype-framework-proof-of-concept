@@ -36,6 +36,7 @@
     <Folder Include="Application\Todos\Workflows\" />
     <Folder Include="Infrastructure\Email\" />
     <Folder Include="Pages\Profile\" />
+    <Folder Include="Pages\StyleTest\Interactions\" />
     <Folder Include="Pages\Todos\Interactions\" />
   </ItemGroup>
 
