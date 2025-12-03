@@ -1,0 +1,89 @@
+# Closed-World UI Theme Definition
+# This file defines appearance while developers define structure.
+# Future: This will compile to CSS. For now, CSS is written manually to match.
+
+tokens:
+  spacing:
+    1: 0.25rem    # 4px
+    2: 0.5rem     # 8px
+    3: 0.75rem    # 12px
+    4: 1rem       # 16px
+    5: 1.25rem    # 20px
+    6: 1.5rem     # 24px
+    8: 2rem       # 32px
+
+  text:
+    sm: 0.875rem  # 14px
+    md: 1rem      # 16px
+    lg: 1.125rem  # 18px
+
+  color:
+    surface: "#ffffff"
+    surface-raised: "#fafafa"
+    border: "#e5e5e5"
+    text-primary: "#171717"
+    text-secondary: "#525252"
+    accent: "#2563eb"
+    accent-hover: "#1d4ed8"
+
+  shadow:
+    sm: "0 1px 2px rgba(0,0,0,0.05)"
+    md: "0 4px 6px rgba(0,0,0,0.1)"
+
+  radius:
+    md: "0.375rem"
+    lg: "0.5rem"
+
+# Container-centric styling
+card:
+  base:
+    background: surface
+    shadow: sm
+    radius: md
+  header:
+    size: md
+    weight: 600
+    padding: 4
+  body:
+    padding: 4
+  footer:
+    padding: 4
+    gap: 2
+    justify: end
+
+# Button styling
+button:
+  base:
+    padding-x: 4
+    padding-y: 2
+    radius: md
+    weight: 500
+    size: md
+
+  importance-primary:
+    background: accent
+    background-hover: accent-hover
+    text: white
+
+  importance-secondary:
+    background: transparent
+    border: border
+    text: text-primary
+    text-hover: text-primary
+
+  importance-tertiary:
+    background: transparent
+    text: text-secondary
+    text-hover: text-primary
+
+  importance-ghost:
+    background: transparent
+    text: text-secondary
+    text-hover: accent
+
+# Text styling
+text:
+  base:
+    size: md
+    color: text-primary
+    line-height: 1.5

@@ -11,6 +11,7 @@ using PagePlay.Site.Infrastructure.Security;
 using PagePlay.Site.Infrastructure.Web.Components;
 using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Framework;
+using PagePlay.Site.Infrastructure.UI.Rendering;
 using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
@@ -47,6 +48,9 @@ public static class DependencyResolver
         services.AddScoped<IDataLoader, DataLoader>();
         services.AddScoped<IComponentFactory, ComponentFactory>();
         services.AddScoped<IFrameworkOrchestrator, FrameworkOrchestrator>();
+
+        // Closed-World UI
+        services.AddSingleton<IHtmlRenderer, HtmlRenderer>();
     }
 
     private static void bindData(IServiceCollection services)
@@ -84,5 +88,6 @@ public static class DependencyResolver
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
         services.AutoRegister<ILoginPageInteraction>(ServiceLifetime.Scoped);
+        services.AutoRegister<PagePlay.Site.Pages.StyleTest.IStyleTestPageInteraction>(ServiceLifetime.Scoped);
     }
 }

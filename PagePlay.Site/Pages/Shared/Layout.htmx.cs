@@ -40,6 +40,7 @@ public class Layout(
             <script src="/js/htmx-config.js"></script>
             <link rel="stylesheet" href="/css/htmx-lib.css" />
             <link rel="stylesheet" href="/css/site.css" />
+            <link rel="stylesheet" href="/css/closed-world.css" />
         </head>
         <body hx-ext="component-context">
             {{_nav.Render()}}
