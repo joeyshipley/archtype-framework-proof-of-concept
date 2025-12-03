@@ -2,8 +2,6 @@ using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.UI;
 using PagePlay.Site.Infrastructure.UI.Rendering;
 using PagePlay.Site.Infrastructure.UI.Vocabulary;
-using PagePlay.Site.Infrastructure.Web.Html;
-using VocabularyButton = PagePlay.Site.Infrastructure.UI.Vocabulary.Button;
 
 namespace PagePlay.Site.Pages.Todos;
 
@@ -62,7 +60,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
                         .Type(InputType.Text)
                         .Placeholder("What needs to be done?")
                         .Id("title"),
-                    new VocabularyButton(Importance.Primary, "Add Todo")
+                    new Button(Importance.Primary, "Add Todo")
                         .Type(ButtonType.Submit)
                 )
             );
@@ -114,12 +112,12 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
                                 .Name("id")
                                 .Type(InputType.Hidden)
                                 .Value(todo.Id.ToString()),
-                            new VocabularyButton(Importance.Ghost, todo.IsCompleted ? "☑" : "☐")
+                            new Button(Importance.Ghost, todo.IsCompleted ? "☑" : "☐")
                                 .Type(ButtonType.Submit)
                         ),
                     new Text(todo.Title),
                     // Delete button
-                    new VocabularyButton(Importance.Ghost, "×")
+                    new Button(Importance.Ghost, "×")
                         .Action("/interaction/todos/delete")
                         .ModelId(todo.Id)
                         .Swap(SwapStrategy.OuterHTML)
