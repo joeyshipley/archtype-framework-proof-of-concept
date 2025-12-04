@@ -141,7 +141,7 @@ public record Form : ComponentBase, IBodyContent
     public Form Swap(SwapStrategy swap) => this with { ElementSwap = swap };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Form Children(params IComponent[] children)
+    public new Form Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);

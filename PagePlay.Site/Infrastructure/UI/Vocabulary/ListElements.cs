@@ -39,7 +39,7 @@ public record List : ComponentBase, IBodyContent
     public List Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public List Children(params IComponent[] children)
+    public new List Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -87,7 +87,7 @@ public record ListItem : ComponentBase
     public ListItem Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public ListItem Children(params IComponent[] children)
+    public new ListItem Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);

@@ -62,7 +62,7 @@ public record Stack : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Stack Children(params IComponent[] children)
+    public new Stack Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -91,7 +91,7 @@ public record Row : ComponentBase, IBodyContent, IFooterContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Row Children(params IComponent[] children)
+    public new Row Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -122,7 +122,7 @@ public record Grid : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Grid Children(params IComponent[] children)
+    public new Grid Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);

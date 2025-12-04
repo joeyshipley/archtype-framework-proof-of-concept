@@ -52,6 +52,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
     private Form renderCreateFormContent() =>
         new Form()
             .Action("/interaction/todos/create")
+            .Swap(SwapStrategy.None)
             .Children(
                 new Row(For.Items,
                     new Input()
@@ -106,6 +107,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
                     // Toggle form with checkbox button
                     new Form()
                         .Action("/interaction/todos/toggle")
+                        .Swap(SwapStrategy.None)
                         .Children(
                             new Input()
                                 .Name("id")
@@ -119,7 +121,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
                     new Button(Importance.Ghost, "×")
                         .Action("/interaction/todos/delete")
                         .ModelId(todo.Id)
-                        .Swap(SwapStrategy.OuterHTML)
+                        .Swap(SwapStrategy.None)
                 )
             );
 

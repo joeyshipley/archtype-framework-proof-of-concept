@@ -28,7 +28,10 @@ public class CreateTodoInteraction(
 
     protected override IResult RenderError(string message)
     {
+        // Return empty main content (to prevent form replacement) + OOB notification
         var errorHtml = Page.RenderErrorNotification(message);
-        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+        var mainContent = ""; // Empty keeps form unchanged
+        var oobNotification = HtmlFragment.InjectOob(errorHtml);
+        return Results.Content(mainContent + oobNotification, "text/html");
     }
 }

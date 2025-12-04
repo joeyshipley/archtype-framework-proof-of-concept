@@ -32,12 +32,17 @@ public class DeleteTodoInteraction(
         // For now, we'll use the generic error handling until the TODO above is addressed
         var errorMessage = errors.FirstOrDefault()?.Message ?? "Failed to delete todo";
         var errorHtml = Page.RenderErrorNotification(errorMessage);
-        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+        var mainContent = ""; // Empty keeps button unchanged
+        var oobNotification = HtmlFragment.InjectOob(errorHtml);
+        return Results.Content(mainContent + oobNotification, "text/html");
     }
 
     protected override IResult RenderError(string message)
     {
+        // Return empty main content (to prevent button replacement) + OOB notification
         var errorHtml = Page.RenderErrorNotification(message);
-        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+        var mainContent = ""; // Empty keeps button unchanged
+        var oobNotification = HtmlFragment.InjectOob(errorHtml);
+        return Results.Content(mainContent + oobNotification, "text/html");
     }
 }

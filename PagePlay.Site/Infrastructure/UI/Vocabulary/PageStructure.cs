@@ -22,7 +22,7 @@ public record Page : ComponentBase
     public Page Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Page Children(params IComponent[] children)
+    public new Page Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -52,7 +52,7 @@ public record Section : ComponentBase, IBodyContent
     public Section Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public Section Children(params IComponent[] children)
+    public new Section Children(params IComponent[] children)
     {
         foreach (var child in children)
             Add(child);
