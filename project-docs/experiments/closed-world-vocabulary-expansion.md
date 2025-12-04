@@ -1749,7 +1749,7 @@ new Dialog()
 **Status:** ✅ Complete
 **Goal:** Fix architectural layering of OOB (Out-of-Band) response composition
 **Completed:** 2025-12-04
-**Commit:** (pending)
+**Commit:** `fd52891`
 
 **Context:**
 
