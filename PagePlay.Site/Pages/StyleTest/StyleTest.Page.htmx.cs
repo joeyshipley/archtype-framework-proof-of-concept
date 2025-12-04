@@ -69,31 +69,41 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
                         new Button(Importance.Primary, "Get Random Number")
                             .Action("/interaction/style-test/random")
                             .Id("random-number-button")
-                            .Target("#random-result")
                             .ModelId(0)
+                    ),
+                // Result container for OOB updates
+                new Card()
+                    .Header(
+                        new Text("Result")
+                    )
+                    .Body(
+                        new Section()
+                            .Id("random-result")
+                            .Children(
+                                new Text("Click the button above to see a random number appear here.")
+                            )
                     )
             )
         };
 
-        var pageHtml = _renderer.Render(page);
-
-        // Add result container (not in vocabulary yet, so raw HTML for now)
-        return pageHtml + "\n<div id=\"random-result\"></div>";
+        return _renderer.Render(page);
     }
 
-    public string RenderRandomNumber(int number)
-    {
-        var content = new Stack(For.Content,
-            new Text($"Random Number: {number}")
+    public string RenderRandomNumber(int number) =>
+        _renderer.Render(
+            new Section()
+                .Id("random-result")
+                .Children(
+                    new Text($"Random Number: {number}")
+                )
         );
-        return _renderer.Render(content);
-    }
 
-    public string RenderError(string message)
-    {
-        var content = new Stack(For.Content,
-            new Text($"Error: {message}")
+    public string RenderError(string message) =>
+        _renderer.Render(
+            new Section()
+                .Id("random-result")
+                .Children(
+                    new Alert($"Error: {message}", AlertTone.Critical)
+                )
         );
-        return _renderer.Render(content);
-    }
 }

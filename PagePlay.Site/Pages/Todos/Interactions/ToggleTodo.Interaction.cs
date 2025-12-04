@@ -24,10 +24,8 @@ public class ToggleTodoInteraction(
 
     protected override IResult RenderError(string message)
     {
-        // Return empty main content (to prevent form replacement) + OOB notification
+        // Only return error notification OOB - checkbox stays as-is
         var errorHtml = Page.RenderErrorNotification(message);
-        var mainContent = ""; // Empty keeps form unchanged
-        var oobNotification = HtmlFragment.InjectOob(errorHtml);
-        return Results.Content(mainContent + oobNotification, "text/html");
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
     }
 }

@@ -20,18 +20,15 @@ public class CreateTodoInteraction(
 
     protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
     {
-        // BuildHtmlFragmentResult combines main content + OOB component updates
-        // We pass the form reset as main content, framework adds component OOB automatically
+        // Framework OOB updates component, plus manual form reset OOB
         var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
-        return await BuildHtmlFragmentResult(formReset);
+        return await BuildOobResultWith(formReset);
     }
 
     protected override IResult RenderError(string message)
     {
-        // Return empty main content (to prevent form replacement) + OOB notification
+        // Only return error notification OOB - form stays as-is with user's values
         var errorHtml = Page.RenderErrorNotification(message);
-        var mainContent = ""; // Empty keeps form unchanged
-        var oobNotification = HtmlFragment.InjectOob(errorHtml);
-        return Results.Content(mainContent + oobNotification, "text/html");
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
     }
 }

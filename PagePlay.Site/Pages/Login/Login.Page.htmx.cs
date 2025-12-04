@@ -7,8 +7,8 @@ public interface ILoginPageView
 {
     string RenderPage();
     string RenderLoginForm();
-    string RenderError(string error);
-    string RenderSuccess(string message);
+    string RenderErrorNotification(string error);
+    string RenderSuccessNotification(string message);
 }
 
 public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
@@ -29,17 +29,23 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
         return _renderer.Render(form);
     }
 
-    public string RenderError(string error)
-    {
-        var alert = new Alert(error, AlertTone.Critical);
-        return _renderer.Render(alert);
-    }
+    public string RenderErrorNotification(string error) =>
+        _renderer.Render(
+            new Section()
+                .Id("notifications")
+                .Children(
+                    new Alert(error, AlertTone.Critical)
+                )
+        );
 
-    public string RenderSuccess(string message)
-    {
-        var alert = new Alert(message, AlertTone.Positive);
-        return _renderer.Render(alert);
-    }
+    public string RenderSuccessNotification(string message) =>
+        _renderer.Render(
+            new Section()
+                .Id("notifications")
+                .Children(
+                    new Alert(message, AlertTone.Positive)
+                )
+        );
 
     private Section renderLoginFormComponent() =>
         new Section()
@@ -47,7 +53,6 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
             .Children(
                 new Form()
                     .Action("/interaction/login/authenticate")
-                    .Swap(SwapStrategy.None)
                     .Children(
                         new Stack(For.Fields)
                             .Children(

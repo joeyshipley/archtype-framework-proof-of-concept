@@ -114,6 +114,7 @@ public record Field : ComponentBase, IBodyContent
 
 /// <summary>
 /// Form - Form container with HTMX support for server interactions.
+/// Default swap strategy is None (OOB-only architecture) - forms use pure OOB updates by default.
 /// </summary>
 public record Form : ComponentBase, IBodyContent
 {
@@ -121,7 +122,7 @@ public record Form : ComponentBase, IBodyContent
     public string ElementMethod { get; init; } = "post";
     public string ElementId { get; init; }
     public string ElementTarget { get; init; }
-    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.None;
 
     // Fluent builder methods
 
@@ -152,6 +153,7 @@ public record Form : ComponentBase, IBodyContent
 /// <summary>
 /// Checkbox - Checkbox input with HTMX support for interactive toggles.
 /// Can be used in traditional forms or with HTMX for immediate server interaction.
+/// Default swap strategy is None (OOB-only architecture) - checkboxes use pure OOB updates by default.
 /// </summary>
 public record Checkbox : IFieldContent, IBodyContent
 {
@@ -164,7 +166,7 @@ public record Checkbox : IFieldContent, IBodyContent
     // HTMX support for interactive checkboxes (e.g., todo toggle)
     public string ElementAction { get; init; }
     public string ElementTarget { get; init; }
-    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.None;
     public long? ElementModelId { get; init; }
 
     public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();

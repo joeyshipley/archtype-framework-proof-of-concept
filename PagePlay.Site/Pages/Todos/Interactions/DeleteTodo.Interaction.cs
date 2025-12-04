@@ -21,7 +21,8 @@ public class DeleteTodoInteraction(
 
     protected override async Task<IResult> OnSuccess(DeleteTodoWorkflowResponse response)
     {
-        return await BuildHtmlFragmentResult();
+        // Pure framework OOB - component updates automatically based on Mutates
+        return await BuildOobResult();
     }
 
     // TODO: fetch the task from DB and send back a row with error state instead of using OH NOES!!! in html
@@ -32,17 +33,13 @@ public class DeleteTodoInteraction(
         // For now, we'll use the generic error handling until the TODO above is addressed
         var errorMessage = errors.FirstOrDefault()?.Message ?? "Failed to delete todo";
         var errorHtml = Page.RenderErrorNotification(errorMessage);
-        var mainContent = ""; // Empty keeps button unchanged
-        var oobNotification = HtmlFragment.InjectOob(errorHtml);
-        return Results.Content(mainContent + oobNotification, "text/html");
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
     }
 
     protected override IResult RenderError(string message)
     {
-        // Return empty main content (to prevent button replacement) + OOB notification
+        // Only return error notification OOB - delete button stays as-is
         var errorHtml = Page.RenderErrorNotification(message);
-        var mainContent = ""; // Empty keeps button unchanged
-        var oobNotification = HtmlFragment.InjectOob(errorHtml);
-        return Results.Content(mainContent + oobNotification, "text/html");
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
     }
 }

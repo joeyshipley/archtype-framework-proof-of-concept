@@ -1,5 +1,6 @@
 using PagePlay.Site.Application.StyleTest.GetRandomNumber;
 using PagePlay.Site.Infrastructure.Web.Framework;
+using PagePlay.Site.Infrastructure.Web.Html;
 using PagePlay.Site.Infrastructure.Web.Pages;
 
 namespace PagePlay.Site.Pages.StyleTest.Interactions;
@@ -14,12 +15,17 @@ public class GetRandomNumberInteraction(
     protected override string RouteAction => "random";
     protected override bool RequireAuth => false;
 
-    protected override async Task<IResult> OnSuccess(GetRandomNumberWorkflowResponse response)
+    protected override Task<IResult> OnSuccess(GetRandomNumberWorkflowResponse response)
     {
-        var content = Page.RenderRandomNumber(response.Number);
-        return await BuildHtmlFragmentResult(content);
+        // OOB-only pattern - update result section with random number
+        var resultHtml = Page.RenderRandomNumber(response.Number);
+        return Task.FromResult(BuildOobOnly(HtmlFragment.InjectOob(resultHtml)));
     }
 
-    protected override IResult RenderError(string message) =>
-        Results.Content(Page.RenderError(message), "text/html");
+    protected override IResult RenderError(string message)
+    {
+        // OOB-only pattern - update result section with error
+        var errorHtml = Page.RenderError(message);
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
+    }
 }

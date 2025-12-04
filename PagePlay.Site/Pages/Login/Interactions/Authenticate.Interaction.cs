@@ -28,7 +28,7 @@ public class AuthenticateInteraction(
     protected override IResult RenderError(string message)
     {
         // Only return error notification OOB - form stays as-is with user's values
-        var errorNotification = HtmlFragment.WithOob("notifications", Page.RenderError(message));
-        return Results.Content(errorNotification, "text/html");
+        var errorHtml = Page.RenderErrorNotification(message);
+        return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
     }
 }

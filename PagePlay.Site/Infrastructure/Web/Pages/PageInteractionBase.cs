@@ -57,6 +57,7 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
     /// Use this only when you need explicit control over targeted content.
     /// </summary>
     /// <param name="mainContent">HTML to return as main response (targeted via hx-target)</param>
+    [Obsolete("Use BuildOobResult() or BuildOobResultWith() for OOB-only architecture. Target-based swaps are discouraged.")]
     protected async Task<IResult> BuildHtmlFragmentResult(string mainContent = null)
     {
         var oobHtml = await OobHtml();
@@ -76,7 +77,37 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
         var oobHtml = await OobHtml();
         return Results.Content(oobHtml, "text/html");
     }
-    
+
+    /// <summary>
+    /// Builds a result containing only OOB content (no target swap).
+    /// Hides the empty string hack - HTMX needs empty main content when only OOB updates are sent.
+    /// Use this for error responses that show notifications via OOB but don't update the triggering element.
+    /// </summary>
+    /// <param name="oobHtml">HTML with hx-swap-oob="true" attributes</param>
+    protected IResult BuildOobOnly(string oobHtml)
+    {
+        // Empty main content tells HTMX to ignore target swap (when SwapStrategy.None is set)
+        // Only the OOB updates are processed
+        var mainContent = "";
+        return Results.Content(mainContent + oobHtml, "text/html");
+    }
+
+    /// <summary>
+    /// Builds a result combining framework component OOB updates with additional manual OOB fragments.
+    /// Use this when you need both automatic component updates (from Mutates) and custom OOB content.
+    /// Example: Form reset after successful creation, where the created item is handled by framework OOB.
+    /// </summary>
+    /// <param name="oobFragments">Additional HTML fragments with hx-swap-oob="true" attributes</param>
+    protected async Task<IResult> BuildOobResultWith(params string[] oobFragments)
+    {
+        var frameworkOob = await OobHtml();
+        var manualOob = string.Join("\n", oobFragments);
+        var combinedOob = string.IsNullOrEmpty(frameworkOob)
+            ? manualOob
+            : frameworkOob + "\n" + manualOob;
+        return Results.Content(combinedOob, "text/html");
+    }
+
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var builder = endpoints.MapPost(

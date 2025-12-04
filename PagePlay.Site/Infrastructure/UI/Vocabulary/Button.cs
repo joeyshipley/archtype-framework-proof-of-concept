@@ -41,6 +41,7 @@ public enum ButtonType
 /// <summary>
 /// Button - Interactive element for user actions.
 /// Can appear in Header, Footer, or Field slots.
+/// Default swap strategy is None (OOB-only architecture) - buttons use pure OOB updates by default.
 /// </summary>
 public record Button : IHeaderContent, IFooterContent, IFieldContent
 {
@@ -61,7 +62,7 @@ public record Button : IHeaderContent, IFooterContent, IFieldContent
     public string ElementAction { get; init; }
     public string ElementId { get; init; }
     public string ElementTarget { get; init; }
-    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.InnerHTML;
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.None;
     public long? ElementModelId { get; init; }
 
     public Button(Importance importance, string label)
