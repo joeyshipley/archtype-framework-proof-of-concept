@@ -50,22 +50,6 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
         Page = page;
         _framework = framework;
     }
-    
-    /// <summary>
-    /// Builds a result containing targeted HTML content plus OOB component updates.
-    /// Traditional pattern - prefer BuildOobResult() for component-first architecture.
-    /// Use this only when you need explicit control over targeted content.
-    /// </summary>
-    /// <param name="mainContent">HTML to return as main response (targeted via hx-target)</param>
-    [Obsolete("Use BuildOobResult() or BuildOobResultWith() for OOB-only architecture. Target-based swaps are discouraged.")]
-    protected async Task<IResult> BuildHtmlFragmentResult(string mainContent = null)
-    {
-        var oobHtml = await OobHtml();
-        var combinedHtml = string.IsNullOrEmpty(mainContent)
-            ? oobHtml
-            : mainContent + "\n" + oobHtml;
-        return Results.Content(combinedHtml, "text/html");
-    }
 
     /// <summary>
     /// Builds a result containing only OOB component updates based on declared mutations.
