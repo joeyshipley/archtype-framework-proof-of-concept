@@ -2011,9 +2011,10 @@ This keeps vocabulary reusable across different transport mechanisms (HTTP, WebS
 ---
 
 ### Phase 4.6: Unified OOB-Only Architecture
-**Status:** 🔲 Not Started
+**Status:** ✅ Complete
 **Goal:** Eliminate target-based swaps entirely, unify all interactions to use pure OOB pattern
-**Estimated Effort:** 3-4 hours
+**Completed:** 2025-12-04
+**Commits:** `2fb5573`, `080e596`
 
 **Context:**
 
@@ -2065,46 +2066,48 @@ Phase 4.5 revealed we have **5 different patterns** across 5 interactions for re
 #### Tasks
 
 **1. Update Form/Button Vocabulary Defaults**
-- [ ] Change Form default swap from `innerHTML` to `None`
-- [ ] Change Button default swap from `innerHTML` to `None`
-- [ ] Remove all explicit `.Swap(SwapStrategy.None)` from pages (now redundant)
-- [ ] Document: "Forms/buttons use OOB-only by default - no target swaps"
+- [x] Change Form default swap from `innerHTML` to `None`
+- [x] Change Button default swap from `innerHTML` to `None`
+- [x] Change Checkbox default swap from `innerHTML` to `None`
+- [x] Remove all explicit `.Swap(SwapStrategy.None)` from pages (4 occurrences removed)
+- [x] Document: "Forms/buttons use OOB-only by default - no target swaps"
 
 **2. Create Unified OOB Helper API**
-- [ ] Add `BuildOobOnly(string oobHtml)` to PageInteractionBase
+- [x] Add `BuildOobOnly(string oobHtml)` to PageInteractionBase
   - Hides empty string hack: `return Results.Content("" + oobHtml, "text/html")`
-- [ ] Add `BuildOobResultWith(params string[] oobFragments)` to PageInteractionBase
+- [x] Add `BuildOobResultWith(params string[] oobFragments)` to PageInteractionBase
   - Combines framework component OOB + manual OOB fragments
   - `return Results.Content(await OobHtml() + string.Join("\n", oobFragments), "text/html")`
-- [ ] Mark `BuildHtmlFragmentResult()` as `[Obsolete]` with message
+- [x] Mark `BuildHtmlFragmentResult()` as `[Obsolete]` with message (then removed entirely)
   - "Use BuildOobResult() or BuildOobResultWith() for OOB-only architecture"
 
 **3. Standardize Page Layer OOB Methods**
-- [ ] Update Login to match Todos pattern:
+- [x] Update Login to match Todos pattern:
   - Change `RenderError()` to `RenderErrorNotification()` with Section wrapper
+  - Change `RenderSuccess()` to `RenderSuccessNotification()` with Section wrapper
   - Ensures consistent structure across pages
-- [ ] Keep InjectOob pattern (page renders Section with id, interaction adds OOB)
-- [ ] Remove WithOob usage (wrapping pattern less semantic)
+- [x] Keep InjectOob pattern (page renders Section with id, interaction adds OOB)
+- [x] Remove WithOob usage (wrapping pattern less semantic)
 
 **4. Update All Interactions to Unified Pattern**
 
 Success Paths:
-- [ ] **ToggleTodo**: Keep `BuildOobResult()` (already correct)
-- [ ] **CreateTodo**: Change to `BuildOobResultWith(formReset)`
-- [ ] **DeleteTodo**: Change to `BuildOobResult()` (no extra OOB needed)
-- [ ] **Login**: Keep `Results.Ok()` + redirect (special case is fine)
-- [ ] **StyleTest**: Convert to OOB pattern or add as example to deprecate
+- [x] **ToggleTodo**: Keep `BuildOobResult()` (already correct)
+- [x] **CreateTodo**: Change to `BuildOobResultWith(formReset)`
+- [x] **DeleteTodo**: Change to `BuildOobResult()` (no extra OOB needed)
+- [x] **Login**: Keep `Results.Ok()` + redirect (special case is fine)
+- [x] **StyleTest**: Convert to OOB pattern (complete with result Card)
 
 Error Paths:
-- [ ] **All interactions**: Use `BuildOobOnly(HtmlFragment.InjectOob(Page.RenderErrorNotification(message)))`
-- [ ] Remove all empty string hacks
-- [ ] One-liner error returns
+- [x] **All interactions**: Use `BuildOobOnly(HtmlFragment.InjectOob(Page.RenderErrorNotification(message)))`
+- [x] Remove all empty string hacks
+- [x] One-liner error returns
 
 **5. Update Documentation**
-- [ ] Add architecture decision doc: "Why OOB-Only"
-- [ ] Update interaction base class comments
-- [ ] Add examples of correct patterns
-- [ ] Document migration path from old patterns
+- [x] Add XML comments to vocabulary explaining OOB-only defaults
+- [x] Add XML comments to helper methods explaining usage
+- [x] Examples of correct patterns in Before/After section
+- [ ] Add architecture decision doc: "Why OOB-Only" (deferred to Phase 6)
 
 ---
 
@@ -2177,17 +2180,54 @@ new Form()
 
 #### Success Criteria
 
-- [ ] Forms and Buttons default to `SwapStrategy.None`
-- [ ] All explicit `.Swap(SwapStrategy.None)` removed from pages (4+ occurrences)
-- [ ] `BuildOobOnly()` helper added to base class
-- [ ] `BuildOobResultWith()` helper added to base class
-- [ ] `BuildHtmlFragmentResult()` marked `[Obsolete]`
-- [ ] Zero empty string hacks visible in interactions
-- [ ] All 5 interactions updated to unified pattern
-- [ ] Login `RenderErrorNotification()` matches Todos structure
-- [ ] Zero uses of `HtmlFragment.WithOob()` (remove or mark obsolete)
-- [ ] Build succeeds with zero errors
-- [ ] All manual tests pass (login, todos create/toggle/delete, errors)
+- [x] Forms and Buttons default to `SwapStrategy.None`
+- [x] All explicit `.Swap(SwapStrategy.None)` removed from pages (4 occurrences removed)
+- [x] `BuildOobOnly()` helper added to base class
+- [x] `BuildOobResultWith()` helper added to base class
+- [x] `BuildHtmlFragmentResult()` removed entirely (was marked obsolete, then deleted)
+- [x] Zero empty string hacks visible in interactions
+- [x] All 5 interactions updated to unified pattern (including StyleTest!)
+- [x] Login `RenderErrorNotification()` matches Todos structure
+- [x] Zero uses of `HtmlFragment.WithOob()` (removed from Login interaction)
+- [x] Build succeeds with zero errors, zero warnings
+- [x] All manual tests pass (login, todos create/toggle/delete, errors, StyleTest)
+
+---
+
+#### Results
+
+**Files Modified:** 11 total
+- 3 vocabulary files (Button.cs, FormElements.cs - Form + Checkbox)
+- 1 framework file (PageInteractionBase.cs)
+- 2 Login files (Login.Page.htmx.cs, Authenticate.Interaction.cs)
+- 2 StyleTest files (StyleTest.Page.htmx.cs, GetRandomNumber.Interaction.cs)
+- 3 Todos interaction files (CreateTodo, ToggleTodo, DeleteTodo)
+
+**Patterns Unified:**
+- Before: 5 different patterns across codebase
+- After: 3 clear, consistent patterns
+
+**Pattern Usage:**
+1. `BuildOobResult()` - ToggleTodo, DeleteTodo (pure framework OOB)
+2. `BuildOobResultWith()` - CreateTodo (framework + form reset)
+3. `BuildOobOnly()` - All error handlers, StyleTest success
+
+**Architectural Impact:**
+- ✅ SwapStrategy.None is now the default for all interactive elements
+- ✅ Empty string hack completely hidden from developers
+- ✅ Target-based swaps eliminated from entire codebase
+- ✅ All pages (Login, Todos, StyleTest) follow same patterns
+- ✅ Method naming standardized (`RenderErrorNotification`)
+- ✅ HtmlFragment utility unified on `InjectOob()` pattern
+
+**Build Status:**
+- 0 errors
+- 0 warnings
+- All interactions compile cleanly
+- No obsolete API usage remaining
+
+**Blocked By:** Phase 4.5
+**Blocks:** Phase 6
 
 ---
 
@@ -2626,10 +2666,11 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 
 ---
 
-**Document Version:** 2.3
+**Document Version:** 2.4
 **Last Updated:** 2025-12-04
 **Maintained By:** Development Team
 **Changelog:**
+- v2.4 (2025-12-04): Phase 4.6 complete - Unified OOB-Only Architecture (11 files modified, 3 unified patterns, zero warnings, commits 2fb5573 + 080e596)
 - v2.3 (2025-12-04): Phase 4.6 planned - Unified OOB-Only Architecture (eliminate all target swaps, default SwapStrategy.None, hide implementation details)
 - v2.2 (2025-12-04): Phase 4.5 SwapStrategy fix - Added `.Swap(SwapStrategy.None)` to resolve element disappearance on errors (commit eb0df3b)
 - v2.1 (2025-12-04): Phase 4.5 complete - OOB architectural layering fixed (4 files modified, build successful, commit fd52891)
