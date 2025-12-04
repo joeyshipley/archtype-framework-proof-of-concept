@@ -5,6 +5,7 @@ using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Mutations;
+using PagePlay.Site.Infrastructure.Web.Html;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
@@ -30,9 +31,13 @@ public class DeleteTodoInteraction(
         // DeleteTodo needs the request ID to render the error state properly
         // For now, we'll use the generic error handling until the TODO above is addressed
         var errorMessage = errors.FirstOrDefault()?.Message ?? "Failed to delete todo";
-        return Results.Content(Page.RenderErrorNotification(errorMessage), "text/html");
+        var errorHtml = Page.RenderErrorNotification(errorMessage);
+        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
     }
 
-    protected override IResult RenderError(string message) =>
-        Results.Content(Page.RenderErrorNotification(message), "text/html");
+    protected override IResult RenderError(string message)
+    {
+        var errorHtml = Page.RenderErrorNotification(message);
+        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+    }
 }

@@ -3,6 +3,7 @@ using PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Mutations;
+using PagePlay.Site.Infrastructure.Web.Html;
 
 namespace PagePlay.Site.Pages.Todos.Interactions;
 
@@ -21,6 +22,9 @@ public class ToggleTodoInteraction(
         return await BuildOobResult();
     }
 
-    protected override IResult RenderError(string message) =>
-        Results.Content(Page.RenderErrorNotification(message), "text/html");
+    protected override IResult RenderError(string message)
+    {
+        var errorHtml = Page.RenderErrorNotification(message);
+        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+    }
 }

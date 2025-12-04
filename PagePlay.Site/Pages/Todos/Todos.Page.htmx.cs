@@ -12,7 +12,6 @@ public interface ITodosPageView
     string RenderCreateForm();
     string RenderTodoList(List<TodoListEntry> todos);
     string RenderTodoItem(TodoListEntry todo);
-    string RenderSuccessfulTodoCreation(TodoListEntry todo);
     string RenderError(string error);
     string RenderErrorNotification(string error);
     string RenderDeleteErrorWithNotification(long todoId, string error);
@@ -127,34 +126,19 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
     public string RenderTodoItem(TodoListEntry todo) =>
         _renderer.Render(renderTodoItemComponent(todo));
 
-    public string RenderSuccessfulTodoCreation(TodoListEntry todo)
-    {
-        var newTodoItem = RenderTodoItem(todo);
-
-        var resetForm = renderCreateFormComponent();
-        var resetFormHtml = _renderer.Render(resetForm)
-            .Replace("<div", "<div hx-swap-oob=\"true\"");
-
-        return newTodoItem + resetFormHtml;
-    }
-
     public string RenderError(string error) =>
         _renderer.Render(
             new Alert(error, AlertTone.Critical)
         );
 
-    public string RenderErrorNotification(string error)
-    {
-        var notification = new Section()
-            .Id("notifications")
-            .Children(
-                new Alert(error, AlertTone.Critical)
-            );
-
-        // Render with OOB swap attribute
-        return _renderer.Render(notification)
-            .Replace("<div", "<div hx-swap-oob=\"true\"");
-    }
+    public string RenderErrorNotification(string error) =>
+        _renderer.Render(
+            new Section()
+                .Id("notifications")
+                .Children(
+                    new Alert(error, AlertTone.Critical)
+                )
+        );
 
     public string RenderDeleteErrorWithNotification(long todoId, string error)
     {

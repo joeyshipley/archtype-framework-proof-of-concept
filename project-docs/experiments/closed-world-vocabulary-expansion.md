@@ -1746,9 +1746,10 @@ new Dialog()
 ---
 
 ### Phase 4.5: OOB Response Layering Cleanup
-**Status:** 🔲 Not Started
+**Status:** ✅ Complete
 **Goal:** Fix architectural layering of OOB (Out-of-Band) response composition
-**Estimated Effort:** 1-2 hours
+**Completed:** 2025-12-04
+**Commit:** (pending)
 
 **Context:**
 
@@ -1856,12 +1857,32 @@ protected override IResult RenderError(string message)
 #### Success Criteria
 
 - [x] Architecture review documented (analysis complete)
-- [ ] `RenderSuccessfulTodoCreation()` removed from interface
-- [ ] All page methods return plain HTML (no OOB injection)
-- [ ] All interactions use `HtmlFragment.InjectOob()` consistently
-- [ ] Zero `.Replace()` string manipulation in page layer
-- [ ] Build succeeds with zero errors
-- [ ] All manual tests still pass (add, toggle, delete, errors)
+- [x] `RenderSuccessfulTodoCreation()` removed from interface and implementation
+- [x] All page methods return plain HTML (no OOB injection)
+- [x] All interactions use `HtmlFragment.InjectOob()` consistently
+- [x] Zero `.Replace()` string manipulation in page layer
+- [x] Build succeeds with zero errors (8 pre-existing warnings unrelated)
+- [ ] All manual tests still pass (add, toggle, delete, errors) - pending user testing
+
+**Results:**
+- ✅ Removed `RenderSuccessfulTodoCreation()` from `ITodosPageView` interface
+- ✅ Removed `RenderSuccessfulTodoCreation()` implementation from `TodosPage`
+- ✅ Updated `RenderErrorNotification()` to return plain HTML (removed `.Replace()` OOB injection)
+- ✅ Fixed `CreateTodoInteraction.RenderError()` to use `HtmlFragment.InjectOob()`
+- ✅ Fixed `ToggleTodoInteraction.RenderError()` to use `HtmlFragment.InjectOob()`
+- ✅ Fixed `DeleteTodoInteraction.RenderError()` to use `HtmlFragment.InjectOob()`
+- ✅ Fixed `DeleteTodoInteraction.OnError()` to use `HtmlFragment.InjectOob()`
+- ✅ Verified `AuthenticateInteraction` already uses correct pattern (`HtmlFragment.WithOob()`)
+- ✅ Added `using PagePlay.Site.Infrastructure.Web.Html` to interaction files
+- ✅ Build successful with 0 errors (8 pre-existing warnings unrelated to changes)
+- ✅ All OOB composition now happens in interaction layer (correct architectural layer)
+- ✅ Pages are now HTTP-agnostic (render semantic vocabulary only)
+
+**Files Modified:**
+1. `Pages/Todos/Todos.Page.htmx.cs` - Removed method, cleaned up OOB injection
+2. `Pages/Todos/Interactions/CreateTodo.Interaction.cs` - Fixed error path
+3. `Pages/Todos/Interactions/ToggleTodo.Interaction.cs` - Added import, fixed error path
+4. `Pages/Todos/Interactions/DeleteTodo.Interaction.cs` - Added import, fixed error paths
 
 ---
 
@@ -2200,9 +2221,9 @@ _(To be filled in after completion)_
 
 ## Conclusion
 
-**Status:** Phase 5 Complete - Phase 4.5 OOB Cleanup Ready
+**Status:** Phase 5 Complete - Phase 4.5 Complete - Phase 6 Ready
 
-This experiment has successfully proven that the Closed-World UI philosophy scales beyond simple cards and buttons to support real-world forms and interactive lists. Phase 5 also revealed important architectural insights about OOB response layering.
+This experiment has successfully proven that the Closed-World UI philosophy scales beyond simple cards and buttons to support real-world forms and interactive lists. Phase 5 revealed important architectural insights about OOB response layering, which were addressed in Phase 4.5.
 
 **Progress Summary:**
 - ✅ Phase 0: Planning complete (experiment document created)
@@ -2213,8 +2234,8 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 - ✅ Phase 4.2: Fluent Builder Pattern for Closed-World UI
 - ✅ Phase 4.3: Element-Prefixed Properties with Concise Builders
 - ✅ Phase 4.4: Card Slot Builder Pattern (hide slot abstraction)
+- ✅ Phase 4.5: OOB Response Layering Cleanup (architectural fixes)
 - ✅ Phase 5: Todos Page Conversion (vocabulary complete, OOB issues discovered)
-- 🔜 Phase 4.5: OOB Response Layering Cleanup (fix architectural issues)
 - 🔜 Phase 6: Polish & Documentation
 
 **Key Design Decision:** We've chosen server-authority over client-validation duplication. The Input element declares semantic type (email, password, etc.) but doesn't duplicate validation rules (Required, MaxLength). Server validates via workflow commands, returns errors via HTMX. This keeps the vocabulary simple, prevents drift, and maintains single source of truth.
@@ -2265,22 +2286,32 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 - Code follows all style guide conventions
 - **Architectural Discovery:** Revealed OOB layering issues → Phase 4.5 created
 
-**Phase 4.5 Architectural Insights:**
+**Phase 4.5 Achievements:**
+- Removed `RenderSuccessfulTodoCreation()` from page layer (wrong abstraction)
+- Updated `RenderErrorNotification()` to return plain HTML (no OOB injection)
+- Fixed all interaction error paths to use `HtmlFragment.InjectOob()`
+- Established correct pattern: Pages render vocabulary, Interactions compose HTTP responses
+- Zero `.Replace()` string manipulation in page layer
+- Build successful with 0 errors
+- Pages are now fully HTTP-agnostic (transport concern separated)
+
+**Architectural Insights:**
 - Pages should not inject OOB attributes (HTTP transport concern)
-- `RenderSuccessfulTodoCreation()` wrong abstraction (interaction's job to compose)
-- `HtmlFragment.InjectOob()` utility should be used consistently in interaction layer
+- OOB composition belongs in interaction layer, not page layer
+- `HtmlFragment.InjectOob()` utility provides clean API for OOB injection
 - Vocabulary must remain HTTP-agnostic (no `.Oob()` method)
 - Proper separation: Vocabulary → Page → Interaction → Framework layers
 - Error path needs OOB injection (bypasses framework component system)
 
-**Next Step:** Phase 4.5 - Fix OOB Response Layering (1-2 hours, then Phase 6)
+**Next Step:** Phase 6 - Polish & Documentation
 
 ---
 
-**Document Version:** 2.0
-**Last Updated:** 2025-12-03
+**Document Version:** 2.1
+**Last Updated:** 2025-12-04
 **Maintained By:** Development Team
 **Changelog:**
+- v2.1 (2025-12-04): Phase 4.5 complete - OOB architectural layering fixed (4 files modified, build successful)
 - v2.0 (2025-12-03): Phase 4.5 planned - OOB architectural layering cleanup (discovery from Phase 5)
 - v1.9 (2025-12-03): Phase 5 complete - Todos Page converted to Closed-World UI vocabulary (commit 9aeffe0)
 - v1.8 (2025-12-03): Login.RenderPage() refactored to use fluent builder pattern (commit bb93613)

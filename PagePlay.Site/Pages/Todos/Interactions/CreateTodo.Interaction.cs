@@ -26,6 +26,9 @@ public class CreateTodoInteraction(
         return await BuildHtmlFragmentResult(formReset);
     }
 
-    protected override IResult RenderError(string message) =>
-        Results.Content(Page.RenderErrorNotification(message), "text/html");
+    protected override IResult RenderError(string message)
+    {
+        var errorHtml = Page.RenderErrorNotification(message);
+        return Results.Content(HtmlFragment.InjectOob(errorHtml), "text/html");
+    }
 }
