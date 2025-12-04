@@ -2006,7 +2006,226 @@ This keeps vocabulary reusable across different transport mechanisms (HTTP, WebS
 ---
 
 **Blocked By:** Phase 4.4, Phase 5 (discovery)
-**Blocks:** Phase 5 completion
+**Blocks:** Phase 4.6
+
+---
+
+### Phase 4.6: Unified OOB-Only Architecture
+**Status:** 🔲 Not Started
+**Goal:** Eliminate target-based swaps entirely, unify all interactions to use pure OOB pattern
+**Estimated Effort:** 3-4 hours
+
+**Context:**
+
+Phase 4.5 revealed we have **5 different patterns** across 5 interactions for returning HTML responses. This creates confusion about which pattern to use and requires developers to understand HTMX swap mechanics.
+
+**Current Problems:**
+
+1. **Five Different Patterns Across Codebase:**
+   - ToggleTodo: `BuildOobResult()` (pure framework OOB)
+   - CreateTodo/DeleteTodo: `BuildHtmlFragmentResult(oobContent)` (confusing API)
+   - StyleTest: `BuildHtmlFragmentResult(targetContent)` (old target pattern)
+   - Login Success: `Results.Ok()` + redirect (special case)
+   - All Errors: Manual OOB with empty string hack
+
+2. **Two HtmlFragment Utilities:**
+   - Login uses `WithOob(id, content)` - wraps bare content
+   - Todos uses `InjectOob(html)` - injects into existing HTML
+   - Creates confusion about which to use when
+
+3. **SwapStrategy.None Required Everywhere:**
+   - Every form/button needs `.Swap(SwapStrategy.None)`
+   - Easy to forget, causes elements to disappear on errors
+   - Should be default, not opt-in
+
+4. **Empty String Hack Exposed:**
+   - All error paths: `var mainContent = ""; return Results.Content(mainContent + oob, ...)`
+   - Implementation detail developers shouldn't need to know
+   - Should be hidden in helper methods
+
+5. **Confusing API Names:**
+   - `BuildHtmlFragmentResult()` encourages target-based thinking
+   - "Fragment" implies main content + extras
+   - Doesn't communicate OOB-only intent
+
+**Architecture Vision:**
+
+**"Call action → Update based on changes"** - No targets, ever. Just mutations + OOB.
+
+**Proposed Solution:**
+
+1. **Default SwapStrategy.None** - Forms/buttons don't swap by default
+2. **Unified OOB API** - One way to return OOB content
+3. **Hide Empty String Hack** - Helper methods handle HTMX quirks
+4. **Deprecate Target Patterns** - Guide developers toward OOB-only
+5. **Standardize on InjectOob** - Page layer controls structure with ids
+
+---
+
+#### Tasks
+
+**1. Update Form/Button Vocabulary Defaults**
+- [ ] Change Form default swap from `innerHTML` to `None`
+- [ ] Change Button default swap from `innerHTML` to `None`
+- [ ] Remove all explicit `.Swap(SwapStrategy.None)` from pages (now redundant)
+- [ ] Document: "Forms/buttons use OOB-only by default - no target swaps"
+
+**2. Create Unified OOB Helper API**
+- [ ] Add `BuildOobOnly(string oobHtml)` to PageInteractionBase
+  - Hides empty string hack: `return Results.Content("" + oobHtml, "text/html")`
+- [ ] Add `BuildOobResultWith(params string[] oobFragments)` to PageInteractionBase
+  - Combines framework component OOB + manual OOB fragments
+  - `return Results.Content(await OobHtml() + string.Join("\n", oobFragments), "text/html")`
+- [ ] Mark `BuildHtmlFragmentResult()` as `[Obsolete]` with message
+  - "Use BuildOobResult() or BuildOobResultWith() for OOB-only architecture"
+
+**3. Standardize Page Layer OOB Methods**
+- [ ] Update Login to match Todos pattern:
+  - Change `RenderError()` to `RenderErrorNotification()` with Section wrapper
+  - Ensures consistent structure across pages
+- [ ] Keep InjectOob pattern (page renders Section with id, interaction adds OOB)
+- [ ] Remove WithOob usage (wrapping pattern less semantic)
+
+**4. Update All Interactions to Unified Pattern**
+
+Success Paths:
+- [ ] **ToggleTodo**: Keep `BuildOobResult()` (already correct)
+- [ ] **CreateTodo**: Change to `BuildOobResultWith(formReset)`
+- [ ] **DeleteTodo**: Change to `BuildOobResult()` (no extra OOB needed)
+- [ ] **Login**: Keep `Results.Ok()` + redirect (special case is fine)
+- [ ] **StyleTest**: Convert to OOB pattern or add as example to deprecate
+
+Error Paths:
+- [ ] **All interactions**: Use `BuildOobOnly(HtmlFragment.InjectOob(Page.RenderErrorNotification(message)))`
+- [ ] Remove all empty string hacks
+- [ ] One-liner error returns
+
+**5. Update Documentation**
+- [ ] Add architecture decision doc: "Why OOB-Only"
+- [ ] Update interaction base class comments
+- [ ] Add examples of correct patterns
+- [ ] Document migration path from old patterns
+
+---
+
+#### Before & After Examples
+
+**Before (5 Different Patterns):**
+
+```csharp
+// Pattern 1: Pure OOB (correct but not consistent)
+protected override async Task<IResult> OnSuccess(...) =>
+    await BuildOobResult();
+
+// Pattern 2: Hybrid (confusing API)
+protected override async Task<IResult> OnSuccess(...)
+{
+    var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
+    return await BuildHtmlFragmentResult(formReset); // Passing OOB as "main content"?
+}
+
+// Pattern 3: Target swap (old pattern)
+protected override async Task<IResult> OnSuccess(...)
+{
+    var content = Page.RenderRandomNumber(response.Number);
+    return await BuildHtmlFragmentResult(content); // Needs target element
+}
+
+// Pattern 4: All errors (verbose + exposed hack)
+protected override IResult RenderError(string message)
+{
+    var errorHtml = Page.RenderErrorNotification(message);
+    var mainContent = ""; // Empty string hack exposed!
+    var oobNotification = HtmlFragment.InjectOob(errorHtml);
+    return Results.Content(mainContent + oobNotification, "text/html");
+}
+
+// Pattern 5: Login errors (different HtmlFragment method)
+protected override IResult RenderError(string message)
+{
+    var errorNotification = HtmlFragment.WithOob("notifications", Page.RenderError(message));
+    return Results.Content(errorNotification, "text/html");
+}
+```
+
+**After (Unified OOB-Only):**
+
+```csharp
+// Success: Pure framework OOB
+protected override async Task<IResult> OnSuccess(...) =>
+    await BuildOobResult();
+
+// Success: Framework OOB + manual OOB (form reset)
+protected override async Task<IResult> OnSuccess(...)
+{
+    var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
+    return await BuildOobResultWith(formReset);
+}
+
+// Error: One-liner (hack hidden in helper)
+protected override IResult RenderError(string message) =>
+    BuildOobOnly(HtmlFragment.InjectOob(Page.RenderErrorNotification(message)));
+
+// View layer: No more .Swap() needed (defaults to None)
+new Form()
+    .Action("/interaction/todos/create")
+    // .Swap(SwapStrategy.None) ← Removed! Default now.
+    .Children(...)
+```
+
+---
+
+#### Success Criteria
+
+- [ ] Forms and Buttons default to `SwapStrategy.None`
+- [ ] All explicit `.Swap(SwapStrategy.None)` removed from pages (4+ occurrences)
+- [ ] `BuildOobOnly()` helper added to base class
+- [ ] `BuildOobResultWith()` helper added to base class
+- [ ] `BuildHtmlFragmentResult()` marked `[Obsolete]`
+- [ ] Zero empty string hacks visible in interactions
+- [ ] All 5 interactions updated to unified pattern
+- [ ] Login `RenderErrorNotification()` matches Todos structure
+- [ ] Zero uses of `HtmlFragment.WithOob()` (remove or mark obsolete)
+- [ ] Build succeeds with zero errors
+- [ ] All manual tests pass (login, todos create/toggle/delete, errors)
+
+---
+
+#### Design Rationale
+
+**Why OOB-Only?**
+
+1. **Simplicity**: One pattern for everything
+2. **Framework-First**: Mutations drive UI updates automatically
+3. **Declarative**: "These data changed" not "Replace this element"
+4. **Less HTMX**: No targets, no swap strategies to think about
+5. **Consistent**: Success and errors work the same way
+
+**Why Default to SwapStrategy.None?**
+
+- Every interaction in our app uses OOB updates only
+- No interactions need target-based swaps
+- Makes the common case (OOB-only) the default
+- If someone needs target swaps later, they can opt-in explicitly
+
+**Why Hide Empty String?**
+
+- HTMX implementation detail: needs something to ignore
+- Developers shouldn't need to know this quirk
+- Helper method encapsulates the pattern
+- Single source of truth for OOB-only responses
+
+**Why InjectOob Over WithOob?**
+
+- Page layer controls semantic structure (Section with id)
+- Interaction layer adds transport concern (OOB attribute)
+- Consistent with component rendering (components have ids)
+- Clear separation: Pages render structure, Interactions add behavior
+
+---
+
+**Blocked By:** Phase 4.5
+**Blocks:** Phase 6
 
 ---
 
@@ -2335,6 +2554,7 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 - ✅ Phase 4.4: Card Slot Builder Pattern (hide slot abstraction)
 - ✅ Phase 4.5: OOB Response Layering Cleanup (architectural fixes)
 - ✅ Phase 5: Todos Page Conversion (vocabulary complete, OOB issues discovered)
+- 🔜 Phase 4.6: Unified OOB-Only Architecture (eliminate target swaps, default SwapStrategy.None, hide empty string hack)
 - 🔜 Phase 6: Polish & Documentation
 
 **Key Design Decision:** We've chosen server-authority over client-validation duplication. The Input element declares semantic type (email, password, etc.) but doesn't duplicate validation rules (Required, MaxLength). Server validates via workflow commands, returns errors via HTMX. This keeps the vocabulary simple, prevents drift, and maintains single source of truth.
@@ -2406,10 +2626,11 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 
 ---
 
-**Document Version:** 2.2
+**Document Version:** 2.3
 **Last Updated:** 2025-12-04
 **Maintained By:** Development Team
 **Changelog:**
+- v2.3 (2025-12-04): Phase 4.6 planned - Unified OOB-Only Architecture (eliminate all target swaps, default SwapStrategy.None, hide implementation details)
 - v2.2 (2025-12-04): Phase 4.5 SwapStrategy fix - Added `.Swap(SwapStrategy.None)` to resolve element disappearance on errors (commit eb0df3b)
 - v2.1 (2025-12-04): Phase 4.5 complete - OOB architectural layering fixed (4 files modified, build successful, commit fd52891)
 - v2.0 (2025-12-03): Phase 4.5 planned - OOB architectural layering cleanup (discovery from Phase 5)
