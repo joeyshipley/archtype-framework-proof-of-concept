@@ -1749,7 +1749,7 @@ new Dialog()
 **Status:** ✅ Complete
 **Goal:** Fix architectural layering of OOB (Out-of-Band) response composition
 **Completed:** 2025-12-04
-**Commit:** `fd52891`
+**Commits:** `fd52891`, `eb0df3b`
 
 **Context:**
 
@@ -1861,8 +1861,8 @@ protected override IResult RenderError(string message)
 - [x] All page methods return plain HTML (no OOB injection)
 - [x] All interactions use `HtmlFragment.InjectOob()` consistently
 - [x] Zero `.Replace()` string manipulation in page layer
-- [x] Build succeeds with zero errors (8 pre-existing warnings unrelated)
-- [ ] All manual tests still pass (add, toggle, delete, errors) - pending user testing
+- [x] Build succeeds with zero errors (warnings resolved by user)
+- [x] All manual tests pass (add, toggle, delete, errors) - tested and verified
 
 **Results:**
 - ✅ Removed `RenderSuccessfulTodoCreation()` from `ITodosPageView` interface
@@ -1878,11 +1878,78 @@ protected override IResult RenderError(string message)
 - ✅ All OOB composition now happens in interaction layer (correct architectural layer)
 - ✅ Pages are now HTTP-agnostic (render semantic vocabulary only)
 
-**Files Modified:**
+**Files Modified (Initial Fix - commit fd52891):**
 1. `Pages/Todos/Todos.Page.htmx.cs` - Removed method, cleaned up OOB injection
 2. `Pages/Todos/Interactions/CreateTodo.Interaction.cs` - Fixed error path
 3. `Pages/Todos/Interactions/ToggleTodo.Interaction.cs` - Added import, fixed error path
 4. `Pages/Todos/Interactions/DeleteTodo.Interaction.cs` - Added import, fixed error paths
+
+---
+
+#### Post-Testing Discovery: HTMX SwapStrategy Issue
+
+**Issue Found During Manual Testing:**
+
+After Phase 4.5 initial fix, manual testing revealed that forms/buttons were disappearing on error:
+- Create form: Disappeared on validation error
+- Toggle button: Disappeared on error
+- Delete button: Disappeared on error
+- Error notifications correctly appeared at top via OOB
+
+**Root Cause Analysis:**
+
+HTMX was processing empty main content and swapping it into target elements:
+
+| Element | Swap Strategy | With Empty Content | Result |
+|---------|--------------|-------------------|---------|
+| Create form | `innerHTML` (default) | Replaces content with `""` | Form empties |
+| Toggle form | `innerHTML` (default) | Replaces content with `""` | Button disappears |
+| Delete button | `outerHTML` (explicit) | Replaces element with `""` | Button disappears |
+
+**The Pattern That Works (Login):**
+
+Login form already had the solution:
+```csharp
+new Form()
+    .Action("/interaction/login/authenticate")
+    .Swap(SwapStrategy.None)  // ← Key difference
+```
+
+`SwapStrategy.None` tells HTMX: "Don't swap any content into the triggering element, only process OOB updates."
+
+**The Fix (commit eb0df3b):**
+
+Added `SwapStrategy.None` to all three interactive elements in `Todos.Page.htmx.cs`:
+
+```csharp
+// Create form (line 55)
+new Form()
+    .Action("/interaction/todos/create")
+    .Swap(SwapStrategy.None)  // ← Added
+
+// Toggle form (line 110)
+new Form()
+    .Action("/interaction/todos/toggle")
+    .Swap(SwapStrategy.None)  // ← Added
+
+// Delete button (line 124)
+new Button(Importance.Ghost, "×")
+    .Action("/interaction/todos/delete")
+    .ModelId(todo.Id)
+    .Swap(SwapStrategy.None)  // ← Changed from OuterHTML
+```
+
+**Files Modified (SwapStrategy Fix - commit eb0df3b):**
+1. `Pages/Todos/Todos.Page.htmx.cs` - Added `.Swap(SwapStrategy.None)` to 3 elements
+2. `Pages/Todos/Interactions/*.cs` - Updated error responses (empty + OOB)
+3. Warning fixes (user contribution)
+
+**Final Results:**
+- ✅ Create error: Notification shows at top, form stays intact with user input
+- ✅ Toggle error: Notification shows at top, checkbox button stays visible
+- ✅ Delete error: Notification shows at top, delete button stays visible
+- ✅ All manual tests passing
+- ✅ Pattern consistent across Login, Create, Toggle, Delete
 
 ---
 
@@ -1895,6 +1962,38 @@ OOB is an HTTP transport concern, not semantic UI structure. Vocabulary should b
 - ✅ `Section().Id("notifications")` - Semantic structure (HTTP-agnostic)
 - ❌ `Section().Id("notifications").Oob(true)` - Couples to HTMX transport
 - ✅ `HtmlFragment.InjectOob(html)` - Transport layer utility (correct place)
+
+**Why use `SwapStrategy.None` for error-reporting interactions?**
+
+When an interaction only sends OOB updates (error notifications), the form/button should opt-out of content swapping:
+
+- ✅ `.Swap(SwapStrategy.None)` - "Only process OOB, don't touch me"
+- ❌ Default `innerHTML` swap - Element gets replaced with empty content
+- ❌ `outerHTML` swap - Element disappears entirely
+
+**Error Response Pattern:**
+
+```csharp
+// View: Opt out of content swapping
+new Form()
+    .Action("/interaction/...")
+    .Swap(SwapStrategy.None)  // Only process OOB updates
+
+// Interaction: Return empty main + OOB notification
+protected override IResult RenderError(string message)
+{
+    var errorHtml = Page.RenderErrorNotification(message);
+    var mainContent = ""; // Empty - HTMX ignores due to SwapStrategy.None
+    var oobNotification = HtmlFragment.InjectOob(errorHtml);
+    return Results.Content(mainContent + oobNotification, "text/html");
+}
+```
+
+This pattern:
+- Keeps form/button visible with user input
+- Shows error notification at top via OOB
+- Makes intent explicit in view layer
+- Matches Login form (already working)
 
 **Separation of concerns:**
 - **Vocabulary Layer**: Semantic UI types (Button, Form, Alert)
@@ -2307,11 +2406,12 @@ This experiment has successfully proven that the Closed-World UI philosophy scal
 
 ---
 
-**Document Version:** 2.1
+**Document Version:** 2.2
 **Last Updated:** 2025-12-04
 **Maintained By:** Development Team
 **Changelog:**
-- v2.1 (2025-12-04): Phase 4.5 complete - OOB architectural layering fixed (4 files modified, build successful)
+- v2.2 (2025-12-04): Phase 4.5 SwapStrategy fix - Added `.Swap(SwapStrategy.None)` to resolve element disappearance on errors (commit eb0df3b)
+- v2.1 (2025-12-04): Phase 4.5 complete - OOB architectural layering fixed (4 files modified, build successful, commit fd52891)
 - v2.0 (2025-12-03): Phase 4.5 planned - OOB architectural layering cleanup (discovery from Phase 5)
 - v1.9 (2025-12-03): Phase 5 complete - Todos Page converted to Closed-World UI vocabulary (commit 9aeffe0)
 - v1.8 (2025-12-03): Login.RenderPage() refactored to use fluent builder pattern (commit bb93613)
