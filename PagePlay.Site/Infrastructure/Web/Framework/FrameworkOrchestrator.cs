@@ -101,12 +101,16 @@ public class FrameworkOrchestrator(
             var component = _componentFactory.Create(componentInfo.ComponentType);
             if (component == null) continue;
 
-            var html = renderComponentWithMetadata(component, dataContext);
+            // Render raw component HTML first
+            var rawHtml = component.Render(dataContext);
 
-            // Insert hx-swap-oob attribute into the component's root element
-            var oobHtml = html.Replace($"id=\"{componentInfo.Id}\"", $"id=\"{componentInfo.Id}\" hx-swap-oob=\"true\"");
+            // Inject OOB attribute BEFORE metadata (ensures pattern match succeeds)
+            var oobHtml = rawHtml.Replace($"id=\"{componentInfo.Id}\"", $"id=\"{componentInfo.Id}\" hx-swap-oob=\"true\"");
 
-            updates.Add(oobHtml);
+            // Then inject metadata attributes (for next interaction's component context)
+            var finalHtml = injectMetadataAttributes(oobHtml, component);
+
+            updates.Add(finalHtml);
         }
 
         return string.Join("\n", updates);
@@ -151,7 +155,15 @@ public class FrameworkOrchestrator(
     private string renderComponentWithMetadata(IServerComponent component, IDataContext data)
     {
         var html = component.Render(data);
+        return injectMetadataAttributes(html, component);
+    }
 
+    /// <summary>
+    /// Injects data-component and data-domain attributes into the component's root element.
+    /// For static components (Dependencies.None), returns HTML unchanged.
+    /// </summary>
+    private string injectMetadataAttributes(string html, IServerComponent component)
+    {
         // No metadata needed for static components
         if (component.Dependencies == DataDependencies.None)
             return html;
