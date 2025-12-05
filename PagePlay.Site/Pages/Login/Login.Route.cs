@@ -1,5 +1,6 @@
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Infrastructure.Web.Components;
+using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Login;
@@ -9,6 +10,7 @@ public interface ILoginPageInteraction : IEndpoint {}
 public class LoginPageEndpoints(
     IPageLayout _layout,
     LoginPage _page,
+    IFrameworkOrchestrator _framework,
     IEnumerable<ILoginPageInteraction> _interactions
 ) : IClientEndpoint
 {
@@ -18,10 +20,11 @@ public class LoginPageEndpoints(
     {
         endpoints.MapGet(PAGE_ROUTE, async () =>
         {
-            var ctx = DataContext.Empty();
-            var bodyContent = ((IServerComponent)_page).Render(ctx);
+            // Framework handles data loading and metadata injection
+            var components = new IServerComponent[] { _page };
+            var renderedComponents = await _framework.RenderComponentsAsync(components);
+            var bodyContent = renderedComponents[_page.ComponentId];
 
-            // Layout handles its own component composition
             var page = await _layout.RenderAsync("Login", bodyContent);
             return Results.Content(page, "text/html");
         });

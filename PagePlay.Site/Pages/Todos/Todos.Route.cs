@@ -2,6 +2,8 @@ using PagePlay.Site.Application.Todos.Perspectives;
 using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.Web.Data;
 using PagePlay.Site.Infrastructure.Web.Routing;
+using PagePlay.Site.Infrastructure.Web.Framework;
+using PagePlay.Site.Infrastructure.Web.Components;
 using PagePlay.Site.Pages.Shared;
 
 namespace PagePlay.Site.Pages.Todos;
@@ -11,6 +13,7 @@ public interface ITodosPageInteraction : IEndpoint {}
 public class TodosPageEndpoints(
     IPageLayout _layout,
     TodosPage _page,
+    IFrameworkOrchestrator _framework,
     IEnumerable<ITodosPageInteraction> _interactions,
     ILogger<TodosPageEndpoints> _logger
 ) : IClientEndpoint
@@ -19,14 +22,15 @@ public class TodosPageEndpoints(
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapGet(PAGE_ROUTE, async (
-            IDataLoader dataLoader
-        ) =>
+        endpoints.MapGet(PAGE_ROUTE, async () =>
         {
             try
             {
-                var ctx = await dataLoader.With<TodosListDomainView>().Load();
-                var bodyContent = _page.Render(ctx);
+                // Framework handles data loading and metadata injection
+                var components = new IServerComponent[] { _page };
+                var renderedComponents = await _framework.RenderComponentsAsync(components);
+                var bodyContent = renderedComponents[_page.ComponentId];
+
                 var page = await _layout.RenderAsync("Todos", bodyContent);
                 return Results.Content(page, "text/html");
             }
