@@ -79,6 +79,17 @@ public class ThemeCompiler
                 css.AppendLine();
             }
 
+            // Font tokens
+            if (tokens.TryGetValue("font", out var fontObj) && fontObj is Dictionary<object, object> font)
+            {
+                css.AppendLine("    /* Font Weights */");
+                foreach (var kvp in font)
+                {
+                    css.AppendLine($"    --{kvp.Key}: {kvp.Value};");
+                }
+                css.AppendLine();
+            }
+
             // Color tokens
             if (tokens.TryGetValue("color", out var colorObj) && colorObj is Dictionary<object, object> colors)
             {
@@ -108,6 +119,28 @@ public class ThemeCompiler
                 foreach (var kvp in radius)
                 {
                     css.AppendLine($"    --radius-{kvp.Key}: {kvp.Value};");
+                }
+                css.AppendLine();
+            }
+
+            // Duration tokens
+            if (tokens.TryGetValue("duration", out var durationObj) && durationObj is Dictionary<object, object> durations)
+            {
+                css.AppendLine("    /* Duration */");
+                foreach (var kvp in durations)
+                {
+                    css.AppendLine($"    --duration-{kvp.Key}: {kvp.Value};");
+                }
+                css.AppendLine();
+            }
+
+            // Opacity tokens
+            if (tokens.TryGetValue("opacity", out var opacityObj) && opacityObj is Dictionary<object, object> opacities)
+            {
+                css.AppendLine("    /* Opacity */");
+                foreach (var kvp in opacities)
+                {
+                    css.AppendLine($"    --opacity-{kvp.Key}: {kvp.Value};");
                 }
             }
         }
