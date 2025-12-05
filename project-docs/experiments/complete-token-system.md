@@ -363,10 +363,15 @@ transition: opacity var(--duration-slow) ease-in;
 
 ### Phase 5: Component Mapping Enhancement
 
+**Status:** ⬜ Not Started (Required for complete designer control)
+
 **Goal:** Add semantic property mappings to theme.yaml
+
+**Why Required:** Component-level mappings allow designers to control styling holistically (e.g., "all buttons in cards should be smaller") without touching CSS generation code. This completes the separation: developers declare components, designers control ALL appearance decisions through theme.yaml.
 
 **Files to Modify:**
 - `PagePlay.Site/Infrastructure/UI/Themes/default.theme.yaml`
+- `PagePlay.Site/Infrastructure/UI/Rendering/ThemeCompiler.cs`
 
 **Tasks:**
 
@@ -381,12 +386,17 @@ button:
     radius: md
     weight: medium      # NEW - maps to font-weight-medium
     size: md
+    duration: fast      # NEW - maps to transition duration
+
+card:
+  header:
+    weight: semibold    # NEW - context-specific override
+  button:
+    size: sm            # NEW - buttons in cards are smaller
 ```
 
-**Note:** This is future work for component-level theme mappings. Not required for Phase 1-4 to succeed.
-
-**Status:** ⬜ Not Started (Optional)
-**Validation:** Theme compiler can read and apply component-level weight/duration/opacity
+**Status:** ⬜ Not Started
+**Validation:** Theme compiler can read and apply component-level weight/duration/opacity mappings
 
 ---
 
