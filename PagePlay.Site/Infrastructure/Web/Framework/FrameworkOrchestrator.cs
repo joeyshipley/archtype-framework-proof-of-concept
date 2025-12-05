@@ -37,21 +37,24 @@ public class FrameworkOrchestrator(
     {
         var componentList = components.ToList();
 
-        // 1. Collect all required domain context types
+        // 1. Collect all required domain context types (excluding None dependencies)
         var requiredContextTypes = componentList
+            .Where(c => c.Dependencies != DataDependencies.None)
             .Select(c => c.Dependencies.DomainContextType)
             .Where(t => t != null)
             .Distinct()
             .ToArray();
 
-        // 2. Load all domains in parallel
-        var dataContext = await buildFluentChain(requiredContextTypes).Load();
+        // 2. Load all domains in parallel (or create empty context if no domains needed)
+        var dataContext = requiredContextTypes.Length > 0
+            ? await buildFluentChain(requiredContextTypes).Load()
+            : DataContext.Empty();
 
-        // 3. Render all components
+        // 3. Render all components with automatic metadata injection
         var renderedComponents = new Dictionary<string, string>();
         foreach (var component in componentList)
         {
-            var html = component.Render(dataContext);
+            var html = renderComponentWithMetadata(component, dataContext);
             renderedComponents[component.ComponentId] = html;
         }
 
@@ -86,20 +89,21 @@ public class FrameworkOrchestrator(
             .Distinct()
             .ToArray();
 
-        // 4. Re-fetch mutated domains
-        var dataContext = await buildFluentChain(affectedContextTypes).Load();
+        // 4. Re-fetch mutated domains (or create empty context if no domains)
+        var dataContext = affectedContextTypes.Length > 0
+            ? await buildFluentChain(affectedContextTypes).Load()
+            : DataContext.Empty();
 
-        // 5. Re-render affected components
+        // 5. Re-render affected components with OOB attribute
         var updates = new List<string>();
         foreach (var componentInfo in affectedComponents)
         {
             var component = _componentFactory.Create(componentInfo.ComponentType);
             if (component == null) continue;
 
-            var html = component.Render(dataContext);
+            var html = renderComponentWithMetadata(component, dataContext);
 
             // Insert hx-swap-oob attribute into the component's root element
-            // The component already has id="..." so we just need to add the OOB attribute
             var oobHtml = html.Replace($"id=\"{componentInfo.Id}\"", $"id=\"{componentInfo.Id}\" hx-swap-oob=\"true\"");
 
             updates.Add(oobHtml);
@@ -137,5 +141,27 @@ public class FrameworkOrchestrator(
         }
 
         return builder;
+    }
+
+    /// <summary>
+    /// Renders a component and automatically injects component tracking metadata.
+    /// For components with Dependencies.None, no metadata is added (static pages).
+    /// For components with data dependencies, adds data-component and data-domain attributes.
+    /// </summary>
+    private string renderComponentWithMetadata(IServerComponent component, IDataContext data)
+    {
+        var html = component.Render(data);
+
+        // No metadata needed for static components
+        if (component.Dependencies == DataDependencies.None)
+            return html;
+
+        // Inject data-component and data-domain attributes into root element
+        // The component renders with id="...", we inject tracking attributes after it
+        var componentTypeName = component.GetType().Name;
+        var domainName = component.Dependencies.Domain;
+
+        var replacement = $"id=\"{component.ComponentId}\" data-component=\"{componentTypeName}\" data-domain=\"{domainName}\"";
+        return html.Replace($"id=\"{component.ComponentId}\"", replacement);
     }
 }

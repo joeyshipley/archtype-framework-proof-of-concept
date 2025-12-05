@@ -34,6 +34,16 @@ public class DataDependencies
     public string Domain { get; private set; } = string.Empty;
     public Type DomainContextType { get; private set; }
 
+    /// <summary>
+    /// Represents a component with no data dependencies (e.g., static pages like Login).
+    /// Use this for pages that don't need to load domain data.
+    /// </summary>
+    public static readonly DataDependencies None = new()
+    {
+        Domain = string.Empty,
+        DomainContextType = null
+    };
+
     public static DataDependencies From<TDomain, TContext>()
         where TDomain : IDataProvider<TContext>
         where TContext : class, new()
@@ -76,6 +86,12 @@ public interface IDataContext
 public class DataContext : IDataContext
 {
     private readonly Dictionary<Type, object> _typedDomainsByContextType = new();
+
+    /// <summary>
+    /// Creates an empty data context for pages without data dependencies.
+    /// Use this for static pages that don't need to load domain data.
+    /// </summary>
+    public static DataContext Empty() => new();
 
     public void AddDomain<TContext>(TContext typedData) where TContext : class
     {

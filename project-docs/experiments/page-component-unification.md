@@ -583,31 +583,31 @@ Framework automatically produces:
 #### Tasks
 
 1. **Update DataDependencies**
-   - [ ] Add `DataDependencies.None` static property
-   - [ ] Update XML docs
+   - [x] Add `DataDependencies.None` static property
+   - [x] Update XML docs
    - [ ] Add unit tests
 
 2. **Update FrameworkOrchestrator**
-   - [ ] Add method to inject component metadata attributes
-   - [ ] Handle `DataDependencies.None` case (no tracking)
-   - [ ] Update existing component rendering path
+   - [x] Add method to inject component metadata attributes
+   - [x] Handle `DataDependencies.None` case (no tracking)
+   - [x] Update existing component rendering path
 
 3. **Update IDataContext**
-   - [ ] Add `DataContext.Empty()` static factory for pages without data
-   - [ ] Update XML docs
+   - [x] Add `DataContext.Empty()` static factory for pages without data
+   - [x] Update XML docs
 
 4. **Build & Test**
-   - [ ] Build succeeds with zero errors
-   - [ ] Existing pages still work
+   - [x] Build succeeds with zero errors
+   - [x] Existing pages still work
    - [ ] Unit tests pass
 
 #### Success Criteria
 
 - [x] `DataDependencies.None` property exists
-- [ ] Framework can inject metadata automatically
-- [ ] Empty data context can be created
-- [ ] No breaking changes to existing pages
-- [ ] Build: 0 errors, 0 warnings
+- [x] Framework can inject metadata automatically
+- [x] Empty data context can be created
+- [x] No breaking changes to existing pages
+- [x] Build: 0 errors, 0 warnings
 
 ---
 
