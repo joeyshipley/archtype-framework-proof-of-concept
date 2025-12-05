@@ -1,52 +1,44 @@
 using PagePlay.Site.Application.Todos.Models;
+using PagePlay.Site.Application.Todos.Perspectives.List;
 using PagePlay.Site.Infrastructure.UI;
 using PagePlay.Site.Infrastructure.UI.Rendering;
 using PagePlay.Site.Infrastructure.UI.Vocabulary;
+using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Todos;
 
 public interface ITodosPageView
 {
-    string RenderPage(List<TodoListEntry> todos);
-    string RenderPageWithComponent(string todoListComponentHtml);
     string RenderCreateForm();
-    string RenderTodoList(List<TodoListEntry> todos);
     string RenderTodoItem(TodoListEntry todo);
     string RenderError(string error);
     string RenderErrorNotification(string error);
     string RenderDeleteErrorWithNotification(long todoId, string error);
 }
 
-public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
+public class TodosPage(IHtmlRenderer _renderer) : IServerComponent, ITodosPageView
 {
-    public string RenderPage(List<TodoListEntry> todos) =>
-        _renderer.Render(
+    public string ComponentId => "todo-page";
+
+    public DataDependencies Dependencies =>
+        DataDependencies.From<TodosListProvider, TodosListDomainView>();
+
+    public string Render(IDataContext data)
+    {
+        var todos = data.Get<TodosListDomainView>();
+
+        return _renderer.Render(
             new Section()
-                .Id("todo-page")
+                .Id(ComponentId)
                 .Children(
                     new PageTitle("My Todos"),
                     new Section().Id("notifications"),
                     renderCreateFormComponent(),
                     new Section()
                         .Id("todo-list")
-                        .Children(renderTodoListComponent(todos))
+                        .Children(renderTodoListComponent(todos.List))
                 )
         );
-
-    public string RenderPageWithComponent(string todoListComponentHtml)
-    {
-        // Note: This method accepts raw HTML from component rendering system
-        // Once components are converted to semantic types, this can be refactored
-        var page = new Section()
-            .Id("todo-page")
-            .Children(
-                new PageTitle("My Todos"),
-                new Section().Id("notifications"),
-                renderCreateFormComponent()
-            );
-
-        // Append raw HTML component (temporary until components use semantic types)
-        return _renderer.Render(page) + todoListComponentHtml;
     }
 
     private Form renderCreateFormContent() =>
@@ -93,9 +85,6 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
 
         return list;
     }
-
-    public string RenderTodoList(List<TodoListEntry> todos) =>
-        _renderer.Render(renderTodoListComponent(todos));
 
     private ListItem renderTodoItemComponent(TodoListEntry todo) =>
         new ListItem()

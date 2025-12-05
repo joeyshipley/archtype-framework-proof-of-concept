@@ -17,7 +17,6 @@ using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;
 using PagePlay.Site.Pages.Todos;
-using PagePlay.Site.Pages.Todos.Components;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
 
@@ -86,13 +85,11 @@ public static class DependencyResolver
         services.AddScoped<IWelcomeWidget, WelcomeWidget>();
         services.AddScoped<IAnalyticsStatsWidget, AnalyticsStatsWidget>();
 
-        // Components
-        services.AddScoped<ITodoListComponent, TodoListComponent>();
-
         services.AutoRegisterPages(ServiceLifetime.Scoped);
 
         // Also register pages by concrete type for endpoints that need full IServerComponent interface
         services.AddScoped<LoginPage>();
+        services.AddScoped<TodosPage>();
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
         services.AutoRegister<ILoginPageInteraction>(ServiceLifetime.Scoped);
