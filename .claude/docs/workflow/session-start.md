@@ -11,7 +11,7 @@
 1. `.claude/docs/README.md` - Project philosophy, team velocity principles, and architecture overview
 2. `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md` - Vertical slices, self-enforcing patterns, and maintaining predictable feature complexity
 3. `.claude/docs/README.WEB_FRAMEWORK.md` - HTTP-First philosophy and turn-based architecture (web framework context)
-4. `.claude/docs/README.SYNTAX_STYLE.md` - Code style conventions (method naming, primary constructors, expression bodies)
+4. `.claude/docs/README.DESIGN_STYLING.md` - Web style practices (css, tokens, etc)
 5. `project-docs/context/personas/README.md` - User personas quick reference for identifying target users
 
 Read these first, every session.
