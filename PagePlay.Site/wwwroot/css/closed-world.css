@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2025-12-05 17:56:12 UTC
+ * Generated: 2025-12-05 18:02:13 UTC
  */
 
 @layer tokens, base, components;
@@ -141,7 +141,7 @@
     border: none;
     cursor: pointer;
     font-family: inherit;
-    transition: all 150ms ease;
+    transition: all var(--duration-fast) ease;
   }
 
   /* Text elements */
@@ -164,7 +164,7 @@
 
   .card > .header {
     font-size: var(--text-md);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     padding: var(--spacing-4);
   }
 
@@ -182,7 +182,7 @@
   .button {
     padding: var(--spacing-2) var(--spacing-4);
     border-radius: var(--radius-md);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     font-size: var(--text-md);
   }
 
@@ -231,7 +231,7 @@
   /* Button states */
   .button:disabled,
   .button--disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
   }
 
@@ -284,14 +284,14 @@
   }
 
   .input:disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
   }
 
   .label {
     display: block;
     font-size: var(--text-sm);
-    font-weight: 500;
+    font-weight: var(--weight-medium);
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-1);
   }
@@ -336,7 +336,7 @@
   }
 
   .checkbox:disabled {
-    opacity: 0.5;
+    opacity: var(--opacity-disabled);
     cursor: not-allowed;
   }
 
@@ -447,12 +447,12 @@
   }
 
   .list-item--completed {
-    opacity: 0.6;
+    opacity: var(--opacity-subtle);
     text-decoration: line-through;
   }
 
   .list-item--disabled {
-    opacity: 0.4;
+    opacity: var(--opacity-subdued);
     cursor: not-allowed;
   }
 
@@ -473,15 +473,15 @@
   }
 
   .page-title {
-    font-size: 2rem;
-    font-weight: 700;
+    font-size: var(--text-2xl);
+    font-weight: var(--weight-bold);
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-4);
   }
 
   .section-title {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
     margin-bottom: var(--spacing-3);
   }

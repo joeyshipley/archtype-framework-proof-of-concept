@@ -214,7 +214,7 @@ public class ThemeCompiler
         css.AppendLine("    border: none;");
         css.AppendLine("    cursor: pointer;");
         css.AppendLine("    font-family: inherit;");
-        css.AppendLine("    transition: all 150ms ease;");
+        css.AppendLine("    transition: all var(--duration-fast) ease;");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  /* Text elements */");
@@ -271,7 +271,7 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .card > .header {");
         css.AppendLine("    font-size: var(--text-md);");
-        css.AppendLine("    font-weight: 600;");
+        css.AppendLine("    font-weight: var(--weight-semibold);");
         css.AppendLine("    padding: var(--spacing-4);");
         css.AppendLine("  }");
         css.AppendLine();
@@ -293,7 +293,7 @@ public class ThemeCompiler
         css.AppendLine("  .button {");
         css.AppendLine("    padding: var(--spacing-2) var(--spacing-4);");
         css.AppendLine("    border-radius: var(--radius-md);");
-        css.AppendLine("    font-weight: 500;");
+        css.AppendLine("    font-weight: var(--weight-medium);");
         css.AppendLine("    font-size: var(--text-md);");
         css.AppendLine("  }");
         css.AppendLine();
@@ -342,7 +342,7 @@ public class ThemeCompiler
         css.AppendLine("  /* Button states */");
         css.AppendLine("  .button:disabled,");
         css.AppendLine("  .button--disabled {");
-        css.AppendLine("    opacity: 0.5;");
+        css.AppendLine("    opacity: var(--opacity-disabled);");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -405,7 +405,7 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .input:disabled {");
-        css.AppendLine("    opacity: 0.5;");
+        css.AppendLine("    opacity: var(--opacity-disabled);");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -414,7 +414,7 @@ public class ThemeCompiler
         css.AppendLine("  .label {");
         css.AppendLine("    display: block;");
         css.AppendLine("    font-size: var(--text-sm);");
-        css.AppendLine("    font-weight: 500;");
+        css.AppendLine("    font-weight: var(--weight-medium);");
         css.AppendLine("    color: var(--color-text-primary);");
         css.AppendLine("    margin-bottom: var(--spacing-1);");
         css.AppendLine("  }");
@@ -465,7 +465,7 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .checkbox:disabled {");
-        css.AppendLine("    opacity: 0.5;");
+        css.AppendLine("    opacity: var(--opacity-disabled);");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -600,12 +600,12 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--completed {");
-        css.AppendLine("    opacity: 0.6;");
+        css.AppendLine("    opacity: var(--opacity-subtle);");
         css.AppendLine("    text-decoration: line-through;");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--disabled {");
-        css.AppendLine("    opacity: 0.4;");
+        css.AppendLine("    opacity: var(--opacity-subdued);");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -630,15 +630,15 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .page-title {");
-        css.AppendLine("    font-size: 2rem;");
-        css.AppendLine("    font-weight: 700;");
+        css.AppendLine("    font-size: var(--text-2xl);");
+        css.AppendLine("    font-weight: var(--weight-bold);");
         css.AppendLine("    color: var(--color-text-primary);");
         css.AppendLine("    margin-bottom: var(--spacing-4);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .section-title {");
-        css.AppendLine("    font-size: 1.5rem;");
-        css.AppendLine("    font-weight: 600;");
+        css.AppendLine("    font-size: var(--text-xl);");
+        css.AppendLine("    font-weight: var(--weight-semibold);");
         css.AppendLine("    color: var(--color-text-primary);");
         css.AppendLine("    margin-bottom: var(--spacing-3);");
         css.AppendLine("  }");
