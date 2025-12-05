@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2025-12-05 18:02:13 UTC
+ * Generated: 2025-12-05 19:38:51 UTC
  */
 
 @layer tokens, base, components;
@@ -189,7 +189,7 @@
   /* Button: Primary importance */
   .button--primary {
     background: var(--color-accent);
-    color: white;
+    color: var(--color-white);
   }
 
   .button--primary:hover:not(:disabled) {
@@ -198,7 +198,7 @@
 
   /* Button: Secondary importance */
   .button--secondary {
-    background: transparent;
+    background: var(--color-transparent);
     border: 1px solid var(--color-border);
     color: var(--color-text-primary);
   }
@@ -209,7 +209,7 @@
 
   /* Button: Tertiary importance */
   .button--tertiary {
-    background: transparent;
+    background: var(--color-transparent);
     color: var(--color-text-secondary);
   }
 
@@ -220,7 +220,7 @@
 
   /* Button: Ghost importance */
   .button--ghost {
-    background: transparent;
+    background: var(--color-transparent);
     color: var(--color-text-secondary);
   }
 
@@ -323,8 +323,8 @@
   }
 
   .checkbox {
-    width: var(--spacing-4);
-    height: var(--spacing-4);
+    width: 4;
+    height: 4;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     cursor: pointer;
@@ -439,7 +439,7 @@
   }
 
   .list-item {
-    padding: var(--spacing-2) 0;
+    padding: var(--spacing-2) var(--spacing-0);
   }
 
   .list-item--normal {

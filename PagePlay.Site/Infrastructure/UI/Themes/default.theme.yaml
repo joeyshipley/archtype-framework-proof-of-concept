@@ -74,7 +74,7 @@ card:
     radius: md
   header:
     size: md
-    weight: 600
+    weight: semibold
     padding: 4
   body:
     padding: 4
@@ -89,8 +89,9 @@ button:
     padding-x: 4
     padding-y: 2
     radius: md
-    weight: 500
+    weight: medium
     size: md
+    duration: fast
 
   importance-primary:
     background: accent
@@ -130,13 +131,13 @@ input:
     size: md
     width: 100%
   state-disabled:
-    opacity: 0.5
+    opacity: disabled
     cursor: not-allowed
 
 label:
   base:
     size: sm
-    weight: 500
+    weight: medium
     color: text-primary
     margin-bottom: 1
 
@@ -174,7 +175,7 @@ checkbox:
     background: accent
     border-color: accent
   disabled:
-    opacity: 0.5
+    opacity: disabled
     cursor: not-allowed
 
 # Feedback elements
@@ -246,13 +247,28 @@ list-item:
   state-normal:
     opacity: 1
   state-completed:
-    opacity: 0.6
+    opacity: subtle
     text-decoration: line-through
   state-disabled:
-    opacity: 0.4
+    opacity: subdued
     cursor: not-allowed
   state-error:
     background: critical-subtle
     border-left-width: 2
     border-left-color: critical
     padding-left: 3
+
+# Page structure
+page-title:
+  base:
+    size: 2xl
+    weight: bold
+    color: text-primary
+    margin-bottom: 4
+
+section-title:
+  base:
+    size: xl
+    weight: semibold
+    color: text-primary
+    margin-bottom: 3

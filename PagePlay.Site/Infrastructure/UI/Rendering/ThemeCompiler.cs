@@ -252,7 +252,7 @@ public class ThemeCompiler
         generateListStyles(theme, css);
 
         // Page structure styling
-        generatePageStructureStyles(css);
+        generatePageStructureStyles(theme, css);
 
         // Layout primitive styling
         generateLayoutStyles(css);
@@ -262,26 +262,28 @@ public class ThemeCompiler
 
     private static void generateCardStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var card = getComponent(theme, "card");
+
         css.AppendLine("  /* Card structure */");
         css.AppendLine("  .card {");
-        css.AppendLine("    background: var(--color-surface);");
-        css.AppendLine("    border-radius: var(--radius-md);");
-        css.AppendLine("    box-shadow: var(--shadow-sm);");
+        css.AppendLine($"    background: {getPropertyOrDefault(card, "base.background", "background", "var(--color-surface)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(card, "base.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    box-shadow: {getPropertyOrDefault(card, "base.shadow", "shadow", "var(--shadow-sm)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .header {");
-        css.AppendLine("    font-size: var(--text-md);");
-        css.AppendLine("    font-weight: var(--weight-semibold);");
-        css.AppendLine("    padding: var(--spacing-4);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(card, "header.size", "size", "var(--text-md)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(card, "header.weight", "weight", "var(--weight-semibold)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "header.padding", "padding", "var(--spacing-4)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .body {");
-        css.AppendLine("    padding: var(--spacing-4);");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "body.padding", "padding", "var(--spacing-4)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .footer {");
-        css.AppendLine("    padding: var(--spacing-4);");
-        css.AppendLine("    gap: var(--spacing-2);");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "footer.padding", "padding", "var(--spacing-4)")};");
+        css.AppendLine($"    gap: {getPropertyOrDefault(card, "footer.gap", "gap", "var(--spacing-2)")};");
         css.AppendLine("    justify-content: flex-end;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -289,56 +291,67 @@ public class ThemeCompiler
 
     private static void generateButtonStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var button = getComponent(theme, "button");
+
         css.AppendLine("  /* Button base */");
         css.AppendLine("  .button {");
-        css.AppendLine("    padding: var(--spacing-2) var(--spacing-4);");
-        css.AppendLine("    border-radius: var(--radius-md);");
-        css.AppendLine("    font-weight: var(--weight-medium);");
-        css.AppendLine("    font-size: var(--text-md);");
+
+        var paddingY = getPropertyOrDefault(button, "base.padding-y", "padding-y", "var(--spacing-2)");
+        var paddingX = getPropertyOrDefault(button, "base.padding-x", "padding-x", "var(--spacing-4)");
+        css.AppendLine($"    padding: {paddingY} {paddingX};");
+
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(button, "base.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(button, "base.weight", "weight", "var(--weight-medium)")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(button, "base.size", "size", "var(--text-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  /* Button: Primary importance */");
         css.AppendLine("  .button--primary {");
-        css.AppendLine("    background: var(--color-accent);");
-        css.AppendLine("    color: white;");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-primary.background", "background", "var(--color-accent)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-primary.text", "text", "white")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .button--primary:hover:not(:disabled) {");
-        css.AppendLine("    background: var(--color-accent-hover);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-primary.background-hover", "background", "var(--color-accent-hover)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  /* Button: Secondary importance */");
         css.AppendLine("  .button--secondary {");
-        css.AppendLine("    background: transparent;");
-        css.AppendLine("    border: 1px solid var(--color-border);");
-        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-secondary.background", "background", "transparent")};");
+        css.AppendLine($"    border: 1px solid {getPropertyOrDefault(button, "importance-secondary.border", "border", "var(--color-border)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-secondary.text", "text", "var(--color-text-primary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .button--secondary:hover:not(:disabled) {");
         css.AppendLine("    background: var(--color-surface-raised);");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  /* Button: Tertiary importance */");
         css.AppendLine("  .button--tertiary {");
-        css.AppendLine("    background: transparent;");
-        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-tertiary.background", "background", "transparent")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-tertiary.text", "text", "var(--color-text-secondary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .button--tertiary:hover:not(:disabled) {");
-        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-tertiary.text-hover", "text", "var(--color-text-primary)")};");
         css.AppendLine("    background: var(--color-surface-raised);");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  /* Button: Ghost importance */");
         css.AppendLine("  .button--ghost {");
-        css.AppendLine("    background: transparent;");
-        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-ghost.background", "background", "transparent")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-ghost.text", "text", "var(--color-text-secondary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .button--ghost:hover:not(:disabled) {");
-        css.AppendLine("    color: var(--color-accent);");
+        css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-ghost.text-hover", "text", "var(--color-accent)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  /* Button states */");
         css.AppendLine("  .button:disabled,");
         css.AppendLine("  .button--disabled {");
@@ -383,16 +396,24 @@ public class ThemeCompiler
 
     private static void generateFormStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var input = getComponent(theme, "input");
+        var label = getComponent(theme, "label");
+        var checkbox = getComponent(theme, "checkbox");
+
         css.AppendLine("  /* Form elements */");
 
         // Input
         css.AppendLine("  .input {");
         css.AppendLine("    display: block;");
         css.AppendLine("    width: 100%;");
-        css.AppendLine("    padding: var(--spacing-2) var(--spacing-3);");
-        css.AppendLine("    border: 1px solid var(--color-border);");
-        css.AppendLine("    border-radius: var(--radius-md);");
-        css.AppendLine("    font-size: var(--text-md);");
+
+        var inputPaddingY = getPropertyOrDefault(input, "base.padding-y", "padding-y", "var(--spacing-2)");
+        var inputPaddingX = getPropertyOrDefault(input, "base.padding-x", "padding-x", "var(--spacing-3)");
+        css.AppendLine($"    padding: {inputPaddingY} {inputPaddingX};");
+
+        css.AppendLine($"    border: 1px solid {getPropertyOrDefault(input, "base.border", "border", "var(--color-border)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(input, "base.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(input, "base.size", "size", "var(--text-md)")};");
         css.AppendLine("    font-family: inherit;");
         css.AppendLine("    line-height: 1.5;");
         css.AppendLine("    color: var(--color-text-primary);");
@@ -405,7 +426,7 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .input:disabled {");
-        css.AppendLine("    opacity: var(--opacity-disabled);");
+        css.AppendLine($"    opacity: {getPropertyOrDefault(input, "state-disabled.opacity", "opacity", "var(--opacity-disabled)")};");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -413,10 +434,10 @@ public class ThemeCompiler
         // Label
         css.AppendLine("  .label {");
         css.AppendLine("    display: block;");
-        css.AppendLine("    font-size: var(--text-sm);");
-        css.AppendLine("    font-weight: var(--weight-medium);");
-        css.AppendLine("    color: var(--color-text-primary);");
-        css.AppendLine("    margin-bottom: var(--spacing-1);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(label, "base.size", "size", "var(--text-sm)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(label, "base.weight", "weight", "var(--weight-medium)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(label, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(label, "base.margin-bottom", "margin-bottom", "var(--spacing-1)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -452,20 +473,21 @@ public class ThemeCompiler
 
         // Checkbox
         css.AppendLine("  .checkbox {");
-        css.AppendLine("    width: var(--spacing-4);");
-        css.AppendLine("    height: var(--spacing-4);");
-        css.AppendLine("    border: 1px solid var(--color-border);");
-        css.AppendLine("    border-radius: var(--radius-sm);");
+        var checkboxSize = getPropertyOrDefault(checkbox, "base.size", "size", "var(--spacing-4)");
+        css.AppendLine($"    width: {checkboxSize};");
+        css.AppendLine($"    height: {checkboxSize};");
+        css.AppendLine($"    border: 1px solid {getPropertyOrDefault(checkbox, "base.border", "border", "var(--color-border)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(checkbox, "base.radius", "radius", "var(--radius-sm)")};");
         css.AppendLine("    cursor: pointer;");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .checkbox:checked {");
-        css.AppendLine("    background: var(--color-accent);");
-        css.AppendLine("    border-color: var(--color-accent);");
+        css.AppendLine($"    background: {getPropertyOrDefault(checkbox, "checked.background", "background", "var(--color-accent)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(checkbox, "checked.border-color", "border", "var(--color-accent)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .checkbox:disabled {");
-        css.AppendLine("    opacity: var(--opacity-disabled);");
+        css.AppendLine($"    opacity: {getPropertyOrDefault(checkbox, "disabled.opacity", "opacity", "var(--opacity-disabled)")};");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -562,6 +584,8 @@ public class ThemeCompiler
 
     private static void generateListStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var listItem = getComponent(theme, "list-item");
+
         css.AppendLine("  /* List elements */");
 
         // List base
@@ -590,22 +614,24 @@ public class ThemeCompiler
 
         // ListItem base
         css.AppendLine("  .list-item {");
-        css.AppendLine("    padding: var(--spacing-2) 0;");
+        var listItemPaddingY = getPropertyOrDefault(listItem, "base.padding-y", "padding-y", "var(--spacing-2)");
+        var listItemPaddingX = getPropertyOrDefault(listItem, "base.padding-x", "padding-x", "0");
+        css.AppendLine($"    padding: {listItemPaddingY} {listItemPaddingX};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // ListItem state variants
         css.AppendLine("  .list-item--normal {");
-        css.AppendLine("    opacity: 1;");
+        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-normal.opacity", "opacity", "1")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--completed {");
-        css.AppendLine("    opacity: var(--opacity-subtle);");
+        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-completed.opacity", "opacity", "var(--opacity-subtle)")};");
         css.AppendLine("    text-decoration: line-through;");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--disabled {");
-        css.AppendLine("    opacity: var(--opacity-subdued);");
+        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-disabled.opacity", "opacity", "var(--opacity-subdued)")};");
         css.AppendLine("    cursor: not-allowed;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -617,8 +643,11 @@ public class ThemeCompiler
         css.AppendLine();
     }
 
-    private static void generatePageStructureStyles(StringBuilder css)
+    private static void generatePageStructureStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var pageTitle = getComponent(theme, "page-title");
+        var sectionTitle = getComponent(theme, "section-title");
+
         css.AppendLine("  /* Page structure */");
         css.AppendLine("  .page {");
         css.AppendLine("    padding-top: var(--spacing-8);");
@@ -630,17 +659,17 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .page-title {");
-        css.AppendLine("    font-size: var(--text-2xl);");
-        css.AppendLine("    font-weight: var(--weight-bold);");
-        css.AppendLine("    color: var(--color-text-primary);");
-        css.AppendLine("    margin-bottom: var(--spacing-4);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(pageTitle, "base.size", "size", "var(--text-2xl)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(pageTitle, "base.weight", "weight", "var(--weight-bold)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(pageTitle, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(pageTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-4)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .section-title {");
-        css.AppendLine("    font-size: var(--text-xl);");
-        css.AppendLine("    font-weight: var(--weight-semibold);");
-        css.AppendLine("    color: var(--color-text-primary);");
-        css.AppendLine("    margin-bottom: var(--spacing-3);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(sectionTitle, "base.size", "size", "var(--text-xl)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(sectionTitle, "base.weight", "weight", "var(--weight-semibold)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(sectionTitle, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(sectionTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-3)")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -718,5 +747,111 @@ public class ThemeCompiler
         css.AppendLine("    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));");
         css.AppendLine("  }");
         css.AppendLine();
+    }
+
+    // ============================================================================
+    // Component Mapping Helper Methods
+    // ============================================================================
+
+    /// <summary>
+    /// Gets a component mapping from the theme dictionary.
+    /// Returns null if the component doesn't exist.
+    /// </summary>
+    private static Dictionary<object, object>? getComponent(Dictionary<string, object> theme, string componentName)
+    {
+        if (theme.TryGetValue(componentName, out var componentObj) && componentObj is Dictionary<object, object> component)
+            return component;
+        return null;
+    }
+
+    /// <summary>
+    /// Gets a nested property from a component mapping (e.g., "base.weight").
+    /// Returns null if the path doesn't exist.
+    /// </summary>
+    private static object? getComponentProperty(Dictionary<object, object> component, string path)
+    {
+        var parts = path.Split('.');
+        object? current = component;
+
+        foreach (var part in parts)
+        {
+            if (current is not Dictionary<object, object> dict)
+                return null;
+
+            if (!dict.TryGetValue(part, out var next))
+                return null;
+
+            current = next;
+        }
+
+        return current;
+    }
+
+    /// <summary>
+    /// Resolves a property value to a CSS variable reference.
+    /// Maps semantic names to CSS custom properties (e.g., "semibold" -> "var(--weight-semibold)").
+    /// </summary>
+    private static string resolvePropertyValue(string property, object? value)
+    {
+        if (value == null)
+            return "";
+
+        var valueStr = value.ToString() ?? "";
+
+        // Map property names to their CSS variable prefixes
+        var cssVarMapping = new Dictionary<string, string>
+        {
+            ["weight"] = "--weight-",
+            ["size"] = "--text-",
+            ["padding"] = "--spacing-",
+            ["padding-x"] = "--spacing-",
+            ["padding-y"] = "--spacing-",
+            ["gap"] = "--spacing-",
+            ["margin"] = "--spacing-",
+            ["margin-bottom"] = "--spacing-",
+            ["margin-top"] = "--spacing-",
+            ["radius"] = "--radius-",
+            ["shadow"] = "--shadow-",
+            ["duration"] = "--duration-",
+            ["opacity"] = "--opacity-",
+            ["background"] = "--color-",
+            ["border"] = "--color-",
+            ["color"] = "--color-",
+            ["text"] = "--color-",
+        };
+
+        // If this property maps to a CSS variable, resolve it
+        if (cssVarMapping.TryGetValue(property, out var prefix))
+        {
+            // Check if the value looks like a token name (not a raw value like "1" or "1px")
+            if (!valueStr.Contains("px") && !valueStr.Contains("#") && !valueStr.Contains("rgba") && !int.TryParse(valueStr, out _))
+            {
+                return $"var({prefix}{valueStr})";
+            }
+            // If it's a number and refers to spacing/padding/margin, treat as spacing token
+            else if (int.TryParse(valueStr, out _) && (property.Contains("padding") || property.Contains("margin") || property == "gap"))
+            {
+                return $"var(--spacing-{valueStr})";
+            }
+        }
+
+        // Return raw value for things like "1" (opacity: 1), URLs, etc.
+        return valueStr;
+    }
+
+    /// <summary>
+    /// Gets a CSS property value from component mapping, with fallback to default.
+    /// </summary>
+    private static string getPropertyOrDefault(Dictionary<object, object>? component, string path, string property, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        var resolved = resolvePropertyValue(property, value);
+        return string.IsNullOrEmpty(resolved) ? defaultValue : resolved;
     }
 }
