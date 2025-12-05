@@ -13,13 +13,23 @@ tokens:
     8: 2rem       # 32px
 
   text:
+    xs: 0.75rem   # 12px - captions, fine print
     sm: 0.875rem  # 14px
     md: 1rem      # 16px
     lg: 1.125rem  # 18px
+    xl: 1.25rem   # 20px - section headings
+    2xl: 1.5rem   # 24px - page titles
+
+  font:
+    weight-normal: 400      # Body text
+    weight-medium: 500      # Labels, UI elements
+    weight-semibold: 600    # Card headers, h2
+    weight-bold: 700        # Page titles, h1
 
   color:
     surface: "#ffffff"
     surface-raised: "#fafafa"
+    white: "#ffffff"        # Explicit for button text on colored backgrounds
     border: "#e5e5e5"
     text-primary: "#171717"
     text-secondary: "#525252"
@@ -38,11 +48,23 @@ tokens:
   shadow:
     sm: "0 1px 2px rgba(0,0,0,0.05)"
     md: "0 4px 6px rgba(0,0,0,0.1)"
+    lg: "0 10px 15px rgba(0,0,0,0.1)"  # Elevated modals, popovers
 
   radius:
     sm: "0.25rem"
     md: "0.375rem"
     lg: "0.5rem"
+    full: "9999px"   # Circular avatars, pills
+
+  duration:
+    fast: 150ms      # Quick interactions (hover, focus)
+    normal: 300ms    # Standard transitions
+    slow: 500ms      # Loading states, emphasis
+
+  opacity:
+    subdued: 0.4     # Very disabled/inactive
+    disabled: 0.5    # Standard disabled state
+    subtle: 0.6      # De-emphasized/completed
 
 # Container-centric styling
 card:
