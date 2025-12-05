@@ -1,6 +1,6 @@
 # Experiment: Page-Component Unification
 
-**Status:** 🚧 In Progress (Phase 2.1 Complete)
+**Status:** 🚧 In Progress (Phase 2.3 Complete - Ready for Testing)
 **Started:** 2025-12-04
 **Goal:** Unify Page and Component abstractions into a single `IServerComponent` model
 **Hypothesis:** Pages and Components are the same abstraction - both declare data dependencies and render HTML. The distinction adds complexity without meaningful benefit.
@@ -11,8 +11,8 @@
 - ✅ Phase 2: Todos Page Conversion (2025-12-05)
 - ✅ Phase 2.1: Framework Integration Fix (2025-12-05)
 - ✅ Phase 2.2: ComponentFactory Fix (2025-12-05)
-- ⏳ Phase 2.3: Fix DataDependencies Domain Name Mismatch (Next - OOB updates currently broken)
-- ⏸️ Phase 3: StyleTest Page
+- ✅ Phase 2.3: Domain Name Mismatch Fix (2025-12-05)
+- ⏸️ Phase 3: StyleTest Page (pending manual testing)
 - ⏸️ Phase 4: Documentation
 - ⏸️ Phase 5: Cleanup & Validation
 
@@ -1049,7 +1049,7 @@ AnalyticsStatsWidget → Key: "AnalyticsStatsWidget", Type: AnalyticsStatsWidget
 
 ---
 
-### Phase 2.3: Fix DataDependencies Domain Name Mismatch ⏳ NEXT
+### Phase 2.3: Fix DataDependencies Domain Name Mismatch ✅ COMPLETE
 
 **Goal:** Fix the domain name mismatch between component dependencies and interaction mutations so that OOB updates actually work.
 
@@ -1186,41 +1186,46 @@ public DataDependencies Dependencies =>
 #### Tasks
 
 1. **Update DataDependencies.From<> Method**
-   - [ ] Change signature from `From<TProvider, TContext>()` to `From<TContext>()`
-   - [ ] Remove `where TDomain : IDataProvider<TContext>` constraint
-   - [ ] Add reflection code to read `TContext.DomainName` static field
-   - [ ] Add validation that field exists and is non-empty
-   - [ ] Update XML documentation
+   - [x] Change signature from `From<TProvider, TContext>()` to `From<TContext>()`
+   - [x] Remove `where TDomain : IDataProvider<TContext>` constraint
+   - [x] Add reflection code to read `TContext.DomainName` static field
+   - [x] Add validation that field exists and is non-empty
+   - [x] Update XML documentation
 
 2. **Update TodosPage**
-   - [ ] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
-   - [ ] To `DataDependencies.From<TodosListDomainView>()`
+   - [x] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+   - [x] To `DataDependencies.From<TodosListDomainView>()`
 
 3. **Update WelcomeWidget**
-   - [ ] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
-   - [ ] To `DataDependencies.From<TodosListDomainView>()`
-   - [ ] Remove manual `data-domain="todosList"` hardcoding from Render method
-   - [ ] Let framework inject metadata automatically
+   - [x] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+   - [x] To `DataDependencies.From<TodosListDomainView>()`
+   - [x] Remove manual `data-domain="todosList"` hardcoding from Render method
+   - [x] Let framework inject metadata automatically
 
-4. **Build and Test**
-   - [ ] Build succeeds: 0 errors, 0 warnings
-   - [ ] Load /todos page - verify metadata: `data-domain="todosList"`
-   - [ ] Test create todo - verify OOB update works (list updates without refresh)
-   - [ ] Test toggle todo - verify OOB update works
-   - [ ] Test delete todo - verify OOB update works
-   - [ ] Verify WelcomeWidget updates on todo mutations
-   - [ ] Verify both TodosPage and WelcomeWidget receive OOB updates
+4. **Update AnalyticsStatsWidget**
+   - [x] Change `DataDependencies.From<TodoAnalyticsProvider, TodoAnalyticsDomainView>()`
+   - [x] To `DataDependencies.From<TodoAnalyticsDomainView>()`
+   - [x] Remove manual metadata attributes from Render method
+
+5. **Build and Test**
+   - [x] Build succeeds: 0 errors, 0 warnings
+   - [ ] Load /todos page - verify metadata: `data-domain="todosList"` (requires manual testing)
+   - [ ] Test create todo - verify OOB update works (list updates without refresh) (requires manual testing)
+   - [ ] Test toggle todo - verify OOB update works (requires manual testing)
+   - [ ] Test delete todo - verify OOB update works (requires manual testing)
+   - [ ] Verify WelcomeWidget updates on todo mutations (requires manual testing)
+   - [ ] Verify both TodosPage and WelcomeWidget receive OOB updates (requires manual testing)
 
 #### Success Criteria
 
-- [ ] `DataDependencies.From<>` takes only TContext generic parameter
-- [ ] Domain name read from `TContext.DomainName` constant
-- [ ] All components updated to use new signature
-- [ ] Build: 0 errors, 0 warnings
-- [ ] Component metadata contains correct domain: `data-domain="todosList"`
-- [ ] Framework finds affected components correctly
-- [ ] OOB updates work end-to-end for all interactions
-- [ ] Both TodosPage and WelcomeWidget update on todo mutations
+- [x] `DataDependencies.From<>` takes only TContext generic parameter
+- [x] Domain name read from `TContext.DomainName` constant
+- [x] All components updated to use new signature (TodosPage, WelcomeWidget, AnalyticsStatsWidget)
+- [x] Build: 0 errors, 0 warnings
+- [ ] Component metadata contains correct domain: `data-domain="todosList"` (requires manual testing)
+- [ ] Framework finds affected components correctly (requires manual testing)
+- [ ] OOB updates work end-to-end for all interactions (requires manual testing)
+- [ ] Both TodosPage and WelcomeWidget update on todo mutations (requires manual testing)
 
 #### Expected Outcomes
 
@@ -1255,7 +1260,37 @@ public DataDependencies Dependencies =>
 - Both will receive OOB updates
 - Welcome message updates todo count automatically!
 
-**Completed:** TBD
+#### Key Changes
+
+**IServerComponent.cs** (PagePlay.Site/Infrastructure/Web/Components/IServerComponent.cs:47-75):
+- Changed `DataDependencies.From<TProvider, TContext>()` to `From<TContext>()`
+- Removed `where TDomain : IDataProvider<TContext>` constraint (TProvider parameter removed)
+- Added reflection code to read `TContext.DomainName` static field
+- Added validation with clear error messages if DomainName field missing or empty
+- Updated XML documentation
+
+**TodosPage.htmx.cs** (PagePlay.Site/Pages/Todos/Todos.Page.htmx.cs:23-24):
+- Changed from `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+- To `DataDependencies.From<TodosListDomainView>()`
+
+**WelcomeWidget.htmx.cs** (PagePlay.Site/Pages/Shared/WelcomeWidget.htmx.cs:17-18, 28-31):
+- Changed from `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+- To `DataDependencies.From<TodosListDomainView>()`
+- Removed manual `data-component="WelcomeWidget"` and `data-domain="todosList"` attributes
+- Framework now injects these automatically
+
+**AnalyticsStatsWidget.htmx.cs** (PagePlay.Site/Pages/Shared/AnalyticsStatsWidget.htmx.cs:29-30, 41-57):
+- Changed from `DataDependencies.From<TodoAnalyticsProvider, TodoAnalyticsDomainView>()`
+- To `DataDependencies.From<TodoAnalyticsDomainView>()`
+- Removed manual `data-component` and `data-domain` attributes
+- Framework now injects these automatically
+
+**Result:**
+- Domain names now match between components and interactions
+- Framework can correctly identify affected components on mutations
+- OOB updates should work end-to-end (pending manual testing)
+
+**Completed:** 2025-12-05
 
 ---
 
