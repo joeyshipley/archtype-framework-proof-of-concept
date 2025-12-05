@@ -10,7 +10,8 @@
 - ✅ Phase 1: Login Page Conversion (2025-12-05)
 - ✅ Phase 2: Todos Page Conversion (2025-12-05)
 - ✅ Phase 2.1: Framework Integration Fix (2025-12-05)
-- ⏸️ Phase 3: StyleTest Page (Next)
+- ⏳ Phase 2.2: ComponentFactory Fix (Next - OOB updates currently broken)
+- ⏸️ Phase 3: StyleTest Page
 - ⏸️ Phase 4: Documentation
 - ⏸️ Phase 5: Cleanup & Validation
 
@@ -877,6 +878,162 @@ var page = await _layout.RenderAsync("Todos", bodyContent);
 - Auto-binding will work end-to-end once manually tested by user
 
 **Completed:** 2025-12-05
+
+---
+
+### Phase 2.2: Fix ComponentFactory Lookup for Pages ⏳ NEXT
+
+**Goal:** Fix ComponentFactory to discover and instantiate page components (concrete classes) instead of only interface-based components, enabling OOB updates to work.
+
+#### Problem Discovery
+
+After completing Phase 2.1, manual testing revealed that **OOB updates don't work**:
+- ✅ Interactions execute successfully (DB updates)
+- ✅ Hard refresh shows correct data
+- ❌ UI doesn't update after interactions complete
+- ❌ No OOB updates being sent to client
+
+**Root Cause Analysis:**
+
+Through deep investigation, we discovered a type discovery mismatch in the ComponentFactory:
+
+1. **Metadata Injection** (FrameworkOrchestrator.cs:173):
+   ```csharp
+   var componentTypeName = component.GetType().Name; // "TodosPage"
+   ```
+   - Injects concrete class name: `data-component="TodosPage"`
+
+2. **ComponentFactory Discovery** (ComponentFactory.cs:25-32):
+   ```csharp
+   return typeof(IServerComponent).Assembly
+       .GetTypes()
+       .Where(t => t.IsInterface && typeof(IServerComponent).IsAssignableFrom(t))
+       .Where(t => t != typeof(IServerComponent))
+       .ToDictionary(
+           t => t.Name.TrimStart('I'), // "IWelcomeWidget" → "WelcomeWidget"
+           t => t
+       );
+   ```
+   - Only discovers **INTERFACES** that extend IServerComponent
+   - Strips `I` prefix from interface names
+
+3. **Lookup Failure** (ComponentFactory.cs:37-38):
+   ```csharp
+   if (!_componentTypes.TryGetValue(componentTypeName, out var componentType))
+       return null; // ❌ Returns null for "TodosPage"
+   ```
+
+4. **Component Skip** (FrameworkOrchestrator.cs:101-102):
+   ```csharp
+   var component = _componentFactory.Create(componentInfo.ComponentType);
+   if (component == null) continue; // ❌ Skips TodosPage, no OOB generated
+   ```
+
+**Why WelcomeWidget Works But TodosPage Doesn't:**
+
+| Component | Pattern | Registered As | Metadata | Factory Lookup | Result |
+|-----------|---------|---------------|----------|----------------|---------|
+| WelcomeWidget | Interface-based | `AddScoped<IWelcomeWidget, WelcomeWidget>()` | `"WelcomeWidget"` | Finds `IWelcomeWidget`, strips `I` → `"WelcomeWidget"` | ✅ MATCH |
+| TodosPage | Class-based | `AddScoped<TodosPage>()` | `"TodosPage"` | Looks for `ITodosPage` interface | ❌ NOT FOUND |
+| LoginPage | Class-based | `AddScoped<LoginPage>()` | `"LoginPage"` | Looks for `ILoginPage` interface | ❌ NOT FOUND |
+
+**The page-component unification converted pages to implement IServerComponent directly as concrete classes, but ComponentFactory still expects the old interface-based pattern.**
+
+#### Proposed Solution
+
+Change ComponentFactory discovery logic to find concrete classes instead of interfaces:
+
+**Before:**
+```csharp
+private static Dictionary<string, Type> discoverComponents()
+{
+    return typeof(IServerComponent).Assembly
+        .GetTypes()
+        .Where(t => t.IsInterface && typeof(IServerComponent).IsAssignableFrom(t))
+        .Where(t => t != typeof(IServerComponent))
+        .ToDictionary(
+            t => t.Name.TrimStart('I'), // "IWelcomeWidget" → "WelcomeWidget"
+            t => t
+        );
+}
+```
+
+**After:**
+```csharp
+private static Dictionary<string, Type> discoverComponents()
+{
+    return typeof(IServerComponent).Assembly
+        .GetTypes()
+        .Where(t => t.IsClass && !t.IsAbstract && typeof(IServerComponent).IsAssignableFrom(t))
+        .ToDictionary(
+            t => t.Name, // Use class name directly: "TodosPage", "WelcomeWidget"
+            t => t
+        );
+}
+```
+
+**Why This Works:**
+- Discovers concrete classes that implement IServerComponent
+- Uses class name directly (no `I` prefix stripping needed)
+- TodosPage class implements IServerComponent → discovered as "TodosPage" ✅
+- WelcomeWidget class implements IWelcomeWidget (which extends IServerComponent) → discovered as "WelcomeWidget" ✅
+- Matches metadata injection which uses `component.GetType().Name` ✅
+
+**Benefits:**
+- Aligns with page-component unification architecture
+- Backward compatible with existing widgets (WelcomeWidget still works)
+- Minimal code change (1 method, 1 file)
+- No DI registration changes needed
+- Fixes OOB updates for all pages
+
+#### Tasks
+
+1. **Update ComponentFactory Discovery**
+   - [ ] Change `discoverComponents()` to find concrete classes instead of interfaces
+   - [ ] Remove `TrimStart('I')` logic (no longer needed)
+   - [ ] Update to use `t.IsClass && !t.IsAbstract` filter
+   - [ ] Use `t.Name` directly as dictionary key
+
+2. **Build and Test**
+   - [ ] Build succeeds: 0 errors, 0 warnings
+   - [ ] Load /todos page - verify page loads
+   - [ ] Test create todo - verify OOB update works (list updates without refresh)
+   - [ ] Test toggle todo - verify OOB update works
+   - [ ] Test delete todo - verify OOB update works
+   - [ ] Verify WelcomeWidget still works (backward compatibility)
+
+#### Success Criteria
+
+- [ ] ComponentFactory discovers concrete classes implementing IServerComponent
+- [ ] TodosPage found in component type dictionary
+- [ ] LoginPage found in component type dictionary
+- [ ] WelcomeWidget still found (backward compatibility)
+- [ ] Build: 0 errors, 0 warnings
+- [ ] OOB updates work for todo interactions
+- [ ] No regressions for existing components
+
+#### Expected Outcomes
+
+**Component Discovery After Fix:**
+```
+TodosPage → Key: "TodosPage", Type: TodosPage (class)
+LoginPage → Key: "LoginPage", Type: LoginPage (class)
+WelcomeWidget → Key: "WelcomeWidget", Type: WelcomeWidget (class)
+AnalyticsStatsWidget → Key: "AnalyticsStatsWidget", Type: AnalyticsStatsWidget (class)
+```
+
+**OOB Update Flow (After Fix):**
+1. User clicks "Add Todo"
+2. Client sends: `X-Component-Context: [{"id":"todo-page","componentType":"TodosPage","domain":"todosList"}]`
+3. Interaction executes, declares: `Mutates => "todosList"`
+4. Framework calls: `_componentFactory.Create("TodosPage")`
+5. ✅ ComponentFactory finds TodosPage class
+6. ✅ Framework re-renders TodosPage with fresh data
+7. ✅ Framework injects `hx-swap-oob="true"` attribute
+8. ✅ Client receives OOB update and swaps content
+9. ✅ UI updates without page refresh!
+
+**Completed:** TBD
 
 ---
 
