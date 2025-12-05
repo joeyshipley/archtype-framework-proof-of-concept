@@ -17,17 +17,16 @@ public interface IComponentFactory
 
 public class ComponentFactory(IServiceScopeFactory _serviceScopeFactory) : IComponentFactory
 {
-    // Auto-discover all IServerComponent interfaces at startup
+    // Auto-discover all IServerComponent concrete classes at startup
     private static readonly Dictionary<string, Type> _componentTypes = discoverComponents();
 
     private static Dictionary<string, Type> discoverComponents()
     {
         return typeof(IServerComponent).Assembly
             .GetTypes()
-            .Where(t => t.IsInterface && typeof(IServerComponent).IsAssignableFrom(t))
-            .Where(t => t != typeof(IServerComponent))
+            .Where(t => t.IsClass && !t.IsAbstract && typeof(IServerComponent).IsAssignableFrom(t))
             .ToDictionary(
-                t => t.Name.TrimStart('I'), // "IWelcomeWidget" → "WelcomeWidget"
+                t => t.Name, // Use class name directly: "TodosPage", "WelcomeWidget"
                 t => t
             );
     }

@@ -10,7 +10,8 @@
 - ✅ Phase 1: Login Page Conversion (2025-12-05)
 - ✅ Phase 2: Todos Page Conversion (2025-12-05)
 - ✅ Phase 2.1: Framework Integration Fix (2025-12-05)
-- ⏳ Phase 2.2: ComponentFactory Fix (Next - OOB updates currently broken)
+- ✅ Phase 2.2: ComponentFactory Fix (2025-12-05)
+- ⏳ Phase 2.3: Fix DataDependencies Domain Name Mismatch (Next - OOB updates currently broken)
 - ⏸️ Phase 3: StyleTest Page
 - ⏸️ Phase 4: Documentation
 - ⏸️ Phase 5: Cleanup & Validation
@@ -881,7 +882,7 @@ var page = await _layout.RenderAsync("Todos", bodyContent);
 
 ---
 
-### Phase 2.2: Fix ComponentFactory Lookup for Pages ⏳ NEXT
+### Phase 2.2: Fix ComponentFactory Lookup for Pages ✅ COMPLETE
 
 **Goal:** Fix ComponentFactory to discover and instantiate page components (concrete classes) instead of only interface-based components, enabling OOB updates to work.
 
@@ -989,28 +990,28 @@ private static Dictionary<string, Type> discoverComponents()
 #### Tasks
 
 1. **Update ComponentFactory Discovery**
-   - [ ] Change `discoverComponents()` to find concrete classes instead of interfaces
-   - [ ] Remove `TrimStart('I')` logic (no longer needed)
-   - [ ] Update to use `t.IsClass && !t.IsAbstract` filter
-   - [ ] Use `t.Name` directly as dictionary key
+   - [x] Change `discoverComponents()` to find concrete classes instead of interfaces
+   - [x] Remove `TrimStart('I')` logic (no longer needed)
+   - [x] Update to use `t.IsClass && !t.IsAbstract` filter
+   - [x] Use `t.Name` directly as dictionary key
 
 2. **Build and Test**
-   - [ ] Build succeeds: 0 errors, 0 warnings
-   - [ ] Load /todos page - verify page loads
-   - [ ] Test create todo - verify OOB update works (list updates without refresh)
-   - [ ] Test toggle todo - verify OOB update works
-   - [ ] Test delete todo - verify OOB update works
-   - [ ] Verify WelcomeWidget still works (backward compatibility)
+   - [x] Build succeeds: 0 errors, 0 warnings
+   - [ ] Load /todos page - verify page loads (requires manual testing)
+   - [ ] Test create todo - verify OOB update works (requires manual testing)
+   - [ ] Test toggle todo - verify OOB update works (requires manual testing)
+   - [ ] Test delete todo - verify OOB update works (requires manual testing)
+   - [ ] Verify WelcomeWidget still works (requires manual testing)
 
 #### Success Criteria
 
-- [ ] ComponentFactory discovers concrete classes implementing IServerComponent
-- [ ] TodosPage found in component type dictionary
-- [ ] LoginPage found in component type dictionary
-- [ ] WelcomeWidget still found (backward compatibility)
-- [ ] Build: 0 errors, 0 warnings
-- [ ] OOB updates work for todo interactions
-- [ ] No regressions for existing components
+- [x] ComponentFactory discovers concrete classes implementing IServerComponent
+- [x] TodosPage found in component type dictionary
+- [x] LoginPage found in component type dictionary
+- [x] WelcomeWidget still found (backward compatibility)
+- [x] Build: 0 errors, 0 warnings
+- [ ] OOB updates work for todo interactions (blocked by Phase 2.3 - domain name mismatch)
+- [ ] No regressions for existing components (requires manual testing)
 
 #### Expected Outcomes
 
@@ -1032,6 +1033,227 @@ AnalyticsStatsWidget → Key: "AnalyticsStatsWidget", Type: AnalyticsStatsWidget
 7. ✅ Framework injects `hx-swap-oob="true"` attribute
 8. ✅ Client receives OOB update and swaps content
 9. ✅ UI updates without page refresh!
+
+#### Key Changes
+
+**ComponentFactory.cs** (PagePlay.Site/Infrastructure/Web/Components/ComponentFactory.cs:23-32):
+- Changed discovery from interfaces to concrete classes
+- Removed `TrimStart('I')` logic
+- Now discovers: TodosPage, LoginPage, WelcomeWidget, etc. by class name
+
+**Result:**
+- ComponentFactory can now find page components
+- However, OOB updates still don't work due to domain name mismatch (see Phase 2.3)
+
+**Completed:** 2025-12-05
+
+---
+
+### Phase 2.3: Fix DataDependencies Domain Name Mismatch ⏳ NEXT
+
+**Goal:** Fix the domain name mismatch between component dependencies and interaction mutations so that OOB updates actually work.
+
+#### Problem Discovery
+
+After completing Phase 2.2, deep investigation revealed the **actual root cause** of broken OOB updates: **domain name mismatch**.
+
+**The Flow:**
+
+1. **TodosPage declares dependencies** (Todos.Page.htmx.cs:23-24):
+   ```csharp
+   public DataDependencies Dependencies =>
+       DataDependencies.From<TodosListProvider, TodosListDomainView>();
+   ```
+
+2. **DataDependencies.From<TProvider, TContext>()** derives domain name from **Provider type name** (IServerComponent.cs:47-66):
+   ```csharp
+   var domainTypeName = typeof(TDomain).Name; // "TodosListProvider"
+
+   var domainName = domainTypeName.EndsWith("Domain")
+       ? domainTypeName.Substring(0, domainTypeName.Length - 6)
+       : domainTypeName;
+   domainName = char.ToLower(domainName[0]) + domainName.Substring(1);
+   // Result: "todosListProvider" ❌
+   ```
+
+3. **Component metadata injected with wrong domain** (FrameworkOrchestrator.cs:165-178):
+   ```html
+   <div id="todo-page"
+        data-component="TodosPage"
+        data-domain="todosListProvider">  <!-- ❌ Wrong! -->
+   ```
+
+4. **Interaction declares mutation** (CreateTodo.Interaction.cs:19):
+   ```csharp
+   protected override DataMutations Mutates =>
+       DataMutations.For(TodosListDomainView.DomainName);  // "todosList" ✅
+   ```
+   Where `TodosListDomainView.DomainName = "todosList"` (TodoList.DomainView.cs:7)
+
+5. **Framework looks for affected components** (FrameworkOrchestrator.cs:72-76):
+   ```csharp
+   var affectedComponents = pageComponents
+       .Where(c => mutations.Domains.Contains(c.Domain))  // Looking for "todosList"
+       .ToList();
+   // Finds NOTHING because component has "todosListProvider" ❌
+   ```
+
+6. **No OOB updates generated** → UI doesn't update!
+
+**The Mismatch:**
+
+| Source | Domain Name | Derived From |
+|--------|-------------|--------------|
+| Component Dependencies | `"todosListProvider"` | Provider type name |
+| Interaction Mutations | `"todosList"` | DomainView.DomainName constant |
+| **Match?** | ❌ NO MATCH | Different sources! |
+
+**Why WelcomeWidget "Works" (But Doesn't Really):**
+
+WelcomeWidget manually hardcodes the correct domain name in its Render method (WelcomeWidget.htmx.cs:30):
+```html
+<div id="welcome-widget"
+     data-component="WelcomeWidget"
+     data-domain="todosList">  <!-- ✅ Manually hardcoded! -->
+```
+
+This is a workaround that hides the fundamental problem.
+
+#### Root Cause
+
+The `DataDependencies.From<TProvider, TContext>()` method uses the **TProvider type name** to derive the domain, but:
+1. The Provider naming convention is inconsistent (`TodosListProvider` not `TodosListDomain`)
+2. The actual source of truth is `TContext.DomainName` constant
+3. TProvider is not used for anything else (DataLoader finds providers by TContext type)
+
+#### Proposed Solution
+
+**Option A: Remove TProvider, read from TContext.DomainName** (Recommended)
+
+Change `DataDependencies.From<>` to only take TContext and read the DomainName constant:
+
+```csharp
+public static DataDependencies From<TContext>()
+    where TContext : class, new()
+{
+    // Read the DomainName constant from TContext
+    var domainNameField = typeof(TContext).GetField("DomainName",
+        BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
+
+    if (domainNameField == null)
+        throw new InvalidOperationException(
+            $"{typeof(TContext).Name} must have a public static DomainName field");
+
+    var domainName = domainNameField.GetValue(null) as string;
+
+    if (string.IsNullOrEmpty(domainName))
+        throw new InvalidOperationException(
+            $"{typeof(TContext).Name}.DomainName cannot be null or empty");
+
+    return new()
+    {
+        Domain = domainName,
+        DomainContextType = typeof(TContext)
+    };
+}
+```
+
+**Usage changes:**
+```csharp
+// Before
+public DataDependencies Dependencies =>
+    DataDependencies.From<TodosListProvider, TodosListDomainView>();
+
+// After
+public DataDependencies Dependencies =>
+    DataDependencies.From<TodosListDomainView>();
+```
+
+**Why This Works:**
+- Reads domain name directly from the source of truth (DomainView.DomainName)
+- Removes unnecessary TProvider generic parameter
+- DataLoader already finds providers by TContext type (not TProvider)
+- Simpler API - one generic instead of two
+- Compile-time safe - will fail at startup if DomainName missing
+
+**Benefits:**
+- Fixes the domain name mismatch
+- Removes unnecessary complexity
+- More honest about what's actually needed
+- Aligns with how DataLoader actually works
+- Prevents future mismatches
+
+#### Tasks
+
+1. **Update DataDependencies.From<> Method**
+   - [ ] Change signature from `From<TProvider, TContext>()` to `From<TContext>()`
+   - [ ] Remove `where TDomain : IDataProvider<TContext>` constraint
+   - [ ] Add reflection code to read `TContext.DomainName` static field
+   - [ ] Add validation that field exists and is non-empty
+   - [ ] Update XML documentation
+
+2. **Update TodosPage**
+   - [ ] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+   - [ ] To `DataDependencies.From<TodosListDomainView>()`
+
+3. **Update WelcomeWidget**
+   - [ ] Change `DataDependencies.From<TodosListProvider, TodosListDomainView>()`
+   - [ ] To `DataDependencies.From<TodosListDomainView>()`
+   - [ ] Remove manual `data-domain="todosList"` hardcoding from Render method
+   - [ ] Let framework inject metadata automatically
+
+4. **Build and Test**
+   - [ ] Build succeeds: 0 errors, 0 warnings
+   - [ ] Load /todos page - verify metadata: `data-domain="todosList"`
+   - [ ] Test create todo - verify OOB update works (list updates without refresh)
+   - [ ] Test toggle todo - verify OOB update works
+   - [ ] Test delete todo - verify OOB update works
+   - [ ] Verify WelcomeWidget updates on todo mutations
+   - [ ] Verify both TodosPage and WelcomeWidget receive OOB updates
+
+#### Success Criteria
+
+- [ ] `DataDependencies.From<>` takes only TContext generic parameter
+- [ ] Domain name read from `TContext.DomainName` constant
+- [ ] All components updated to use new signature
+- [ ] Build: 0 errors, 0 warnings
+- [ ] Component metadata contains correct domain: `data-domain="todosList"`
+- [ ] Framework finds affected components correctly
+- [ ] OOB updates work end-to-end for all interactions
+- [ ] Both TodosPage and WelcomeWidget update on todo mutations
+
+#### Expected Outcomes
+
+**After Fix - Component Metadata:**
+```html
+<!-- TodosPage -->
+<div id="todo-page"
+     data-component="TodosPage"
+     data-domain="todosList">  <!-- ✅ Correct! -->
+
+<!-- WelcomeWidget -->
+<div id="welcome-widget"
+     data-component="WelcomeWidget"
+     data-domain="todosList">  <!-- ✅ Auto-injected, not hardcoded! -->
+```
+
+**After Fix - OOB Update Flow:**
+1. User clicks "Add Todo"
+2. Client sends: `X-Component-Context: [{"id":"todo-page","componentType":"TodosPage","domain":"todosList"}]`
+3. CreateTodo interaction declares: `Mutates => "todosList"`
+4. Framework filters: `pageComponents.Where(c => c.Domain == "todosList")`
+5. ✅ **MATCH FOUND!** TodosPage has domain "todosList"
+6. ✅ Framework creates TodosPage via ComponentFactory
+7. ✅ Framework re-renders TodosPage with fresh data
+8. ✅ Framework injects `hx-swap-oob="true"` and metadata
+9. ✅ Client receives OOB update and swaps content
+10. ✅ **UI UPDATES WITHOUT PAGE REFRESH!**
+
+**Multiple Components Update:**
+- Both TodosPage and WelcomeWidget depend on "todosList" domain
+- Both will be found by framework
+- Both will receive OOB updates
+- Welcome message updates todo count automatically!
 
 **Completed:** TBD
 
