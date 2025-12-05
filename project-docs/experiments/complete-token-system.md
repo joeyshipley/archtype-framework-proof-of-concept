@@ -220,7 +220,7 @@ if (tokens.TryGetValue("opacity", out var opacityObj) && opacityObj is Dictionar
 ---
 
 ### Phase 3: Theme Compiler Updates (Component Generation)
-**Status:** ⬜ Not Started
+**Status:** ✅ Complete
 
 **Goal:** Replace all hardcoded values with token references
 
@@ -326,10 +326,21 @@ css.AppendLine("    font-size: var(--text-2xl);");
 
 ### Phase 4: External CSS Files
 
+**Status:** ⏭️ Skipped (Deferred to framework extraction)
+
 **Goal:** Update non-generated CSS to use tokens
 
 **Files to Modify:**
 - `PagePlay.Site/wwwroot/css/htmx-lib.css`
+
+**Decision:** Skipped - htmx-lib.css will become framework code and should remain independent of application token system. Framework behavior (loading indicators) should not couple to application theming.
+
+**Reasoning:**
+- `htmx-lib.css` loads before `closed-world.css` and is not in a cascade layer
+- Unlayered CSS has higher specificity than layered CSS
+- This file will be extracted to framework and won't have access to app tokens
+- Framework loading indicators are infrastructure, not application styling
+- Can revisit when framework has its own theming system
 
 **Tasks:**
 
@@ -345,8 +356,8 @@ transition: opacity 500ms ease-in;
 transition: opacity var(--duration-slow) ease-in;
 ```
 
-**Status:** ⬜ Not Started
-**Validation:** htmx animations use duration tokens
+**Status:** ⏭️ Skipped (deferred to framework theming)
+**Validation:** N/A - maintaining framework independence
 
 ---
 
