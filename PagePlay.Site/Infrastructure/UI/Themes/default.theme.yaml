@@ -1,24 +1,23 @@
-# Closed-World UI Theme Definition
-# This file defines appearance while developers define structure.
-# Future: This will compile to CSS. For now, CSS is written manually to match.
+# UI Theme Definition
 
 tokens:
   spacing:
-    1: 0.25rem    # 4px
-    2: 0.5rem     # 8px
-    3: 0.75rem    # 12px
-    4: 1rem       # 16px
-    5: 1.25rem    # 20px
-    6: 1.5rem     # 24px
-    8: 2rem       # 32px
+    xs: 0.25rem      # 4px  - Minimal breathing room
+    sm: 0.5rem       # 8px  - Tight spacing
+    md: 0.75rem      # 12px - Comfortable
+    lg: 1rem         # 16px - Standard padding
+    xl: 1.25rem      # 20px - Generous
+    2xl: 1.5rem      # 24px - Section spacing
+    3xl: 2rem        # 32px - Major divisions
 
   text:
-    xs: 0.75rem   # 12px - captions, fine print
-    sm: 0.875rem  # 14px
-    md: 1rem      # 16px
-    lg: 1.125rem  # 18px
-    xl: 1.25rem   # 20px - section headings
-    2xl: 1.5rem   # 24px - page titles
+    xs: 0.75rem      # 12px - captions, fine print
+    sm: 0.875rem     # 14px
+    md: 1rem         # 16px - body default
+    lg: 1.125rem     # 18px
+    xl: 1.25rem      # 20px - section headings
+    2xl: 1.5rem      # 24px - page titles
+    3xl: 1.875rem    # 30px - hero titles
 
   font:
     weight-normal: 400      # Body text
@@ -29,7 +28,7 @@ tokens:
   color:
     surface: "#ffffff"
     surface-raised: "#fafafa"
-    white: "#ffffff"        # Explicit for button text on colored backgrounds
+    white: "#ffffff"
     border: "#e5e5e5"
     text-primary: "#171717"
     text-secondary: "#525252"

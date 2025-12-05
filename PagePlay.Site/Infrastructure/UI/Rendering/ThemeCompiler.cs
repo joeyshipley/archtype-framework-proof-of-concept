@@ -161,7 +161,7 @@ public class ThemeCompiler
         css.AppendLine("  .page {");
         css.AppendLine("    max-width: 1200px;");
         css.AppendLine("    margin: 0 auto;");
-        css.AppendLine("    padding: 0 var(--spacing-4);");
+        css.AppendLine("    padding: 0 var(--spacing-lg);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .section {");
@@ -598,12 +598,12 @@ public class ThemeCompiler
         // List style variants
         css.AppendLine("  .list--unordered {");
         css.AppendLine("    list-style: disc;");
-        css.AppendLine("    padding-left: var(--spacing-5);");
+        css.AppendLine("    padding-left: var(--spacing-xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list--ordered {");
         css.AppendLine("    list-style: decimal;");
-        css.AppendLine("    padding-left: var(--spacing-5);");
+        css.AppendLine("    padding-left: var(--spacing-xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list--plain {");
@@ -638,7 +638,7 @@ public class ThemeCompiler
         css.AppendLine("  .list-item--error {");
         css.AppendLine("    background: var(--color-critical-subtle);");
         css.AppendLine("    border-left: 2px solid var(--color-critical);");
-        css.AppendLine("    padding-left: var(--spacing-3);");
+        css.AppendLine("    padding-left: var(--spacing-md);");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -650,12 +650,12 @@ public class ThemeCompiler
 
         css.AppendLine("  /* Page structure */");
         css.AppendLine("  .page {");
-        css.AppendLine("    padding-top: var(--spacing-8);");
-        css.AppendLine("    padding-bottom: var(--spacing-8);");
+        css.AppendLine("    padding-top: var(--spacing-3xl);");
+        css.AppendLine("    padding-bottom: var(--spacing-3xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .section {");
-        css.AppendLine("    margin-bottom: var(--spacing-8);");
+        css.AppendLine("    margin-bottom: var(--spacing-3xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .page-title {");
@@ -678,53 +678,53 @@ public class ThemeCompiler
     {
         css.AppendLine("  /* Stack - purpose-based spacing */");
         css.AppendLine("  .stack--actions {");
-        css.AppendLine("    gap: var(--spacing-2);");
+        css.AppendLine("    gap: var(--spacing-sm);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--fields {");
-        css.AppendLine("    gap: var(--spacing-4);");
+        css.AppendLine("    gap: var(--spacing-lg);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--content {");
-        css.AppendLine("    gap: var(--spacing-3);");
+        css.AppendLine("    gap: var(--spacing-md);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--items {");
-        css.AppendLine("    gap: var(--spacing-3);");
+        css.AppendLine("    gap: var(--spacing-md);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--sections {");
-        css.AppendLine("    gap: var(--spacing-8);");
+        css.AppendLine("    gap: var(--spacing-3xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--inline {");
-        css.AppendLine("    gap: var(--spacing-1);");
+        css.AppendLine("    gap: var(--spacing-xs);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--cards {");
-        css.AppendLine("    gap: var(--spacing-6);");
+        css.AppendLine("    gap: var(--spacing-2xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  /* Row - purpose-based spacing */");
         css.AppendLine("  .row--actions {");
-        css.AppendLine("    gap: var(--spacing-2);");
+        css.AppendLine("    gap: var(--spacing-sm);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .row--fields {");
-        css.AppendLine("    gap: var(--spacing-4);");
+        css.AppendLine("    gap: var(--spacing-lg);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .row--inline {");
-        css.AppendLine("    gap: var(--spacing-1);");
+        css.AppendLine("    gap: var(--spacing-xs);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  /* Grid - purpose-based spacing and columns */");
         css.AppendLine("  .grid--cards {");
-        css.AppendLine("    gap: var(--spacing-6);");
+        css.AppendLine("    gap: var(--spacing-2xl);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .grid--items {");
-        css.AppendLine("    gap: var(--spacing-3);");
+        css.AppendLine("    gap: var(--spacing-md);");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .grid--cols-1 {");
@@ -757,7 +757,7 @@ public class ThemeCompiler
     /// Gets a component mapping from the theme dictionary.
     /// Returns null if the component doesn't exist.
     /// </summary>
-    private static Dictionary<object, object>? getComponent(Dictionary<string, object> theme, string componentName)
+    private static Dictionary<object, object> getComponent(Dictionary<string, object> theme, string componentName)
     {
         if (theme.TryGetValue(componentName, out var componentObj) && componentObj is Dictionary<object, object> component)
             return component;
@@ -768,10 +768,10 @@ public class ThemeCompiler
     /// Gets a nested property from a component mapping (e.g., "base.weight").
     /// Returns null if the path doesn't exist.
     /// </summary>
-    private static object? getComponentProperty(Dictionary<object, object> component, string path)
+    private static object getComponentProperty(Dictionary<object, object> component, string path)
     {
         var parts = path.Split('.');
-        object? current = component;
+        object current = component;
 
         foreach (var part in parts)
         {
@@ -791,7 +791,7 @@ public class ThemeCompiler
     /// Resolves a property value to a CSS variable reference.
     /// Maps semantic names to CSS custom properties (e.g., "semibold" -> "var(--weight-semibold)").
     /// </summary>
-    private static string resolvePropertyValue(string property, object? value)
+    private static string resolvePropertyValue(string property, object value)
     {
         if (value == null)
             return "";
@@ -842,7 +842,7 @@ public class ThemeCompiler
     /// <summary>
     /// Gets a CSS property value from component mapping, with fallback to default.
     /// </summary>
-    private static string getPropertyOrDefault(Dictionary<object, object>? component, string path, string property, string defaultValue)
+    private static string getPropertyOrDefault(Dictionary<object, object> component, string path, string property, string defaultValue)
     {
         if (component == null)
             return defaultValue;

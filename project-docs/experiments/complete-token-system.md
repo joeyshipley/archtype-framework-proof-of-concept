@@ -572,4 +572,217 @@ Designers now have complete control over all styling through `default.theme.yaml
 ---
 
 **Last Updated:** 2025-12-05
-**Status Summary:** Planning complete, ready for implementation
+**Status Summary:** Phases 1-6 complete. Phase 7 identified for semantic spacing scale.
+
+---
+
+## Phase 7: Semantic Spacing Scale
+
+**Status:** 📋 Planned
+**Priority:** High (UX consistency issue)
+
+**Problem Identified:**
+Current spacing scale uses numeric names (1-8) that require lookup table, inconsistent with semantic naming used for text sizes (`xs`, `sm`, `md`) and font weights (`normal`, `medium`, `bold`). The missing "7" adds confusion.
+
+**Current State:**
+```yaml
+spacing:
+  1: 0.25rem    # 4px - Designer must memorize "1 = 4px"
+  2: 0.5rem     # 8px
+  3: 0.75rem    # 12px
+  4: 1rem       # 16px
+  5: 1.25rem    # 20px
+  6: 1.5rem     # 24px
+  8: 2rem       # 32px - Why no 7? Confusing gap
+```
+
+**Designer Experience Issue:**
+- "What spacing should I use for card padding?" → Must look up that "4 = 1rem"
+- Inconsistent with semantic naming elsewhere (text.md, font.weight-medium)
+- Not self-documenting: `padding: 4` doesn't convey visual intent
+
+**Target State:**
+```yaml
+spacing:
+  xs: 0.25rem      # 4px  - Minimal breathing room (icon + label)
+  sm: 0.5rem       # 8px  - Tight spacing (button actions)
+  md: 0.75rem      # 12px - Comfortable (form fields)
+  lg: 1rem         # 16px - Standard padding (cards, sections)
+  xl: 1.25rem      # 20px - Generous (list items)
+  2xl: 1.5rem      # 24px - Section spacing (card grids)
+  3xl: 2rem        # 32px - Major divisions (page sections)
+```
+
+**Benefits:**
+- ✅ Consistent with text/font naming patterns
+- ✅ Self-documenting: `padding: lg` conveys "large spacing"
+- ✅ Designer doesn't need lookup table
+- ✅ Aligns with Closed-World UI principle (semantic WHAT, not numeric HOW)
+- ✅ Removes confusing numeric gap (no more "why no 7?")
+
+**Implementation Plan:**
+
+### Step 1: Update Token Definitions
+**File:** `default.theme.yaml`
+
+Replace spacing tokens:
+```yaml
+spacing:
+  xs: 0.25rem      # 4px
+  sm: 0.5rem       # 8px
+  md: 0.75rem      # 12px
+  lg: 1rem         # 16px
+  xl: 1.25rem      # 20px
+  2xl: 1.5rem      # 24px
+  3xl: 2rem        # 32px
+```
+
+**Breaking Change:** No backwards compatibility. Clean break.
+
+### Step 2: Update Component Mappings
+**File:** `default.theme.yaml`
+
+Update all component padding/margin/gap values:
+```yaml
+# Before:
+button:
+  base:
+    padding-x: 4
+    padding-y: 2
+
+# After:
+button:
+  base:
+    padding-x: lg
+    padding-y: sm
+
+# Before:
+card:
+  header:
+    padding: 4
+
+# After:
+card:
+  header:
+    padding: lg
+```
+
+**Affected Components:**
+- button (padding-x, padding-y)
+- card (header/body/footer padding, footer gap)
+- input (padding-x, padding-y)
+- label (margin-bottom)
+- field (gap, margin-bottom)
+- alert (padding-x, padding-y)
+- empty-state (padding for size variants)
+- list-item (padding-y, padding-left)
+- page-title (margin-bottom)
+- section-title (margin-bottom)
+
+### Step 3: Update ThemeCompiler CSS Variable Generation
+**File:** `ThemeCompiler.cs`
+
+No changes needed! The compiler already generates `--spacing-{name}` pattern.
+
+Current: `--spacing-1`, `--spacing-2`, etc.
+After: `--spacing-xs`, `--spacing-sm`, etc.
+
+### Step 4: Update Layout Styles (Hardcoded References)
+**File:** `ThemeCompiler.cs` - `generateLayoutStyles()`
+
+Update hardcoded spacing references:
+```csharp
+// Before:
+css.AppendLine("    gap: var(--spacing-2);");   // actions
+css.AppendLine("    gap: var(--spacing-4);");   // fields
+css.AppendLine("    gap: var(--spacing-3);");   // content/items
+css.AppendLine("    gap: var(--spacing-8);");   // sections
+css.AppendLine("    gap: var(--spacing-1);");   // inline
+css.AppendLine("    gap: var(--spacing-6);");   // cards
+
+// After:
+css.AppendLine("    gap: var(--spacing-sm);");   // actions
+css.AppendLine("    gap: var(--spacing-lg);");   // fields
+css.AppendLine("    gap: var(--spacing-md);");   // content/items
+css.AppendLine("    gap: var(--spacing-3xl);");  // sections
+css.AppendLine("    gap: var(--spacing-xs);");   // inline
+css.AppendLine("    gap: var(--spacing-2xl);");  // cards
+```
+
+**Mapping:**
+- `1` → `xs` (0.25rem)
+- `2` → `sm` (0.5rem)
+- `3` → `md` (0.75rem)
+- `4` → `lg` (1rem)
+- `5` → `xl` (1.25rem)
+- `6` → `2xl` (1.5rem)
+- `8` → `3xl` (2rem)
+
+### Step 5: Update Base Layer Hardcoded Spacing
+**File:** `ThemeCompiler.cs` - `generateBaseLayer()`
+
+Update page padding:
+```csharp
+// Before:
+css.AppendLine("    padding: 0 var(--spacing-4);");
+
+// After:
+css.AppendLine("    padding: 0 var(--spacing-lg);");
+```
+
+Update list padding:
+```csharp
+// Before (in generateListStyles):
+css.AppendLine("    padding-left: var(--spacing-5);");
+
+// After:
+css.AppendLine("    padding-left: var(--spacing-xl);");
+```
+
+### Step 6: Update Page Structure Hardcoded Spacing
+**File:** `ThemeCompiler.cs` - `generatePageStructureStyles()`
+
+```csharp
+// Before:
+css.AppendLine("    padding-top: var(--spacing-8);");
+css.AppendLine("    padding-bottom: var(--spacing-8);");
+css.AppendLine("    margin-bottom: var(--spacing-8);");
+
+// After:
+css.AppendLine("    padding-top: var(--spacing-3xl);");
+css.AppendLine("    padding-bottom: var(--spacing-3xl);");
+css.AppendLine("    margin-bottom: var(--spacing-3xl);");
+```
+
+### Step 7: Validation
+- [ ] Build succeeds
+- [ ] Theme compiles without errors
+- [ ] Generated CSS uses semantic names (--spacing-xs through --spacing-3xl)
+- [ ] All component padding/margins use semantic names
+- [ ] Visual regression test: Output looks identical to before
+- [ ] Designer test: Can change spacing.lg value and see it propagate
+
+### Step 8: Documentation Update
+Update `README.DESIGN_STYLING.md` to reflect semantic spacing scale in examples.
+
+---
+
+**Risk Assessment:**
+- **Breaking Change:** Yes - removes numeric spacing tokens
+- **Impact:** Medium - all spacing references must update
+- **Mitigation:** Single atomic commit, all changes together
+- **Rollback:** Git revert if issues found
+
+**Success Criteria:**
+- ✅ Designers can reason about spacing without lookup table
+- ✅ Naming consistent with text/font patterns
+- ✅ No visual regression (same pixel values)
+- ✅ Generated CSS uses semantic names throughout
+
+**Estimated Effort:** 1-2 hours
+**Dependencies:** Phases 1-6 complete
+
+---
+
+**Last Updated:** 2025-12-05
+**Status Summary:** Phases 1-6 complete. Phase 7 planned for semantic spacing scale.
