@@ -9,7 +9,8 @@
 - ✅ Phase 0: Infrastructure (2025-12-05)
 - ✅ Phase 1: Login Page Conversion (2025-12-05)
 - ✅ Phase 2: Todos Page Conversion (2025-12-05)
-- ⏳ Phase 3: StyleTest Page (Next)
+- ⏳ Phase 2.1: Framework Integration Fix (Next)
+- ⏸️ Phase 3: StyleTest Page
 - ⏸️ Phase 4: Documentation
 - ⏸️ Phase 5: Cleanup & Validation
 
@@ -728,6 +729,133 @@ Framework automatically produces:
 - Framework will inject component metadata automatically (data-component, data-domain)
 
 **Completed:** 2025-12-05
+
+---
+
+### Phase 2.1: Framework Integration for Initial Page Loads ⏳ NEXT
+
+**Goal:** Fix route handlers to use `FrameworkOrchestrator.RenderComponentsAsync()` instead of bypassing framework, ensuring proper metadata injection for auto-binding.
+
+#### Problem Discovery
+
+After completing Phase 2, we discovered that both Login and Todos route handlers call `page.Render(ctx)` directly:
+
+```csharp
+// Current (bypasses framework)
+var ctx = await dataLoader.With<TodosListDomainView>().Load();
+var bodyContent = _page.Render(ctx);  // ❌ No metadata injection!
+```
+
+**Impact:**
+- ✅ Pages load and display correctly
+- ❌ Component metadata not injected (`data-component`, `data-domain`)
+- ❌ Auto-binding won't work (interactions can't identify affected components)
+- ❌ OOB updates won't trigger automatically
+
+#### Architecture Analysis
+
+**How framework works:**
+
+1. **Interactions (OOB updates):** Use `FrameworkOrchestrator.RenderMutationResponseAsync()`
+   - Reads `X-Component-Context` header from client
+   - Identifies affected components based on `Mutates` declaration
+   - Re-fetches data and re-renders affected components
+   - Injects both OOB attribute AND metadata
+   - ✅ Works correctly (auto-binding functional)
+
+2. **Initial page loads (route handlers):** Currently bypass framework
+   - Call `page.Render(ctx)` directly
+   - No metadata injection happens
+   - ❌ Broken: clients can't track components for future interactions
+
+3. **Layout components (WelcomeWidget):** Use framework correctly
+   - Call `_framework.RenderComponentsAsync(components)`
+   - Metadata properly injected
+   - ✅ Works correctly
+
+**Correct pattern:**
+```csharp
+// Layout.htmx.cs example (line 62-64)
+var components = new IServerComponent[] { _welcomeWidget };
+var renderedComponents = await _framework.RenderComponentsAsync(components);
+return renderedComponents[_welcomeWidget.ComponentId];
+```
+
+#### Proposed Solution
+
+Update route handlers to use `FrameworkOrchestrator.RenderComponentsAsync()`:
+
+**Before (Todos):**
+```csharp
+var ctx = await dataLoader.With<TodosListDomainView>().Load();
+var bodyContent = _page.Render(ctx);
+var page = await _layout.RenderAsync("Todos", bodyContent);
+```
+
+**After (Todos):**
+```csharp
+var components = new IServerComponent[] { _page };
+var renderedComponents = await _framework.RenderComponentsAsync(components);
+var bodyContent = renderedComponents[_page.ComponentId];
+var page = await _layout.RenderAsync("Todos", bodyContent);
+```
+
+**Benefits:**
+- Framework handles data loading (collects dependencies from components)
+- Framework handles metadata injection automatically
+- Consistent with Layout's pattern
+- No manual data loading needed!
+
+#### Tasks
+
+1. **Update TodosPageEndpoints**
+   - [ ] Inject `IFrameworkOrchestrator` into constructor
+   - [ ] Remove manual `IDataLoader` usage
+   - [ ] Call `_framework.RenderComponentsAsync(new[] { _page })`
+   - [ ] Extract rendered HTML using `ComponentId`
+
+2. **Update LoginPageEndpoints**
+   - [ ] Inject `IFrameworkOrchestrator` into constructor
+   - [ ] Remove `DataContext.Empty()` manual creation
+   - [ ] Call `_framework.RenderComponentsAsync(new[] { _page })`
+   - [ ] Extract rendered HTML using `ComponentId`
+
+3. **Build and Test**
+   - [ ] Build succeeds: 0 errors, 0 warnings
+   - [ ] Load /login page - verify no visual changes
+   - [ ] Load /todos page - verify no visual changes
+   - [ ] Inspect HTML - verify metadata present: `data-component="TodosPage" data-domain="todosList"`
+   - [ ] Test create todo - verify auto-binding works (OOB update of entire page)
+   - [ ] Test toggle todo - verify auto-binding works
+   - [ ] Test delete todo - verify auto-binding works
+
+#### Success Criteria
+
+- [ ] Both route handlers use `FrameworkOrchestrator.RenderComponentsAsync()`
+- [ ] No manual data loading in route handlers
+- [ ] Component metadata present in initial page HTML
+- [ ] Auto-binding works end-to-end (initial load → interaction → OOB update)
+- [ ] Build: 0 errors, 0 warnings
+- [ ] Visual appearance unchanged
+
+#### Expected Outcomes
+
+**HTML Output (Todos page):**
+```html
+<div id="todo-page" data-component="TodosPage" data-domain="todosList">
+  <h1>My Todos</h1>
+  <!-- ... -->
+</div>
+```
+
+**Auto-binding flow:**
+1. Initial page load: Client sees `data-component` and `data-domain`, stores in component context
+2. User clicks "Add Todo": Client sends `X-Component-Context` header with tracked components
+3. Server processes mutation: Framework sees `Mutates => "todosList"`
+4. Server finds affected components: TodosPage depends on "todosList"
+5. Server re-renders: TodosPage.Render() with fresh data + OOB attribute + metadata
+6. Client receives OOB: Swaps entire `todo-page` content
+7. ✅ Full auto-binding cycle complete!
 
 ---
 
