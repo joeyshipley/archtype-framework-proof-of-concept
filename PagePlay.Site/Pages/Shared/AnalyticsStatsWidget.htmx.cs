@@ -27,7 +27,7 @@ public class AnalyticsStatsWidget : IAnalyticsStatsWidget
     public string ComponentId => "analytics-stats-widget";
 
     public DataDependencies Dependencies => DataDependencies
-        .From<TodoAnalyticsProvider, TodoAnalyticsDomainView>();
+        .From<TodoAnalyticsDomainView>();
 
     public string Render(IDataContext data)
     {
@@ -39,8 +39,6 @@ public class AnalyticsStatsWidget : IAnalyticsStatsWidget
         // language=html
         return $$"""
         <div id="{{ComponentId}}"
-             data-component="AnalyticsStatsWidget"
-             data-domain="todoAnalytics"
              class="analytics-stats-widget">
             <div class="stats-grid">
                 <div class="stat-card">

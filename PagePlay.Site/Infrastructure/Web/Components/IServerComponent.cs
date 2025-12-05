@@ -44,19 +44,28 @@ public class DataDependencies
         DomainContextType = null
     };
 
-    public static DataDependencies From<TDomain, TContext>()
-        where TDomain : IDataProvider<TContext>
+    /// <summary>
+    /// Creates data dependencies from a domain context type.
+    /// Reads the domain name from the TContext.DomainName static field.
+    /// </summary>
+    /// <typeparam name="TContext">Domain view type that contains a public static DomainName field</typeparam>
+    /// <exception cref="InvalidOperationException">Thrown if TContext doesn't have a DomainName field or it's empty</exception>
+    public static DataDependencies From<TContext>()
         where TContext : class, new()
     {
-        // Use the domain type name as the domain identifier
-        // Domain classes should match their Name property (e.g., TodosDomain.Name = "todos")
-        var domainTypeName = typeof(TDomain).Name;
+        // Read the DomainName constant from TContext
+        var domainNameField = typeof(TContext).GetField("DomainName",
+            System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
 
-        // Convert "TodosDomain" -> "todos" (remove "Domain" suffix and lowercase first char)
-        var domainName = domainTypeName.EndsWith("Domain")
-            ? domainTypeName.Substring(0, domainTypeName.Length - 6)
-            : domainTypeName;
-        domainName = char.ToLower(domainName[0]) + domainName.Substring(1);
+        if (domainNameField == null)
+            throw new InvalidOperationException(
+                $"{typeof(TContext).Name} must have a public static DomainName field");
+
+        var domainName = domainNameField.GetValue(null) as string;
+
+        if (string.IsNullOrEmpty(domainName))
+            throw new InvalidOperationException(
+                $"{typeof(TContext).Name}.DomainName cannot be null or empty");
 
         return new()
         {

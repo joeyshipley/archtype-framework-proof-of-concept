@@ -21,7 +21,7 @@ public class TodosPage(IHtmlRenderer _renderer) : IServerComponent, ITodosPageVi
     public string ComponentId => "todo-page";
 
     public DataDependencies Dependencies =>
-        DataDependencies.From<TodosListProvider, TodosListDomainView>();
+        DataDependencies.From<TodosListDomainView>();
 
     public string Render(IDataContext data)
     {

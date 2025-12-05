@@ -15,7 +15,7 @@ public class WelcomeWidget : IWelcomeWidget
 
     // New typed API - compile-time safe, no magic strings!
     public DataDependencies Dependencies => DataDependencies
-        .From<TodosListProvider, TodosListDomainView>();
+        .From<TodosListDomainView>();
 
     public string Render(IDataContext data)
     {
@@ -26,8 +26,6 @@ public class WelcomeWidget : IWelcomeWidget
         // language=html
         return $$"""
         <div id="{{ComponentId}}"
-             data-component="WelcomeWidget"
-             data-domain="todosList"
              class="welcome-widget">
             <p>Welcome, you have {{count}} open Todos to look at.</p>
         </div>
