@@ -16,6 +16,7 @@ using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Shared;
+using PagePlay.Site.Pages.StyleTest;
 using PagePlay.Site.Pages.Todos;
 
 namespace PagePlay.Site.Infrastructure.Dependencies;
@@ -90,6 +91,7 @@ public static class DependencyResolver
         // Also register pages by concrete type for endpoints that need full IServerComponent interface
         services.AddScoped<LoginPage>();
         services.AddScoped<TodosPage>();
+        services.AddScoped<StyleTestPage>();
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
         services.AutoRegister<ILoginPageInteraction>(ServiceLifetime.Scoped);

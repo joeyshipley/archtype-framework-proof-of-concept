@@ -1,3 +1,5 @@
+using PagePlay.Site.Infrastructure.Web.Components;
+using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Routing;
 using PagePlay.Site.Pages.Shared;
 
@@ -7,7 +9,8 @@ public interface IStyleTestPageInteraction : IEndpoint {}
 
 public class StyleTestPageEndpoints(
     IPageLayout _layout,
-    IStyleTestPageView _page,
+    StyleTestPage _page,
+    IFrameworkOrchestrator _framework,
     IEnumerable<IStyleTestPageInteraction> _interactions
 ) : IClientEndpoint
 {
@@ -17,7 +20,9 @@ public class StyleTestPageEndpoints(
     {
         endpoints.MapGet(PAGE_ROUTE, async () =>
         {
-            var bodyContent = _page.RenderPage();
+            var components = new IServerComponent[] { _page };
+            var renderedComponents = await _framework.RenderComponentsAsync(components);
+            var bodyContent = renderedComponents[_page.ComponentId];
 
             var page = await _layout.RenderAsync("Style Test", bodyContent);
             return Results.Content(page, "text/html");
