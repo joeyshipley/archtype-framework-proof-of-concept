@@ -90,6 +90,9 @@ public static class DependencyResolver
         services.AddScoped<ITodoListComponent, TodoListComponent>();
 
         services.AutoRegisterPages(ServiceLifetime.Scoped);
+
+        // Also register pages by concrete type for endpoints that need full IServerComponent interface
+        services.AddScoped<LoginPage>();
         services.AutoRegister<IClientEndpoint>(ServiceLifetime.Scoped);
         services.AutoRegister<ITodosPageInteraction>(ServiceLifetime.Scoped);
         services.AutoRegister<ILoginPageInteraction>(ServiceLifetime.Scoped);

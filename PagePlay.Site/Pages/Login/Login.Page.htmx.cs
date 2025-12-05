@@ -1,21 +1,26 @@
 using PagePlay.Site.Infrastructure.UI.Rendering;
 using PagePlay.Site.Infrastructure.UI.Vocabulary;
+using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Login;
 
 public interface ILoginPageView
 {
-    string RenderPage();
     string RenderLoginForm();
     string RenderErrorNotification(string error);
     string RenderSuccessNotification(string message);
 }
 
-public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
+public class LoginPage(IHtmlRenderer _renderer) : IServerComponent, ILoginPageView
 {
-    public string RenderPage() =>
+    public string ComponentId => "login-page";
+
+    public DataDependencies Dependencies => DataDependencies.None;
+
+    public string Render(IDataContext data) =>
         _renderer.Render(
             new Section()
+                .Id(ComponentId)
                 .Children(
                     new PageTitle("Login"),
                     new Section().Id("notifications"),
