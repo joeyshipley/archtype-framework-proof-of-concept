@@ -1,2 +1,6 @@
+- Fix file naming. Those pages shouldn't have .htmx in them now.
 - ThemeComplier - consider throwing errors if a non-token is used. 
 - Fix all of the context loading docs. They use old implementations.
+- Come up with actual web theme.
+- Review, what else do we need before we can create an actual website?
+- Refactor and move framework into a Archtype.Framework project.
