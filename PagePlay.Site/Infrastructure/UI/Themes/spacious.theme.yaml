@@ -1,0 +1,352 @@
+# Spacious Theme - Generous Spacing, Large Text, Comfortable Reading
+# Goal: Maximize readability and breathing room
+# Characteristics: Large text, generous padding, wide spacing, soft colors
+
+tokens:
+  spacing:
+    xs: 0.5rem       # 8px  - Minimum is still comfortable
+    sm: 0.75rem      # 12px
+    md: 1rem         # 16px
+    lg: 1.5rem       # 24px
+    xl: 2rem         # 32px
+    2xl: 3rem        # 48px - Generous section spacing
+    3xl: 4rem        # 64px - Massive divisions
+
+  text:
+    xs: 0.875rem     # 14px - Larger minimum
+    sm: 1rem         # 16px
+    md: 1.125rem     # 18px - body default (comfortable)
+    lg: 1.25rem      # 20px
+    xl: 1.75rem      # 28px - section headings
+    2xl: 2.25rem     # 36px - page titles
+    3xl: 3rem        # 48px - hero
+
+  font:
+    weight-normal: 400
+    weight-medium: 500
+    weight-semibold: 600
+    weight-bold: 700
+
+  color:
+    surface: "#ffffff"
+    surface-raised: "#f8f8f8"
+    white: "#ffffff"
+    border: "#e0e0e0"            # Soft borders
+    text-primary: "#1a1a1a"      # Softer black
+    text-secondary: "#6b6b6b"    # Comfortable gray
+    accent: "#3b82f6"            # Softer blue
+    accent-hover: "#2563eb"
+    positive: "#22c55e"          # Softer green
+    positive-subtle: "#f0fdf4"
+    positive-dark: "#16a34a"
+    warning: "#f59e0b"           # Softer orange
+    warning-subtle: "#fffbeb"
+    warning-dark: "#d97706"
+    critical: "#ef4444"          # Softer red
+    critical-subtle: "#fef2f2"
+    critical-dark: "#dc2626"
+
+  shadow:
+    sm: "0 2px 4px rgba(0,0,0,0.08)"    # Soft shadows
+    md: "0 4px 8px rgba(0,0,0,0.12)"
+    lg: "0 8px 16px rgba(0,0,0,0.15)"
+
+  radius:
+    sm: "0.375rem"               # 6px - Comfortable rounding
+    md: "0.5rem"                 # 8px
+    lg: "0.75rem"                # 12px
+    full: "9999px"
+
+  duration:
+    fast: 200ms                  # Smooth
+    normal: 400ms
+    slow: 600ms
+
+  opacity:
+    subdued: 0.4
+    disabled: 0.5
+    subtle: 0.6
+
+# ============================================================================
+# PAGE & SECTION STRUCTURE
+# ============================================================================
+page:
+  base:
+    max-width: 1400              # Wide page for comfort
+    margin: auto
+    padding-x: 2xl               # Generous side margins
+    padding-y: 0
+    display: block
+
+section:
+  base:
+    display: block
+    margin-bottom: 0
+
+# ============================================================================
+# LAYOUT SEMANTIC SPACING
+# ============================================================================
+layout:
+  stack:
+    purpose-actions: md          # Comfortable spacing
+    purpose-fields: xl           # Generous
+    purpose-content: lg          # Readable
+    purpose-items: lg
+    purpose-sections: 3xl        # Massive section gaps
+    purpose-inline: sm
+    purpose-cards: 2xl
+  row:
+    purpose-actions: md
+    purpose-fields: xl
+    purpose-inline: sm
+  grid:
+    purpose-cards: 2xl
+    purpose-items: xl
+    cols-auto-minwidth: 400      # Wide columns
+
+# ============================================================================
+# BASE LAYER PROPERTIES
+# ============================================================================
+stack:
+  base:
+    display: flex
+    flex-direction: column
+
+row:
+  base:
+    display: flex
+    flex-direction: row
+    align-items: center
+
+grid:
+  base:
+    display: grid
+
+header:
+  base:
+    display: block
+
+body:
+  base:
+    display: block
+
+footer:
+  base:
+    display: flex
+    align-items: center
+
+# ============================================================================
+# CONTAINER-CENTRIC STYLING
+# ============================================================================
+card:
+  base:
+    display: flex
+    flex-direction: column
+    background: surface
+    shadow: md                   # Noticeable shadow
+    radius: lg                   # Comfortable rounding
+  header:
+    size: lg                     # Large text
+    weight: semibold
+    padding: 6                   # Generous padding
+  body:
+    padding: 6
+  footer:
+    padding: 6
+    gap: 3
+    justify: end
+
+button:
+  base:
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    border: none
+    cursor: pointer
+    font-family: inherit
+    transition-property: all
+    transition-duration: normal  # Smooth transitions
+    transition-timing: ease
+    padding-x: 6                 # Generous padding
+    padding-y: 3
+    radius: md                   # Comfortable rounding
+    weight: medium
+    size: lg                     # Large text
+
+  importance-primary:
+    background: accent
+    background-hover: accent-hover
+    text: white
+
+  importance-secondary:
+    background: transparent
+    border: border
+    text: text-primary
+    text-hover: text-primary
+
+  importance-tertiary:
+    background: transparent
+    text: text-secondary
+    text-hover: text-primary
+
+  importance-ghost:
+    background: transparent
+    text: text-secondary
+    text-hover: accent
+
+text:
+  base:
+    margin: 0
+    size: md                     # Large by default
+    color: text-primary
+    line-height: 1.7             # Comfortable line height
+
+input:
+  base:
+    padding-x: 4                 # Generous padding
+    padding-y: 3
+    border: border
+    radius: md                   # Comfortable rounding
+    size: lg                     # Large text
+    width: 100%
+  state-disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+label:
+  base:
+    size: md                     # Larger labels
+    weight: medium
+    color: text-primary
+    margin-bottom: 2
+
+field:
+  base:
+    gap: 2
+  label:
+    margin-bottom: 2
+  input:
+    width: 100%
+  state-error:
+    input:
+      border-color: critical
+      background: critical-subtle
+  help-text:
+    size: sm
+    color: text-secondary
+    margin-top: 2
+  error-message:
+    size: sm
+    color: critical
+    margin-top: 2
+
+form:
+  base:
+    display: block
+
+checkbox:
+  base:
+    size: 5                      # Larger checkbox
+    border: border
+    radius: sm
+    cursor: pointer
+  checked:
+    background: accent
+    border-color: accent
+  disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+alert:
+  base:
+    padding-x: 6                 # Generous padding
+    padding-y: 4
+    radius: lg                   # Comfortable rounding
+    border-width: 1
+  tone-neutral:
+    background: surface-raised
+    border-color: border
+    text: text-primary
+  tone-positive:
+    background: positive-subtle
+    border-color: positive
+    text: positive-dark
+  tone-warning:
+    background: warning-subtle
+    border-color: warning
+    text: warning-dark
+  tone-critical:
+    background: critical-subtle
+    border-color: critical
+    text: critical-dark
+  message:
+    size: lg                     # Large text
+    margin: 0
+
+empty-state:
+  base:
+    text-align: center
+    color: text-secondary
+  size-small:
+    padding: 6
+    text-size: md
+  size-medium:
+    padding: 10
+    text-size: lg
+  size-large:
+    padding: 16                  # Massive padding
+    text-size: xl
+  message:
+    margin-bottom: 0
+  action:
+    margin-top: 4
+    color: accent
+    text-decoration: underline
+
+list:
+  base:
+    margin: 0
+    padding: 0
+  style-unordered:
+    list-style: disc
+    padding-left: 6              # Comfortable indent
+  style-ordered:
+    list-style: decimal
+    padding-left: 6
+  style-plain:
+    list-style: none
+    padding-left: 0
+
+list-item:
+  base:
+    padding-y: 3                 # Generous padding
+    padding-x: 0
+  state-normal:
+    opacity: 1
+  state-completed:
+    opacity: subtle
+    text-decoration: line-through
+  state-disabled:
+    opacity: subdued
+    cursor: not-allowed
+  state-error:
+    background: critical-subtle
+    border-left-width: 3
+    border-left-color: critical
+    padding-left: 4
+
+page-title:
+  base:
+    margin: 0
+    size: 2xl                    # Large titles
+    weight: bold
+    color: text-primary
+    margin-bottom: 6             # Generous spacing
+
+section-title:
+  base:
+    margin: 0
+    size: xl                     # Large titles
+    weight: semibold
+    color: text-primary
+    margin-bottom: 4             # Generous spacing

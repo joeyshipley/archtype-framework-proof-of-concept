@@ -1,0 +1,352 @@
+# Compact Theme - Tight Spacing, Small Text, Dense Information
+# Goal: Maximize information density while maintaining readability
+# Characteristics: Small text, minimal padding, tight spacing, subtle borders
+
+tokens:
+  spacing:
+    xs: 0.125rem     # 2px  - Very tight
+    sm: 0.25rem      # 4px  - Minimal
+    md: 0.5rem       # 8px  - Compact
+    lg: 0.75rem      # 12px - Standard
+    xl: 1rem         # 16px - Spacious (for compact)
+    2xl: 1.25rem     # 20px - Section spacing
+    3xl: 1.5rem      # 24px - Major divisions
+
+  text:
+    xs: 0.625rem     # 10px - Tiny
+    sm: 0.75rem      # 12px - Small
+    md: 0.875rem     # 14px - body default (compact)
+    lg: 1rem         # 16px
+    xl: 1.125rem     # 18px - section headings
+    2xl: 1.25rem     # 20px - page titles
+    3xl: 1.5rem      # 24px - hero
+
+  font:
+    weight-normal: 400
+    weight-medium: 500
+    weight-semibold: 600
+    weight-bold: 700
+
+  color:
+    surface: "#ffffff"
+    surface-raised: "#fafafa"
+    white: "#ffffff"
+    border: "#d4d4d4"            # Subtle borders
+    text-primary: "#262626"
+    text-secondary: "#737373"
+    accent: "#2563eb"
+    accent-hover: "#1d4ed8"
+    positive: "#16a34a"
+    positive-subtle: "#f0fdf4"
+    positive-dark: "#15803d"
+    warning: "#d97706"
+    warning-subtle: "#fffbeb"
+    warning-dark: "#b45309"
+    critical: "#dc2626"
+    critical-subtle: "#fef2f2"
+    critical-dark: "#991b1b"
+
+  shadow:
+    sm: "0 1px 2px rgba(0,0,0,0.03)"   # Very subtle
+    md: "0 2px 4px rgba(0,0,0,0.06)"
+    lg: "0 4px 8px rgba(0,0,0,0.08)"
+
+  radius:
+    sm: "0.125rem"               # 2px - Minimal rounding
+    md: "0.25rem"                # 4px
+    lg: "0.375rem"               # 6px
+    full: "9999px"
+
+  duration:
+    fast: 100ms                  # Quick
+    normal: 200ms
+    slow: 300ms
+
+  opacity:
+    subdued: 0.4
+    disabled: 0.5
+    subtle: 0.6
+
+# ============================================================================
+# PAGE & SECTION STRUCTURE
+# ============================================================================
+page:
+  base:
+    max-width: 1000              # Narrower for density
+    margin: auto
+    padding-x: md                # Minimal side padding
+    padding-y: 0
+    display: block
+
+section:
+  base:
+    display: block
+    margin-bottom: 0
+
+# ============================================================================
+# LAYOUT SEMANTIC SPACING
+# ============================================================================
+layout:
+  stack:
+    purpose-actions: xs          # Very tight
+    purpose-fields: sm           # Compact
+    purpose-content: sm
+    purpose-items: xs
+    purpose-sections: xl         # Reduced section spacing
+    purpose-inline: xs
+    purpose-cards: lg
+  row:
+    purpose-actions: xs
+    purpose-fields: sm
+    purpose-inline: xs
+  grid:
+    purpose-cards: lg
+    purpose-items: sm
+    cols-auto-minwidth: 200      # Narrower columns for density
+
+# ============================================================================
+# BASE LAYER PROPERTIES
+# ============================================================================
+stack:
+  base:
+    display: flex
+    flex-direction: column
+
+row:
+  base:
+    display: flex
+    flex-direction: row
+    align-items: center
+
+grid:
+  base:
+    display: grid
+
+header:
+  base:
+    display: block
+
+body:
+  base:
+    display: block
+
+footer:
+  base:
+    display: flex
+    align-items: center
+
+# ============================================================================
+# CONTAINER-CENTRIC STYLING
+# ============================================================================
+card:
+  base:
+    display: flex
+    flex-direction: column
+    background: surface
+    shadow: sm                   # Subtle shadow
+    radius: sm                   # Minimal rounding
+  header:
+    size: sm                     # Small text
+    weight: semibold
+    padding: 2                   # Tight padding
+  body:
+    padding: 2
+  footer:
+    padding: 2
+    gap: 1
+    justify: end
+
+button:
+  base:
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    border: none
+    cursor: pointer
+    font-family: inherit
+    transition-property: all
+    transition-duration: fast
+    transition-timing: ease
+    padding-x: 2                 # Compact padding
+    padding-y: 1
+    radius: sm                   # Minimal rounding
+    weight: medium
+    size: sm                     # Small text
+
+  importance-primary:
+    background: accent
+    background-hover: accent-hover
+    text: white
+
+  importance-secondary:
+    background: transparent
+    border: border
+    text: text-primary
+    text-hover: text-primary
+
+  importance-tertiary:
+    background: transparent
+    text: text-secondary
+    text-hover: text-primary
+
+  importance-ghost:
+    background: transparent
+    text: text-secondary
+    text-hover: accent
+
+text:
+  base:
+    margin: 0
+    size: md                     # Small by default
+    color: text-primary
+    line-height: 1.4             # Tight line height
+
+input:
+  base:
+    padding-x: 2                 # Compact padding
+    padding-y: 1
+    border: border
+    radius: sm                   # Minimal rounding
+    size: sm                     # Small text
+    width: 100%
+  state-disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+label:
+  base:
+    size: xs                     # Tiny labels
+    weight: medium
+    color: text-primary
+    margin-bottom: 1
+
+field:
+  base:
+    gap: 1
+  label:
+    margin-bottom: 1
+  input:
+    width: 100%
+  state-error:
+    input:
+      border-color: critical
+      background: critical-subtle
+  help-text:
+    size: xs                     # Tiny help text
+    color: text-secondary
+    margin-top: 1
+  error-message:
+    size: xs
+    color: critical
+    margin-top: 1
+
+form:
+  base:
+    display: block
+
+checkbox:
+  base:
+    size: 3                      # Smaller checkbox
+    border: border
+    radius: sm
+    cursor: pointer
+  checked:
+    background: accent
+    border-color: accent
+  disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+alert:
+  base:
+    padding-x: 2                 # Compact padding
+    padding-y: 2
+    radius: sm
+    border-width: 1
+  tone-neutral:
+    background: surface-raised
+    border-color: border
+    text: text-primary
+  tone-positive:
+    background: positive-subtle
+    border-color: positive
+    text: positive-dark
+  tone-warning:
+    background: warning-subtle
+    border-color: warning
+    text: warning-dark
+  tone-critical:
+    background: critical-subtle
+    border-color: critical
+    text: critical-dark
+  message:
+    size: sm                     # Small text
+    margin: 0
+
+empty-state:
+  base:
+    text-align: center
+    color: text-secondary
+  size-small:
+    padding: 2
+    text-size: xs
+  size-medium:
+    padding: 3
+    text-size: sm
+  size-large:
+    padding: 4
+    text-size: md
+  message:
+    margin-bottom: 0
+  action:
+    margin-top: 2
+    color: accent
+    text-decoration: underline
+
+list:
+  base:
+    margin: 0
+    padding: 0
+  style-unordered:
+    list-style: disc
+    padding-left: 3              # Minimal indent
+  style-ordered:
+    list-style: decimal
+    padding-left: 3
+  style-plain:
+    list-style: none
+    padding-left: 0
+
+list-item:
+  base:
+    padding-y: 1                 # Tight padding
+    padding-x: 0
+  state-normal:
+    opacity: 1
+  state-completed:
+    opacity: subtle
+    text-decoration: line-through
+  state-disabled:
+    opacity: subdued
+    cursor: not-allowed
+  state-error:
+    background: critical-subtle
+    border-left-width: 2
+    border-left-color: critical
+    padding-left: 2
+
+page-title:
+  base:
+    margin: 0
+    size: xl                     # Smaller titles
+    weight: bold
+    color: text-primary
+    margin-bottom: 2             # Tight spacing
+
+section-title:
+  base:
+    margin: 0
+    size: lg                     # Smaller titles
+    weight: semibold
+    color: text-primary
+    margin-bottom: 2             # Tight spacing

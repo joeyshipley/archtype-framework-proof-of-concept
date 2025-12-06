@@ -1,0 +1,352 @@
+# Brutalist Theme - Bold, High-Contrast, Geometric
+# Goal: Demonstrate complete visual transformation through YAML alone
+# Characteristics: Heavy borders, pure colors, no subtlety, stark contrast
+
+tokens:
+  spacing:
+    xs: 0.5rem       # 8px  - Nothing too small
+    sm: 0.75rem      # 12px
+    md: 1rem         # 16px
+    lg: 1.5rem       # 24px
+    xl: 2rem         # 32px - Big gaps
+    2xl: 3rem        # 48px - Massive spacing
+    3xl: 4rem        # 64px - Dramatic separation
+
+  text:
+    xs: 0.875rem     # 14px
+    sm: 1rem         # 16px - Larger minimum
+    md: 1.125rem     # 18px - body default
+    lg: 1.5rem       # 24px
+    xl: 2rem         # 32px - Big headings
+    2xl: 3rem        # 48px - Massive titles
+    3xl: 4rem        # 64px - Hero
+
+  font:
+    weight-normal: 400
+    weight-medium: 700           # Jump straight to bold
+    weight-semibold: 800         # Extra bold
+    weight-bold: 900             # Black
+
+  color:
+    surface: "#ffffff"
+    surface-raised: "#f0f0f0"    # Strong distinction
+    white: "#ffffff"
+    border: "#000000"            # Pure black borders
+    text-primary: "#000000"      # Pure black text
+    text-secondary: "#000000"    # Everything black
+    accent: "#ff0000"            # Pure red accent
+    accent-hover: "#cc0000"      # Darker red
+    positive: "#00ff00"          # Pure lime green
+    positive-subtle: "#ccffcc"
+    positive-dark: "#00cc00"
+    warning: "#ffff00"           # Pure yellow
+    warning-subtle: "#ffffcc"
+    warning-dark: "#cccc00"
+    critical: "#ff0000"          # Pure red
+    critical-subtle: "#ffcccc"
+    critical-dark: "#cc0000"
+
+  shadow:
+    sm: "4px 4px 0 #000000"      # Hard drop shadows
+    md: "8px 8px 0 #000000"
+    lg: "12px 12px 0 #000000"
+
+  radius:
+    sm: "0"                      # No curves - all geometric
+    md: "0"
+    lg: "0"
+    full: "0"
+
+  duration:
+    fast: 0ms                    # No smooth transitions
+    normal: 0ms                  # Instant changes only
+    slow: 0ms
+
+  opacity:
+    subdued: 0.5
+    disabled: 0.6                # Less dramatic
+    subtle: 0.7
+
+# ============================================================================
+# PAGE & SECTION STRUCTURE
+# ============================================================================
+page:
+  base:
+    max-width: 1400              # Wide page
+    margin: auto
+    padding-x: xl                # Big margins
+    padding-y: 0
+    display: block
+
+section:
+  base:
+    display: block
+    margin-bottom: 0
+
+# ============================================================================
+# LAYOUT SEMANTIC SPACING
+# ============================================================================
+layout:
+  stack:
+    purpose-actions: md          # Generous spacing
+    purpose-fields: xl
+    purpose-content: lg
+    purpose-items: lg
+    purpose-sections: 3xl        # Massive gaps
+    purpose-inline: sm
+    purpose-cards: 2xl
+  row:
+    purpose-actions: md
+    purpose-fields: xl
+    purpose-inline: sm
+  grid:
+    purpose-cards: 2xl
+    purpose-items: lg
+    cols-auto-minwidth: 350      # Wider columns
+
+# ============================================================================
+# BASE LAYER PROPERTIES
+# ============================================================================
+stack:
+  base:
+    display: flex
+    flex-direction: column
+
+row:
+  base:
+    display: flex
+    flex-direction: row
+    align-items: center
+
+grid:
+  base:
+    display: grid
+
+header:
+  base:
+    display: block
+
+body:
+  base:
+    display: block
+
+footer:
+  base:
+    display: flex
+    align-items: center
+
+# ============================================================================
+# CONTAINER-CENTRIC STYLING
+# ============================================================================
+card:
+  base:
+    display: flex
+    flex-direction: column
+    background: surface
+    shadow: md                   # Heavy shadow
+    radius: none                 # Square
+  header:
+    size: lg                     # Big headers
+    weight: bold                 # Very bold
+    padding: 6                   # Big padding
+  body:
+    padding: 6
+  footer:
+    padding: 6
+    gap: 4                       # Wide gaps
+    justify: end
+
+button:
+  base:
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    border: none
+    cursor: pointer
+    font-family: inherit
+    transition-property: all
+    transition-duration: fast
+    transition-timing: ease
+    padding-x: 6                 # Big padding
+    padding-y: 3
+    radius: none                 # Square buttons
+    weight: bold                 # Very bold
+    size: lg                     # Large text
+
+  importance-primary:
+    background: accent
+    background-hover: accent-hover
+    text: white
+
+  importance-secondary:
+    background: white
+    border: border
+    text: text-primary
+    text-hover: text-primary
+
+  importance-tertiary:
+    background: transparent
+    text: text-primary           # All black
+    text-hover: accent
+
+  importance-ghost:
+    background: transparent
+    text: text-primary           # All black
+    text-hover: accent
+
+text:
+  base:
+    margin: 0
+    size: md
+    color: text-primary
+    line-height: 1.6             # More space
+
+input:
+  base:
+    padding-x: 4                 # Big padding
+    padding-y: 3
+    border: border
+    radius: none                 # Square inputs
+    size: lg                     # Large text
+    width: 100%
+  state-disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+label:
+  base:
+    size: md                     # Larger labels
+    weight: bold                 # Bold labels
+    color: text-primary
+    margin-bottom: 2
+
+field:
+  base:
+    gap: 2
+  label:
+    margin-bottom: 2
+  input:
+    width: 100%
+  state-error:
+    input:
+      border-color: critical
+      background: critical-subtle
+  help-text:
+    size: md
+    color: text-primary          # All black
+    margin-top: 2
+  error-message:
+    size: md
+    color: critical
+    margin-top: 2
+
+form:
+  base:
+    display: block
+
+checkbox:
+  base:
+    size: 6                      # Bigger checkboxes
+    border: border
+    radius: none                 # Square
+    cursor: pointer
+  checked:
+    background: accent
+    border-color: accent
+  disabled:
+    opacity: disabled
+    cursor: not-allowed
+
+alert:
+  base:
+    padding-x: 6                 # Big padding
+    padding-y: 4
+    radius: none                 # Square
+    border-width: 4              # Heavy borders
+  tone-neutral:
+    background: surface-raised
+    border-color: border
+    text: text-primary
+  tone-positive:
+    background: positive-subtle
+    border-color: positive
+    text: text-primary           # Black text on lime
+  tone-warning:
+    background: warning-subtle
+    border-color: warning
+    text: text-primary           # Black text on yellow
+  tone-critical:
+    background: critical-subtle
+    border-color: critical
+    text: text-primary           # Black text
+  message:
+    size: lg                     # Large text
+    margin: 0
+
+empty-state:
+  base:
+    text-align: center
+    color: text-primary          # Black, not gray
+  size-small:
+    padding: 4
+    text-size: md
+  size-medium:
+    padding: 8
+    text-size: lg
+  size-large:
+    padding: 12                  # Massive padding
+    text-size: xl
+  message:
+    margin-bottom: 0
+  action:
+    margin-top: 4
+    color: accent
+    text-decoration: underline
+
+list:
+  base:
+    margin: 0
+    padding: 0
+  style-unordered:
+    list-style: square           # Square bullets
+    padding-left: 8              # Deep indent
+  style-ordered:
+    list-style: decimal
+    padding-left: 8
+  style-plain:
+    list-style: none
+    padding-left: 0
+
+list-item:
+  base:
+    padding-y: 3                 # Big padding
+    padding-x: 0
+  state-normal:
+    opacity: 1
+  state-completed:
+    opacity: subtle
+    text-decoration: line-through
+  state-disabled:
+    opacity: subdued
+    cursor: not-allowed
+  state-error:
+    background: critical-subtle
+    border-left-width: 8         # Massive border
+    border-left-color: critical
+    padding-left: 4
+
+page-title:
+  base:
+    margin: 0
+    size: 2xl                    # Huge titles
+    weight: bold                 # Black weight
+    color: text-primary
+    margin-bottom: 8             # Massive spacing
+
+section-title:
+  base:
+    margin: 0
+    size: xl                     # Big titles
+    weight: bold                 # Black weight
+    color: text-primary
+    margin-bottom: 6             # Big spacing
