@@ -283,8 +283,30 @@ public class ThemeCompiler
         var textMargin = textMarginRaw?.ToString() == "0" ? "0" : getPropertyOrDefault(text, "base.margin", "margin", "0");
         css.AppendLine($"    margin: {textMargin};");
         css.AppendLine("  }");
+        css.AppendLine();
+
+        // HTMX framework styles
+        generateHtmxStyles(theme, css);
+
         css.AppendLine("}");
         css.AppendLine();
+    }
+
+    private static void generateHtmxStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        css.AppendLine("  /* HTMX framework styles */");
+        css.AppendLine("  .htmx-indicator {");
+        css.AppendLine("    opacity: 0;");
+        css.AppendLine("    transition: opacity var(--duration-slow) ease-in;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .htmx-request .htmx-indicator {");
+        css.AppendLine("    opacity: 1;");
+        css.AppendLine("  }");
+        css.AppendLine();
+        css.AppendLine("  .htmx-request.htmx-indicator {");
+        css.AppendLine("    opacity: 1;");
+        css.AppendLine("  }");
     }
 
     private static void generateComponentsLayer(Dictionary<string, object> theme, StringBuilder css)

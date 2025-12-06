@@ -38,7 +38,6 @@ public class Layout(
             <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
             <script src="/js/component-context.js"></script>
             <script src="/js/htmx-config.js"></script>
-            <link rel="stylesheet" href="/css/htmx-lib.css" />
             <link rel="stylesheet" href="/css/closed-world.css" />
         </head>
         <body hx-ext="component-context">

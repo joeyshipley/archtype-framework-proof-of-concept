@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: brutalist.theme.yaml
- * Generated: 2025-12-06 15:54:02 UTC
+ * Generated: 2025-12-06 16:22:21 UTC
  */
 
 @layer tokens, base, components;
@@ -148,6 +148,20 @@
   /* Text elements */
   .text {
     margin: 0;
+  }
+
+  /* HTMX framework styles */
+  .htmx-indicator {
+    opacity: 0;
+    transition: opacity var(--duration-slow) ease-in;
+  }
+
+  .htmx-request .htmx-indicator {
+    opacity: 1;
+  }
+
+  .htmx-request.htmx-indicator {
+    opacity: 1;
   }
 }
 
