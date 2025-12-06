@@ -146,12 +146,12 @@ card:
   header:
     size: md
     weight: semibold
-    padding: 4
+    padding: lg
   body:
-    padding: 4
+    padding: lg
   footer:
-    padding: 4
-    gap: 2
+    padding: lg
+    gap: sm
     justify: end
 
 # Button styling
@@ -166,8 +166,8 @@ button:
     transition-property: all
     transition-duration: fast
     transition-timing: ease
-    padding-x: 4
-    padding-y: 2
+    padding-x: lg
+    padding-y: sm
     radius: md
     weight: medium
     size: md
@@ -204,8 +204,8 @@ text:
 # Form styling
 input:
   base:
-    padding-x: 3
-    padding-y: 2
+    padding-x: md
+    padding-y: sm
     border: border
     radius: md
     size: md
@@ -219,13 +219,13 @@ label:
     size: sm
     weight: medium
     color: text-primary
-    margin-bottom: 1
+    margin-bottom: xs
 
 field:
   base:
-    gap: 1
+    gap: xs
   label:
-    margin-bottom: 1
+    margin-bottom: xs
   input:
     width: 100%
   state-error:
@@ -235,11 +235,11 @@ field:
   help-text:
     size: sm
     color: text-secondary
-    margin-top: 1
+    margin-top: xs
   error-message:
     size: sm
     color: critical
-    margin-top: 1
+    margin-top: xs
 
 form:
   base:
@@ -247,7 +247,7 @@ form:
 
 checkbox:
   base:
-    size: 4  # 16px
+    size: lg  # 16px
     border: border
     radius: sm
     cursor: pointer
@@ -261,8 +261,8 @@ checkbox:
 # Feedback elements
 alert:
   base:
-    padding-x: 4
-    padding-y: 3
+    padding-x: lg
+    padding-y: md
     radius: md
     border-width: 1
   tone-neutral:
@@ -290,18 +290,18 @@ empty-state:
     text-align: center
     color: text-secondary
   size-small:
-    padding: 3
+    padding: md
     text-size: sm
   size-medium:
-    padding: 6
+    padding: 2xl
     text-size: md
   size-large:
-    padding: 8
+    padding: 3xl
     text-size: lg
   message:
     margin-bottom: 0
   action:
-    margin-top: 3
+    margin-top: md
     color: accent
     text-decoration: underline
 
@@ -312,17 +312,17 @@ list:
     padding: 0
   style-unordered:
     list-style: disc
-    padding-left: 5  # 20px indentation for bullets
+    padding-left: xl  # 20px indentation for bullets
   style-ordered:
     list-style: decimal
-    padding-left: 5  # 20px indentation for numbers
+    padding-left: xl  # 20px indentation for numbers
   style-plain:
     list-style: none
     padding-left: 0
 
 list-item:
   base:
-    padding-y: 2
+    padding-y: sm
     padding-x: 0
   state-normal:
     opacity: 1
@@ -336,7 +336,7 @@ list-item:
     background: critical-subtle
     border-left-width: 2
     border-left-color: critical
-    padding-left: 3
+    padding-left: md
 
 # Page structure
 page-title:
@@ -345,7 +345,7 @@ page-title:
     size: 2xl
     weight: bold
     color: text-primary
-    margin-bottom: 4
+    margin-bottom: lg
 
 section-title:
   base:
@@ -353,4 +353,4 @@ section-title:
     size: xl
     weight: semibold
     color: text-primary
-    margin-bottom: 3
+    margin-bottom: md

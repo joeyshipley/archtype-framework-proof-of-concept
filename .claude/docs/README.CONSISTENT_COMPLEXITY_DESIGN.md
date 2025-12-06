@@ -4,6 +4,8 @@
 **Last Updated:** 2025-11-22
 **Status:** Foundation Document
 
+## NOTE - implementation has changed since the creation of the doc, the belief system is what we care about.
+
 ---
 
 ## Core Principle

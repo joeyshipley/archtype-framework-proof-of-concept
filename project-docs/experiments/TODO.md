@@ -1,0 +1,2 @@
+- ThemeComplier - consider throwing errors if a non-token is used. 
+- Fix all of the context loading docs. They use old implementations.

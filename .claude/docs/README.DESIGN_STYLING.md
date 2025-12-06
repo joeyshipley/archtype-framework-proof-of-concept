@@ -4,6 +4,8 @@
 **Last Updated:** 2025-12-05
 **Status:** Living Specification
 
+## NOTE - implementation has changed since the creation of the doc, the belief system is what we care about.
+
 ---
 
 ## Core Principle
@@ -295,13 +297,34 @@ Clean semantic HTML with simple class names:
 
 @layer tokens {
   :root {
-    --spacing-4: 1rem;
+    /* Spacing */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 0.75rem;
+    --spacing-lg: 1rem;
+    --spacing-xl: 1.25rem;
+    --spacing-2xl: 1.5rem;
+    --spacing-3xl: 2rem;
+
+    /* Typography */
     --text-md: 1rem;
-    --font-weight-semibold: 600;
+
+    /* Font Weights */
+    --weight-semibold: 600;
+
+    /* Colors */
     --color-accent: #2563eb;
+
+    /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+
+    /* Radius */
     --radius-md: 0.375rem;
+
+    /* Duration */
     --duration-fast: 150ms;
+
+    /* Opacity */
     --opacity-disabled: 0.5;
   }
 }
@@ -320,13 +343,13 @@ Clean semantic HTML with simple class names:
 
   .card > .header {
     font-size: var(--text-md);
-    font-weight: var(--font-weight-semibold);
-    padding: var(--spacing-4);
+    font-weight: var(--weight-semibold);
+    padding: var(--spacing-lg);
   }
 
   /* Context-aware: buttons in cards */
   .card .button {
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--text-sm);
   }
 
@@ -385,28 +408,29 @@ Currently NO for:
 
 **These violate the separation principle.** Designers cannot rebrand, adjust feel, or tweak emphasis without developer involvement.
 
-### Recommended Complete Token System
+### Complete Token System (Implemented)
 
 ```yaml
 tokens:
-  # Spacing (complete)
+  # Spacing (semantic names)
   spacing:
-    1: 0.25rem    # 4px
-    2: 0.5rem     # 8px
-    3: 0.75rem    # 12px
-    4: 1rem       # 16px
-    5: 1.25rem    # 20px
-    6: 1.5rem     # 24px
-    8: 2rem       # 32px
+    xs: 0.25rem      # 4px  - Minimal breathing room
+    sm: 0.5rem       # 8px  - Tight spacing
+    md: 0.75rem      # 12px - Comfortable
+    lg: 1rem         # 16px - Standard padding
+    xl: 1.25rem      # 20px - Generous
+    2xl: 1.5rem      # 24px - Section spacing
+    3xl: 2rem        # 32px - Major divisions
 
-  # Typography (expand)
+  # Typography
   text:
-    xs: 0.75rem       # NEW - captions, fine print
-    sm: 0.875rem      # 14px - small text
-    md: 1rem          # 16px - body
-    lg: 1.125rem      # 18px - large body
-    xl: 1.25rem       # NEW - 20px - section headings (h2)
-    2xl: 1.5rem       # NEW - 24px - page titles (h1)
+    xs: 0.75rem      # 12px - captions, fine print
+    sm: 0.875rem     # 14px - small text
+    md: 1rem         # 16px - body default
+    lg: 1.125rem     # 18px - large body
+    xl: 1.25rem      # 20px - section headings (h2)
+    2xl: 1.5rem      # 24px - page titles (h1)
+    3xl: 1.875rem    # 30px - hero titles
 
   # Font (NEW CATEGORY - designer-controlled weights)
   font:

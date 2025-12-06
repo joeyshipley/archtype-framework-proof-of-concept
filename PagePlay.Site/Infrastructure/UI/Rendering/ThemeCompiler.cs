@@ -358,16 +358,16 @@ public class ThemeCompiler
         css.AppendLine("  .card > .header {");
         css.AppendLine($"    font-size: {getPropertyOrDefault(card, "header.size", "size", "var(--text-md)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(card, "header.weight", "weight", "var(--weight-semibold)")};");
-        css.AppendLine($"    padding: {getPropertyOrDefault(card, "header.padding", "padding", "var(--spacing-4)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "header.padding", "padding", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .body {");
-        css.AppendLine($"    padding: {getPropertyOrDefault(card, "body.padding", "padding", "var(--spacing-4)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "body.padding", "padding", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .footer {");
-        css.AppendLine($"    padding: {getPropertyOrDefault(card, "footer.padding", "padding", "var(--spacing-4)")};");
-        css.AppendLine($"    gap: {getPropertyOrDefault(card, "footer.gap", "gap", "var(--spacing-2)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(card, "footer.padding", "padding", "var(--spacing-lg)")};");
+        css.AppendLine($"    gap: {getPropertyOrDefault(card, "footer.gap", "gap", "var(--spacing-sm)")};");
         css.AppendLine("    justify-content: flex-end;");
         css.AppendLine("  }");
         css.AppendLine();
@@ -380,8 +380,8 @@ public class ThemeCompiler
         css.AppendLine("  /* Button base */");
         css.AppendLine("  .button {");
 
-        var paddingY = getPropertyOrDefault(button, "base.padding-y", "padding-y", "var(--spacing-2)");
-        var paddingX = getPropertyOrDefault(button, "base.padding-x", "padding-x", "var(--spacing-4)");
+        var paddingY = getPropertyOrDefault(button, "base.padding-y", "padding-y", "var(--spacing-sm)");
+        var paddingX = getPropertyOrDefault(button, "base.padding-x", "padding-x", "var(--spacing-lg)");
         css.AppendLine($"    padding: {paddingY} {paddingX};");
 
         css.AppendLine($"    border-radius: {getPropertyOrDefault(button, "base.radius", "radius", "var(--radius-md)")};");
@@ -494,8 +494,8 @@ public class ThemeCompiler
         css.AppendLine("    display: block;");
         css.AppendLine($"    width: {getWidthValue(input, "base.width", "100%")};");
 
-        var inputPaddingY = getPropertyOrDefault(input, "base.padding-y", "padding-y", "var(--spacing-2)");
-        var inputPaddingX = getPropertyOrDefault(input, "base.padding-x", "padding-x", "var(--spacing-3)");
+        var inputPaddingY = getPropertyOrDefault(input, "base.padding-y", "padding-y", "var(--spacing-sm)");
+        var inputPaddingX = getPropertyOrDefault(input, "base.padding-x", "padding-x", "var(--spacing-md)");
         css.AppendLine($"    padding: {inputPaddingY} {inputPaddingX};");
 
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(input, "base.border", "border", "var(--color-border)")};");
@@ -524,14 +524,14 @@ public class ThemeCompiler
         css.AppendLine($"    font-size: {getPropertyOrDefault(label, "base.size", "size", "var(--text-sm)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(label, "base.weight", "weight", "var(--weight-medium)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(label, "base.color", "color", "var(--color-text-primary)")};");
-        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(label, "base.margin-bottom", "margin-bottom", "var(--spacing-1)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(label, "base.margin-bottom", "margin-bottom", "var(--spacing-xs)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // Field
         css.AppendLine("  .field {");
         css.AppendLine("    display: block;");
-        css.AppendLine($"    gap: {getPropertyOrDefault(field, "base.gap", "gap", "var(--spacing-1)")};");
+        css.AppendLine($"    gap: {getPropertyOrDefault(field, "base.gap", "gap", "var(--spacing-xs)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field--error .input {");
@@ -540,13 +540,13 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field__help {");
-        css.AppendLine($"    margin: {getPropertyOrDefault(field, "help-text.margin-top", "margin-top", "var(--spacing-1)")} 0 0 0;");
+        css.AppendLine($"    margin: {getPropertyOrDefault(field, "help-text.margin-top", "margin-top", "var(--spacing-xs)")} 0 0 0;");
         css.AppendLine($"    font-size: {getPropertyOrDefault(field, "help-text.size", "size", "var(--text-sm)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(field, "help-text.color", "color", "var(--color-text-secondary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field__error {");
-        css.AppendLine($"    margin: {getPropertyOrDefault(field, "error-message.margin-top", "margin-top", "var(--spacing-1)")} 0 0 0;");
+        css.AppendLine($"    margin: {getPropertyOrDefault(field, "error-message.margin-top", "margin-top", "var(--spacing-xs)")} 0 0 0;");
         css.AppendLine($"    font-size: {getPropertyOrDefault(field, "error-message.size", "size", "var(--text-sm)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(field, "error-message.color", "color", "var(--color-critical)")};");
         css.AppendLine("  }");
@@ -560,7 +560,7 @@ public class ThemeCompiler
 
         // Checkbox
         css.AppendLine("  .checkbox {");
-        var checkboxSize = getPropertyOrDefault(checkbox, "base.size", "size", "var(--spacing-4)");
+        var checkboxSize = getPropertyOrDefault(checkbox, "base.size", "size", "var(--spacing-lg)");
         css.AppendLine($"    width: {checkboxSize};");
         css.AppendLine($"    height: {checkboxSize};");
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(checkbox, "base.border", "border", "var(--color-border)")};");
@@ -588,8 +588,8 @@ public class ThemeCompiler
 
         // Alert base
         css.AppendLine("  .alert {");
-        var alertPaddingY = getPropertyOrDefault(alert, "base.padding-y", "padding-y", "var(--spacing-3)");
-        var alertPaddingX = getPropertyOrDefault(alert, "base.padding-x", "padding-x", "var(--spacing-4)");
+        var alertPaddingY = getPropertyOrDefault(alert, "base.padding-y", "padding-y", "var(--spacing-md)");
+        var alertPaddingX = getPropertyOrDefault(alert, "base.padding-x", "padding-x", "var(--spacing-lg)");
         css.AppendLine($"    padding: {alertPaddingY} {alertPaddingX};");
         css.AppendLine($"    border-radius: {getPropertyOrDefault(alert, "base.radius", "radius", "var(--radius-md)")};");
         css.AppendLine($"    border-width: {getBorderWidthValue(alert, "base.border-width", "1px")};");
@@ -642,7 +642,7 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .empty-state__action {");
         css.AppendLine("    display: inline-block;");
-        css.AppendLine($"    margin-top: {getPropertyOrDefault(emptyState, "action.margin-top", "margin-top", "var(--spacing-3)")};");
+        css.AppendLine($"    margin-top: {getPropertyOrDefault(emptyState, "action.margin-top", "margin-top", "var(--spacing-md)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(emptyState, "action.color", "color", "var(--color-accent)")};");
         css.AppendLine($"    text-decoration: {getTextDecorationValue(emptyState, "action.text-decoration", "underline")};");
         css.AppendLine("  }");
@@ -650,7 +650,7 @@ public class ThemeCompiler
 
         // EmptyState size variants
         css.AppendLine("  .empty-state--small {");
-        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-small.padding", "padding", "var(--spacing-3)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-small.padding", "padding", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--small .empty-state__message {");
@@ -658,7 +658,7 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--medium {");
-        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-medium.padding", "padding", "var(--spacing-6)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-medium.padding", "padding", "var(--spacing-2xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--medium .empty-state__message {");
@@ -666,7 +666,7 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--large {");
-        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-large.padding", "padding", "var(--spacing-8)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-large.padding", "padding", "var(--spacing-3xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--large .empty-state__message {");
@@ -708,7 +708,7 @@ public class ThemeCompiler
 
         // ListItem base
         css.AppendLine("  .list-item {");
-        var listItemPaddingY = getPropertyOrDefault(listItem, "base.padding-y", "padding-y", "var(--spacing-2)");
+        var listItemPaddingY = getPropertyOrDefault(listItem, "base.padding-y", "padding-y", "var(--spacing-sm)");
         var listItemPaddingX = getPropertyOrDefault(listItem, "base.padding-x", "padding-x", "0");
         css.AppendLine($"    padding: {listItemPaddingY} {listItemPaddingX};");
         css.AppendLine("  }");
@@ -756,14 +756,14 @@ public class ThemeCompiler
         css.AppendLine($"    font-size: {getPropertyOrDefault(pageTitle, "base.size", "size", "var(--text-2xl)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(pageTitle, "base.weight", "weight", "var(--weight-bold)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(pageTitle, "base.color", "color", "var(--color-text-primary)")};");
-        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(pageTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-4)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(pageTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .section-title {");
         css.AppendLine($"    font-size: {getPropertyOrDefault(sectionTitle, "base.size", "size", "var(--text-xl)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(sectionTitle, "base.weight", "weight", "var(--weight-semibold)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(sectionTitle, "base.color", "color", "var(--color-text-primary)")};");
-        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(sectionTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-3)")};");
+        css.AppendLine($"    margin-bottom: {getPropertyOrDefault(sectionTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -930,19 +930,31 @@ public class ThemeCompiler
         // If this property maps to a CSS variable, resolve it
         if (cssVarMapping.TryGetValue(property, out var prefix))
         {
-            // Check if the value looks like a token name (not a raw value like "1" or "1px")
-            if (!valueStr.Contains("px") && !valueStr.Contains("#") && !valueStr.Contains("rgba") && !int.TryParse(valueStr, out _))
+            // Check if the value looks like a token name (not a raw value like "1px" or "#fff")
+            // Named tokens: xs, sm, md, lg, xl, 2xl, 3xl, semibold, disabled, fast, etc.
+            if (!valueStr.Contains("px") && !valueStr.Contains("#") && !valueStr.Contains("rgba"))
             {
+                // If it's a plain integer without units, assume it's a raw value (like opacity: 1 or border-width: 1)
+                // But if it's spacing/padding/margin/gap, it should have been a named token in the YAML
+                if (int.TryParse(valueStr, out var numValue))
+                {
+                    // For spacing properties, if someone still uses a number, treat it as pixels
+                    if (property.Contains("padding") || property.Contains("margin") || property == "gap")
+                    {
+                        // This is likely an error - spacing should use named tokens (xs, sm, md, lg, etc.)
+                        // But we'll convert to pixels as a fallback for backwards compatibility
+                        return $"{valueStr}px";
+                    }
+                    // For other numeric values (opacity, border-width, etc.), return as-is
+                    return valueStr;
+                }
+
+                // Named token - resolve to CSS variable
                 return $"var({prefix}{valueStr})";
-            }
-            // If it's a number and refers to spacing/padding/margin, treat as spacing token
-            else if (int.TryParse(valueStr, out _) && (property.Contains("padding") || property.Contains("margin") || property == "gap"))
-            {
-                return $"var(--spacing-{valueStr})";
             }
         }
 
-        // Return raw value for things like "1" (opacity: 1), URLs, etc.
+        // Return raw value for things like "1px", "#fff", "rgba(...)", etc.
         return valueStr;
     }
 
