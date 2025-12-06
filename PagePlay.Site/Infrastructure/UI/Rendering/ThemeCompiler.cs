@@ -385,11 +385,13 @@ public class ThemeCompiler
 
     private static void generateTextStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var text = getComponent(theme, "text");
+
         css.AppendLine("  /* Text */");
         css.AppendLine("  .text {");
-        css.AppendLine("    font-size: var(--text-md);");
-        css.AppendLine("    color: var(--color-text-primary);");
-        css.AppendLine("    line-height: 1.5;");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(text, "base.size", "size", "var(--text-md)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(text, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    line-height: {getLineHeightValue(text, "base.line-height", "1.5")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -398,6 +400,7 @@ public class ThemeCompiler
     {
         var input = getComponent(theme, "input");
         var label = getComponent(theme, "label");
+        var field = getComponent(theme, "field");
         var checkbox = getComponent(theme, "checkbox");
 
         css.AppendLine("  /* Form elements */");
@@ -405,7 +408,7 @@ public class ThemeCompiler
         // Input
         css.AppendLine("  .input {");
         css.AppendLine("    display: block;");
-        css.AppendLine("    width: 100%;");
+        css.AppendLine($"    width: {getWidthValue(input, "base.width", "100%")};");
 
         var inputPaddingY = getPropertyOrDefault(input, "base.padding-y", "padding-y", "var(--spacing-2)");
         var inputPaddingX = getPropertyOrDefault(input, "base.padding-x", "padding-x", "var(--spacing-3)");
@@ -427,7 +430,7 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .input:disabled {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(input, "state-disabled.opacity", "opacity", "var(--opacity-disabled)")};");
-        css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine($"    cursor: {getCursorValue(input, "state-disabled.cursor", "not-allowed")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -444,24 +447,24 @@ public class ThemeCompiler
         // Field
         css.AppendLine("  .field {");
         css.AppendLine("    display: block;");
-        css.AppendLine("    margin-bottom: var(--spacing-4);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(field, "base.gap", "gap", "var(--spacing-1)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field--error .input {");
-        css.AppendLine("    border-color: var(--color-critical);");
-        css.AppendLine("    background: var(--color-critical-subtle);");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(field, "state-error.input.border-color", "border", "var(--color-critical)")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(field, "state-error.input.background", "background", "var(--color-critical-subtle)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field__help {");
-        css.AppendLine("    margin: var(--spacing-1) 0 0 0;");
-        css.AppendLine("    font-size: var(--text-sm);");
-        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine($"    margin: {getPropertyOrDefault(field, "help-text.margin-top", "margin-top", "var(--spacing-1)")} 0 0 0;");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(field, "help-text.size", "size", "var(--text-sm)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(field, "help-text.color", "color", "var(--color-text-secondary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .field__error {");
-        css.AppendLine("    margin: var(--spacing-1) 0 0 0;");
-        css.AppendLine("    font-size: var(--text-sm);");
-        css.AppendLine("    color: var(--color-critical);");
+        css.AppendLine($"    margin: {getPropertyOrDefault(field, "error-message.margin-top", "margin-top", "var(--spacing-1)")} 0 0 0;");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(field, "error-message.size", "size", "var(--text-sm)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(field, "error-message.color", "color", "var(--color-critical)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -478,7 +481,7 @@ public class ThemeCompiler
         css.AppendLine($"    height: {checkboxSize};");
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(checkbox, "base.border", "border", "var(--color-border)")};");
         css.AppendLine($"    border-radius: {getPropertyOrDefault(checkbox, "base.radius", "radius", "var(--radius-sm)")};");
-        css.AppendLine("    cursor: pointer;");
+        css.AppendLine($"    cursor: {getCursorValue(checkbox, "base.cursor", "pointer")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .checkbox:checked {");
@@ -488,127 +491,134 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .checkbox:disabled {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(checkbox, "disabled.opacity", "opacity", "var(--opacity-disabled)")};");
-        css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine($"    cursor: {getCursorValue(checkbox, "disabled.cursor", "not-allowed")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
 
     private static void generateFeedbackStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var alert = getComponent(theme, "alert");
+
         css.AppendLine("  /* Feedback elements */");
 
         // Alert base
         css.AppendLine("  .alert {");
-        css.AppendLine("    padding: var(--spacing-3) var(--spacing-4);");
-        css.AppendLine("    border-radius: var(--radius-md);");
-        css.AppendLine("    border-width: 1px;");
+        var alertPaddingY = getPropertyOrDefault(alert, "base.padding-y", "padding-y", "var(--spacing-3)");
+        var alertPaddingX = getPropertyOrDefault(alert, "base.padding-x", "padding-x", "var(--spacing-4)");
+        css.AppendLine($"    padding: {alertPaddingY} {alertPaddingX};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(alert, "base.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    border-width: {getBorderWidthValue(alert, "base.border-width", "1px")};");
         css.AppendLine("    border-style: solid;");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .alert__message {");
-        css.AppendLine("    margin: 0;");
-        css.AppendLine("    font-size: var(--text-md);");
+        css.AppendLine($"    margin: {getPropertyOrDefault(alert, "message.margin", "margin", "0")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(alert, "message.size", "size", "var(--text-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // Alert tone variants
         css.AppendLine("  .alert--neutral {");
-        css.AppendLine("    background: var(--color-surface-raised);");
-        css.AppendLine("    border-color: var(--color-border);");
-        css.AppendLine("    color: var(--color-text-primary);");
+        css.AppendLine($"    background: {getPropertyOrDefault(alert, "tone-neutral.background", "background", "var(--color-surface-raised)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(alert, "tone-neutral.border-color", "border", "var(--color-border)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(alert, "tone-neutral.text", "text", "var(--color-text-primary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .alert--positive {");
-        css.AppendLine("    background: var(--color-positive-subtle);");
-        css.AppendLine("    border-color: var(--color-positive);");
-        css.AppendLine("    color: var(--color-positive-dark);");
+        css.AppendLine($"    background: {getPropertyOrDefault(alert, "tone-positive.background", "background", "var(--color-positive-subtle)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(alert, "tone-positive.border-color", "border", "var(--color-positive)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(alert, "tone-positive.text", "text", "var(--color-positive-dark)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .alert--warning {");
-        css.AppendLine("    background: var(--color-warning-subtle);");
-        css.AppendLine("    border-color: var(--color-warning);");
-        css.AppendLine("    color: var(--color-warning-dark);");
+        css.AppendLine($"    background: {getPropertyOrDefault(alert, "tone-warning.background", "background", "var(--color-warning-subtle)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(alert, "tone-warning.border-color", "border", "var(--color-warning)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(alert, "tone-warning.text", "text", "var(--color-warning-dark)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .alert--critical {");
-        css.AppendLine("    background: var(--color-critical-subtle);");
-        css.AppendLine("    border-color: var(--color-critical);");
-        css.AppendLine("    color: var(--color-critical-dark);");
+        css.AppendLine($"    background: {getPropertyOrDefault(alert, "tone-critical.background", "background", "var(--color-critical-subtle)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(alert, "tone-critical.border-color", "border", "var(--color-critical)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(alert, "tone-critical.text", "text", "var(--color-critical-dark)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // EmptyState base
+        var emptyState = getComponent(theme, "empty-state");
+
         css.AppendLine("  .empty-state {");
-        css.AppendLine("    text-align: center;");
-        css.AppendLine("    color: var(--color-text-secondary);");
+        css.AppendLine($"    text-align: {getTextAlignValue(emptyState, "base.text-align", "center")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(emptyState, "base.color", "color", "var(--color-text-secondary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state__message {");
-        css.AppendLine("    margin: 0;");
+        css.AppendLine($"    margin: {getPropertyOrDefault(emptyState, "message.margin-bottom", "margin", "0")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state__action {");
         css.AppendLine("    display: inline-block;");
-        css.AppendLine("    margin-top: var(--spacing-3);");
-        css.AppendLine("    color: var(--color-accent);");
-        css.AppendLine("    text-decoration: underline;");
+        css.AppendLine($"    margin-top: {getPropertyOrDefault(emptyState, "action.margin-top", "margin-top", "var(--spacing-3)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(emptyState, "action.color", "color", "var(--color-accent)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(emptyState, "action.text-decoration", "underline")};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // EmptyState size variants
         css.AppendLine("  .empty-state--small {");
-        css.AppendLine("    padding: var(--spacing-3);");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-small.padding", "padding", "var(--spacing-3)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--small .empty-state__message {");
-        css.AppendLine("    font-size: var(--text-sm);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(emptyState, "size-small.text-size", "size", "var(--text-sm)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--medium {");
-        css.AppendLine("    padding: var(--spacing-6);");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-medium.padding", "padding", "var(--spacing-6)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--medium .empty-state__message {");
-        css.AppendLine("    font-size: var(--text-md);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(emptyState, "size-medium.text-size", "size", "var(--text-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--large {");
-        css.AppendLine("    padding: var(--spacing-8);");
+        css.AppendLine($"    padding: {getPropertyOrDefault(emptyState, "size-large.padding", "padding", "var(--spacing-8)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .empty-state--large .empty-state__message {");
-        css.AppendLine("    font-size: var(--text-lg);");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(emptyState, "size-large.text-size", "size", "var(--text-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
 
     private static void generateListStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var list = getComponent(theme, "list");
         var listItem = getComponent(theme, "list-item");
 
         css.AppendLine("  /* List elements */");
 
         // List base
         css.AppendLine("  .list {");
-        css.AppendLine("    margin: 0;");
-        css.AppendLine("    padding: 0;");
+        css.AppendLine($"    margin: {getPropertyOrDefault(list, "base.margin", "margin", "0")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(list, "base.padding", "padding", "0")};");
         css.AppendLine("  }");
         css.AppendLine();
 
         // List style variants
         css.AppendLine("  .list--unordered {");
-        css.AppendLine("    list-style: disc;");
-        css.AppendLine("    padding-left: var(--spacing-xl);");
+        css.AppendLine($"    list-style: {getListStyleValue(list, "style-unordered.list-style", "disc")};");
+        css.AppendLine($"    padding-left: {getPropertyOrDefault(list, "style-unordered.padding-left", "padding", "var(--spacing-xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list--ordered {");
-        css.AppendLine("    list-style: decimal;");
-        css.AppendLine("    padding-left: var(--spacing-xl);");
+        css.AppendLine($"    list-style: {getListStyleValue(list, "style-ordered.list-style", "decimal")};");
+        css.AppendLine($"    padding-left: {getPropertyOrDefault(list, "style-ordered.padding-left", "padding", "var(--spacing-xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list--plain {");
-        css.AppendLine("    list-style: none;");
-        css.AppendLine("    padding-left: 0;");
+        css.AppendLine($"    list-style: {getListStyleValue(list, "style-plain.list-style", "none")};");
+        css.AppendLine($"    padding-left: {getPropertyOrDefault(list, "style-plain.padding-left", "padding", "0")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -627,18 +637,18 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .list-item--completed {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-completed.opacity", "opacity", "var(--opacity-subtle)")};");
-        css.AppendLine("    text-decoration: line-through;");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(listItem, "state-completed.text-decoration", "line-through")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--disabled {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-disabled.opacity", "opacity", "var(--opacity-subdued)")};");
-        css.AppendLine("    cursor: not-allowed;");
+        css.AppendLine($"    cursor: {getCursorValue(listItem, "state-disabled.cursor", "not-allowed")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .list-item--error {");
-        css.AppendLine("    background: var(--color-critical-subtle);");
-        css.AppendLine("    border-left: 2px solid var(--color-critical);");
-        css.AppendLine("    padding-left: var(--spacing-md);");
+        css.AppendLine($"    background: {getPropertyOrDefault(listItem, "state-error.background", "background", "var(--color-critical-subtle)")};");
+        css.AppendLine($"    border-left: {getBorderWidthValue(listItem, "state-error.border-left-width", "2px")} solid {getPropertyOrDefault(listItem, "state-error.border-left-color", "border", "var(--color-critical)")};");
+        css.AppendLine($"    padding-left: {getPropertyOrDefault(listItem, "state-error.padding-left", "padding", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -853,5 +863,123 @@ public class ThemeCompiler
 
         var resolved = resolvePropertyValue(property, value);
         return string.IsNullOrEmpty(resolved) ? defaultValue : resolved;
+    }
+
+    /// <summary>
+    /// Gets a line-height value from component mapping, with fallback to default.
+    /// Line-height is special because it can be a unitless number or a unit value, and doesn't map to tokens.
+    /// </summary>
+    private static string getLineHeightValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a border-width value from component mapping, with fallback to default.
+    /// Border-width is typically a unitless number that needs "px" appended.
+    /// </summary>
+    private static string getBorderWidthValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        var valueStr = value.ToString() ?? defaultValue;
+
+        // If it's a plain number, append "px"
+        if (int.TryParse(valueStr, out _))
+            return $"{valueStr}px";
+
+        return valueStr;
+    }
+
+    /// <summary>
+    /// Gets a text-align value from component mapping, with fallback to default.
+    /// Text-align doesn't map to tokens and returns raw values like "center", "left", "right", "justify".
+    /// </summary>
+    private static string getTextAlignValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a text-decoration value from component mapping, with fallback to default.
+    /// Text-decoration doesn't map to tokens and returns raw values like "none", "underline", "line-through".
+    /// </summary>
+    private static string getTextDecorationValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a list-style value from component mapping, with fallback to default.
+    /// List-style doesn't map to tokens and returns raw values like "none", "disc", "decimal", "circle", "square".
+    /// </summary>
+    private static string getListStyleValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a cursor value from component mapping, with fallback to default.
+    /// Cursor doesn't map to tokens and returns raw values like "pointer", "not-allowed", "default", "text".
+    /// </summary>
+    private static string getCursorValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a width value from component mapping, with fallback to default.
+    /// Width doesn't map to tokens and returns raw values like "100%", "50%", "200px", "auto".
+    /// </summary>
+    private static string getWidthValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
     }
 }
