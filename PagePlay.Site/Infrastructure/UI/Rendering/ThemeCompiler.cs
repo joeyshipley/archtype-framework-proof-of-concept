@@ -38,7 +38,7 @@ public class ThemeCompiler
         generateTokensLayer(theme, css);
 
         // Generate base layer
-        generateBaseLayer(css);
+        generateBaseLayer(theme, css);
 
         // Generate components layer
         generateComponentsLayer(theme, css);
@@ -150,76 +150,138 @@ public class ThemeCompiler
         css.AppendLine();
     }
 
-    private static void generateBaseLayer(StringBuilder css)
+    private static void generateBaseLayer(Dictionary<string, object> theme, StringBuilder css)
     {
         css.AppendLine("/* ============================================================================");
         css.AppendLine("   BASE - Structural defaults");
         css.AppendLine("   ============================================================================ */");
         css.AppendLine();
         css.AppendLine("@layer base {");
+
+        // Page structure
+        var page = getComponent(theme, "page");
         css.AppendLine("  /* Page structure */");
         css.AppendLine("  .page {");
-        css.AppendLine("    max-width: 1200px;");
-        css.AppendLine("    margin: 0 auto;");
-        css.AppendLine("    padding: 0 var(--spacing-lg);");
+        css.AppendLine($"    max-width: {getMaxWidthValue(page, "base.max-width", "1200px")};");
+
+        // Margin handling - "auto" should remain literal, not resolve to token
+        var marginValue = page != null ? getComponentProperty(page, "base.margin") : null;
+        var margin = marginValue?.ToString() == "auto" ? "0 auto" : getPropertyOrDefault(page, "base.margin", "margin", "0 auto");
+        css.AppendLine($"    margin: {margin};");
+
+        var paddingX = getPropertyOrDefault(page, "base.padding-x", "padding-x", "var(--spacing-lg)");
+        var paddingY = page != null ? getComponentProperty(page, "base.padding-y")?.ToString() : null;
+        paddingY = paddingY == "0" ? "0" : getPropertyOrDefault(page, "base.padding-y", "padding-y", "0");
+        css.AppendLine($"    padding: {paddingY} {paddingX};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        var section = getComponent(theme, "section");
         css.AppendLine("  .section {");
-        css.AppendLine("    display: block;");
+        css.AppendLine($"    display: {getDisplayValue(section, "base.display", "block")};");
+
+        var sectionMarginBottomRaw = section != null ? getComponentProperty(section, "base.margin-bottom") : null;
+        var sectionMarginBottom = sectionMarginBottomRaw?.ToString() == "0" ? "0" : getPropertyOrDefault(section, "base.margin-bottom", "margin-bottom", "0");
+        if (sectionMarginBottom != "0") {
+            css.AppendLine($"    margin-bottom: {sectionMarginBottom};");
+        }
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Page title and section title margins
+        var pageTitle = getComponent(theme, "page-title");
+        var sectionTitle = getComponent(theme, "section-title");
         css.AppendLine("  .page-title,");
         css.AppendLine("  .section-title {");
-        css.AppendLine("    margin: 0;");
+        var titleMarginRaw = pageTitle != null ? getComponentProperty(pageTitle, "base.margin") : null;
+        var titleMargin = titleMarginRaw?.ToString() == "0" ? "0" : getPropertyOrDefault(pageTitle, "base.margin", "margin", "0");
+        css.AppendLine($"    margin: {titleMargin};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Layout primitives
+        var stack = getComponent(theme, "stack");
         css.AppendLine("  /* Layout primitives */");
         css.AppendLine("  .stack {");
-        css.AppendLine("    display: flex;");
-        css.AppendLine("    flex-direction: column;");
+        css.AppendLine($"    display: {getDisplayValue(stack, "base.display", "flex")};");
+        css.AppendLine($"    flex-direction: {getFlexDirectionValue(stack, "base.flex-direction", "column")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        var row = getComponent(theme, "row");
         css.AppendLine("  .row {");
-        css.AppendLine("    display: flex;");
-        css.AppendLine("    flex-direction: row;");
-        css.AppendLine("    align-items: center;");
+        css.AppendLine($"    display: {getDisplayValue(row, "base.display", "flex")};");
+        css.AppendLine($"    flex-direction: {getFlexDirectionValue(row, "base.flex-direction", "row")};");
+        css.AppendLine($"    align-items: {getAlignItemsValue(row, "base.align-items", "center")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        var grid = getComponent(theme, "grid");
         css.AppendLine("  .grid {");
-        css.AppendLine("    display: grid;");
+        css.AppendLine($"    display: {getDisplayValue(grid, "base.display", "grid")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Containers
+        var card = getComponent(theme, "card");
         css.AppendLine("  /* Containers */");
         css.AppendLine("  .card {");
-        css.AppendLine("    display: flex;");
-        css.AppendLine("    flex-direction: column;");
+        css.AppendLine($"    display: {getDisplayValue(card, "base.display", "flex")};");
+        css.AppendLine($"    flex-direction: {getFlexDirectionValue(card, "base.flex-direction", "column")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        var header = getComponent(theme, "header");
+        var body = getComponent(theme, "body");
+        var footer = getComponent(theme, "footer");
         css.AppendLine("  .header,");
         css.AppendLine("  .body,");
         css.AppendLine("  .footer {");
-        css.AppendLine("    display: block;");
+        css.AppendLine($"    display: {getDisplayValue(header, "base.display", "block")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .footer {");
-        css.AppendLine("    display: flex;");
-        css.AppendLine("    align-items: center;");
+        css.AppendLine($"    display: {getDisplayValue(footer, "base.display", "flex")};");
+        css.AppendLine($"    align-items: {getAlignItemsValue(footer, "base.align-items", "center")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Interactive elements
+        var button = getComponent(theme, "button");
         css.AppendLine("  /* Interactive elements */");
         css.AppendLine("  .button {");
-        css.AppendLine("    display: inline-flex;");
-        css.AppendLine("    align-items: center;");
-        css.AppendLine("    justify-content: center;");
-        css.AppendLine("    border: none;");
-        css.AppendLine("    cursor: pointer;");
-        css.AppendLine("    font-family: inherit;");
-        css.AppendLine("    transition: all var(--duration-fast) ease;");
+        css.AppendLine($"    display: {getDisplayValue(button, "base.display", "inline-flex")};");
+        css.AppendLine($"    align-items: {getAlignItemsValue(button, "base.align-items", "center")};");
+        css.AppendLine($"    justify-content: {getJustifyContentValue(button, "base.justify-content", "center")};");
+
+        // Border handling - "none" is a literal value
+        var borderRaw = button != null ? getComponentProperty(button, "base.border") : null;
+        var border = borderRaw?.ToString() == "none" ? "none" : getPropertyOrDefault(button, "base.border", "border", "none");
+        css.AppendLine($"    border: {border};");
+
+        css.AppendLine($"    cursor: {getCursorValue(button, "base.cursor", "pointer")};");
+
+        var fontFamily = button != null && getComponentProperty(button, "base.font-family") != null
+            ? getComponentProperty(button, "base.font-family").ToString()
+            : "inherit";
+        css.AppendLine($"    font-family: {fontFamily};");
+
+        // Transition handling - support separate properties or combined
+        var transitionProp = (button != null ? getComponentProperty(button, "base.transition-property")?.ToString() : null) ?? "all";
+        var transitionDuration = getPropertyOrDefault(button, "base.transition-duration", "transition-duration", "var(--duration-fast)");
+        var transitionTiming = (button != null ? getComponentProperty(button, "base.transition-timing")?.ToString() : null) ?? "ease";
+        css.AppendLine($"    transition: {transitionProp} {transitionDuration} {transitionTiming};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Text elements
+        var text = getComponent(theme, "text");
         css.AppendLine("  /* Text elements */");
         css.AppendLine("  .text {");
-        css.AppendLine("    margin: 0;");
+        var textMarginRaw = text != null ? getComponentProperty(text, "base.margin") : null;
+        var textMargin = textMarginRaw?.ToString() == "0" ? "0" : getPropertyOrDefault(text, "base.margin", "margin", "0");
+        css.AppendLine($"    margin: {textMargin};");
         css.AppendLine("  }");
         css.AppendLine("}");
         css.AppendLine();
@@ -255,7 +317,7 @@ public class ThemeCompiler
         generatePageStructureStyles(theme, css);
 
         // Layout primitive styling
-        generateLayoutStyles(css);
+        generateLayoutStyles(theme, css);
 
         css.AppendLine("}");
     }
@@ -684,59 +746,68 @@ public class ThemeCompiler
         css.AppendLine();
     }
 
-    private static void generateLayoutStyles(StringBuilder css)
+    private static void generateLayoutStyles(Dictionary<string, object> theme, StringBuilder css)
     {
+        var layout = getComponent(theme, "layout");
+
+        // Stack - purpose-based spacing
         css.AppendLine("  /* Stack - purpose-based spacing */");
         css.AppendLine("  .stack--actions {");
-        css.AppendLine("    gap: var(--spacing-sm);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-actions", "gap", "var(--spacing-sm)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--fields {");
-        css.AppendLine("    gap: var(--spacing-lg);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-fields", "gap", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--content {");
-        css.AppendLine("    gap: var(--spacing-md);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-content", "gap", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--items {");
-        css.AppendLine("    gap: var(--spacing-md);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-items", "gap", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--sections {");
-        css.AppendLine("    gap: var(--spacing-3xl);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-sections", "gap", "var(--spacing-3xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--inline {");
-        css.AppendLine("    gap: var(--spacing-xs);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-inline", "gap", "var(--spacing-xs)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .stack--cards {");
-        css.AppendLine("    gap: var(--spacing-2xl);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "stack.purpose-cards", "gap", "var(--spacing-2xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Row - purpose-based spacing
         css.AppendLine("  /* Row - purpose-based spacing */");
         css.AppendLine("  .row--actions {");
-        css.AppendLine("    gap: var(--spacing-sm);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "row.purpose-actions", "gap", "var(--spacing-sm)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .row--fields {");
-        css.AppendLine("    gap: var(--spacing-lg);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "row.purpose-fields", "gap", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .row--inline {");
-        css.AppendLine("    gap: var(--spacing-xs);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "row.purpose-inline", "gap", "var(--spacing-xs)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Grid - purpose-based spacing and columns
         css.AppendLine("  /* Grid - purpose-based spacing and columns */");
         css.AppendLine("  .grid--cards {");
-        css.AppendLine("    gap: var(--spacing-2xl);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "grid.purpose-cards", "gap", "var(--spacing-2xl)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .grid--items {");
-        css.AppendLine("    gap: var(--spacing-md);");
+        css.AppendLine($"    gap: {getPropertyOrDefault(layout, "grid.purpose-items", "gap", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Grid column configurations
         css.AppendLine("  .grid--cols-1 {");
         css.AppendLine("    grid-template-columns: 1fr;");
         css.AppendLine("  }");
@@ -753,8 +824,11 @@ public class ThemeCompiler
         css.AppendLine("    grid-template-columns: repeat(4, 1fr);");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Grid auto columns with configurable minwidth
+        var colsAutoMinwidth = getPropertyOrDefault(layout, "grid.cols-auto-minwidth", "cols-auto-minwidth", "300");
         css.AppendLine("  .grid--cols-auto {");
-        css.AppendLine("    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));");
+        css.AppendLine($"    grid-template-columns: repeat(auto-fit, minmax({colsAutoMinwidth}px, 1fr));");
         css.AppendLine("  }");
         css.AppendLine();
     }
@@ -823,6 +897,7 @@ public class ThemeCompiler
             ["radius"] = "--radius-",
             ["shadow"] = "--shadow-",
             ["duration"] = "--duration-",
+            ["transition-duration"] = "--duration-",
             ["opacity"] = "--opacity-",
             ["background"] = "--color-",
             ["border"] = "--color-",

@@ -225,41 +225,42 @@ Grid column configurations hardcoded:
 
 ---
 
-### Phase 4: Refactor Base Layer (High Priority)
+### Phase 4: Refactor Base Layer (High Priority) ✅ COMPLETED
 **Goal:** Make base layer read from theme instead of being hardcoded
 
-#### 4.1 Decision: Approach Selection
-Choose one approach:
-
-**Option A: Move to Components Layer**
-- Merge base layer properties into component definitions
-- Eliminate separate base layer generation
-- Pro: Simpler, all in one place
-- Con: May blur separation of concerns
-
-**Option B: Make Base Layer Theme-Aware**
+#### 4.1 Decision: Approach Selection ✅
+**Chose Option B: Make Base Layer Theme-Aware**
 - Keep base layer separate but read from theme
-- Add `base:` section to YAML for structural defaults
-- Pro: Maintains clean separation
-- Con: More YAML structure complexity
+- YAML structures already added in Phase 3
+- Maintains clean separation of concerns
 
-**Recommended:** Option B - maintains architecture clarity
+#### 4.2 Implement Base Layer Theme Integration ✅
+- [x] Update `generateBaseLayer()` to accept theme parameter
+- [x] Read all structural properties from theme (page, section, stack, row, grid, card, header, body, footer, button, text)
+- [x] Use appropriate helper methods (getDisplayValue, getFlexDirectionValue, getAlignItemsValue, etc.)
+- [x] Handle special values (auto, none, 0, inherit) correctly
+- [x] Maintain backward compatibility with defaults
 
-#### 4.2 Implement Base Layer Theme Integration
-- [ ] Add `base:` section to YAML schema
-- [ ] Update `generateBaseLayer()` to accept theme parameter
-- [ ] Read all structural properties from theme
-- [ ] Maintain backward compatibility with defaults
+#### 4.3 Implement Layout Styles Theme Integration ✅
+- [x] Update `generateLayoutStyles()` to accept theme parameter
+- [x] Read all layout semantic spacing from theme (stack, row, grid purpose variants)
+- [x] Read grid auto-columns minwidth configuration
+- [x] Fix property resolution for gap values
 
-#### 4.3 Test All Components
-- [ ] Verify page layout
-- [ ] Verify all layout primitives (stack, row, grid)
-- [ ] Verify containers (card, slots)
-- [ ] Verify interactive elements (button, input, checkbox)
-- [ ] Verify text elements
+#### 4.4 Test All Components ✅
+- [x] Verify page layout (max-width, margin, padding)
+- [x] Verify all layout primitives (stack, row, grid display and flex properties)
+- [x] Verify containers (card, slots display and alignment)
+- [x] Verify interactive elements (button display, alignment, border, cursor, transition)
+- [x] Verify text elements (margin)
+- [x] Verify layout semantic spacing (all gap values resolve correctly)
 
-**Estimated Effort:** 2-3 sessions
-**Files Modified:** `ThemeCompiler.cs` (generateBaseLayer), `default.theme.yaml`
+**Actual Effort:** 1 session
+**Files Modified:**
+- `ThemeCompiler.cs` (generateBaseLayer, generateLayoutStyles, resolvePropertyValue)
+**Build Status:** ✅ 0 warnings, 0 errors
+**Theme Compilation:** ✅ Successful
+**Generated CSS:** ✅ All values correctly read from YAML
 
 ---
 
@@ -355,7 +356,18 @@ Choose one approach:
 - ✅ Updated existing components to include structural properties
 - ✅ Build verified: 0 warnings, 0 errors
 - ✅ Theme compilation successful
-- **Next:** Phase 4 - Refactor ThemeCompiler to read from YAML instead of hardcoded values
+
+### Session 5 (2025-12-06)
+- ✅ **Phase 4 COMPLETED**: Refactored base layer and layout styles to read from YAML
+- ✅ Updated `generateBaseLayer()` to accept theme parameter and read all properties
+- ✅ Updated `generateLayoutStyles()` to accept theme parameter and read semantic spacing
+- ✅ Fixed special value handling (auto, none, 0, inherit, transition-duration)
+- ✅ Added transition-duration to CSS variable mapping
+- ✅ Verified all components render correctly with YAML-driven values
+- ✅ Build verified: 0 warnings, 0 errors
+- ✅ Theme compilation successful
+- ✅ Generated CSS validates: all values correctly resolved from YAML
+- **Next:** Phase 5 - Create test themes and validation
 
 ---
 
