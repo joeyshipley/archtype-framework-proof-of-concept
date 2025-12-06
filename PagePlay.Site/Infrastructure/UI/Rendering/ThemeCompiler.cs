@@ -982,4 +982,123 @@ public class ThemeCompiler
 
         return value.ToString() ?? defaultValue;
     }
+
+    /// <summary>
+    /// Gets a display value from component mapping, with fallback to default.
+    /// Display doesn't map to tokens and returns raw values like "block", "flex", "inline-flex", "grid", "none".
+    /// </summary>
+    private static string getDisplayValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a flex-direction value from component mapping, with fallback to default.
+    /// Flex-direction doesn't map to tokens and returns raw values like "row", "column", "row-reverse", "column-reverse".
+    /// </summary>
+    private static string getFlexDirectionValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets an align-items value from component mapping, with fallback to default.
+    /// Align-items doesn't map to tokens and returns raw values like "center", "flex-start", "flex-end", "stretch", "baseline".
+    /// </summary>
+    private static string getAlignItemsValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a justify-content value from component mapping, with fallback to default.
+    /// Justify-content doesn't map to tokens and returns raw values like "center", "flex-start", "flex-end", "space-between", "space-around".
+    /// </summary>
+    private static string getJustifyContentValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a border-style value from component mapping, with fallback to default.
+    /// Border-style doesn't map to tokens and returns raw values like "solid", "dashed", "dotted", "none".
+    /// </summary>
+    private static string getBorderStyleValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a max-width value from component mapping, with fallback to default.
+    /// Max-width doesn't map to tokens and returns raw values like "1200px", "100%", "none".
+    /// If the value is a plain number, it's treated as pixels and "px" is appended.
+    /// </summary>
+    private static string getMaxWidthValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        var valueStr = value.ToString() ?? defaultValue;
+
+        // If it's a plain number, append "px"
+        if (int.TryParse(valueStr, out _))
+            return $"{valueStr}px";
+
+        return valueStr;
+    }
+
+    /// <summary>
+    /// Gets a grid-template-columns value from component mapping, with fallback to default.
+    /// Grid-template-columns doesn't map to tokens and returns raw values like "repeat(2, 1fr)", "minmax(300px, 1fr)".
+    /// </summary>
+    private static string getGridTemplateColumnsValue(Dictionary<object, object> component, string path, string defaultValue)
+    {
+        if (component == null)
+            return defaultValue;
+
+        var value = getComponentProperty(component, path);
+        if (value == null)
+            return defaultValue;
+
+        return value.ToString() ?? defaultValue;
+    }
 }
