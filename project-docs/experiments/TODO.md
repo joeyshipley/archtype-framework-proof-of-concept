@@ -1,4 +1,5 @@
 - Fix file naming. Those pages shouldn't have .htmx in them now.
+- Remove DI auto helpers and framework code that string hacks finding dependencies and use normal DI until framework is in a more complete form.
 - ThemeComplier - consider throwing errors if a non-token is used. 
 - Fix all of the context loading docs. They use old implementations.
 - Come up with actual web theme.
