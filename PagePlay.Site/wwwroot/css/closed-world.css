@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2025-12-05 19:52:12 UTC
+ * Generated: 2025-12-06 15:37:23 UTC
  */
 
 @layer tokens, base, components;
@@ -299,7 +299,7 @@
 
   .field {
     display: block;
-    margin-bottom: var(--spacing-4);
+    gap: var(--spacing-1);
   }
 
   .field--error .input {
@@ -350,7 +350,7 @@
   }
 
   .alert__message {
-    margin: 0;
+    margin: var(--spacing-0);
     font-size: var(--text-md);
   }
 
@@ -384,7 +384,7 @@
   }
 
   .empty-state__message {
-    margin: 0;
+    margin: var(--spacing-0);
   }
 
   .empty-state__action {
@@ -420,23 +420,23 @@
 
   /* List elements */
   .list {
-    margin: 0;
-    padding: 0;
+    margin: var(--spacing-0);
+    padding: var(--spacing-0);
   }
 
   .list--unordered {
     list-style: disc;
-    padding-left: var(--spacing-xl);
+    padding-left: var(--spacing-5);
   }
 
   .list--ordered {
     list-style: decimal;
-    padding-left: var(--spacing-xl);
+    padding-left: var(--spacing-5);
   }
 
   .list--plain {
     list-style: none;
-    padding-left: 0;
+    padding-left: var(--spacing-0);
   }
 
   .list-item {
@@ -460,7 +460,7 @@
   .list-item--error {
     background: var(--color-critical-subtle);
     border-left: 2px solid var(--color-critical);
-    padding-left: var(--spacing-md);
+    padding-left: var(--spacing-3);
   }
 
   /* Page structure */
