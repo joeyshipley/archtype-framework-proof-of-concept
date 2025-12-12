@@ -1,7 +1,7 @@
 # Project Philosophy & Architecture
 
-**Version:** 1.0
-**Last Updated:** 2025-11-22
+**Version:** 2.0
+**Last Updated:** 2025-12-12
 **Status:** Foundation Document
 
 ---
@@ -22,6 +22,6 @@ This documentation describes the technical patterns and architectural decisions 
 
 ## Additional Documentation
 
-- **[Web Framework Philosophy](./README.WEB_FRAMEWORK.md)** - HTTP-First approach, turn-based architecture, and game-inspired patterns
-- **[Consistent Complexity Design](./README.CONSISTENT_COMPLEXITY_DESIGN.md)** - Vertical slices, self-enforcing patterns, and maintaining predictable feature complexity
+- **[Philosophy](./README.PHILOSOPHY.md)** - Core beliefs, HTTP-first rationale, consistent complexity, and patterns
+- **[Architecture Reference](./README.ARCHITECTURE_REFERENCE.md)** - Interfaces, data flow, and implementation details
 - **[Workflow](./workflow/)** - Development modes and processes
