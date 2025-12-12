@@ -1,6 +1,23 @@
 # Experiment: Component-First Architecture with Pure OOB & Minimal Workflow Responses
 
-**Status:** Phase 3 Complete - Validated & Production-Ready
+> **HISTORICAL DOCUMENT**
+>
+> This experiment was completed on 2025-12-02 and its patterns have been **partially superseded** by the Page-Component Unification experiment.
+>
+> **What survived:**
+> - Pure OOB updates (server decides what updates, not client)
+> - `DataMutations.For()` pattern for declaring mutations
+> - `BuildOobResult()` for interactions
+> - CQRS separation (workflows return metadata only)
+>
+> **What was superseded:**
+> - `TodoListComponent` wrapper class was eliminated (pages now implement IView directly)
+> - `DataDependencies.From<TProvider, TContext>()` changed to `From<TContext>()` (single generic)
+> - File references (`README.CONSISTENT_COMPLEXITY_DESIGN.md`, `README.WEB_FRAMEWORK.md`) have been consolidated into `README.PHILOSOPHY.md`
+>
+> **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+
+**Status:** Phase 3 Complete - Validated & Production-Ready (HISTORICAL)
 **Created:** 2025-12-02
 **Phase 1 Completed:** 2025-12-02
 **Phase 2 Completed:** 2025-12-02

@@ -40,7 +40,7 @@ Many docs contain code examples and patterns that no longer match reality.
 | 3 | Pattern Template Docs | ✅ Complete |
 | 4 | Read/Write Pattern Docs | ✅ Complete |
 | 5 | UI/Styling Docs | ✅ Complete |
-| 6 | Historical Experiment Cleanup | ⏳ Pending |
+| 6 | Historical Experiment Cleanup | ✅ Complete |
 | 7 | Final Review & Validation | ⏳ Pending |
 
 ---
@@ -442,7 +442,7 @@ Rather than documenting the current (flawed) implementation details, the doc sho
 
 **Goal:** Organize experiment docs so historical context is preserved but doesn't confuse.
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ### Target Files
 - `project-docs/experiments/completed/component-first-architecture.md`
@@ -450,26 +450,57 @@ Rather than documenting the current (flawed) implementation details, the doc sho
 - `project-docs/experiments/completed/domain-data-manifests.md`
 - `project-docs/experiments/completed/fluent-domain-loading.md`
 - `project-docs/experiments/completed/loader-workflow-separation.md`
+- `project-docs/experiments/completed/styles/B-*.md` (6 files)
 
 ### Research Tasks
-- [ ] Determine which experiments led to current state
-- [ ] Add "Historical Context" headers to completed experiments
-- [ ] Note which patterns were superseded
-- [ ] Consider consolidating or archiving
+- [x] Determine which experiments led to current state
+- [x] Add "Historical Context" headers to completed experiments
+- [x] Note which patterns were superseded
+- [x] Consider consolidating or archiving
 
 ### Approach Options
-1. Add clear "HISTORICAL" banners to each
+1. Add clear "HISTORICAL" banners to each ← **CHOSEN**
 2. Move to `experiments/archive/` folder
 3. Create summary doc linking to current implementation
 
 ### Research Findings
-<!-- Fill in during research phase -->
+
+**Experiment Evolution Chain:**
+
+| Order | Experiment | Contribution | Status |
+|-------|------------|--------------|--------|
+| 1 | domain-data-manifests | Domain-level data fetching, OOB updates, FrameworkOrchestrator | Foundational - patterns survived |
+| 2 | fluent-domain-loading | `With<T>().Load()` fluent API | Complete - merged |
+| 3 | loader-workflow-separation | Read/write separation (Providers for reads, Workflows for writes) | Planning doc - pattern adopted |
+| 4 | component-first-architecture | BuildOobResult(), DataMutations, pure OOB | Partially superseded by #5 |
+| 5 | page-component-unification | Pages ARE Views, single `From<TContext>()` generic | Most recent - defines current architecture |
+
+**Key patterns that survived through all experiments:**
+- `DataMutations.For()` - declaring what interactions mutate
+- `FrameworkOrchestrator` - automatic OOB updates
+- Fluent loading: `With<T>().Load()`, `Get<T>()`
+- Read/write separation (Providers vs Workflows)
+- Pages implement `IView` directly (no separate component wrappers)
 
 ### Plan Adjustments
-<!-- Update plan based on research -->
+
+**Decision: Add HISTORICAL banners (Option 1)**
+
+Rationale:
+- Preserves context for understanding architectural decisions
+- Clear signal that code examples may be outdated
+- Links to current `README.ARCHITECTURE_REFERENCE.md` for accurate patterns
+- Files stay in `completed/` folder (not moving to archive)
 
 ### Completion Notes
-<!-- Document what was done -->
+- Added HISTORICAL banner to all 5 main experiment docs with:
+  - What patterns survived to current architecture
+  - What patterns were superseded
+  - Link to `README.ARCHITECTURE_REFERENCE.md` as current source of truth
+- Added HISTORICAL banner to `B-00_README.md` covering all B-* styling experiment files
+  - Notes that all 6 files (B-00 through B-05) are consolidated into `README.DESIGN_STYLING.md`
+- Each banner uses blockquote format for visual distinction
+- Terminology notes added where naming changed (e.g., IServerComponent → IView)
 
 ---
 
@@ -588,6 +619,23 @@ Rather than documenting the current (flawed) implementation details, the doc sho
   - Test: "If a designer needs C# to change appearance, that's a bug"
 - Doc now emphasizes the target state, making the implementation gap obvious
 
+### Session 7 (2025-12-12)
+- Completed Phase 6: Historical Experiment Cleanup
+- Analyzed 5 main experiment docs + 6 B-*.md styling docs
+- Determined experiment evolution chain:
+  1. domain-data-manifests → foundational data loading
+  2. fluent-domain-loading → `With<T>().Load()` API
+  3. loader-workflow-separation → read/write separation
+  4. component-first-architecture → OOB patterns (partially superseded)
+  5. page-component-unification → pages ARE views (most recent)
+- Added HISTORICAL banners to all experiment docs with:
+  - What survived, what was superseded
+  - Terminology notes (IServerComponent → IView, etc.)
+  - Links to `README.ARCHITECTURE_REFERENCE.md`
+- Added banner to B-00_README.md covering all styling experiment files
+  - Notes consolidation into `README.DESIGN_STYLING.md`
+- Decision: Keep files in `completed/` folder, don't move to archive
+
 ---
 
 ## Open Questions
@@ -599,4 +647,4 @@ Rather than documenting the current (flawed) implementation details, the doc sho
 
 ---
 
-**Last Updated:** 2025-12-12 (Phase 5 Complete)
+**Last Updated:** 2025-12-12 (Phase 6 Complete)

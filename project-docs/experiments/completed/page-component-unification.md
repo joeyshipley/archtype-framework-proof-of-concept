@@ -1,8 +1,22 @@
 # Experiment: Page-Component Unification
 
-**Status:** 🚧 In Progress (Phase 3 Complete - Ready for Testing)
+> **HISTORICAL DOCUMENT**
+>
+> This experiment was completed on 2025-12-05 and represents the **most recent architectural evolution**.
+>
+> **Key outcomes that define current architecture:**
+> - Pages implement `IView` (renamed from `IServerComponent`) directly - no separate component wrappers
+> - `DataDependencies.From<TContext>()` - single generic parameter, reads `DomainName` from context
+> - `ComponentFactory` discovers concrete classes (not interfaces)
+> - Framework injects component metadata automatically (`data-view`, `data-domain`)
+>
+> **Terminology note:** This document uses `IServerComponent` which was later renamed to `IView` during documentation reconciliation.
+>
+> **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+
+**Status:** Complete (Phases 1-3) - HISTORICAL
 **Started:** 2025-12-04
-**Goal:** Unify Page and Component abstractions into a single `IServerComponent` model
+**Goal:** Unify Page and Component abstractions into a single `IView` model (originally `IServerComponent`)
 **Hypothesis:** Pages and Components are the same abstraction - both declare data dependencies and render HTML. The distinction adds complexity without meaningful benefit.
 
 **Progress:**

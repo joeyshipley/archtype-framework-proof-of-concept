@@ -1,9 +1,22 @@
 # Active Implementation: DataDomains for Reads, Workflows for Writes
 
-**Status:** Planning Complete, Ready for Implementation
+> **HISTORICAL DOCUMENT**
+>
+> This planning document was created on 2025-11-29 and its pattern is **fully adopted**.
+>
+> **Key principle that defines current architecture:**
+> - **Providers (DomainViews) handle all reads** - data fetching for rendering
+> - **Workflows handle all writes** - Create, Update, Delete operations
+> - No "list workflows" - reads go through DataLoader with Providers
+>
+> **Terminology note:** "DataDomains" were renamed to "DomainViews + Providers" in the current architecture.
+>
+> **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md` section "Read vs Write: Choosing the Right Pattern"
+
+**Status:** Planning Complete - Pattern Adopted (HISTORICAL)
 **Created:** 2025-11-29
 **Last Updated:** 2025-11-29
-**Architectural Decision:** Separate read/write concerns - DataDomains (queries) vs Workflows (commands)
+**Architectural Decision:** Separate read/write concerns - Providers (queries) vs Workflows (commands)
 
 ---
 

@@ -1,6 +1,20 @@
 # Experiment: Fluent Domain Loading API
 
-**Status:** Planning
+> **HISTORICAL DOCUMENT**
+>
+> This experiment was completed on 2025-11-29 and its patterns are **fully adopted**.
+>
+> **Key patterns that define current architecture:**
+> - Fluent loading: `dataLoader.With<TContext>().Load()`
+> - Type-safe access: `ctx.Get<TContext>()`
+> - Single pattern for 1 or N domains (no mental conditionals)
+> - No magic strings - types only
+>
+> **Philosophy preserved:** "Removing conditionals in mental models is as important as it is in code."
+>
+> **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+
+**Status:** Complete - HISTORICAL
 **Started:** 2025-11-29
 **Goal:** Eliminate magic strings and mental conditionals from domain loading with a consistent fluent API
 

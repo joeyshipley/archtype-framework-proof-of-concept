@@ -1,6 +1,24 @@
 # Experiment: Domain-Level Data Manifests with OOB Updates
 
-**Status:** In Progress
+> **HISTORICAL DOCUMENT**
+>
+> This experiment was completed on 2025-11-29 and established the **foundational data loading architecture**.
+>
+> **Key patterns that survived:**
+> - `IDataProvider<T>` (originally `IDataDomain`) - domain-level data fetching
+> - `DataMutations.For()` - declaring what interactions mutate
+> - `FrameworkOrchestrator` - automatic OOB updates
+> - `X-Component-Context` header - client tracks views for server updates
+> - Two-phase rendering (async data load → sync render)
+>
+> **What evolved:**
+> - `IDataDomain` renamed to `IDataProvider<T>`
+> - Domain naming now uses `DomainView.DomainName` constant (not derived from type name)
+> - Data loading uses fluent API: `With<T>().Load()` (see fluent-domain-loading experiment)
+>
+> **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+
+**Status:** Complete - HISTORICAL
 **Started:** 2025-11-29
 **Goal:** Implement domain-level data manifests with two-phase rendering and HTMX OOB updates
 

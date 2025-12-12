@@ -1,5 +1,21 @@
 # Closed-World UI Specification
 
+> **HISTORICAL DOCUMENTS**
+>
+> This specification (B-00 through B-05) was written during the initial design phase and has been **consolidated** into the main styling documentation.
+>
+> **Current documentation:** See `.claude/docs/README.DESIGN_STYLING.md`
+>
+> These files are preserved for historical context showing the design evolution:
+> - B-00_README.md - This overview
+> - B-01_philosophy.md - Core beliefs (consolidated)
+> - B-02_vocabulary.md - Semantic types (consolidated)
+> - B-03_type-system.md - C# enforcement (consolidated)
+> - B-04_theme-authoring.md - Designer control (consolidated)
+> - B-05_rendering.md - HTML/CSS output (consolidated)
+>
+> **Key insight preserved:** "Invalid output is impossible, not discouraged."
+
 A styling framework where developers declare what things ARE, and the system derives how they look.
 
 ---
