@@ -36,7 +36,7 @@ Many docs contain code examples and patterns that no longer match reality.
 | Phase | Focus | Status |
 |-------|-------|--------|
 | 1 | Create "Source of Truth" Reference | ✅ Complete |
-| 2 | Core Philosophy Docs | ⏳ Pending |
+| 2 | Core Philosophy Docs | 🔬 Research Complete |
 | 3 | Pattern Template Docs | ⏳ Pending |
 | 4 | Workflow/CQRS Docs | ⏳ Pending |
 | 5 | UI/Styling Docs | ⏳ Pending |
@@ -132,31 +132,81 @@ protected override DataMutations Mutates => DataMutations.For(TodosListDomainVie
 
 ## Phase 2: Core Philosophy Docs
 
-**Goal:** Update terminology and concepts in main philosophy documents while preserving the core ideas.
+**Goal:** Consolidate and update philosophy documents, align terminology with current implementation.
 
-**Status:** ⏳ Pending
+**Status:** 🔬 Research Complete, Ready to Implement
 
-### Target Files
+### Original Target Files
 - `.claude/docs/README.md`
 - `.claude/docs/README.WEB_FRAMEWORK.md`
 - `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md`
 
 ### Research Tasks
-- [ ] Read each file and identify specific outdated sections
-- [ ] List terminology that needs updating
-- [ ] Identify concepts that are still valid vs need rewriting
-- [ ] Check for code examples that need updating
-
-### Known Issues (from initial scan)
-- Uses "turn-based" metaphor with old routing (`/turn/*`)
-- References `IServerComponent`, `ComponentId`
-- May reference old data loading patterns
+- [x] Read each file and identify specific outdated sections
+- [x] List terminology that needs updating
+- [x] Identify concepts that are still valid vs need rewriting
+- [x] Check for code examples that need updating
 
 ### Research Findings
-<!-- Fill in during research phase -->
+
+**README.md (28 lines)**
+- Minimal changes needed - just update links to new structure
+
+**README.WEB_FRAMEWORK.md (550 lines)**
+- Has "NOTE - implementation has changed" disclaimer (remove)
+- Line 129: `DataManifest` → `DataDependencies`
+- Lines 139-162: `DataDomains` terminology throughout → `DomainViews + Providers`
+- Line 338: `TodoListPageComponent : Component` → should use `IView`
+- Lines 338-345: Hypothetical WebSocket transport code (remove - future feature)
+- Line 536: References "ArchType" (remove - future project name)
+- **Philosophy content is solid** - HTTP-first rationale, game patterns, server authority all still valid
+
+**README.CONSISTENT_COMPLEXITY_DESIGN.md (599 lines)**
+- Has "NOTE - implementation has changed" disclaimer (remove)
+- Lines 279-296: `TodosDomainContext` → `TodosListDomainView`
+- Lines 460-475: "DataDomains handle all reads" → "DomainViews + Providers"
+- Line 464: `TodosDomain`, `TodoAnalyticsDomain` → proper DomainView names
+- Lines 487-534: Example code uses wrong type names
+- **Pattern guidance is solid** - vertical slices, CQRS, consistent complexity all still valid
 
 ### Plan Adjustments
-<!-- Update plan based on research -->
+
+**Decision: Option C - Merge into 2 Docs**
+
+Instead of updating 3 separate files, consolidate into clearer structure:
+
+1. **Create `README.PHILOSOPHY.md`** (~800-900 lines)
+   - Merge WEB_FRAMEWORK + CONSISTENT_COMPLEXITY
+   - Both answer "why do we do things this way?"
+   - Clear separation from technical reference
+
+2. **Keep `README.ARCHITECTURE_REFERENCE.md`** (~400 lines)
+   - Technical reference for "what exists and how to use it"
+   - Already created in Phase 1
+
+3. **Update `README.md`**
+   - Update links to new 2-doc structure
+
+4. **Delete old files**
+   - `README.WEB_FRAMEWORK.md`
+   - `README.CONSISTENT_COMPLEXITY_DESIGN.md`
+
+**Proposed Structure for README.PHILOSOPHY.md:**
+```
+1. Core Insight (web apps as turn-based games)
+2. Core Principles (server authority, thin client, HTTP-first, etc.)
+3. HTTP-First Rationale (why HTTP, validation strategy, game patterns)
+4. Consistent Complexity (vertical slices, self-enforcing patterns)
+5. What We Embrace / What We Reject
+6. For AI Agents and Developers (practical guidance)
+```
+
+**Changes to Apply:**
+- Remove "NOTE - implementation has changed" disclaimers
+- Remove hypothetical WebSocket/future code examples
+- Remove ArchType references
+- Update all terminology per translation table
+- Update code examples to current types
 
 ### Completion Notes
 <!-- Document what was done -->
@@ -362,8 +412,14 @@ protected override DataMutations Mutates => DataMutations.For(TodosListDomainVie
 - Corrected file paths (IElement.cs location, DataLoader.cs contains interface)
 - Documented actual code patterns with examples from TodosPage
 
-### Session 3
-<!-- Add notes here -->
+### Session 3 (2025-12-12)
+- Completed Phase 2 research
+- Read all three target files and compared to ARCHITECTURE_REFERENCE
+- Identified specific outdated terminology and code examples
+- Decision: Merge WEB_FRAMEWORK + CONSISTENT_COMPLEXITY into single PHILOSOPHY doc
+- Rationale: Both answer "why", keeps technical reference separate
+- Documented plan with proposed structure and changes to apply
+- Ready to implement Phase 2
 
 ---
 
@@ -376,4 +432,4 @@ protected override DataMutations Mutates => DataMutations.For(TodosListDomainVie
 
 ---
 
-**Last Updated:** 2025-12-12 (Phase 1 Complete)
+**Last Updated:** 2025-12-12 (Phase 2 Research Complete)
