@@ -1,6 +1,5 @@
-- With the seperation of workflow into command/query split what is a better name for workflow now?
-- Come up with actual web theme.
-- Review, what else do we need before we can create an actual website?
 - Refactor and move framework into a Archtype.Framework project.
+- Review, what else do we need before we can create an actual website?
+- Come up with actual web theme.
 - ThemeComplier - consider throwing errors if a non-token is used. 
 - Advanced UI interactions: drag and drop, autocomplete dropdown, pagination/filtering/sorting tables, etc.
