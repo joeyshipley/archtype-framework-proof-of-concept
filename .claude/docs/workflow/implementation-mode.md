@@ -92,15 +92,16 @@ Check if tasks are organized in phases with proper structure:
 **CRITICAL: Prevents drift to training data patterns**
 
 Read relevant architectural documentation before implementing:
-- `.claude/docs/README.md` - Project philosophy and team velocity principles
-- `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md` - Vertical slices and self-enforcing patterns
-- `.claude/docs/README.SYNTAX_STYLE.md` - Code style conventions
+- `.claude/docs/README.md` - Project overview and navigation
+- `.claude/docs/README.PHILOSOPHY.md` - Core beliefs, HTTP-first philosophy, vertical slices
+- `.claude/docs/README.ARCHITECTURE_REFERENCE.md` - Technical reference, creation patterns, testing
 
-**If task includes pattern references, read those:**
-- `project-docs/context/patterns/workflow-creation.md` - When creating new workflows
-- `project-docs/context/patterns/test-creation.md` - When creating test files
+**For creation patterns, the Architecture Reference includes:**
+- "Creating New Features" section - Page views, interactions, providers, API workflows
+- "Testing" section - SetupTestFor<T>, Mocker, Fakes patterns
+- "Authentication" section - RequireAuthenticatedUser, LoggedInAuthContext
 
-Pattern docs provide scaffolding templates. Execute in root session (no subprocess) to maintain full context.
+Execute in root session (no subprocess) to maintain full context.
 
 ### 3. Check TodoWrite
 

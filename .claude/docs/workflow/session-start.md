@@ -8,10 +8,10 @@
 ## STEP 1: READ CORE FILES
 
 **Before anything else, read these files in order**:
-1. `.claude/docs/README.md` - Project philosophy, team velocity principles, and architecture overview
-2. `.claude/docs/README.CONSISTENT_COMPLEXITY_DESIGN.md` - Vertical slices, self-enforcing patterns, and maintaining predictable feature complexity
-3. `.claude/docs/README.WEB_FRAMEWORK.md` - HTTP-First philosophy and turn-based architecture (web framework context)
-4. `.claude/docs/README.DESIGN_STYLING.md` - Web style practices (css, tokens, etc)
+1. `.claude/docs/README.md` - Project overview and navigation
+2. `.claude/docs/README.PHILOSOPHY.md` - Core beliefs, HTTP-first philosophy, vertical slices, consistent complexity
+3. `.claude/docs/README.ARCHITECTURE_REFERENCE.md` - Technical reference for interfaces, patterns, and implementation
+4. `.claude/docs/README.DESIGN_STYLING.md` - Web style practices (CSS, tokens, theming)
 5. `project-docs/context/personas/README.md` - User personas quick reference for identifying target users
 
 Read these first, every session.
@@ -99,4 +99,4 @@ All paths valid. Briefs are tools, not requirements.
 
 ---
 
-**Last Updated**: 2025-11-22 (Added syntax style guide)
+**Last Updated**: 2025-12-12 (Updated doc references after reconciliation)

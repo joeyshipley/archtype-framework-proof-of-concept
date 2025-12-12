@@ -74,17 +74,16 @@ Ensures plan aligns with architectural decisions.
 
 For each task that creates new code, ask:
 
-1. **Does this need a new workflow?**
-   - If YES → Include in task: "Read `project-docs/context/patterns/workflow-creation.md` and create {Feature} workflow"
+1. **Does this need a new page feature?** (View + Interaction + Provider)
+   - If YES → Include in task: "Follow 'Creating New Features' in `README.ARCHITECTURE_REFERENCE.md` for page feature creation"
 
-2. **Does this need workflow tests?**
-   - If YES → Include in task: "Read `project-docs/context/patterns/test-creation.md` (Pattern A) and create tests for {Feature} workflow"
+2. **Does this need an API workflow?**
+   - If YES → Include in task: "Follow 'Creating New Features > API Workflows' in `README.ARCHITECTURE_REFERENCE.md`"
 
-3. **Does this need standalone test files?** (outside workflow context)
-   - Examples: Testing utilities, domain models, repositories, validators
-   - If YES → Include in task: "Read `project-docs/context/patterns/test-creation.md` (Pattern B) and create test file for {Component}"
+3. **Does this need tests?**
+   - If YES → Include in task: "Follow 'Testing' section in `README.ARCHITECTURE_REFERENCE.md` (SetupTestFor<T>, Mocker, or Fakes as appropriate)"
 
-These pattern docs provide scaffolding templates. AI reads them during implementation and executes in root session (maintains full context).
+The Architecture Reference doc provides creation patterns and scaffolding guidance. AI reads it during implementation and executes in root session (maintains full context).
 
 **Structure**:
 ```markdown

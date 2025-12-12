@@ -1,7 +1,20 @@
 # Phase 2 Implementation Plan: Todos Component-First Conversion
 
+> **⚠️ HISTORICAL DOCUMENT**
+>
+> This plan was created during the component-first architecture experiment (December 2025).
+> Code examples and terminology may not reflect current implementation.
+>
+> **Terminology changes since this document:**
+> - `IServerComponent` → `IView`
+> - `ComponentId` → `ViewId`
+> - `DataDependencies.From<Provider, Context>()` → `DataDependencies.From<Context>()`
+> - `data-component` attribute → `data-view`
+>
+> **For current patterns, see:** `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+
 **Created:** 2025-12-02
-**Status:** Ready for Implementation
+**Status:** Completed (Historical)
 **Experiment:** component-first-architecture.md
 **Phase:** 2 of 4
 
