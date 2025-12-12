@@ -2,9 +2,9 @@ using FluentValidation.Results;
 
 namespace PagePlay.Site.Infrastructure.Core.Application;
 
-public abstract class WorkflowBase<TRequest, TResponse>
-    where TRequest : IWorkflowRequest
-    where TResponse : IWorkflowResponse
+public abstract class PerformerBase<TRequest, TResponse>
+    where TRequest : IPerformerRequest
+    where TResponse : IPerformerResponse
 {
     protected IApplicationResult<TResponse> Fail(ValidationResult validationResult) =>
         ApplicationResult<TResponse>.Fail(validationResult);
