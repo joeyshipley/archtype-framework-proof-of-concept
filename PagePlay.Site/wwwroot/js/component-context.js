@@ -1,14 +1,14 @@
-// HTMX extension that sends component context with each request
+// HTMX extension that sends view context with each request
 htmx.defineExtension('component-context', {
     onEvent: function(name, evt) {
         if (name === 'htmx:configRequest') {
-            // Find all components on page
-            const components = document.querySelectorAll('[data-component]');
+            // Find all views on page
+            const views = document.querySelectorAll('[data-view]');
 
             // Build context array
-            const context = Array.from(components).map(el => ({
+            const context = Array.from(views).map(el => ({
                 id: el.id,
-                componentType: el.dataset.component,
+                viewType: el.dataset.view,
                 domain: el.dataset.domain
             }));
 
