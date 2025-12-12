@@ -11,14 +11,14 @@ public class AuthenticateInteraction(
     ICookieManager cookieManager,
     IResponseManager responseManager,
     IFrameworkOrchestrator framework
-) : PageInteractionBase<LoginWorkflowRequest, LoginWorkflowResponse, ILoginPageView>(page, framework),
+) : PageInteractionBase<LoginRequest, LoginResponse, ILoginPageView>(page, framework),
     ILoginPageInteraction
 {
     protected override string RouteBase => LoginPageEndpoints.PAGE_ROUTE;
     protected override string RouteAction => "authenticate";
     protected override bool RequireAuth => false;
 
-    protected override Task<IResult> OnSuccess(LoginWorkflowResponse response)
+    protected override Task<IResult> OnSuccess(LoginResponse response)
     {
         cookieManager.SetAuthCookie(response.Token);
         responseManager.SetRedirectHeader("/todos");

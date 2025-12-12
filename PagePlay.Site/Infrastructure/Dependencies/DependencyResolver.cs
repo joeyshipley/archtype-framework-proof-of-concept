@@ -7,10 +7,10 @@ using PagePlay.Site.Application.StyleTest.GetRandomNumber;
 using PagePlay.Site.Application.Todos.Perspectives;
 using PagePlay.Site.Application.Todos.Perspectives.Analytics;
 using PagePlay.Site.Application.Todos.Perspectives.List;
-using PagePlay.Site.Application.Todos.Workflows.CreateTodo;
-using PagePlay.Site.Application.Todos.Workflows.DeleteTodo;
-using PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
-using PagePlay.Site.Application.Todos.Workflows.UpdateTodo;
+using PagePlay.Site.Application.Todos.Performers.CreateTodo;
+using PagePlay.Site.Application.Todos.Performers.DeleteTodo;
+using PagePlay.Site.Application.Todos.Performers.ToggleTodo;
+using PagePlay.Site.Application.Todos.Performers.UpdateTodo;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Data;
 using PagePlay.Site.Infrastructure.Data.Repositories;
@@ -39,7 +39,7 @@ public static class DependencyResolver
         bindInfrastructure(services);
         bindData(services);
         bindValidation(services);
-        bindWorkflows(services);
+        bindPerformers(services);
         bindClient(services);
     }
 
@@ -93,38 +93,38 @@ public static class DependencyResolver
 
     private static void bindValidation(IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining<IWorkflowRequest>();
+        services.AddValidatorsFromAssemblyContaining<IPerformerRequest>();
     }
 
     #endregion
 
-    #region Workflows
+    #region Performers
 
-    private static void bindWorkflows(IServiceCollection services)
+    private static void bindPerformers(IServiceCollection services)
     {
-        bindAccountWorkflows(services);
-        bindStyleTestWorkflows(services);
-        bindTodoWorkflows(services);
+        bindAccountPerformers(services);
+        bindStyleTestPerformers(services);
+        bindTodoPerformers(services);
     }
 
-    private static void bindAccountWorkflows(IServiceCollection services)
+    private static void bindAccountPerformers(IServiceCollection services)
     {
-        services.AddScoped<IWorkflow<LoginWorkflowRequest, LoginWorkflowResponse>, LoginWorkflow>();
-        services.AddScoped<IWorkflow<RegisterWorkflowRequest, RegisterWorkflowResponse>, RegisterWorkflow>();
-        services.AddScoped<IWorkflow<ViewProfileWorkflowRequest, ViewProfileWorkflowResponse>, ViewProfileWorkflow>();
+        services.AddScoped<IPerformer<LoginRequest, LoginResponse>, LoginPerformer>();
+        services.AddScoped<IPerformer<RegisterRequest, RegisterResponse>, RegisterPerformer>();
+        services.AddScoped<IPerformer<ViewProfileRequest, ViewProfileResponse>, ViewProfilePerformer>();
     }
 
-    private static void bindStyleTestWorkflows(IServiceCollection services)
+    private static void bindStyleTestPerformers(IServiceCollection services)
     {
-        services.AddScoped<IWorkflow<GetRandomNumberWorkflowRequest, GetRandomNumberWorkflowResponse>, GetRandomNumberWorkflow>();
+        services.AddScoped<IPerformer<GetRandomNumberRequest, GetRandomNumberResponse>, GetRandomNumberPerformer>();
     }
 
-    private static void bindTodoWorkflows(IServiceCollection services)
+    private static void bindTodoPerformers(IServiceCollection services)
     {
-        services.AddScoped<IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>, CreateTodoWorkflow>();
-        services.AddScoped<IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>, DeleteTodoWorkflow>();
-        services.AddScoped<IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>, ToggleTodoWorkflow>();
-        services.AddScoped<IWorkflow<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>, UpdateTodoWorkflow>();
+        services.AddScoped<IPerformer<CreateTodoRequest, CreateTodoResponse>, CreateTodoPerformer>();
+        services.AddScoped<IPerformer<DeleteTodoRequest, DeleteTodoResponse>, DeleteTodoPerformer>();
+        services.AddScoped<IPerformer<ToggleTodoRequest, ToggleTodoResponse>, ToggleTodoPerformer>();
+        services.AddScoped<IPerformer<UpdateTodoRequest, UpdateTodoResponse>, UpdateTodoPerformer>();
     }
 
     #endregion

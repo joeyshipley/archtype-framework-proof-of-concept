@@ -1,6 +1,6 @@
 using PagePlay.Site.Application.Todos.Perspectives;
 using PagePlay.Site.Application.Todos.Perspectives.List;
-using PagePlay.Site.Application.Todos.Workflows.DeleteTodo;
+using PagePlay.Site.Application.Todos.Performers.DeleteTodo;
 using PagePlay.Site.Infrastructure.Core.Application;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
@@ -12,14 +12,14 @@ namespace PagePlay.Site.Pages.Todos.Interactions;
 public class DeleteTodoInteraction(
     ITodosPageView page,
     IFrameworkOrchestrator framework
-) : PageInteractionBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse, ITodosPageView>(page, framework),
+) : PageInteractionBase<DeleteTodoRequest, DeleteTodoResponse, ITodosPageView>(page, framework),
       ITodosPageInteraction
 {
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
     protected override string RouteAction => "delete";
     protected override DataMutations Mutates => DataMutations.For(TodosListDomainView.DomainName);
 
-    protected override async Task<IResult> OnSuccess(DeleteTodoWorkflowResponse response)
+    protected override async Task<IResult> OnSuccess(DeleteTodoResponse response)
     {
         // Pure framework OOB - component updates automatically based on Mutates
         return await BuildOobResult();

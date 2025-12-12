@@ -7,13 +7,13 @@ using PagePlay.Site.Infrastructure.Web.Routing;
 namespace PagePlay.Site.Infrastructure.Web.Pages;
 
 /// <summary>
-/// Base class for page interactions that handles common boilerplate for workflow execution,
+/// Base class for page interactions that handles common boilerplate for performer execution,
 /// routing, authentication, and error handling. Junior developers only need to specify
 /// route information and success/error rendering logic.
 /// </summary>
 public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoint
-    where TRequest : IWorkflowRequest
-    where TResponse : IWorkflowResponse
+    where TRequest : IPerformerRequest
+    where TResponse : IPerformerResponse
     where TView : class
 {
     protected readonly TView Page;
@@ -105,13 +105,13 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
 
     private async Task<IResult> Handle(
         [FromForm] TRequest request,
-        IWorkflow<TRequest, TResponse> workflow,
+        IPerformer<TRequest, TResponse> performer,
         HttpContext httpContext
     )
     {
         HttpContext = httpContext;
 
-        var result = await workflow.Perform(request);
+        var result = await performer.Perform(request);
 
         return result.Success
             ? await OnSuccess(result.Model)

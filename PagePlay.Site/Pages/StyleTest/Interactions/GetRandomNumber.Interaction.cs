@@ -8,14 +8,14 @@ namespace PagePlay.Site.Pages.StyleTest.Interactions;
 public class GetRandomNumberInteraction(
     IStyleTestPageView page,
     IFrameworkOrchestrator framework
-) : PageInteractionBase<GetRandomNumberWorkflowRequest, GetRandomNumberWorkflowResponse, IStyleTestPageView>(page, framework),
+) : PageInteractionBase<GetRandomNumberRequest, GetRandomNumberResponse, IStyleTestPageView>(page, framework),
     IStyleTestPageInteraction
 {
     protected override string RouteBase => StyleTestPageEndpoints.PAGE_ROUTE;
     protected override string RouteAction => "random";
     protected override bool RequireAuth => false;
 
-    protected override Task<IResult> OnSuccess(GetRandomNumberWorkflowResponse response)
+    protected override Task<IResult> OnSuccess(GetRandomNumberResponse response)
     {
         // OOB-only pattern - update result section with random number
         var resultHtml = Page.RenderRandomNumber(response.Number);

@@ -1,5 +1,5 @@
 using PagePlay.Site.Application.Todos.Perspectives.List;
-using PagePlay.Site.Application.Todos.Workflows.CreateTodo;
+using PagePlay.Site.Application.Todos.Performers.CreateTodo;
 using PagePlay.Site.Infrastructure.Web.Pages;
 using PagePlay.Site.Infrastructure.Web.Framework;
 using PagePlay.Site.Infrastructure.Web.Mutations;
@@ -10,7 +10,7 @@ namespace PagePlay.Site.Pages.Todos.Interactions;
 public class CreateTodoInteraction(
     ITodosPageView page,
     IFrameworkOrchestrator _framework
-) : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page, _framework),
+) : PageInteractionBase<CreateTodoRequest, CreateTodoResponse, ITodosPageView>(page, _framework),
       ITodosPageInteraction
 {
     protected override string RouteBase => TodosPageEndpoints.PAGE_ROUTE;
@@ -18,7 +18,7 @@ public class CreateTodoInteraction(
 
     protected override DataMutations Mutates => DataMutations.For(TodosListDomainView.DomainName);
 
-    protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+    protected override async Task<IResult> OnSuccess(CreateTodoResponse response)
     {
         // Framework OOB updates component, plus manual form reset OOB
         var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
