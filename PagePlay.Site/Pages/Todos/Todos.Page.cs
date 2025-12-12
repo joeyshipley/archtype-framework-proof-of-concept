@@ -7,7 +7,7 @@ using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Todos;
 
-public interface ITodosPageView
+public interface ITodosPageView : IView
 {
     string RenderCreateForm();
     string RenderTodoItem(TodoListEntry todo);
@@ -16,7 +16,7 @@ public interface ITodosPageView
     string RenderDeleteErrorWithNotification(long todoId, string error);
 }
 
-public class TodosPage(IHtmlRenderer _renderer) : IView, ITodosPageView
+public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
 {
     public string ViewId => "todo-page";
 

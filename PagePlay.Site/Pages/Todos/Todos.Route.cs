@@ -12,7 +12,7 @@ public interface ITodosPageInteraction : IEndpoint {}
 
 public class TodosPageEndpoints(
     IPageLayout _layout,
-    TodosPage _page,
+    ITodosPageView _page,
     IFrameworkOrchestrator _framework,
     IEnumerable<ITodosPageInteraction> _interactions,
     ILogger<TodosPageEndpoints> _logger

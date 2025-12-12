@@ -149,16 +149,10 @@ public static class DependencyResolver
 
     private static void bindPages(IServiceCollection services)
     {
-        // Interface registrations
         services.AddScoped<IHomePageView, HomePage>();
         services.AddScoped<ILoginPageView, LoginPage>();
         services.AddScoped<IStyleTestPageView, StyleTestPage>();
         services.AddScoped<ITodosPageView, TodosPage>();
-
-        // Concrete registrations (needed by page endpoints)
-        services.AddScoped<LoginPage>();
-        services.AddScoped<StyleTestPage>();
-        services.AddScoped<TodosPage>();
     }
 
     private static void bindPageEndpoints(IServiceCollection services)

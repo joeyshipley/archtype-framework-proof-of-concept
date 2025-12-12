@@ -9,7 +9,7 @@ public interface IStyleTestPageInteraction : IEndpoint {}
 
 public class StyleTestPageEndpoints(
     IPageLayout _layout,
-    StyleTestPage _page,
+    IStyleTestPageView _page,
     IFrameworkOrchestrator _framework,
     IEnumerable<IStyleTestPageInteraction> _interactions
 ) : IClientEndpoint

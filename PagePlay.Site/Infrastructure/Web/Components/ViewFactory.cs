@@ -27,7 +27,9 @@ public class ViewFactory(IServiceScopeFactory _serviceScopeFactory) : IViewFacto
             .Where(t => t.IsClass && !t.IsAbstract && typeof(IView).IsAssignableFrom(t))
             .ToDictionary(
                 t => t.Name, // Use class name directly: "TodosPage", "WelcomeWidget"
-                t => t
+                t => t.GetInterfaces()
+                      .FirstOrDefault(i => i != typeof(IView) && typeof(IView).IsAssignableFrom(i))
+                      ?? t // Fallback to concrete type if no specific interface
             );
     }
 

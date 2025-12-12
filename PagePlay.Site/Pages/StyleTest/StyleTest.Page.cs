@@ -5,13 +5,13 @@ using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.StyleTest;
 
-public interface IStyleTestPageView
+public interface IStyleTestPageView : IView
 {
     string RenderRandomNumber(int number);
     string RenderError(string message);
 }
 
-public class StyleTestPage(IHtmlRenderer _renderer) : IView, IStyleTestPageView
+public class StyleTestPage(IHtmlRenderer _renderer) : IStyleTestPageView
 {
     public string ViewId => "style-test-page";
 

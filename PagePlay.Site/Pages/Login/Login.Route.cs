@@ -9,7 +9,7 @@ public interface ILoginPageInteraction : IEndpoint {}
 
 public class LoginPageEndpoints(
     IPageLayout _layout,
-    LoginPage _page,
+    ILoginPageView _page,
     IFrameworkOrchestrator _framework,
     IEnumerable<ILoginPageInteraction> _interactions
 ) : IClientEndpoint

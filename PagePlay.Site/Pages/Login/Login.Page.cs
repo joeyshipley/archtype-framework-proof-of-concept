@@ -4,14 +4,14 @@ using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Login;
 
-public interface ILoginPageView
+public interface ILoginPageView : IView
 {
     string RenderLoginForm();
     string RenderErrorNotification(string error);
     string RenderSuccessNotification(string message);
 }
 
-public class LoginPage(IHtmlRenderer _renderer) : IView, ILoginPageView
+public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
 {
     public string ViewId => "login-page";
 
