@@ -11,13 +11,13 @@ using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.Register;
 
-public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
+public class RegisterPerformerUnitTests : SetupUnitTestFor<RegisterPerformer>
 {
     [Fact]
     public async Task Perform_WithValidRequest_ReturnsSuccess()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "test@example.com",
             Password = "Password123!",
@@ -25,7 +25,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -80,7 +80,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_WithInvalidRequest_ReturnsValidationErrors()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "invalid-email",
             Password = "short",
@@ -95,7 +95,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -124,7 +124,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_WithExistingEmail_ReturnsError()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "existing@example.com",
             Password = "Password123!",
@@ -132,7 +132,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -164,7 +164,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_WithEmptyEmail_ReturnsValidationError()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "",
             Password = "Password123!",
@@ -177,7 +177,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -194,7 +194,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_WithEmptyPassword_ReturnsValidationError()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "test@example.com",
             Password = "",
@@ -207,7 +207,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -224,7 +224,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_PasswordsDoNotMatch_ReturnsValidationError()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "test@example.com",
             Password = "Password123!",
@@ -237,7 +237,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -254,7 +254,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
     public async Task Perform_HashesPasswordCorrectly()
     {
         // Arrange
-        var request = new RegisterWorkflowRequest
+        var request = new RegisterRequest
         {
             Email = "test@example.com",
             Password = "MySecurePassword123!",
@@ -264,7 +264,7 @@ public class RegisterWorkflowUnitTests : SetupUnitTestFor<RegisterWorkflow>
         var hashedPassword = "securely_hashed_password_value";
 
         Mocker
-            .GetSubstituteFor<IValidator<RegisterWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<RegisterRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 

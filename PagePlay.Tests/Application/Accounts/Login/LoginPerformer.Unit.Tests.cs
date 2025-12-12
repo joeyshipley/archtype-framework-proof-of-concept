@@ -11,13 +11,13 @@ using PagePlay.Tests.Infrastructure.TestBases;
 
 namespace PagePlay.Tests.Application.Accounts.Login;
 
-public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
+public class LoginPerformerUnitTests : SetupUnitTestFor<LoginPerformer>
 {
     [Fact]
     public async Task Perform_WithValidCredentials_ReturnsSuccess()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "test@example.com",
             Password = "Password123!"
@@ -31,7 +31,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -79,7 +79,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_WithInvalidRequest_ReturnsValidationErrors()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "invalid-email",
             Password = ""
@@ -92,7 +92,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -120,14 +120,14 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_WithNonExistentEmail_ReturnsError()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "nonexistent@example.com",
             Password = "Password123!"
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -159,7 +159,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_WithIncorrectPassword_ReturnsError()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "test@example.com",
             Password = "WrongPassword123!"
@@ -173,7 +173,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -210,7 +210,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_WithEmptyEmail_ReturnsValidationError()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "",
             Password = "Password123!"
@@ -222,7 +222,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -244,7 +244,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_WithEmptyPassword_ReturnsValidationError()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "test@example.com",
             Password = ""
@@ -256,7 +256,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult(validationFailures));
 
@@ -278,7 +278,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_VerifiesPasswordWithCorrectHash()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "test@example.com",
             Password = "MySecurePassword123!"
@@ -293,7 +293,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         };
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -329,7 +329,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
     public async Task Perform_GeneratesJwtTokenOnSuccess()
     {
         // Arrange
-        var request = new LoginWorkflowRequest
+        var request = new LoginRequest
         {
             Email = "user@example.com",
             Password = "SecurePassword123!"
@@ -345,7 +345,7 @@ public class LoginWorkflowUnitTests : SetupUnitTestFor<LoginWorkflow>
         var expectedToken = "expected_jwt_token_value";
 
         Mocker
-            .GetSubstituteFor<IValidator<LoginWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<LoginRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
