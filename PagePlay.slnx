@@ -4,6 +4,7 @@
     <File Path="README.md" />
     <File Path="docker-compose.yml" />
   </Folder>
+  <Project Path="ArchType.Framework\ArchType.Framework.csproj" Type="Classic C#" />
   <Project Path="PagePlay.Site/PagePlay.Site.csproj" />
   <Project Path="PagePlay.Tests/PagePlay.Tests.csproj" />
 </Solution>
