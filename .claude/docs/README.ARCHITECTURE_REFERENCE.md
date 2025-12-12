@@ -48,7 +48,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
 ### IDataProvider (Query-Side Data)
 **File:** `Infrastructure/Web/Data/IDataProvider.cs`
 
-Providers fetch domain data for views. They implement the query side of CQRS.
+Providers fetch domain data for views. They handle the read side (getting data to render).
 
 ```csharp
 public interface IDataProvider {}  // Marker for DI discovery
@@ -206,7 +206,7 @@ Form Submit → POST /interaction/{route}/{action}
     ├─→ PageInteractionBase.Handle()
     │   │
     │   ├─→ workflow.Perform(request)
-    │   │   └─→ Returns metadata only (CQRS - no query data)
+    │   │   └─→ Returns metadata only (no query data)
     │   │
     │   └─→ OnSuccess(response) or OnError(errors)
     │       │
@@ -280,6 +280,142 @@ return await BuildOobResultWith(formReset);
 
 // Manual OOB only (e.g., error notification, no component updates)
 return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
+```
+
+---
+
+## Read vs Write: Choosing the Right Pattern
+
+### Decision Tree
+
+```
+Is this operation changing data?
+├─ YES → Create a Workflow
+│   ├─ Creating new records? → CreateX workflow
+│   ├─ Updating existing records? → UpdateX workflow
+│   ├─ Deleting records? → DeleteX workflow
+│   └─ Complex business operation? → PerformX workflow
+│
+└─ NO → Use Provider + DomainView
+    ├─ New data shape needed? → Create new DomainView + Provider
+    ├─ Existing provider has data? → Reuse existing DomainView
+    └─ Need different perspective? → Create new Perspective folder
+```
+
+**Simple rule:** Does it change data? → Workflow. Does it just fetch data? → Provider.
+
+---
+
+### Why This Separation Matters
+
+**Providers (reads)** fetch data for rendering. They:
+- Are named after data contexts (nouns: `TodosList`, `UserProfile`)
+- Return strongly-typed DomainView objects
+- Have no side effects, no mutations
+- Can be loaded in parallel by the framework
+
+**Workflows (writes)** perform business operations. They:
+- Are named after actions (verbs: `CreateTodo`, `UpdateProfile`)
+- Contain validation, authorization, business logic
+- Mutate database state
+- Return success/failure metadata only (not query data)
+
+---
+
+### Anti-Patterns
+
+#### ❌ "List" or "Get" Workflows
+
+```csharp
+// ❌ Wrong - reads don't belong in workflows
+public class ListTodosWorkflow : IWorkflow<ListTodosRequest, ListTodosResponse>
+{
+    public async Task<IApplicationResult<ListTodosResponse>> Perform(...)
+    {
+        var todos = await _repository.List(...);
+        return Succeed(new ListTodosResponse { Todos = todos });
+    }
+}
+
+// ✅ Correct - use Provider
+public class TodosListProvider : IDataProvider<TodosListDomainView>
+{
+    public async Task<TodosListDomainView> FetchTyped(long userId)
+    {
+        var todos = await _repository.List(Todo.ByUserId(userId));
+        return new TodosListDomainView { List = todos.Select(...).ToList() };
+    }
+}
+```
+
+#### ❌ Mutations in Providers
+
+```csharp
+// ❌ Wrong - providers must be read-only
+public async Task<TodosListDomainView> FetchTyped(long userId)
+{
+    var todos = await _repository.List(...);
+    foreach (var old in todos.Where(t => t.IsOld()))
+        await _repository.Delete(old);  // NO! Side effect in read
+    return new TodosListDomainView { ... };
+}
+
+// ✅ Correct - mutations go in workflows
+public class ArchiveOldTodosWorkflow : IWorkflow<...>
+{
+    public async Task<IApplicationResult<...>> Perform(...)
+    {
+        var oldTodos = await findOldTodos();
+        await archiveTodos(oldTodos);
+        return Succeed(...);
+    }
+}
+```
+
+#### ❌ Workflows Returning Query Data
+
+```csharp
+// ❌ Wrong - workflow returns data for display
+public async Task<IApplicationResult<CreateTodoResponse>> Perform(...)
+{
+    var todo = await createAndSave(request);
+    var allTodos = await _repository.List(...);  // NO! Fetching for display
+    return Succeed(new CreateTodoResponse {
+        CreatedTodo = todo,
+        AllTodos = allTodos  // Wrong - query data in command response
+    });
+}
+
+// ✅ Correct - workflow returns metadata only, OOB handles refresh
+public async Task<IApplicationResult<CreateTodoResponse>> Perform(...)
+{
+    var todo = await createAndSave(request);
+    return Succeed(new CreateTodoResponse { CreatedId = todo.Id });
+}
+// Framework re-fetches affected DomainViews via DataMutations declaration
+```
+
+---
+
+### When to Create New vs Extend Existing
+
+**Create new DomainView + Provider when:**
+- Data represents different conceptual context (Analytics vs TodosList)
+- Data comes from different aggregate root
+- Different access patterns or caching needs
+
+**Reuse existing DomainView when:**
+- Multiple views need the same data shape
+- Data is already being fetched for the page
+
+```
+Application/Todos/Perspectives/
+├── List/                    # Main todo list perspective
+│   ├── TodosList.DomainView.cs
+│   └── TodosList.Provider.cs
+└── Analytics/               # Separate analytics perspective
+    ├── TodoAnalytics.DomainView.cs
+    └── TodoAnalytics.Provider.cs
 ```
 
 ---

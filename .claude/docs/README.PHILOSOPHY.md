@@ -406,7 +406,7 @@ public class RegisterWorkflow(
 
 ### Read vs Write Separation
 
-Clear separation following CQRS principles:
+Clear separation between performing tasks and getting data to render:
 
 **DomainViews + Providers handle all reads (queries):**
 - Used by pages for initial data fetching

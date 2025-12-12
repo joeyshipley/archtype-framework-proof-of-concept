@@ -38,7 +38,7 @@ Many docs contain code examples and patterns that no longer match reality.
 | 1 | Create "Source of Truth" Reference | ✅ Complete |
 | 2 | Core Philosophy Docs | ✅ Complete |
 | 3 | Pattern Template Docs | ✅ Complete |
-| 4 | Workflow/CQRS Docs | ⏳ Pending |
+| 4 | Read/Write Pattern Docs | ✅ Complete |
 | 5 | UI/Styling Docs | ⏳ Pending |
 | 6 | Historical Experiment Cleanup | ⏳ Pending |
 | 7 | Final Review & Validation | ⏳ Pending |
@@ -292,20 +292,20 @@ Creation docs now reference the architecture doc for page features, keeping them
 
 ---
 
-## Phase 4: Workflow/CQRS Docs
+## Phase 4: Read/Write Pattern Docs
 
-**Goal:** Update the read/write pattern documentation to reflect current CQRS implementation.
+**Goal:** Update the read/write pattern documentation to reflect current implementation.
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ### Target Files
 - `.claude/docs/workflow/read-write-pattern.md`
 
 ### Research Tasks
-- [ ] Audit actual workflow implementations for current patterns
-- [ ] Audit actual DomainView provider implementations
-- [ ] Document the interaction layer (PageInteractionBase)
-- [ ] Document DataMutations and OOB flow
+- [x] Audit actual workflow implementations for current patterns
+- [x] Audit actual DomainView provider implementations
+- [x] Document the interaction layer (PageInteractionBase)
+- [x] Document DataMutations and OOB flow
 
 ### Known Issues (from initial scan)
 - Uses `IDataDomain` (should be `IDataProvider`)
@@ -314,15 +314,30 @@ Creation docs now reference the architecture doc for page features, keeping them
 - Shows workflows returning query data (should return metadata only)
 - Uses `DataDependencies.From<Provider, Context>()` (should be `From<Context>()`)
 - Missing PageInteractionBase entirely
+- Uses "CQRS" terminology throughout
 
 ### Research Findings
-<!-- Fill in during research phase -->
+- Extensive terminology updates needed (IDataDomain → IDataProvider, etc.)
+- All code examples used old API patterns
+- Significant overlap with Architecture Reference doc
+- CQRS framing could attract unwanted "corrections" from pattern purists
 
 ### Plan Adjustments
-<!-- Update plan based on research -->
+**Decision: Merge into Architecture Reference, delete standalone doc**
+
+Rather than updating the standalone doc, consolidated the valuable content (decision tree, anti-patterns, guidance) into `README.ARCHITECTURE_REFERENCE.md` and deleted the original file. This:
+- Reduces duplication
+- Creates single source of truth
+- Removes CQRS terminology in favor of "read vs write" framing
 
 ### Completion Notes
-<!-- Document what was done -->
+- Added "Read vs Write: Choosing the Right Pattern" section to `README.ARCHITECTURE_REFERENCE.md` (~120 lines)
+  - Decision tree for Workflow vs Provider choice
+  - "Why This Separation Matters" explanation (no CQRS jargon)
+  - Three anti-pattern examples with correct alternatives
+  - "When to Create New vs Extend Existing" guidance
+- Deleted `.claude/docs/workflow/read-write-pattern.md`
+- No pointer files existed for this doc
 
 ---
 
@@ -482,6 +497,18 @@ Creation docs now reference the architecture doc for page features, keeping them
 - Updated pointer files to reference architecture doc
 - Architecture doc is now the single source for all creation/testing/auth patterns
 
+### Session 5 (2025-12-12)
+- Completed Phase 4: Read/Write Pattern Docs
+- Analyzed read-write-pattern.md - extensive terminology and API updates needed
+- Decision: Merge into Architecture Reference instead of updating standalone doc
+- Key change: Removed all "CQRS" terminology per user request (avoid pattern purists)
+- Added "Read vs Write: Choosing the Right Pattern" section (~120 lines):
+  - Decision tree for Workflow vs Provider
+  - "Why This Separation Matters" (no jargon)
+  - Three anti-pattern examples
+  - "When to Create New vs Extend" guidance
+- Deleted read-write-pattern.md
+
 ---
 
 ## Open Questions
@@ -493,4 +520,4 @@ Creation docs now reference the architecture doc for page features, keeping them
 
 ---
 
-**Last Updated:** 2025-12-12 (Phase 3 Complete)
+**Last Updated:** 2025-12-12 (Phase 4 Complete)
