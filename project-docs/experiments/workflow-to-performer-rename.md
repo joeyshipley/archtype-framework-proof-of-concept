@@ -14,8 +14,8 @@
 | Phase 2: Application Layer | ✅ Complete | - | Performers + contracts renamed |
 | Phase 3: Infrastructure References | ✅ Complete | - | PageInteractionBase, DependencyResolver, Interactions updated |
 | Phase 4: Tests | ✅ Complete | - | Test files renamed, all 19 tests pass |
-| Phase 5: Documentation | 🔄 Next | - | - |
-| Phase 6: Verification | ⏳ Pending | - | - |
+| Phase 5: Documentation | ✅ Complete | - | Core docs, historical notes, considerations updated |
+| Phase 6: Verification | 🔄 Next | - | - |
 
 ---
 
@@ -246,24 +246,28 @@ RegisterWorkflow.Unit.Tests.cs → RegisterPerformer.Unit.Tests.cs ✅
 
 ---
 
-### Phase 5: Documentation
+### Phase 5: Documentation ✅
 
 Update all documentation to reflect new terminology.
 
-**5a: Core docs (active, must update)**
-- `.claude/docs/README.md`
-- `.claude/docs/README.PHILOSOPHY.md`
-- `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
+**5a: Core docs (active, must update)** ✅
+- `.claude/docs/README.md` - No changes needed (no Workflow references)
+- `.claude/docs/README.PHILOSOPHY.md` - Updated all code examples and terminology
+- `.claude/docs/README.ARCHITECTURE_REFERENCE.md` - Updated all code examples and terminology
 
-**5b: Workflow docs (rename references, these are about process not the Workflow type)**
-- `.claude/docs/workflow/*.md` - Review each, update code examples
+**5b: Workflow docs (rename references, these are about process not the Workflow type)** ✅
+- `.claude/docs/workflow/*.md` - No code pattern references found (these are about development process)
 
-**5c: Historical docs (add note only)**
-- `project-docs/experiments/completed/*.md` - Add historical note header, don't rewrite
+**5c: Historical docs (add note only)** ✅
+- `project-docs/experiments/completed/loader-workflow-separation.md` - Added terminology note
+- `project-docs/experiments/completed/component-first-architecture.md` - Added terminology note
+- `project-docs/experiments/completed/domain-data-manifests.md` - Added terminology note
 
-**5d: Other docs**
-- `project-docs/plans/*.md`
-- `project-docs/context/considerations/*.md`
+**5d: Other docs** ✅
+- `project-docs/plans/phase-2-todos-component-conversion.md` - Added terminology note
+- `project-docs/context/considerations/input-validation-sanitization.md` - Updated to PerformerRequest
+- `project-docs/context/considerations/sql-injection-protection.md` - Updated to Performer Pattern
+- `project-docs/context/considerations/file-upload-security.md` - Updated to Performer Pattern
 
 ---
 

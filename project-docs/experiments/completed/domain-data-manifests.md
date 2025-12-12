@@ -15,6 +15,7 @@
 > - `IDataDomain` renamed to `IDataProvider<T>`
 > - Domain naming now uses `DomainView.DomainName` constant (not derived from type name)
 > - Data loading uses fluent API: `With<T>().Load()` (see fluent-domain-loading experiment)
+> - "Workflows" renamed to "Performers" (Dec 2025) - `IWorkflow` → `IPerformer`, `.Workflow.cs` → `.Performer.cs`
 >
 > **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
 

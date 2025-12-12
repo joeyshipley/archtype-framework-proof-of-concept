@@ -9,7 +9,9 @@
 > - **Workflows handle all writes** - Create, Update, Delete operations
 > - No "list workflows" - reads go through DataLoader with Providers
 >
-> **Terminology note:** "DataDomains" were renamed to "DomainViews + Providers" in the current architecture.
+> **Terminology notes:**
+> - "DataDomains" were renamed to "DomainViews + Providers" in the current architecture.
+> - "Workflows" were renamed to "Performers" (Dec 2025) - `IWorkflow` → `IPerformer`, `.Workflow.cs` → `.Performer.cs`
 >
 > **Current architecture:** See `.claude/docs/README.ARCHITECTURE_REFERENCE.md` section "Read vs Write: Choosing the Right Pattern"
 

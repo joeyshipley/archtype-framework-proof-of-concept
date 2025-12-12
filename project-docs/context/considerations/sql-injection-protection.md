@@ -153,7 +153,7 @@ REVOKE CREATE ON SCHEMA public FROM pageplay_app;
 - No ad-hoc SQL scattered in codebase
 - Easy to audit and test
 
-**Workflow Pattern Benefits:**
+**Performer Pattern Benefits:**
 - Input validation at boundary
 - Type-safe requests
 - Prevents raw user input reaching database layer

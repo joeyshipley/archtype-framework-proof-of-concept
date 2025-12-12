@@ -129,12 +129,12 @@ public abstract record ElementBase : IElement, IEnumerable
 ### PageInteractionBase (Command Handler)
 **File:** `Infrastructure/Web/Pages/PageInteractionBase.cs`
 
-Base class for handling user interactions (commands). Handles workflow execution, routing, and OOB orchestration.
+Base class for handling user interactions (commands). Handles performer execution, routing, and OOB orchestration.
 
 ```csharp
 public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoint
-    where TRequest : IWorkflowRequest
-    where TResponse : IWorkflowResponse
+    where TRequest : IPerformerRequest
+    where TResponse : IPerformerResponse
     where TView : class
 {
     protected abstract string RouteBase { get; }     // e.g., "todos"
@@ -154,13 +154,13 @@ public abstract class PageInteractionBase<TRequest, TResponse, TView> : IEndpoin
 **Example implementation:**
 ```csharp
 public class CreateTodoInteraction(ITodosPageView page, IFrameworkOrchestrator _framework)
-    : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page, _framework)
+    : PageInteractionBase<CreateTodoRequest, CreateTodoResponse, ITodosPageView>(page, _framework)
 {
     protected override string RouteBase => "todos";
     protected override string RouteAction => "create";
     protected override DataMutations Mutates => DataMutations.For(TodosListDomainView.DomainName);
 
-    protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+    protected override async Task<IResult> OnSuccess(CreateTodoResponse response)
     {
         var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
         return await BuildOobResultWith(formReset);
@@ -205,7 +205,7 @@ Form Submit → POST /interaction/{route}/{action}
     │
     ├─→ PageInteractionBase.Handle()
     │   │
-    │   ├─→ workflow.Perform(request)
+    │   ├─→ performer.Perform(request)
     │   │   └─→ Returns metadata only (no query data)
     │   │
     │   └─→ OnSuccess(response) or OnError(errors)
@@ -290,11 +290,11 @@ return BuildOobOnly(HtmlFragment.InjectOob(errorHtml));
 
 ```
 Is this operation changing data?
-├─ YES → Create a Workflow
-│   ├─ Creating new records? → CreateX workflow
-│   ├─ Updating existing records? → UpdateX workflow
-│   ├─ Deleting records? → DeleteX workflow
-│   └─ Complex business operation? → PerformX workflow
+├─ YES → Create a Performer
+│   ├─ Creating new records? → CreateX performer
+│   ├─ Updating existing records? → UpdateX performer
+│   ├─ Deleting records? → DeleteX performer
+│   └─ Complex business operation? → PerformX performer
 │
 └─ NO → Use Provider + DomainView
     ├─ New data shape needed? → Create new DomainView + Provider
@@ -302,7 +302,7 @@ Is this operation changing data?
     └─ Need different perspective? → Create new Perspective folder
 ```
 
-**Simple rule:** Does it change data? → Workflow. Does it just fetch data? → Provider.
+**Simple rule:** Does it change data? → Performer. Does it just fetch data? → Provider.
 
 ---
 
@@ -314,7 +314,7 @@ Is this operation changing data?
 - Have no side effects, no mutations
 - Can be loaded in parallel by the framework
 
-**Workflows (writes)** perform business operations. They:
+**Performers (writes)** perform business operations. They:
 - Are named after actions (verbs: `CreateTodo`, `UpdateProfile`)
 - Contain validation, authorization, business logic
 - Mutate database state
@@ -324,11 +324,11 @@ Is this operation changing data?
 
 ### Anti-Patterns
 
-#### ❌ "List" or "Get" Workflows
+#### ❌ "List" or "Get" Performers
 
 ```csharp
-// ❌ Wrong - reads don't belong in workflows
-public class ListTodosWorkflow : IWorkflow<ListTodosRequest, ListTodosResponse>
+// ❌ Wrong - reads don't belong in performers
+public class ListTodosPerformer : IPerformer<ListTodosRequest, ListTodosResponse>
 {
     public async Task<IApplicationResult<ListTodosResponse>> Perform(...)
     {
@@ -360,8 +360,8 @@ public async Task<TodosListDomainView> FetchTyped(long userId)
     return new TodosListDomainView { ... };
 }
 
-// ✅ Correct - mutations go in workflows
-public class ArchiveOldTodosWorkflow : IWorkflow<...>
+// ✅ Correct - mutations go in performers
+public class ArchiveOldTodosPerformer : IPerformer<...>
 {
     public async Task<IApplicationResult<...>> Perform(...)
     {
@@ -372,10 +372,10 @@ public class ArchiveOldTodosWorkflow : IWorkflow<...>
 }
 ```
 
-#### ❌ Workflows Returning Query Data
+#### ❌ Performers Returning Query Data
 
 ```csharp
-// ❌ Wrong - workflow returns data for display
+// ❌ Wrong - performer returns data for display
 public async Task<IApplicationResult<CreateTodoResponse>> Perform(...)
 {
     var todo = await createAndSave(request);
@@ -386,7 +386,7 @@ public async Task<IApplicationResult<CreateTodoResponse>> Perform(...)
     });
 }
 
-// ✅ Correct - workflow returns metadata only, OOB handles refresh
+// ✅ Correct - performer returns metadata only, OOB handles refresh
 public async Task<IApplicationResult<CreateTodoResponse>> Perform(...)
 {
     var todo = await createAndSave(request);
@@ -490,14 +490,14 @@ public interface ITodosPageInteraction : IEndpoint { }
 
 // Implement interaction
 public class CreateTodoInteraction(ITodosPageView page, IFrameworkOrchestrator _framework)
-    : PageInteractionBase<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse, ITodosPageView>(page, _framework),
+    : PageInteractionBase<CreateTodoRequest, CreateTodoResponse, ITodosPageView>(page, _framework),
       ITodosPageInteraction
 {
     protected override string RouteBase => "todos";
     protected override string RouteAction => "create";
     protected override DataMutations Mutates => DataMutations.For(TodosListDomainView.DomainName);
 
-    protected override async Task<IResult> OnSuccess(CreateTodoWorkflowResponse response)
+    protected override async Task<IResult> OnSuccess(CreateTodoResponse response)
     {
         var formReset = HtmlFragment.InjectOob(Page.RenderCreateForm());
         return await BuildOobResultWith(formReset);
@@ -530,8 +530,8 @@ public class TodosPageEndpoints(ITodosPageView _page, IFrameworkOrchestrator _fr
 // In bindData() - add Provider
 services.AddScoped<IDataProvider, TodosListProvider>();
 
-// In bind{Domain}Workflows() - add Workflow (if new)
-services.AddScoped<IWorkflow<CreateTodoWorkflowRequest, CreateTodoWorkflowResponse>, CreateTodoWorkflow>();
+// In bind{Domain}Performers() - add Performer (if new)
+services.AddScoped<IPerformer<CreateTodoRequest, CreateTodoResponse>, CreateTodoPerformer>();
 
 // In bindPageEndpoints() - add Endpoints
 services.AddScoped<IClientEndpoint, TodosPageEndpoints>();
@@ -544,7 +544,7 @@ services.AddScoped<ITodosPageInteraction, CreateTodoInteraction>();
 
 ---
 
-### Adding an API Workflow Only
+### Adding an API Performer Only
 
 For API-only features (no page UI), create a vertical slice:
 
@@ -553,15 +553,15 @@ For API-only features (no page UI), create a vertical slice:
 | File | Purpose |
 |------|---------|
 | `{Feature}.BoundaryContracts.cs` | Request, Response, Validator |
-| `{Feature}.Workflow.cs` | Business logic |
+| `{Feature}.Performer.cs` | Business logic |
 | `{Feature}.Endpoint.cs` | HTTP route registration |
 
 ```csharp
-// {Feature}.Workflow.cs
-public class UpdateProfileWorkflow(
+// {Feature}.Performer.cs
+public class UpdateProfilePerformer(
     IValidator<UpdateProfileRequest> _validator,
     IRepository _repository
-) : IWorkflow<UpdateProfileRequest, UpdateProfileResponse>
+) : IPerformer<UpdateProfileRequest, UpdateProfileResponse>
 {
     public async Task<IApplicationResult<UpdateProfileResponse>> Perform(UpdateProfileRequest request)
     {
@@ -576,7 +576,7 @@ public class UpdateProfileWorkflow(
 }
 ```
 
-**Register:** Add workflow in `bind{Domain}Workflows()` section of DependencyResolver.
+**Register:** Add performer in `bind{Domain}Performers()` section of DependencyResolver.
 
 ---
 
@@ -599,16 +599,16 @@ All tests inherit from `SetupTestFor<T>` which auto-injects dependencies.
 ### Unit Tests (Mocked Dependencies)
 
 ```csharp
-public class CreateTodoWorkflowUnitTests : SetupTestFor<CreateTodoWorkflow>
+public class CreateTodoPerformerUnitTests : SetupTestFor<CreateTodoPerformer>
 {
     [Fact]
     public async Task Perform_WithValidRequest_ReturnsSuccess()
     {
         // Arrange
-        var request = new CreateTodoWorkflowRequest { Title = "Test" };
+        var request = new CreateTodoRequest { Title = "Test" };
 
         Mocker
-            .GetSubstituteFor<IValidator<CreateTodoWorkflowRequest>>()
+            .GetSubstituteFor<IValidator<CreateTodoRequest>>()
             .ValidateAsync(request, default)
             .Returns(new ValidationResult());
 
@@ -624,7 +624,7 @@ public class CreateTodoWorkflowUnitTests : SetupTestFor<CreateTodoWorkflow>
 ### Integration Tests (Real Implementations)
 
 ```csharp
-public class CreateTodoWorkflowIntegrationTests : SetupTestFor<CreateTodoWorkflow>
+public class CreateTodoPerformerIntegrationTests : SetupTestFor<CreateTodoPerformer>
 {
     [Fact]
     public async Task Perform_EndToEnd_WithFakeRepository()
@@ -634,7 +634,7 @@ public class CreateTodoWorkflowIntegrationTests : SetupTestFor<CreateTodoWorkflo
             .Replace<IRepository, InMemoryRepository>()
             .Use();
 
-        var request = new CreateTodoWorkflowRequest { Title = "Test" };
+        var request = new CreateTodoRequest { Title = "Test" };
 
         // Act
         var result = await SUT.Perform(request);
@@ -657,6 +657,7 @@ public class CreateTodoWorkflowIntegrationTests : SetupTestFor<CreateTodoWorkflo
 - `{Component}.Unit.Tests.cs` - Unit tests
 - `{Component}.Integration.Tests.cs` - Integration tests
 - Location mirrors source: `PagePlay.Tests/Application/{Domain}/{Feature}/`
+- Performer tests follow pattern: `{Name}Performer.Unit.Tests.cs`
 
 ---
 
@@ -706,9 +707,9 @@ PagePlay.Site/
 │       │   └── {Perspective}/
 │       │       ├── {Name}.DomainView.cs   # Query context POCO
 │       │       └── {Name}.Provider.cs     # IDataProvider implementation
-│       └── Workflows/           # Command handlers
+│       └── Performers/          # Command handlers
 │           └── {Action}/
-│               └── {Action}.Workflow.cs
+│               └── {Action}.Performer.cs
 │
 ├── Pages/
 │   └── {PageName}/

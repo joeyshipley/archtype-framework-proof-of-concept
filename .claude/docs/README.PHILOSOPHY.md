@@ -80,7 +80,7 @@ Every vertical slice should have similar complexity. When features vary wildly i
 
 **Good Signs:**
 - New CRUD feature takes ~2 hours, just like the last one
-- Each workflow follows the same structure
+- Each performer follows the same structure
 - Most files are 50-200 lines
 
 **Bad Signs:**
@@ -233,7 +233,7 @@ We organize by feature, not by technical layer:
 Application/
 ├── Accounts/
 │   ├── Login/
-│   │   ├── Login.Workflow.cs
+│   │   ├── Login.Performer.cs
 │   │   ├── Login.BoundaryContracts.cs
 │   │   └── Login.Endpoint.cs
 │   ├── Register/
@@ -333,23 +333,23 @@ Single consistent pattern for 1-N domains. No magic strings, compile-time safety
 
 ```
 Feature/
-  ├── Feature.Workflow.cs           # Business logic
+  ├── Feature.Performer.cs          # Business logic
   ├── Feature.BoundaryContracts.cs  # Request/Response
   └── Feature.Endpoint.cs           # API routing
 ```
 
 Each folder = one operation. Everything related to feature in one place. Never create god classes. Never split by technical layer.
 
-### Workflow Pattern - Revealing Intent
+### Performer Pattern - Revealing Intent
 
-Every workflow follows consistent internal structure:
+Every performer follows consistent internal structure:
 
 ```csharp
-public class RegisterWorkflow(
+public class RegisterPerformer(
     IPasswordHasher _passwordHasher,
     IUserRepository _userRepository,
     IValidator<RegisterRequest> _validator
-) : IWorkflow<RegisterRequest, RegisterResponse>
+) : IPerformer<RegisterRequest, RegisterResponse>
 {
     // Entry point reveals business intent
     public async Task<IApplicationResult<RegisterResponse>> Perform(RegisterRequest request)
@@ -413,23 +413,23 @@ Clear separation between performing tasks and getting data to render:
 - Used by views for rendering
 - Used by framework for OOB updates after mutations
 
-**Workflows handle all writes (commands):**
+**Performers handle all writes (commands):**
 - Create, Update, Delete operations
 - Business logic, validation, authorization
 
 **Pattern:**
 - Need to read data? → Use DomainView via DataLoader
-- Need to mutate data? → Create a Workflow
-- No "read workflows" - reads go through DomainViews
+- Need to mutate data? → Create a Performer
+- No "read performers" - reads go through DomainViews
 
 ```csharp
 // Reading data through DomainView with fluent API
 var data = await dataLoader.With<TodosListDomainView>().Load();
 var todosData = data.Get<TodosListDomainView>();
 
-// Mutating data through Workflow
-public class CreateTodoWorkflow(ITodoRepository _repository)
-    : IWorkflow<CreateTodoRequest, CreateTodoResponse>
+// Mutating data through Performer
+public class CreateTodoPerformer(ITodoRepository _repository)
+    : IPerformer<CreateTodoRequest, CreateTodoResponse>
 {
     public async Task<IApplicationResult<CreateTodoResponse>> Perform(CreateTodoRequest request)
     {
@@ -437,7 +437,7 @@ public class CreateTodoWorkflow(ITodoRepository _repository)
     }
 }
 
-// Don't create "ListTodos" workflow - use DomainView instead
+// Don't create "ListTodos" performer - use DomainView instead
 ```
 
 ### Testing Pattern - Framework-Provided Base
@@ -445,7 +445,7 @@ public class CreateTodoWorkflow(ITodoRepository _repository)
 Every test inherits from `SetupTestFor<T>`:
 
 ```csharp
-public class RegisterWorkflowUnitTests : SetupTestFor<RegisterWorkflow>
+public class RegisterPerformerUnitTests : SetupTestFor<RegisterPerformer>
 {
     [Fact]
     public async Task Perform_WithValidRequest_ReturnsSuccess()
@@ -521,9 +521,9 @@ We don't know if everything will work. Let's find out quickly. Assumptions must 
 
 When implementing features:
 
-1. **Use framework infrastructure** - Tests inherit from `SetupTestFor<T>`, workflows use repositories, DI is centralized
+1. **Use framework infrastructure** - Tests inherit from `SetupTestFor<T>`, performers use repositories, DI is centralized
 2. **Start with single operation** - Each feature folder does ONE thing
-3. **Follow read/write separation** - DomainViews for queries, Workflows for commands
+3. **Follow read/write separation** - DomainViews for queries, Performers for commands
 4. **Look for existing patterns** - Find similar feature, copy structure exactly
 5. **Measure deviation** - If new feature is 2x bigger, ask why
 6. **Flag complexity** - "This feature seems more complex than others, should we extract to framework?"
@@ -531,11 +531,11 @@ When implementing features:
 **When implementing reads:**
 - Use DomainView via DataLoader with fluent API: `dataLoader.With<TView>().Load()`
 - Access data with `data.Get<TView>()` (no magic strings)
-- Never create "List" or "Get" workflows
+- Never create "List" or "Get" performers
 
 **When implementing writes:**
-- Create a Workflow for the mutation
-- Workflow names reveal business actions
+- Create a Performer for the mutation
+- Performer names reveal business actions
 - Follow revealing intent pattern
 
 **When infrastructure is missing:**

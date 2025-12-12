@@ -10,6 +10,8 @@
 > - `ComponentId` → `ViewId`
 > - `DataDependencies.From<Provider, Context>()` → `DataDependencies.From<Context>()`
 > - `data-component` attribute → `data-view`
+> - `IWorkflow` → `IPerformer`, `.Workflow.cs` → `.Performer.cs` (Dec 2025)
+> - `*WorkflowRequest/*WorkflowResponse` → `*Request/*Response`
 >
 > **For current patterns, see:** `.claude/docs/README.ARCHITECTURE_REFERENCE.md`
 

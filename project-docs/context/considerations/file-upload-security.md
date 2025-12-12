@@ -242,9 +242,9 @@ public async Task<IActionResult> DownloadFile(Guid fileId)
 - Add `IFileRepository` for file metadata
 - Store: filename, size, content type, owner, upload date
 
-**Workflow Pattern:**
-- `UploadFileWorkflow`: validation, scanning, storage
-- `DownloadFileWorkflow`: permission check, logging
+**Performer Pattern:**
+- `UploadFilePerformer`: validation, scanning, storage
+- `DownloadFilePerformer`: permission check, logging
 
 **Middleware:**
 - Already configured: 5 MB request body limit

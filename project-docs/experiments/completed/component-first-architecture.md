@@ -8,7 +8,9 @@
 > - Pure OOB updates (server decides what updates, not client)
 > - `DataMutations.For()` pattern for declaring mutations
 > - `BuildOobResult()` for interactions
-> - CQRS separation (workflows return metadata only)
+> - CQRS separation (performers return metadata only)
+>
+> **Terminology note:** "Workflows" were renamed to "Performers" (Dec 2025) - `IWorkflow` → `IPerformer`, `.Workflow.cs` → `.Performer.cs`
 >
 > **What was superseded:**
 > - `TodoListComponent` wrapper class was eliminated (pages now implement IView directly)

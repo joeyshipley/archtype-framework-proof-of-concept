@@ -93,7 +93,7 @@ public string SanitizePlainText(string input)
 ## Current Architecture Integration
 
 **Where to Add Sanitization:**
-- `WorkflowRequest` base class: Add `Sanitize()` method
+- `PerformerRequest` base class: Add `Sanitize()` method
 - `Repository.SaveAsync()`: Sanitize before persistence
 - Endpoint filters: Add `SanitizeInputFilter`
 
