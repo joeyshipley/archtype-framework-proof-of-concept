@@ -39,7 +39,7 @@ Many docs contain code examples and patterns that no longer match reality.
 | 2 | Core Philosophy Docs | ✅ Complete |
 | 3 | Pattern Template Docs | ✅ Complete |
 | 4 | Read/Write Pattern Docs | ✅ Complete |
-| 5 | UI/Styling Docs | ⏳ Pending |
+| 5 | UI/Styling Docs | ✅ Complete |
 | 6 | Historical Experiment Cleanup | ⏳ Pending |
 | 7 | Final Review & Validation | ⏳ Pending |
 
@@ -345,16 +345,17 @@ Rather than updating the standalone doc, consolidated the valuable content (deci
 
 **Goal:** Update UI vocabulary and styling documentation.
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ### Target Files
 - `.claude/docs/README.DESIGN_STYLING.md`
 - `project-docs/experiments/completed/styles/B-*.md`
 
 ### Research Tasks
-- [ ] Check if IElement vocabulary is accurately documented
-- [ ] Check if styling token system docs match implementation
-- [ ] Verify theme authoring docs are current
+- [x] Check if IElement vocabulary is accurately documented
+- [x] Check if styling token system docs match implementation
+- [x] Verify theme authoring docs are current
+- [x] Trace full flow from usage to tokens
 
 ### Known Issues (from initial scan)
 - Uses `IComponent` (should be `IElement`)
@@ -362,13 +363,78 @@ Rather than updating the standalone doc, consolidated the valuable content (deci
 - Check if "implementation has changed" notes are still relevant
 
 ### Research Findings
-<!-- Fill in during research phase -->
+
+**Full Flow Traced:**
+```
+C# Vocabulary (Button.cs)     → Developer uses semantic types
+        ↓
+HtmlRenderer.cs               → Maps elements to CSS classes
+        ↓
+ThemeCompiler.cs              → Generates CSS from YAML
+        ↓
+default.theme.yaml            → Tokens + component mappings
+        ↓
+closed-world.css              → Generated output
+```
+
+**README.DESIGN_STYLING.md Issues Found:**
+1. Line 7: Has "NOTE - implementation has changed" disclaimer (remove per pattern from earlier phases)
+2. Lines 512-518: Uses `IComponent` terminology (should be `IElement`)
+3. Line 582: File paths are correct (`Infrastructure/UI/Vocabulary/*.cs`)
+4. Lines 602-609: Claims to replace B-*.md files (they still exist - handle in Phase 6)
+
+**B-*.md Files:**
+- 6 files exist in `project-docs/experiments/completed/styles/`
+- README.DESIGN_STYLING.md claims to be the consolidated replacement
+- These should be handled in Phase 6 (historical cleanup)
+
+**Critical Implementation Gap Discovered:**
+
+The doc's core belief is: *"UI devs only touch YAML, never C#"*
+
+Current reality violates this:
+
+| What UI Devs CAN Change (YAML) | What Requires C# |
+|--------------------------------|------------------|
+| Token values (colors, spacing) | Hover pseudo-selectors |
+| Component property values | Loading spinner animation |
+| State opacity/colors | Focus ring styles |
+| Layout gap sizes | Grid column templates |
+| | Adding new states/variants |
+
+**Root cause:** ThemeCompiler.cs has hardcoded CSS structure (selectors, pseudo-classes, animations). YAML only controls values within that structure.
+
+**Example:** `list-item--completed` can change opacity via YAML, but the decision to support `text-decoration` at all is baked into ThemeCompiler.cs line 724.
+
+**This is a defect to be fixed separately** - the doc should highlight the belief system strongly so this gap is obvious.
 
 ### Plan Adjustments
-<!-- Update plan based on research -->
+
+**Decision: Update doc to emphasize the belief system**
+
+Rather than documenting the current (flawed) implementation details, the doc should:
+1. Remove "implementation has changed" disclaimer
+2. Fix `IComponent` → `IElement` terminology
+3. Strengthen the "UI devs never touch C#" principle language
+4. Add explicit "Violation Test" section - if a designer needs C# to make a visual change, that's a bug
+5. Keep implementation checklist but note it represents the target state
+
+**Changes to Apply:**
+- Remove line 7 disclaimer
+- Update type system section (lines 512-518) to use `IElement`
+- Add/strengthen "Principle Violation Test" guidance
+- Keep token system documentation (it's accurate)
+- Keep implementation checklist (represents target, not current state)
 
 ### Completion Notes
-<!-- Document what was done -->
+- Removed "NOTE - implementation has changed" disclaimer from README.DESIGN_STYLING.md
+- Updated `IComponent` → `IElement` in type system section
+- Added "The Principle Violation Test" section prominently after Core Principle
+  - Makes the belief system explicit: "If a designer needs C# to change appearance, that's a bug"
+  - Provides table of scenarios showing expected behavior
+  - Distinguishes appearance changes (YAML only) from vocabulary changes (C# required)
+- B-*.md files left for Phase 6 (historical cleanup)
+- **Known implementation gap documented:** ThemeCompiler has hardcoded CSS structure that violates the principle (tracked separately for fix)
 
 ---
 
@@ -509,6 +575,19 @@ Rather than updating the standalone doc, consolidated the valuable content (deci
   - "When to Create New vs Extend" guidance
 - Deleted read-write-pattern.md
 
+### Session 6 (2025-12-12)
+- Completed Phase 5: UI/Styling Docs
+- Traced full UI flow: TodosPage → HtmlRenderer → ThemeCompiler → YAML → CSS
+- **Critical finding:** ThemeCompiler has hardcoded CSS structure (hover states, animations, focus rings)
+  - This violates the core principle "UI devs only touch YAML"
+  - Tracked as separate defect to fix
+- Updated README.DESIGN_STYLING.md:
+  - Removed "implementation has changed" disclaimer
+  - Fixed `IComponent` → `IElement` terminology
+  - Added "The Principle Violation Test" section - makes belief system explicit
+  - Test: "If a designer needs C# to change appearance, that's a bug"
+- Doc now emphasizes the target state, making the implementation gap obvious
+
 ---
 
 ## Open Questions
@@ -520,4 +599,4 @@ Rather than updating the standalone doc, consolidated the valuable content (deci
 
 ---
 
-**Last Updated:** 2025-12-12 (Phase 4 Complete)
+**Last Updated:** 2025-12-12 (Phase 5 Complete)

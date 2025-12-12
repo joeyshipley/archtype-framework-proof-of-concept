@@ -1,10 +1,8 @@
 # Unified Styling Specification: Closed-World UI
 
-**Version:** 1.0
-**Last Updated:** 2025-12-05
+**Version:** 1.1
+**Last Updated:** 2025-12-12
 **Status:** Living Specification
-
-## NOTE - implementation has changed since the creation of the doc, the belief system is what we care about.
 
 ---
 
@@ -15,6 +13,30 @@
 Closed-World UI inverts the traditional styling model. Instead of developers writing CSS to describe appearance, they use a finite semantic vocabulary. The theme system—owned entirely by designers—maps that vocabulary to visual output.
 
 **Key Constraint:** No escape hatches. If it's not in the vocabulary, it doesn't exist.
+
+---
+
+## The Principle Violation Test
+
+**This is the acid test for the Closed-World UI system:**
+
+> If a designer needs to edit C# code to change how something looks, that's a bug.
+
+Use this test when evaluating the implementation:
+
+| Scenario | Expected | If Violated |
+|----------|----------|-------------|
+| Change button hover color | Edit YAML only | Bug in ThemeCompiler |
+| Adjust completed item opacity | Edit YAML only | Bug in ThemeCompiler |
+| Modify focus ring appearance | Edit YAML only | Bug in ThemeCompiler |
+| Change loading spinner animation | Edit YAML only | Bug in ThemeCompiler |
+| Add new button importance level | Edit YAML + C# vocabulary | Expected (vocabulary extension) |
+
+**The distinction:**
+- **Appearance changes** (colors, spacing, animations, transitions) → YAML only
+- **Vocabulary changes** (new element types, new semantic variants) → C# required (controlled process)
+
+If the ThemeCompiler has hardcoded CSS values, selectors, or animations that designers cannot override via YAML, that violates the core principle and should be fixed.
 
 ---
 
@@ -509,9 +531,9 @@ tokens:
 ### Slot Constraints
 
 ```csharp
-public interface IHeaderContent : IComponent { }
-public interface IBodyContent : IComponent { }
-public interface IFooterContent : IComponent { }
+public interface IHeaderContent : IElement { }
+public interface IBodyContent : IElement { }
+public interface IFooterContent : IElement { }
 
 public record Text : IHeaderContent, IBodyContent, IFooterContent { }
 public record Button : IHeaderContent, IFooterContent { }
