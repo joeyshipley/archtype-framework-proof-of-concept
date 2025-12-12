@@ -1,102 +1,58 @@
----
----
-
-# Session Start Protocol
+# Session Start
 
 ---
 
-## STEP 1: READ CORE FILES
+## Step 1: Read Core Docs
 
-**Before anything else, read these files in order**:
+Read these files first, every session:
 1. `.claude/docs/README.md` - Project overview and navigation
-2. `.claude/docs/README.PHILOSOPHY.md` - Core beliefs, HTTP-first philosophy, vertical slices, consistent complexity
-3. `.claude/docs/README.ARCHITECTURE_REFERENCE.md` - Technical reference for interfaces, patterns, and implementation
-4. `.claude/docs/README.DESIGN_STYLING.md` - Web style practices (CSS, tokens, theming)
-5. `project-docs/context/personas/README.md` - User personas quick reference for identifying target users
-
-Read these first, every session.
+2. `.claude/docs/README.PHILOSOPHY.md` - Core beliefs, HTTP-first, vertical slices
+3. `.claude/docs/README.ARCHITECTURE_REFERENCE.md` - Technical patterns
+4. `.claude/docs/README.DESIGN_STYLING.md` - CSS, tokens, theming
 
 ---
 
-## STEP 2: COLLABORATION DISCIPLINE
+## Step 2: What Are You Working On?
 
-**Core Truth**: AI responds to instruction tone over documentation. Human language directly affects AI mode adherence.
+Ask the user what they'd like to work on.
 
-| Mode | Human Says | AI Response | AI Never |
-|------|------------|-------------|----------|
-| **Exploration** | "What if...", "Should we...", "Something feels off..." | "Let me document this decision first" | Start implementation |
-| **Planning** | "How should we break this down?", "What's the approach?" | "Let me create task breakdown for approval" | Jump to code without approval |
-| **Implementation** | "Create X", "Implement Y", "Fix Z" | Execute directive | Question architecture (return to exploration) |
+### New Work
 
-**Critical Signals**:
-- **"Something feels off"** → STOP everything, return to exploration
-- **Directive during wrong mode** → AI pauses, documents/plans first
-- **Architecture questions mid-implementation** → STOP, return to exploration
-- **Context collapse** (any bugs, workarounds) → STOP, rollback, smaller slices
+If user has new intent to structure:
+1. Follow `.claude/docs/workflow/brief-creation.md`
+2. Create brief with Goal, Problem, Success Signal, Constraints
+3. Break into phases
+4. Start Phase 1 research
 
-**Recovery**: Implementation without plan → STOP → Retroactive plan → Keep/rollback | Exploration not documented → Pause → Document in project-docs/context/ → Resume
+### Existing Brief
 
----
+If user references existing brief:
+1. Read the brief
+2. Find current phase (first incomplete phase)
+3. Follow `.claude/docs/workflow/phase-workflow.md`
+4. Resume: Research → Plan → Execute → Validate
 
-## STEP 3: DO YOU NEED TO CREATE A BRIEF?
+### Quick Task
 
-**Is human expressing new intent and wants help structuring it?**
-
-**YES** → Read `.claude/workflow/brief-creation.md`
-
-**NO** → Continue to Step 4
-
-**Note**: Briefs can be created three ways:
-1. **AI-assisted** (brief-creation.md) - Conversational structuring
-2. **Human-written** (directly in `project-docs/briefs/` using template) - Then validate in Exploration
-3. **During exploration** (Exploration mode creates brief as artifact) - Documents discoveries
-
-All paths valid. Briefs are tools, not requirements.
+If user has a small, clear task (no brief needed):
+1. Confirm scope is small
+2. Execute directly
+3. No ceremony required
 
 ---
 
-## STEP 4: IDENTIFY YOUR MODE
+## Collaboration Signals
 
-**What mode are you in?**
+**Listen for uncertainty:**
+- "Something feels off..." → Pause, explore the concern
+- "I'm not sure about..." → Capture in Open Questions
+- "Wait, should we..." → Worth investigating before continuing
 
-### EXPLORATION MODE
-**Signals**:
-- Asking "are we building the right thing?"
-- Questioning architecture or design
-- Making foundational decisions
-- Human expresses uncertainty ("something feels off")
-- No clear implementation plan exists
-
-**→ Read:** `.claude/workflow/exploration-mode.md`
+**Context collapse indicators:**
+- Bugs appearing → Step back, smaller slices
+- Workarounds needed → Architecture question, explore first
+- Confusion → Missing context, read more before acting
 
 ---
 
-### PLANNING MODE
-**Signals**:
-- Architecture decided
-- Need to break work into tasks
-- Creating implementation roadmap
-- Ready to design approach
-
-**→ Read:** `.claude/workflow/planning-mode.md`
-
----
-
-### IMPLEMENTATION MODE
-**Signals**:
-- Clear task list exists
-- TDD workflow active
-- Building/testing/validating
-- Concrete goal file in place
-
-**→ Read:** `.claude/workflow/implementation-mode.md`
-
----
-
-## WHERE ARE WE?
-
-**This file defines PROCESS. User chooses path. -- Ask the user what they would like to work on next.**
-
----
-
-**Last Updated**: 2025-12-12 (Updated doc references after reconciliation)
+**Last Updated:** 2025-12-12

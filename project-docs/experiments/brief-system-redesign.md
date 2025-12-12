@@ -1,6 +1,6 @@
 # Experiment: Brief System Redesign
 
-**Status:** In Progress
+**Status:** Complete
 **Created:** 2025-12-12
 **Goal:** Replace mode-based brief system with lightweight research-first approach
 
@@ -55,7 +55,7 @@ The documentation-reconciliation experiment proved a lighter pattern works bette
 | 2 | Create phase workflow doc | ✅ |
 | 3 | Update brief creation workflow | ✅ |
 | 4 | Update entry points and commands | ✅ |
-| 5 | Cleanup old files | ⬜ |
+| 5 | Cleanup old files | ✅ |
 
 ---
 
@@ -353,22 +353,54 @@ No mode commands - each phase follows phase-workflow.md cycle.
 **Goal:** Remove old mode files, verify no broken references
 
 ### Research
-- [ ] List all files to delete
-- [ ] Search for references to deleted files
-- [ ] Verify nothing breaks
+- [x] List all files to delete
+- [x] Search for references to deleted files
+- [x] Verify nothing breaks
 
 ### Findings
-[To be populated]
+
+**Files deleted (11 total):**
+
+Workflow files (old):
+- `brief-creation.md` (replaced by v2)
+- `exploration-mode.md`
+- `implementation-mode.md`
+- `planning-mode.md`
+- `session-start.md` (replaced by v2)
+
+Brief templates (old):
+- `PRODUCT_BRIEF_TEMPLATE.md` (replaced by BRIEF_TEMPLATE.md)
+
+Commands (mode-specific):
+- `explore.md`
+- `explore-finalize.md`
+- `implement.md`
+- `plan.md`
+
+Other:
+- `AI_START.md` (unnecessary indirection)
+
+**References found and handled:**
+- Commands (`/explore`, `/plan`, `/implement`) → deleted (no longer needed)
+- Internal references in old files → deleted with the files
+- Historical references in experiment docs → kept as historical record
+
+**Files renamed (cleaner names since clean break):**
+- `brief-creation-v2.md` → `brief-creation.md`
+- `session-start-v2.md` → `session-start.md`
 
 ### Done
-[To be filled]
+- Deleted 11 old files
+- Renamed 2 v2 files to clean names
+- Updated 3 references to use clean names
+- Verified no broken references in active files
 
 ---
 
 ## Open Questions
 
-1. Should we keep any backward compatibility with old briefs, or clean break?
-2. Where should the template live? `.claude/docs/briefs/` or move to `project-docs/templates/`?
+1. ~~Should we keep any backward compatibility with old briefs, or clean break?~~ **Decision:** Clean break, no backward compatibility needed.
+2. ~~Where should the template live?~~ **Decision:** Keep in `.claude/docs/briefs/` - files live with the project, each project can have different ones.
 
 ---
 
@@ -381,3 +413,27 @@ No mode commands - each phase follows phase-workflow.md cycle.
 - Designed new approach: invariants + phase goals, per-phase research → TDD plan
 - Created this experiment doc
 - Phase 1 research complete, ready to create template
+
+### 2025-12-12 - Session 2
+- Completed Phases 1-4 (template, workflow doc, brief creation, entry points)
+- Phase 5: Cleaned up old files
+  - Deleted 11 files (5 workflow, 1 template, 4 commands, 1 indirection)
+  - Renamed v2 files to clean names
+  - Updated all references
+- **Experiment complete**
+
+**Final metrics:**
+| Metric | Old | New | Reduction |
+|--------|-----|-----|-----------|
+| Brief template | 418 lines | 93 lines | 78% |
+| Core workflow docs | ~948 lines | 253 lines | 73% |
+| Total system | ~1,700 lines | 346 lines | 80% |
+| Mode files | 3 | 0 | 100% |
+| Commands | 10 | 6 | 40% |
+
+**Success signals achieved:**
+- ✅ Brief template under 100 lines (93)
+- ✅ Total workflow docs under 400 lines (346)
+- ✅ No mode-switching ceremony
+- ✅ Phase goals are "what" statements, TDD plans emerge from research
+- ✅ Can resume work by reading one file (the brief itself)

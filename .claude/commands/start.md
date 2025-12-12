@@ -1,1 +1,1 @@
-Read .claude/docs/workflow/session-start-v2.md
+Read .claude/docs/workflow/session-start.md
