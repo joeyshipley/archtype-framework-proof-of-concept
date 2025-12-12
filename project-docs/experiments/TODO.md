@@ -1,3 +1,4 @@
+- With the seperation of workflow into command/query split what is a better name for workflow now?
 - Come up with actual web theme.
 - Review, what else do we need before we can create an actual website?
 - Refactor and move framework into a Archtype.Framework project.
