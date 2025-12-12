@@ -16,7 +16,7 @@ public enum AlertTone
 /// Alert - User feedback for errors, success, warnings, and informational messages.
 /// Server returns alerts via workflow responses (validation errors, operation results).
 /// </summary>
-public record Alert : IComponent, IBodyContent
+public record Alert : IElement, IBodyContent
 {
     private readonly string _message;
 
@@ -25,7 +25,7 @@ public record Alert : IComponent, IBodyContent
     public bool ElementDismissible { get; init; }
     public string ElementId { get; init; }
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public Alert(string message, AlertTone tone = AlertTone.Neutral)
     {
@@ -56,7 +56,7 @@ public enum EmptyStateSize
 /// EmptyState - Empty list or no-content messaging.
 /// Displayed when data collections are empty (no todos, no search results, etc.).
 /// </summary>
-public record EmptyState : IComponent, IBodyContent
+public record EmptyState : IElement, IBodyContent
 {
     private readonly string _message;
 
@@ -65,7 +65,7 @@ public record EmptyState : IComponent, IBodyContent
     public string ElementActionLabel { get; init; }
     public string ElementActionUrl { get; init; }
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public EmptyState(string message)
     {

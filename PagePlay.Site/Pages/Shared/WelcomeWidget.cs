@@ -4,14 +4,14 @@ using PagePlay.Site.Infrastructure.Web.Components;
 
 namespace PagePlay.Site.Pages.Shared;
 
-public interface IWelcomeWidget : IServerComponent
+public interface IWelcomeWidget : IView
 {
     string RenderUnauthenticated();
 }
 
 public class WelcomeWidget : IWelcomeWidget
 {
-    public string ComponentId => "welcome-widget";
+    public string ViewId => "welcome-widget";
 
     // New typed API - compile-time safe, no magic strings!
     public DataDependencies Dependencies => DataDependencies
@@ -25,7 +25,7 @@ public class WelcomeWidget : IWelcomeWidget
 
         // language=html
         return $$"""
-        <div id="{{ComponentId}}"
+        <div id="{{ViewId}}"
              class="welcome-widget">
             <p>Welcome, you have {{count}} open Todos to look at.</p>
         </div>
@@ -36,7 +36,7 @@ public class WelcomeWidget : IWelcomeWidget
     {
         // language=html
         return $$"""
-        <div id="{{ComponentId}}"
+        <div id="{{ViewId}}"
              class="welcome-widget">
             <p>Welcome</p>
         </div>

@@ -44,7 +44,7 @@ public enum Columns
 /// <summary>
 /// Stack - Vertical arrangement with semantic purpose-based spacing.
 /// </summary>
-public record Stack : ComponentBase, IBodyContent
+public record Stack : ElementBase, IBodyContent
 {
     public For ElementPurpose { get; }
 
@@ -53,7 +53,7 @@ public record Stack : ComponentBase, IBodyContent
         ElementPurpose = purpose;
     }
 
-    public Stack(For purpose, params IComponent[] content) : this(purpose)
+    public Stack(For purpose, params IElement[] content) : this(purpose)
     {
         foreach (var item in content)
             Add(item);
@@ -62,7 +62,7 @@ public record Stack : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Stack Children(params IComponent[] children)
+    public new Stack Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -73,7 +73,7 @@ public record Stack : ComponentBase, IBodyContent
 /// <summary>
 /// Row - Horizontal arrangement with semantic purpose-based spacing.
 /// </summary>
-public record Row : ComponentBase, IBodyContent, IFooterContent
+public record Row : ElementBase, IBodyContent, IFooterContent
 {
     public For ElementPurpose { get; }
 
@@ -82,7 +82,7 @@ public record Row : ComponentBase, IBodyContent, IFooterContent
         ElementPurpose = purpose;
     }
 
-    public Row(For purpose, params IComponent[] content) : this(purpose)
+    public Row(For purpose, params IElement[] content) : this(purpose)
     {
         foreach (var item in content)
             Add(item);
@@ -91,7 +91,7 @@ public record Row : ComponentBase, IBodyContent, IFooterContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Row Children(params IComponent[] children)
+    public new Row Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -102,7 +102,7 @@ public record Row : ComponentBase, IBodyContent, IFooterContent
 /// <summary>
 /// Grid - Two-dimensional layout with semantic purpose and column count.
 /// </summary>
-public record Grid : ComponentBase, IBodyContent
+public record Grid : ElementBase, IBodyContent
 {
     public For ElementPurpose { get; }
     public Columns ElementColumns { get; }
@@ -113,7 +113,7 @@ public record Grid : ComponentBase, IBodyContent
         ElementColumns = columns;
     }
 
-    public Grid(For purpose, Columns columns, params IComponent[] content) : this(purpose, columns)
+    public Grid(For purpose, Columns columns, params IElement[] content) : this(purpose, columns)
     {
         foreach (var item in content)
             Add(item);
@@ -122,7 +122,7 @@ public record Grid : ComponentBase, IBodyContent
     // Fluent builder methods
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Grid Children(params IComponent[] children)
+    public new Grid Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);

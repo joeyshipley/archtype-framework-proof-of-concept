@@ -47,7 +47,7 @@ public record Button : IHeaderContent, IFooterContent, IFieldContent
 {
     private readonly string _label;
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     // Visual properties
     public Importance Importance { get; }

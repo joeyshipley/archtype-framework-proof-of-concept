@@ -58,9 +58,9 @@ public class Layout(
         if (_userIdentity.GetCurrentUserId().HasValue)
         {
             // Authenticated: render with domain data
-            var components = new IServerComponent[] { _welcomeWidget };
-            var renderedComponents = await _framework.RenderComponentsAsync(components);
-            return renderedComponents[_welcomeWidget.ComponentId];
+            var views = new IView[] { _welcomeWidget };
+            var renderedViews = await _framework.RenderViewsAsync(views);
+            return renderedViews[_welcomeWidget.ViewId];
         }
 
         // Not authenticated: render simple welcome message

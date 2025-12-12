@@ -8,7 +8,7 @@ public record Text : IHeaderContent, IBodyContent, IFooterContent
 {
     private readonly string _content;
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public string Content => _content;
 

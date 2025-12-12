@@ -32,7 +32,7 @@ public record Input : IFieldContent, IBodyContent
     public bool ElementReadOnly { get; init; }
     public string ElementId { get; init; }
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     // Fluent builder methods
 
@@ -69,7 +69,7 @@ public record Label : IFieldContent, IBodyContent
     public string Text => _text;
     public string ElementFor { get; init; }
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public Label(string text)
     {
@@ -86,7 +86,7 @@ public record Label : IFieldContent, IBodyContent
 /// Field - Semantic grouping of Label + Input with server-side error display.
 /// Displays validation errors returned from workflow via FluentValidation.
 /// </summary>
-public record Field : ComponentBase, IBodyContent
+public record Field : ElementBase, IBodyContent
 {
     public Label ElementLabel { get; init; }
     public Input ElementInput { get; init; }
@@ -116,7 +116,7 @@ public record Field : ComponentBase, IBodyContent
 /// Form - Form container with HTMX support for server interactions.
 /// Default swap strategy is None (OOB-only architecture) - forms use pure OOB updates by default.
 /// </summary>
-public record Form : ComponentBase, IBodyContent
+public record Form : ElementBase, IBodyContent
 {
     public string ElementAction { get; init; }
     public string ElementMethod { get; init; } = "post";
@@ -142,7 +142,7 @@ public record Form : ComponentBase, IBodyContent
     public Form Swap(SwapStrategy swap) => this with { ElementSwap = swap };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Form Children(params IComponent[] children)
+    public new Form Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -169,7 +169,7 @@ public record Checkbox : IFieldContent, IBodyContent
     public SwapStrategy ElementSwap { get; init; } = SwapStrategy.None;
     public long? ElementModelId { get; init; }
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     // Fluent builder methods
 

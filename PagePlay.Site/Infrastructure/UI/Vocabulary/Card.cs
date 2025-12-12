@@ -4,7 +4,7 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 /// Card - A bounded visual unit for grouping related content.
 /// Uses direct content builder pattern - slots hidden as implementation detail.
 /// </summary>
-public record Card : ComponentBase
+public record Card : ElementBase
 {
     /// <summary>
     /// Internal header slot storage. Use .Header() builder method to set content.

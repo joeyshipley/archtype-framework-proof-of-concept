@@ -15,7 +15,7 @@ public enum ListStyle
 /// List - Container for list items.
 /// Semantic container that enforces type-safe list structure.
 /// </summary>
-public record List : ComponentBase, IBodyContent
+public record List : ElementBase, IBodyContent
 {
     public ListStyle ElementStyle { get; init; } = ListStyle.Unordered;
     public string ElementId { get; init; }
@@ -24,7 +24,7 @@ public record List : ComponentBase, IBodyContent
     {
     }
 
-    public List(params IComponent[] items)
+    public List(params IElement[] items)
     {
         foreach (var item in items)
             Add(item);
@@ -39,7 +39,7 @@ public record List : ComponentBase, IBodyContent
     public List Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new List Children(params IComponent[] children)
+    public new List Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -63,7 +63,7 @@ public enum ListItemState
 /// ListItem - Individual list item with semantic state.
 /// Used within List containers to represent individual items with optional state styling.
 /// </summary>
-public record ListItem : ComponentBase
+public record ListItem : ElementBase
 {
     public ListItemState ElementState { get; init; } = ListItemState.Normal;
     public string ElementId { get; init; }
@@ -72,7 +72,7 @@ public record ListItem : ComponentBase
     {
     }
 
-    public ListItem(params IComponent[] content)
+    public ListItem(params IElement[] content)
     {
         foreach (var item in content)
             Add(item);
@@ -87,7 +87,7 @@ public record ListItem : ComponentBase
     public ListItem Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new ListItem Children(params IComponent[] children)
+    public new ListItem Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);

@@ -1,49 +1,49 @@
 namespace PagePlay.Site.Infrastructure.UI;
 
 /// <summary>
-/// Base marker interface for all UI components in the Closed-World system.
-/// Components declare WHAT they are, not HOW they look.
+/// Base marker interface for all UI elements in the Closed-World system.
+/// Elements declare WHAT they are, not HOW they look.
 /// </summary>
-public interface IComponent
+public interface IElement
 {
     /// <summary>
-    /// The child content of this component.
+    /// The child content of this element.
     /// </summary>
-    IEnumerable<IComponent> Children { get; }
+    IEnumerable<IElement> Children { get; }
 }
 
 /// <summary>
 /// Marker interface for content that can appear in a Header slot.
 /// </summary>
-public interface IHeaderContent : IComponent { }
+public interface IHeaderContent : IElement { }
 
 /// <summary>
 /// Marker interface for content that can appear in a Body slot.
 /// </summary>
-public interface IBodyContent : IComponent { }
+public interface IBodyContent : IElement { }
 
 /// <summary>
 /// Marker interface for content that can appear in a Footer slot.
 /// </summary>
-public interface IFooterContent : IComponent { }
+public interface IFooterContent : IElement { }
 
 /// <summary>
 /// Marker interface for content that can appear in form fields.
 /// Includes inputs, labels, buttons, and other form elements.
 /// </summary>
-public interface IFieldContent : IComponent { }
+public interface IFieldContent : IElement { }
 
 /// <summary>
-/// Base class for components with children.
+/// Base class for elements with children.
 /// Supports collection initializer syntax.
 /// </summary>
-public abstract record ComponentBase : IComponent, System.Collections.IEnumerable
+public abstract record ElementBase : IElement, System.Collections.IEnumerable
 {
-    private readonly List<IComponent> _children = new();
+    private readonly List<IElement> _children = new();
 
-    public IEnumerable<IComponent> Children => _children;
+    public IEnumerable<IElement> Children => _children;
 
-    public void Add(IComponent component) => _children.Add(component);
+    public void Add(IElement element) => _children.Add(element);
 
     // Required for collection initializer syntax
     public System.Collections.IEnumerator GetEnumerator() => _children.GetEnumerator();

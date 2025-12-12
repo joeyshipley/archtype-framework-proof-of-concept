@@ -4,13 +4,13 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 /// Page - Root container for a complete view.
 /// Provides standard page wrapper and max-width constraint.
 /// </summary>
-public record Page : ComponentBase
+public record Page : ElementBase
 {
     public string ElementId { get; init; }
 
     public Page() { }
 
-    public Page(params IComponent[] content)
+    public Page(params IElement[] content)
     {
         foreach (var item in content)
             Add(item);
@@ -22,7 +22,7 @@ public record Page : ComponentBase
     public Page Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Page Children(params IComponent[] children)
+    public new Page Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -34,13 +34,13 @@ public record Page : ComponentBase
 /// Section - Major division within a page.
 /// Groups related content with appropriate spacing.
 /// </summary>
-public record Section : ComponentBase, IBodyContent
+public record Section : ElementBase, IBodyContent
 {
     public string ElementId { get; init; }
 
     public Section() { }
 
-    public Section(params IComponent[] content)
+    public Section(params IElement[] content)
     {
         foreach (var item in content)
             Add(item);
@@ -52,7 +52,7 @@ public record Section : ComponentBase, IBodyContent
     public Section Id(string id) => this with { ElementId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
-    public new Section Children(params IComponent[] children)
+    public new Section Children(params IElement[] children)
     {
         foreach (var child in children)
             Add(child);
@@ -64,11 +64,11 @@ public record Section : ComponentBase, IBodyContent
 /// PageTitle - H1-level page identity.
 /// Appears once per page, establishes primary context.
 /// </summary>
-public record PageTitle : IComponent, IBodyContent
+public record PageTitle : IElement, IBodyContent
 {
     private readonly string _title;
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public string Title => _title;
 
@@ -82,11 +82,11 @@ public record PageTitle : IComponent, IBodyContent
 /// SectionTitle - H2-level section identity.
 /// Establishes hierarchy within page sections.
 /// </summary>
-public record SectionTitle : IComponent, IBodyContent
+public record SectionTitle : IElement, IBodyContent
 {
     private readonly string _title;
 
-    public IEnumerable<IComponent> Children => Enumerable.Empty<IComponent>();
+    public IEnumerable<IElement> Children => Enumerable.Empty<IElement>();
 
     public string Title => _title;
 

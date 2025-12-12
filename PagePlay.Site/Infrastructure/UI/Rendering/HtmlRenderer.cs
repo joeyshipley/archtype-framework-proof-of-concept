@@ -9,21 +9,21 @@ namespace PagePlay.Site.Infrastructure.UI.Rendering;
 /// </summary>
 public interface IHtmlRenderer
 {
-    string Render(IComponent component);
+    string Render(IElement element);
 }
 
 public class HtmlRenderer : IHtmlRenderer
 {
-    public string Render(IComponent component)
+    public string Render(IElement element)
     {
         var builder = new StringBuilder();
-        renderComponent(component, builder);
+        renderElement(element, builder);
         return builder.ToString();
     }
 
-    private void renderComponent(IComponent component, StringBuilder sb)
+    private void renderElement(IElement element, StringBuilder sb)
     {
-        switch (component)
+        switch (element)
         {
             case Page page:
                 renderPage(page, sb);
@@ -92,7 +92,7 @@ public class HtmlRenderer : IHtmlRenderer
                 renderListItem(listItem, sb);
                 break;
             default:
-                throw new InvalidOperationException($"Unknown component type: {component.GetType().Name}");
+                throw new InvalidOperationException($"Unknown element type: {element.GetType().Name}");
         }
     }
 
@@ -101,23 +101,23 @@ public class HtmlRenderer : IHtmlRenderer
         sb.Append("<div class=\"card\">");
 
         if (card._headerSlot != null)
-            renderComponent(card._headerSlot, sb);
+            renderElement(card._headerSlot, sb);
 
         if (card._bodySlot != null)
-            renderComponent(card._bodySlot, sb);
+            renderElement(card._bodySlot, sb);
 
         if (card._footerSlot != null)
-            renderComponent(card._footerSlot, sb);
+            renderElement(card._footerSlot, sb);
 
         sb.Append("</div>");
     }
 
-    private void renderSlot(string slotName, ComponentBase slot, StringBuilder sb)
+    private void renderSlot(string slotName, ElementBase slot, StringBuilder sb)
     {
         sb.Append($"<div class=\"{slotName}\">");
 
         foreach (var child in slot.Children)
-            renderComponent(child, sb);
+            renderElement(child, sb);
 
         sb.Append("</div>");
     }
@@ -203,8 +203,8 @@ public class HtmlRenderer : IHtmlRenderer
         var idAttr = !string.IsNullOrEmpty(page.ElementId) ? $" id=\"{htmlEncode(page.ElementId)}\"" : "";
         sb.Append($"<div class=\"page\"{idAttr}>");
 
-        foreach (var child in ((IComponent)page).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)page).Children)
+            renderElement(child, sb);
 
         sb.Append("</div>");
     }
@@ -214,8 +214,8 @@ public class HtmlRenderer : IHtmlRenderer
         var idAttr = !string.IsNullOrEmpty(section.ElementId) ? $" id=\"{htmlEncode(section.ElementId)}\"" : "";
         sb.Append($"<section class=\"section\"{idAttr}>");
 
-        foreach (var child in ((IComponent)section).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)section).Children)
+            renderElement(child, sb);
 
         sb.Append("</section>");
     }
@@ -239,8 +239,8 @@ public class HtmlRenderer : IHtmlRenderer
         var purposeClass = getPurposeClass(stack.ElementPurpose);
         sb.Append($"<div class=\"stack stack--{purposeClass}\">");
 
-        foreach (var child in ((IComponent)stack).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)stack).Children)
+            renderElement(child, sb);
 
         sb.Append("</div>");
     }
@@ -250,8 +250,8 @@ public class HtmlRenderer : IHtmlRenderer
         var purposeClass = getPurposeClass(row.ElementPurpose);
         sb.Append($"<div class=\"row row--{purposeClass}\">");
 
-        foreach (var child in ((IComponent)row).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)row).Children)
+            renderElement(child, sb);
 
         sb.Append("</div>");
     }
@@ -262,8 +262,8 @@ public class HtmlRenderer : IHtmlRenderer
         var columnsClass = getColumnsClass(grid.ElementColumns);
         sb.Append($"<div class=\"grid grid--{purposeClass} grid--{columnsClass}\">");
 
-        foreach (var child in ((IComponent)grid).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)grid).Children)
+            renderElement(child, sb);
 
         sb.Append("</div>");
     }
@@ -334,9 +334,9 @@ public class HtmlRenderer : IHtmlRenderer
         sb.Append($"<div class=\"{classes}\">");
 
         if (field.ElementLabel != null)
-            renderComponent(field.ElementLabel, sb);
+            renderElement(field.ElementLabel, sb);
 
-        renderComponent(field.ElementInput, sb);
+        renderElement(field.ElementInput, sb);
 
         if (field.ElementHelpText != null && !field.ElementHasError)
         {
@@ -382,8 +382,8 @@ public class HtmlRenderer : IHtmlRenderer
 
         sb.Append($"<form class=\"form\"{idAttr}{htmxAttrs}>");
 
-        foreach (var child in ((IComponent)form).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)form).Children)
+            renderElement(child, sb);
 
         sb.Append("</form>");
     }
@@ -496,8 +496,8 @@ public class HtmlRenderer : IHtmlRenderer
 
         sb.Append($"<{tagName} class=\"{classes}\"{idAttr}>");
 
-        foreach (var child in ((IComponent)list).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)list).Children)
+            renderElement(child, sb);
 
         sb.Append($"</{tagName}>");
     }
@@ -518,8 +518,8 @@ public class HtmlRenderer : IHtmlRenderer
 
         sb.Append($"<li class=\"{classes}\"{idAttr}>");
 
-        foreach (var child in ((IComponent)listItem).Children)
-            renderComponent(child, sb);
+        foreach (var child in ((IElement)listItem).Children)
+            renderElement(child, sb);
 
         sb.Append("</li>");
     }

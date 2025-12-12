@@ -3,19 +3,19 @@ namespace PagePlay.Site.Infrastructure.Web.Components;
 using PagePlay.Site.Infrastructure.Web.Data;
 
 /// <summary>
-/// Server-rendered component that declares data dependencies
+/// Server-rendered view that declares data dependencies
 /// and renders HTML from pre-loaded data.
 /// </summary>
-public interface IServerComponent
+public interface IView
 {
     /// <summary>
-    /// Unique identifier for this component instance.
+    /// Unique identifier for this view instance.
     /// Used as DOM element ID and for OOB targeting.
     /// </summary>
-    string ComponentId { get; }
+    string ViewId { get; }
 
     /// <summary>
-    /// Data dependencies this component needs to render.
+    /// Data dependencies this view needs to render.
     /// </summary>
     DataDependencies Dependencies { get; }
 
@@ -27,7 +27,7 @@ public interface IServerComponent
 }
 
 /// <summary>
-/// Declares which domain(s) a component depends on using strongly-typed domain references.
+/// Declares which domain(s) a view depends on using strongly-typed domain references.
 /// </summary>
 public class DataDependencies
 {
@@ -35,7 +35,7 @@ public class DataDependencies
     public Type DomainContextType { get; private set; }
 
     /// <summary>
-    /// Represents a component with no data dependencies (e.g., static pages like Login).
+    /// Represents a view with no data dependencies (e.g., static pages like Login).
     /// Use this for pages that don't need to load domain data.
     /// </summary>
     public static readonly DataDependencies None = new()

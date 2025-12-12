@@ -20,9 +20,9 @@ public class StyleTestPageEndpoints(
     {
         endpoints.MapGet(PAGE_ROUTE, async () =>
         {
-            var components = new IServerComponent[] { _page };
-            var renderedComponents = await _framework.RenderComponentsAsync(components);
-            var bodyContent = renderedComponents[_page.ComponentId];
+            var views = new IView[] { _page };
+            var renderedViews = await _framework.RenderViewsAsync(views);
+            var bodyContent = renderedViews[_page.ViewId];
 
             var page = await _layout.RenderAsync("Style Test", bodyContent);
             return Results.Content(page, "text/html");

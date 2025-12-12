@@ -11,16 +11,16 @@ public interface ILoginPageView
     string RenderSuccessNotification(string message);
 }
 
-public class LoginPage(IHtmlRenderer _renderer) : IServerComponent, ILoginPageView
+public class LoginPage(IHtmlRenderer _renderer) : IView, ILoginPageView
 {
-    public string ComponentId => "login-page";
+    public string ViewId => "login-page";
 
     public DataDependencies Dependencies => DataDependencies.None;
 
     public string Render(IDataContext data) =>
         _renderer.Render(
             new Section()
-                .Id(ComponentId)
+                .Id(ViewId)
                 .Children(
                     new PageTitle("Login"),
                     new Section().Id("notifications"),

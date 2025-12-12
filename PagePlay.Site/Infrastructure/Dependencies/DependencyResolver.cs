@@ -45,9 +45,9 @@ public static class DependencyResolver
         services.AddScoped<ICookieManager, CookieManager>();
         services.AddScoped<IResponseManager, ResponseManager>();
         services.AddScoped<IAntiforgeryTokenProvider, AntiforgeryTokenProvider>();
-        services.AddScoped<IComponentContextParser, ComponentContextParser>();
+        services.AddScoped<IViewContextParser, ViewContextParser>();
         services.AddScoped<IDataLoader, DataLoader>();
-        services.AddScoped<IComponentFactory, ComponentFactory>();
+        services.AddScoped<IViewFactory, ViewFactory>();
         services.AddScoped<IFrameworkOrchestrator, FrameworkOrchestrator>();
 
         // Closed-World UI
@@ -88,7 +88,7 @@ public static class DependencyResolver
 
         services.AutoRegisterPages(ServiceLifetime.Scoped);
 
-        // Also register pages by concrete type for endpoints that need full IServerComponent interface
+        // Also register pages by concrete type for endpoints that need full IView interface
         services.AddScoped<LoginPage>();
         services.AddScoped<TodosPage>();
         services.AddScoped<StyleTestPage>();

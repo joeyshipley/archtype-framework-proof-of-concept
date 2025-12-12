@@ -11,9 +11,9 @@ public interface IStyleTestPageView
     string RenderError(string message);
 }
 
-public class StyleTestPage(IHtmlRenderer _renderer) : IServerComponent, IStyleTestPageView
+public class StyleTestPage(IHtmlRenderer _renderer) : IView, IStyleTestPageView
 {
-    public string ComponentId => "style-test-page";
+    public string ViewId => "style-test-page";
 
     public DataDependencies Dependencies => DataDependencies.None;
 
@@ -21,7 +21,7 @@ public class StyleTestPage(IHtmlRenderer _renderer) : IServerComponent, IStyleTe
     {
         // Build the entire page using semantic types - no inline styles
         var page = new Section()
-            .Id(ComponentId)
+            .Id(ViewId)
             .Children(
                 new PageTitle("Closed-World UI - Walking Skeleton"),
                 new Stack(For.Content,

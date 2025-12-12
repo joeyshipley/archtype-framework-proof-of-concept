@@ -16,9 +16,9 @@ public interface ITodosPageView
     string RenderDeleteErrorWithNotification(long todoId, string error);
 }
 
-public class TodosPage(IHtmlRenderer _renderer) : IServerComponent, ITodosPageView
+public class TodosPage(IHtmlRenderer _renderer) : IView, ITodosPageView
 {
-    public string ComponentId => "todo-page";
+    public string ViewId => "todo-page";
 
     public DataDependencies Dependencies =>
         DataDependencies.From<TodosListDomainView>();
@@ -29,7 +29,7 @@ public class TodosPage(IHtmlRenderer _renderer) : IServerComponent, ITodosPageVi
 
         return _renderer.Render(
             new Section()
-                .Id(ComponentId)
+                .Id(ViewId)
                 .Children(
                     new PageTitle("My Todos"),
                     new Section().Id("notifications"),
@@ -64,7 +64,7 @@ public class TodosPage(IHtmlRenderer _renderer) : IServerComponent, ITodosPageVi
     public string RenderCreateForm() =>
         _renderer.Render(renderCreateFormComponent());
 
-    private IComponent renderTodoListComponent(List<TodoListEntry> todos)
+    private IElement renderTodoListComponent(List<TodoListEntry> todos)
     {
         if (todos.Count == 0)
         {

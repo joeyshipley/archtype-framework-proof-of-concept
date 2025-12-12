@@ -20,11 +20,11 @@ namespace PagePlay.Site.Pages.Shared;
 /// - Simple CRUD pages don't pay analytics cost
 /// - Independent domain evolution
 /// </summary>
-public interface IAnalyticsStatsWidget : IServerComponent {}
+public interface IAnalyticsStatsWidget : IView {}
 
 public class AnalyticsStatsWidget : IAnalyticsStatsWidget
 {
-    public string ComponentId => "analytics-stats-widget";
+    public string ViewId => "analytics-stats-widget";
 
     public DataDependencies Dependencies => DataDependencies
         .From<TodoAnalyticsDomainView>();
@@ -38,7 +38,7 @@ public class AnalyticsStatsWidget : IAnalyticsStatsWidget
 
         // language=html
         return $$"""
-        <div id="{{ComponentId}}"
+        <div id="{{ViewId}}"
              class="analytics-stats-widget">
             <div class="stats-grid">
                 <div class="stat-card">

@@ -4,7 +4,7 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 /// Header slot - appears at the top of containers.
 /// Universal slot type - containers define how it appears in their context.
 /// </summary>
-public record Header : ComponentBase
+public record Header : ElementBase
 {
     public Header() { }
 
@@ -19,7 +19,7 @@ public record Header : ComponentBase
 /// Body slot - main content area of containers.
 /// Universal slot type - containers define how it appears in their context.
 /// </summary>
-public record Body : ComponentBase
+public record Body : ElementBase
 {
     public Body() { }
 
@@ -34,7 +34,7 @@ public record Body : ComponentBase
 /// Footer slot - appears at the bottom of containers.
 /// Universal slot type - containers define how it appears in their context.
 /// </summary>
-public record Footer : ComponentBase
+public record Footer : ElementBase
 {
     public Footer() { }
 
