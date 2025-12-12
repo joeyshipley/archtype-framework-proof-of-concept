@@ -53,7 +53,7 @@ The documentation-reconciliation experiment proved a lighter pattern works bette
 |---|------|--------|
 | 1 | Create new brief template | ✅ |
 | 2 | Create phase workflow doc | ✅ |
-| 3 | Update brief creation workflow | ⬜ |
+| 3 | Update brief creation workflow | ✅ |
 | 4 | Update entry points and commands | ⬜ |
 | 5 | Cleanup old files | ⬜ |
 
@@ -225,15 +225,65 @@ Research → TDD Plan → Execute → Validate
 **Goal:** Streamlined workflow for creating initial brief with Claude
 
 ### Research
-- [ ] Review current brief-creation.md
-- [ ] Identify essential questions vs overhead
-- [ ] Design conversation flow
+- [x] Review current brief-creation.md
+- [x] Identify essential questions vs overhead
+- [x] Design conversation flow
 
 ### Findings
-[To be populated]
+
+**Current state:** brief-creation.md is 224 lines
+
+**Essential (keep):**
+- Questions to extract Goal, Problem, Success Signal, Constraints, Open Questions
+- Phase breakdown guidance
+- File naming convention
+- "Next steps" guidance
+
+**Overhead (remove):**
+- Mode selection logic (~40 lines) - modes are gone
+- Intent section with For/Problem/Outcome/Why Now - redundant with Goal/Problem
+- "Is this architecture, implementation, or bug?" question - mode hint no longer needed
+- 3 detailed examples (~65 lines) - keep 1 short example max
+- Anti-patterns section (~15 lines) - mode-specific
+- Change protocol section (~25 lines) - meta, not workflow
+- Context Reference Map complexity
+
+**New conversation flow:**
+```
+1. Understand Intent (4 questions → 4 invariants)
+   "What are you building/changing?" → Goal
+   "What's broken or missing today?" → Problem
+   "How will you know it works?" → Success Signal
+   "What can't change?" → Constraints
+
+2. Capture Unknowns
+   "What don't we know yet?" → Open Questions
+
+3. Break into Phases
+   Identify logical chunks of work with goals
+
+4. Create Brief
+   Use template, fill invariants + phases
+
+5. Start or Save
+   Begin Phase 1 research, or save for later
+```
+
+**Key insight:** No mode selection needed - each phase follows Research → Plan → Execute → Validate cycle from phase-workflow.md.
+
+### Adjustments
+
+Target ~60-70 lines (down from 224 - ~70% reduction)
+
+### TDD Plan
+> N/A - This phase creates a workflow doc, not code
 
 ### Done
-[To be filled]
+- Created `.claude/docs/workflow/brief-creation-v2.md` (84 lines)
+- Down from 224 lines in original (62% reduction)
+- Removed: mode selection, Intent section redundancy, anti-patterns, change protocol, 2 of 3 examples
+- Simplified to 5-step flow: Understand Intent → Capture Unknowns → Break into Phases → Create Brief → Next Steps
+- Integrated with phase-workflow.md for execution
 
 ---
 
