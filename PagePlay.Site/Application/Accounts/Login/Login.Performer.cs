@@ -7,24 +7,24 @@ using PagePlay.Site.Infrastructure.Security;
 
 namespace PagePlay.Site.Application.Accounts.Login;
 
-public class LoginWorkflow(
+public class LoginPerformer(
     IRepository _repository,
     IPasswordHasher _passwordHasher,
     IJwtTokenService _jwtTokenService,
-    IValidator<LoginWorkflowRequest> _validator
-) : WorkflowBase<LoginWorkflowRequest, LoginWorkflowResponse>, IWorkflow<LoginWorkflowRequest, LoginWorkflowResponse>
+    IValidator<LoginRequest> _validator
+) : PerformerBase<LoginRequest, LoginResponse>, IPerformer<LoginRequest, LoginResponse>
 {
-    public async Task<IApplicationResult<LoginWorkflowResponse>> Perform(LoginWorkflowRequest workflowRequest)
+    public async Task<IApplicationResult<LoginResponse>> Perform(LoginRequest request)
     {
-        var validationResult = await validate(workflowRequest);
+        var validationResult = await validate(request);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var user = await getUserByEmail(workflowRequest.Email);
+        var user = await getUserByEmail(request.Email);
         if (user == null)
             return Fail("Invalid email or password.");
 
-        var passwordValid = verifyPassword(workflowRequest.Password, user.PasswordHash);
+        var passwordValid = verifyPassword(request.Password, user.PasswordHash);
         if (!passwordValid)
             return Fail("Invalid email or password.");
 
@@ -32,8 +32,8 @@ public class LoginWorkflow(
         return Succeed(buildResponse(user.Id, token));
     }
 
-    private async Task<ValidationResult> validate(LoginWorkflowRequest workflowRequest) =>
-        await _validator.ValidateAsync(workflowRequest);
+    private async Task<ValidationResult> validate(LoginRequest request) =>
+        await _validator.ValidateAsync(request);
 
     private async Task<User> getUserByEmail(string email) =>
         await _repository.Get(User.ByEmail(email));
@@ -44,6 +44,6 @@ public class LoginWorkflow(
     private string generateToken(long userId) =>
         _jwtTokenService.GenerateToken(new TokenClaims { UserId = userId });
 
-    private LoginWorkflowResponse buildResponse(long userId, string token) =>
-        new LoginWorkflowResponse { UserId = userId, Token = token };
+    private LoginResponse buildResponse(long userId, string token) =>
+        new LoginResponse { UserId = userId, Token = token };
 }

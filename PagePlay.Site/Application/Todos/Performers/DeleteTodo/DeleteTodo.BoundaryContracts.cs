@@ -1,20 +1,20 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.Workflows.DeleteTodo;
+namespace PagePlay.Site.Application.Todos.Performers.DeleteTodo;
 
-public class DeleteTodoWorkflowResponse : IWorkflowResponse
+public class DeleteTodoResponse : IPerformerResponse
 {
     public long Id { get; set; }
     public string Message { get; set; } = string.Empty;
 }
 
-public class DeleteTodoWorkflowRequest : IWorkflowRequest
+public class DeleteTodoRequest : IPerformerRequest
 {
     public long Id { get; set; }
 }
 
-public class DeleteTodoRequestValidator : AbstractValidator<DeleteTodoWorkflowRequest>
+public class DeleteTodoRequestValidator : AbstractValidator<DeleteTodoRequest>
 {
     public DeleteTodoRequestValidator()
     {

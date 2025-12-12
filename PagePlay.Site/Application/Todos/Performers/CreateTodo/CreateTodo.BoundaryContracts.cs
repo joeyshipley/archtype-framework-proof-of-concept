@@ -2,20 +2,20 @@ using FluentValidation;
 using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.Workflows.CreateTodo;
+namespace PagePlay.Site.Application.Todos.Performers.CreateTodo;
 
-public class CreateTodoWorkflowResponse : IWorkflowResponse
+public class CreateTodoResponse : IPerformerResponse
 {
     public long CreatedId { get; set; }
     // Metadata only - query data comes from TodosListProvider
 }
 
-public class CreateTodoWorkflowRequest : IWorkflowRequest
+public class CreateTodoRequest : IPerformerRequest
 {
     public string Title { get; set; } = string.Empty;
 }
 
-public class CreateTodoRequestValidator : AbstractValidator<CreateTodoWorkflowRequest>
+public class CreateTodoRequestValidator : AbstractValidator<CreateTodoRequest>
 {
     public CreateTodoRequestValidator()
     {

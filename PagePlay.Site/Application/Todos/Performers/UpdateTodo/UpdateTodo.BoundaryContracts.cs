@@ -1,22 +1,22 @@
 using FluentValidation;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.Workflows.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.Performers.UpdateTodo;
 
-public class UpdateTodoWorkflowResponse : IWorkflowResponse
+public class UpdateTodoResponse : IPerformerResponse
 {
     public long Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public DateTime UpdatedAt { get; set; }
 }
 
-public class UpdateTodoWorkflowRequest : IWorkflowRequest
+public class UpdateTodoRequest : IPerformerRequest
 {
     public long Id { get; set; }
     public string Title { get; set; } = string.Empty;
 }
 
-public class UpdateTodoRequestValidator : AbstractValidator<UpdateTodoWorkflowRequest>
+public class UpdateTodoRequestValidator : AbstractValidator<UpdateTodoRequest>
 {
     public UpdateTodoRequestValidator()
     {

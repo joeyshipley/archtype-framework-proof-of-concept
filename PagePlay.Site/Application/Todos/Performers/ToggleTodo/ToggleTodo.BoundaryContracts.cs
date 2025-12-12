@@ -2,20 +2,20 @@ using FluentValidation;
 using PagePlay.Site.Application.Todos.Models;
 using PagePlay.Site.Infrastructure.Core.Application;
 
-namespace PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
+namespace PagePlay.Site.Application.Todos.Performers.ToggleTodo;
 
-public class ToggleTodoWorkflowResponse : IWorkflowResponse
+public class ToggleTodoResponse : IPerformerResponse
 {
     // Empty response - no metadata needed for toggle
     // Query data comes from TodosListProvider via component update
 }
 
-public class ToggleTodoWorkflowRequest : IWorkflowRequest
+public class ToggleTodoRequest : IPerformerRequest
 {
     public long Id { get; set; }
 }
 
-public class ToggleTodoRequestValidator : AbstractValidator<ToggleTodoWorkflowRequest>
+public class ToggleTodoRequestValidator : AbstractValidator<ToggleTodoRequest>
 {
     public ToggleTodoRequestValidator()
     {

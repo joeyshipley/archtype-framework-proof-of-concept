@@ -5,25 +5,25 @@ using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 using Todo = PagePlay.Site.Application.Todos.Models.Todo;
 
-namespace PagePlay.Site.Application.Todos.Workflows.UpdateTodo;
+namespace PagePlay.Site.Application.Todos.Performers.UpdateTodo;
 
-public class UpdateTodoWorkflow(
-    IValidator<UpdateTodoWorkflowRequest> _validator,
+public class UpdateTodoPerformer(
+    IValidator<UpdateTodoRequest> _validator,
     ICurrentUserContext currentUserContext,
     IRepository _repository
-) : WorkflowBase<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>, IWorkflow<UpdateTodoWorkflowRequest, UpdateTodoWorkflowResponse>
+) : PerformerBase<UpdateTodoRequest, UpdateTodoResponse>, IPerformer<UpdateTodoRequest, UpdateTodoResponse>
 {
-    public async Task<IApplicationResult<UpdateTodoWorkflowResponse>> Perform(UpdateTodoWorkflowRequest workflowRequest)
+    public async Task<IApplicationResult<UpdateTodoResponse>> Perform(UpdateTodoRequest request)
     {
-        var validationResult = await validate(workflowRequest);
+        var validationResult = await validate(request);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var (todo, errorMessage) = await getTodo(workflowRequest.Id);
+        var (todo, errorMessage) = await getTodo(request.Id);
         if (!string.IsNullOrEmpty(errorMessage))
             return Fail(errorMessage);
 
-        await changeTitle(todo, workflowRequest.Title);
+        await changeTitle(todo, request.Title);
 
         return Succeed(buildResponse(todo));
     }
@@ -40,8 +40,8 @@ public class UpdateTodoWorkflow(
         return (todo, null);
     }
 
-    private async Task<ValidationResult> validate(UpdateTodoWorkflowRequest workflowRequest) =>
-        await _validator.ValidateAsync(workflowRequest);
+    private async Task<ValidationResult> validate(UpdateTodoRequest request) =>
+        await _validator.ValidateAsync(request);
 
     private async Task changeTitle(Todo todo, string title)
     {
@@ -49,8 +49,8 @@ public class UpdateTodoWorkflow(
         await _repository.SaveChanges();
     }
 
-    private UpdateTodoWorkflowResponse buildResponse(Todo todo) =>
-        new UpdateTodoWorkflowResponse
+    private UpdateTodoResponse buildResponse(Todo todo) =>
+        new UpdateTodoResponse
         {
             Id = todo.Id,
             Title = todo.Title,

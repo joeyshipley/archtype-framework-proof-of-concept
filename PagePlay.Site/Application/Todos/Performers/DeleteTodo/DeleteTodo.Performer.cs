@@ -5,21 +5,21 @@ using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 using Todo = PagePlay.Site.Application.Todos.Models.Todo;
 
-namespace PagePlay.Site.Application.Todos.Workflows.DeleteTodo;
+namespace PagePlay.Site.Application.Todos.Performers.DeleteTodo;
 
-public class DeleteTodoWorkflow(
-    IValidator<DeleteTodoWorkflowRequest> _validator,
+public class DeleteTodoPerformer(
+    IValidator<DeleteTodoRequest> _validator,
     ICurrentUserContext currentUserContext,
     IRepository _repository
-) : WorkflowBase<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>, IWorkflow<DeleteTodoWorkflowRequest, DeleteTodoWorkflowResponse>
+) : PerformerBase<DeleteTodoRequest, DeleteTodoResponse>, IPerformer<DeleteTodoRequest, DeleteTodoResponse>
 {
-    public async Task<IApplicationResult<DeleteTodoWorkflowResponse>> Perform(DeleteTodoWorkflowRequest workflowRequest)
+    public async Task<IApplicationResult<DeleteTodoResponse>> Perform(DeleteTodoRequest request)
     {
-        var validationResult = await validate(workflowRequest);
+        var validationResult = await validate(request);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = await getTodoById(workflowRequest.Id);
+        var todo = await getTodoById(request.Id);
         if (todo == null)
             return Fail("Todo not found.");
 
@@ -31,8 +31,8 @@ public class DeleteTodoWorkflow(
         return Succeed(buildResponse(todo));
     }
 
-    private async Task<ValidationResult> validate(DeleteTodoWorkflowRequest workflowRequest) =>
-        await _validator.ValidateAsync(workflowRequest);
+    private async Task<ValidationResult> validate(DeleteTodoRequest request) =>
+        await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
         await _repository.Get(Todo.ById(id));
@@ -43,8 +43,8 @@ public class DeleteTodoWorkflow(
         await _repository.SaveChanges();
     }
 
-    private DeleteTodoWorkflowResponse buildResponse(Todo todo) =>
-        new DeleteTodoWorkflowResponse
+    private DeleteTodoResponse buildResponse(Todo todo) =>
+        new DeleteTodoResponse
         {
             Id = todo.Id,
             Message = "Todo deleted successfully."

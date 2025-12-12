@@ -6,21 +6,21 @@ using PagePlay.Site.Infrastructure.Data.Repositories;
 using PagePlay.Site.Infrastructure.Security;
 using Todo = PagePlay.Site.Application.Todos.Models.Todo;
 
-namespace PagePlay.Site.Application.Todos.Workflows.ToggleTodo;
+namespace PagePlay.Site.Application.Todos.Performers.ToggleTodo;
 
-public class ToggleTodoWorkflow(
-    IValidator<ToggleTodoWorkflowRequest> _validator,
+public class ToggleTodoPerformer(
+    IValidator<ToggleTodoRequest> _validator,
     ICurrentUserContext currentUserContext,
     IRepository _repository
-) : WorkflowBase<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>, IWorkflow<ToggleTodoWorkflowRequest, ToggleTodoWorkflowResponse>
+) : PerformerBase<ToggleTodoRequest, ToggleTodoResponse>, IPerformer<ToggleTodoRequest, ToggleTodoResponse>
 {
-    public async Task<IApplicationResult<ToggleTodoWorkflowResponse>> Perform(ToggleTodoWorkflowRequest workflowRequest)
+    public async Task<IApplicationResult<ToggleTodoResponse>> Perform(ToggleTodoRequest request)
     {
-        var validationResult = await validate(workflowRequest);
+        var validationResult = await validate(request);
         if (!validationResult.IsValid)
             return Fail(validationResult);
 
-        var todo = await getTodoById(workflowRequest.Id);
+        var todo = await getTodoById(request.Id);
         if (todo == null)
             return Fail("Todo not found.");
 
@@ -30,11 +30,11 @@ public class ToggleTodoWorkflow(
         toggleTodo(todo);
         await saveTodo(todo);
 
-        return Succeed(new ToggleTodoWorkflowResponse());
+        return Succeed(new ToggleTodoResponse());
     }
 
-    private async Task<ValidationResult> validate(ToggleTodoWorkflowRequest workflowRequest) =>
-        await _validator.ValidateAsync(workflowRequest);
+    private async Task<ValidationResult> validate(ToggleTodoRequest request) =>
+        await _validator.ValidateAsync(request);
 
     private async Task<Todo> getTodoById(long id) =>
         await _repository.GetForUpdate(Todo.ById(id));

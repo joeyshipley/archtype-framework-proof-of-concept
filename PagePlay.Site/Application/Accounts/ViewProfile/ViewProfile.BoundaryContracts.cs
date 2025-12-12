@@ -3,18 +3,18 @@ using PagePlay.Site.Infrastructure.Core.Application;
 
 namespace PagePlay.Site.Application.Accounts.ViewProfile;
 
-public class ViewProfileWorkflowResponse : IWorkflowResponse
+public class ViewProfileResponse : IPerformerResponse
 {
     public string Email { get; set; } = string.Empty;
     public DateTime CreatedAt { get; set; }
 }
 
-public class ViewProfileWorkflowRequest : IWorkflowRequest
+public class ViewProfileRequest : IPerformerRequest
 {
     // No request properties needed - user ID comes from JWT token
 }
 
-public class ViewProfileRequestValidator : AbstractValidator<ViewProfileWorkflowRequest>
+public class ViewProfileRequestValidator : AbstractValidator<ViewProfileRequest>
 {
     public ViewProfileRequestValidator()
     {
