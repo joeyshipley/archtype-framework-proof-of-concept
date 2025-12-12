@@ -1,1 +1,1 @@
-Read `project-docs/context/patterns/workflow-creation.md` and follow the instructions to create a new workflow following the vertical slice architecture pattern.
+See the "Creating New Features" section in [README.ARCHITECTURE_REFERENCE.md](../README.ARCHITECTURE_REFERENCE.md#creating-new-features) for workflow and page feature creation patterns.

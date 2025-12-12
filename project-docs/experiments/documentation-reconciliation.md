@@ -37,7 +37,7 @@ Many docs contain code examples and patterns that no longer match reality.
 |-------|-------|--------|
 | 1 | Create "Source of Truth" Reference | ✅ Complete |
 | 2 | Core Philosophy Docs | ✅ Complete |
-| 3 | Pattern Template Docs | ⏳ Pending |
+| 3 | Pattern Template Docs | ✅ Complete |
 | 4 | Workflow/CQRS Docs | ⏳ Pending |
 | 5 | UI/Styling Docs | ⏳ Pending |
 | 6 | Historical Experiment Cleanup | ⏳ Pending |
@@ -226,18 +226,18 @@ Instead of updating 3 separate files, consolidate into clearer structure:
 
 **Goal:** Update the pattern docs that AI/developers use when creating new features.
 
-**Status:** ⏳ Pending
+**Status:** ✅ Complete
 
 ### Target Files
 - `project-docs/context/patterns/workflow-creation.md`
 - `project-docs/context/patterns/test-creation.md`
-- `.claude/docs/workflow/workflow-creation.md`
-- `.claude/docs/workflow/test-creation.md`
+- `.claude/docs/workflow/workflow-creation.md` (pointer only)
+- `.claude/docs/workflow/test-creation.md` (pointer only)
 
 ### Research Tasks
-- [ ] Compare documented patterns to actual implementation
-- [ ] Identify what's missing (PageInteractionBase, DataMutations, etc.)
-- [ ] Check if test patterns still apply
+- [x] Compare documented patterns to actual implementation
+- [x] Identify what's missing (PageInteractionBase, DataMutations, etc.)
+- [x] Check if test patterns still apply
 
 ### Known Issues (from initial scan)
 - workflow-creation.md doesn't mention PageInteractionBase
@@ -246,13 +246,49 @@ Instead of updating 3 separate files, consolidate into clearer structure:
 - May be missing DomainView provider patterns
 
 ### Research Findings
-<!-- Fill in during research phase -->
+
+**File Structure Discovery:**
+- `.claude/docs/workflow/workflow-creation.md` → Just a pointer to `project-docs/context/patterns/workflow-creation.md`
+- `.claude/docs/workflow/test-creation.md` → Just a pointer to `project-docs/context/patterns/test-creation.md`
+- Only 2 files with actual content to update
+
+**workflow-creation.md Issues:**
+- Broken reference to `README.CONSISTENT_COMPLEXITY_DESIGN.md` (deleted in Phase 2)
+- Broken reference to `README.SYNTAX_STYLE.md` (doesn't exist)
+- References auto-registration (`AutoRegisterWorkflows()`) which was removed
+- Missing page feature patterns (View, Interaction, Provider)
+
+**test-creation.md Issues:**
+- Broken reference to `README.SYNTAX_STYLE.md` (doesn't exist)
+- Test patterns for workflows still valid
 
 ### Plan Adjustments
-<!-- Update plan based on research -->
+
+**Decision: Enhance Architecture Doc Instead of Creation Docs**
+
+Rather than expanding workflow-creation.md with all patterns, we added a comprehensive "Creating New Features" section to `README.ARCHITECTURE_REFERENCE.md` covering:
+- Page feature creation (Provider → View → Interaction → Endpoints → DI)
+- API workflow creation
+- DI registration requirements
+- Common mistakes table
+
+Creation docs now reference the architecture doc for page features, keeping them focused on API workflows only.
 
 ### Completion Notes
-<!-- Document what was done -->
+- Added "Creating New Features" section to `README.ARCHITECTURE_REFERENCE.md` (~170 lines)
+  - Step-by-step guide for page features (View + Interaction + Provider)
+  - API workflow creation guide
+  - Common mistakes table
+- Added "Testing" section to `README.ARCHITECTURE_REFERENCE.md` (~65 lines)
+  - SetupTestFor<T> pattern
+  - Unit tests with Mocker
+  - Integration tests with Fakes
+- Added "Authentication" section to `README.ARCHITECTURE_REFERENCE.md` (~30 lines)
+  - .RequireAuthenticatedUser() pattern
+  - LoggedInAuthContext usage
+- Deleted `project-docs/context/patterns/workflow-creation.md`
+- Deleted `project-docs/context/patterns/test-creation.md`
+- Updated pointer files in `.claude/docs/workflow/` to reference architecture doc
 
 ---
 
@@ -434,6 +470,18 @@ Instead of updating 3 separate files, consolidate into clearer structure:
   - Deleted old philosophy docs
   - All terminology updated to current implementation
 
+### Session 4 (2025-12-12)
+- Completed Phase 3: Pattern Template Docs
+- Discovered `.claude/docs/workflow/*.md` files are just pointers to `project-docs/context/patterns/`
+- Decision: Consolidate all creation guidance into architecture doc
+- Added to README.ARCHITECTURE_REFERENCE.md:
+  - "Creating New Features" section (~170 lines)
+  - "Testing" section (~65 lines) - SetupTestFor<T>, Mocker, Fakes
+  - "Authentication" section (~30 lines) - RequireAuthenticatedUser, LoggedInAuthContext
+- Deleted creation docs (workflow-creation.md, test-creation.md)
+- Updated pointer files to reference architecture doc
+- Architecture doc is now the single source for all creation/testing/auth patterns
+
 ---
 
 ## Open Questions
@@ -445,4 +493,4 @@ Instead of updating 3 separate files, consolidate into clearer structure:
 
 ---
 
-**Last Updated:** 2025-12-12 (Phase 2 Complete)
+**Last Updated:** 2025-12-12 (Phase 3 Complete)

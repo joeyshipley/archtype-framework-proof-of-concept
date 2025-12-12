@@ -1,1 +1,1 @@
-Read `project-docs/context/patterns/test-creation.md` and follow the instructions to create test files following the consistent testing pattern.
+See the "Testing" section in [README.ARCHITECTURE_REFERENCE.md](../README.ARCHITECTURE_REFERENCE.md#testing) for test creation patterns using `SetupTestFor<T>`.
