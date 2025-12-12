@@ -54,7 +54,7 @@ The documentation-reconciliation experiment proved a lighter pattern works bette
 | 1 | Create new brief template | ✅ |
 | 2 | Create phase workflow doc | ✅ |
 | 3 | Update brief creation workflow | ✅ |
-| 4 | Update entry points and commands | ⬜ |
+| 4 | Update entry points and commands | ✅ |
 | 5 | Cleanup old files | ⬜ |
 
 ---
@@ -292,15 +292,59 @@ Target ~60-70 lines (down from 224 - ~70% reduction)
 **Goal:** Simplified session-start and commands
 
 ### Research
-- [ ] Review current session-start.md
-- [ ] Review command files
-- [ ] Design simplified flow
+- [x] Review current session-start.md
+- [x] Review command files
+- [x] Design simplified flow
 
 ### Findings
-[To be populated]
+
+**session-start.md (103 lines):**
+- Step 1: Read core files - keep
+- Step 2: Collaboration Discipline - mode table needs removal
+- Step 3: Brief creation reference - update to v2
+- Step 4: "Identify Your Mode" - entire section is mode-based (remove)
+
+**Commands (10 files):**
+| Command | Lines | Action |
+|---------|-------|--------|
+| /start | 1 | Keep, update target |
+| /brief-create | 8 | Update references |
+| /brief-check | 1 | Keep |
+| /explore | 3 | Delete (mode-specific) |
+| /explore-finalize | ? | Delete (mode-specific) |
+| /plan | 3 | Delete (mode-specific) |
+| /implement | 3 | Delete (mode-specific) |
+| /persona | ? | Keep |
+| /workflow-create | ? | Keep |
+| /test-create | ? | Keep |
+
+**Chain:** /start → AI_START.md → session-start.md (unnecessary indirection)
+
+**Simplified flow:**
+```
+/start → Read core docs → "What are you working on?"
+    ├── New work → Create brief → Start Phase 1 research
+    └── Existing brief → Find current phase → Resume
+```
+
+No mode commands - each phase follows phase-workflow.md cycle.
+
+### Adjustments
+
+1. Create session-start-v2.md (~40-50 lines target)
+2. Update /start to point directly to new session-start
+3. Update /brief-create to reference new files
+4. Mark mode commands for deletion in Phase 5
+
+### TDD Plan
+> N/A - This phase updates workflow docs, not code
 
 ### Done
-[To be filled]
+- Created `.claude/docs/workflow/session-start-v2.md` (58 lines, down from 103 - 44% reduction)
+- Removed mode selection logic, simplified to: Read docs → What are you working on?
+- Updated `/start` command to point directly to session-start-v2.md (bypasses AI_START.md)
+- Updated `/brief-create` command to reference new v2 files
+- Mode commands (/explore, /plan, /implement) marked for deletion in Phase 5
 
 ---
 

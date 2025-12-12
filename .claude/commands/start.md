@@ -1,1 +1,1 @@
-1) Read .claude/docs/AI_START.md
+Read .claude/docs/workflow/session-start-v2.md
