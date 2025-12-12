@@ -51,8 +51,8 @@ The documentation-reconciliation experiment proved a lighter pattern works bette
 
 | # | Goal | Status |
 |---|------|--------|
-| 1 | Create new brief template | ⬜ |
-| 2 | Create phase workflow doc | ⬜ |
+| 1 | Create new brief template | ✅ |
+| 2 | Create phase workflow doc | ✅ |
 | 3 | Update brief creation workflow | ⬜ |
 | 4 | Update entry points and commands | ⬜ |
 | 5 | Cleanup old files | ⬜ |
@@ -114,7 +114,10 @@ Session Log
 > N/A - This phase creates a template file, not code
 
 ### Done
-[To be filled after implementation]
+- Created `.claude/docs/briefs/BRIEF_TEMPLATE.md` (93 lines)
+- Down from 418 lines in old template (78% reduction)
+- Structure: Invariants → Phase table → Per-phase sections → Open Questions → Session Log
+- Per-phase sections: Research → Findings → Adjustments → TDD Plan → Done
 
 ---
 
@@ -123,18 +126,97 @@ Session Log
 **Goal:** Single doc covering Research → TDD Plan → Execute cycle
 
 ### Research
-- [ ] Extract TDD essentials from planning-mode.md
-- [ ] Extract execution essentials from implementation-mode.md
-- [ ] Identify minimum viable process
+- [x] Extract TDD essentials from planning-mode.md
+- [x] Extract execution essentials from implementation-mode.md
+- [x] Identify minimum viable process
 
 ### Findings
-[To be populated]
+
+**Current state:** 3 mode files totaling ~948 lines
+- exploration-mode.md: 188 lines
+- planning-mode.md: 363 lines
+- implementation-mode.md: 397 lines
+
+**TDD Essentials (from planning-mode.md):**
+- Context gathering (understand what exists, map dependencies)
+- ATOMIC task breakdown with TDD pairs (Test → Implement alternating)
+- Phase structure - each phase ends with: Run tests → Commit
+- Present plan for approval before implementation
+- Dependencies mapped explicitly
+
+**Execution Essentials (from implementation-mode.md):**
+- TDD Workflow: Test first (red) → Implement minimal (green) → Run test → Full suite
+- Run tests after any core file change
+- One task in_progress, mark complete immediately
+- Stop conditions (bugs, architecture wrong, plan not working, confusion)
+- System validation (full suite, build, verify goals)
+- TDD Investigation for unknown bugs
+
+**From exploration-mode.md:**
+- Question, discover, decide (folds into Research)
+- Listen to human uncertainty
+- Capture findings
+
+**Minimum Viable Process:**
+
+Modes are ceremony. What matters is the cycle per phase:
+
+```
+Research → TDD Plan → Execute → Validate
+    │          │          │         │
+    ▼          ▼          ▼         ▼
+ Understand  ATOMIC    Test→Code  Full suite
+ context     tasks      cycle     + commit
+```
 
 ### Adjustments
-[To be populated]
+
+**New doc structure (~100 lines target):**
+
+```markdown
+# Phase Workflow
+
+## Research
+- Read relevant files
+- Understand what exists
+- Map dependencies
+- Record findings in brief
+
+## TDD Plan (after research)
+- ATOMIC tasks with TDD pairs
+- Each task: Test → Implement
+- Phase ends with: Run tests → Commit
+- Get approval if significant
+
+## Execute
+- Test first (red)
+- Implement minimal (green)
+- Run full suite after core changes
+- One task in_progress, mark complete immediately
+- STOP on: bugs, architecture wrong, confusion
+
+## Validate
+- Full test suite passes
+- Build succeeds
+- Goals achieved
+- Commit + update brief
+```
+
+**What to remove:**
+- Mode-specific language ("not for exploration")
+- Mode transition ceremony
+- Separate "Planning Output" sections
+- 200+ lines of examples and anti-patterns
+- Change protocols (move to meta doc if needed)
+
+### TDD Plan
+> N/A - This phase creates a workflow doc, not code
 
 ### Done
-[To be filled]
+- Created `.claude/docs/workflow/phase-workflow.md` (111 lines)
+- Consolidates 3 mode files (948 lines) into single workflow
+- Covers: Research → Plan → Execute → Validate cycle
+- Includes TDD Investigation pattern for unknown bugs
 
 ---
 
