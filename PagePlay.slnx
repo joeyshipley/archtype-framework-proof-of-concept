@@ -1,13 +1,8 @@
 <Solution>
-  <Folder Name="/development-files/">
-    <File Path="docker-compose.yml" />
-  </Folder>
   <Folder Name="/repository-files/">
     <File Path=".gitignore" />
     <File Path="README.md" />
-  </Folder>
-  <Folder Name="/project-docs/">
-    <File Path="project-docs/README.PROJECT_DOCS.md" />
+    <File Path="docker-compose.yml" />
   </Folder>
   <Project Path="PagePlay.Site/PagePlay.Site.csproj" />
   <Project Path="PagePlay.Tests/PagePlay.Tests.csproj" />
