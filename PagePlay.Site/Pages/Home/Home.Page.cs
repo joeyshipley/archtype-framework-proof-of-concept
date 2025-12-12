@@ -1,15 +1,21 @@
+using PagePlay.Site.Infrastructure.Web.Components;
+
 namespace PagePlay.Site.Pages.Home;
 
-public interface IHomePageView
+public interface IHomePageView : IView
 {
-    string RenderPage();
 }
 
 public class HomePage : IHomePageView
 {
-    // language=html
-    public string RenderPage() =>
-    """
-    <h1>Hello Reader</h1>
-    """;
+    public string ViewId => "home-page";
+
+    public DataDependencies Dependencies => DataDependencies.None;
+
+    public string Render(IDataContext data) =>
+        """
+        <section id="home-page">
+            <h1>Hello Reader</h1>
+        </section>
+        """;
 }

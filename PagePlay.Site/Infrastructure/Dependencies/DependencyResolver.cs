@@ -149,10 +149,18 @@ public static class DependencyResolver
 
     private static void bindPages(IServiceCollection services)
     {
-        services.AddScoped<IHomePageView, HomePage>();
-        services.AddScoped<ILoginPageView, LoginPage>();
-        services.AddScoped<IStyleTestPageView, StyleTestPage>();
-        services.AddScoped<ITodosPageView, TodosPage>();
+        // Auto-discover and register all IView implementations by their specific interface
+        var viewTypes = typeof(IView).Assembly.GetTypes()
+            .Where(t => t.IsClass && !t.IsAbstract && typeof(IView).IsAssignableFrom(t));
+
+        foreach (var concreteType in viewTypes)
+        {
+            var viewInterface = concreteType.GetInterfaces()
+                .FirstOrDefault(i => i != typeof(IView) && typeof(IView).IsAssignableFrom(i));
+
+            if (viewInterface != null)
+                services.AddScoped(viewInterface, concreteType);
+        }
     }
 
     private static void bindPageEndpoints(IServiceCollection services)
