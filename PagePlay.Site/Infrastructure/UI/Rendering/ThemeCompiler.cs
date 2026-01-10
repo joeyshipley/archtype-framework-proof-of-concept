@@ -434,11 +434,25 @@ public class ThemeCompiler
         var ringOpacity = button != null ? getComponentProperty(button, "focus.ring-opacity")?.ToString() : null;
 
         ringWidth ??= "4px";
-        var ringColorVar = ringColor != null ? $"var(--color-{ringColor})" : "var(--color-accent)";
+        ringColor ??= "accent";
         ringOpacity ??= "0.3";
 
+        // Get the hex value of the color token and parse to RGB
+        var colorHex = getColorTokenHex(theme, ringColor);
+        var rgb = parseHexToRgb(colorHex);
+
         // Use box-shadow for the focus ring (Flowbite pattern)
-        css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} rgba(37, 99, 235, {ringOpacity});");
+        // RGB values derived from theme token at compile time
+        if (rgb.HasValue)
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} rgba({rgb.Value.r}, {rgb.Value.g}, {rgb.Value.b}, {ringOpacity});");
+        }
+        else
+        {
+            // Fallback if token lookup fails - log warning and use accent color assumption
+            css.AppendLine($"    /* Warning: Could not resolve color token '{ringColor}' - using CSS variable fallback */");
+            css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} var(--color-{ringColor});");
+        }
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -1278,5 +1292,51 @@ public class ThemeCompiler
             return defaultValue;
 
         return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets the hex color value for a color token name from the theme.
+    /// Returns null if the token doesn't exist.
+    /// </summary>
+    private static string getColorTokenHex(Dictionary<string, object> theme, string colorName)
+    {
+        if (!theme.TryGetValue("tokens", out var tokensObj) || tokensObj is not Dictionary<object, object> tokens)
+            return null;
+
+        if (!tokens.TryGetValue("color", out var colorsObj) || colorsObj is not Dictionary<object, object> colors)
+            return null;
+
+        if (colors.TryGetValue(colorName, out var hexValue))
+            return hexValue?.ToString();
+
+        return null;
+    }
+
+    /// <summary>
+    /// Parses a hex color string (e.g., "#2563eb" or "2563eb") to RGB components.
+    /// Returns (r, g, b) tuple or null if parsing fails.
+    /// </summary>
+    private static (int r, int g, int b)? parseHexToRgb(string hex)
+    {
+        if (string.IsNullOrEmpty(hex))
+            return null;
+
+        // Remove leading # if present
+        hex = hex.TrimStart('#');
+
+        if (hex.Length != 6)
+            return null;
+
+        try
+        {
+            var r = Convert.ToInt32(hex.Substring(0, 2), 16);
+            var g = Convert.ToInt32(hex.Substring(2, 2), 16);
+            var b = Convert.ToInt32(hex.Substring(4, 2), 16);
+            return (r, g, b);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
