@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2025-12-06 16:50:54 UTC
+ * Generated: 2026-01-10 15:09:35 UTC
  */
 
 @layer tokens, base, components;
@@ -173,14 +173,15 @@
   /* Card structure */
   .card {
     background: var(--color-surface);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
   }
 
   .card > .header {
     font-size: var(--text-md);
     font-weight: var(--weight-semibold);
     padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
   }
 
   .card > .body {
@@ -191,6 +192,7 @@
     padding: var(--spacing-lg);
     gap: var(--spacing-sm);
     justify-content: flex-end;
+    border-top: 1px solid var(--color-border);
   }
 
   /* Button base */

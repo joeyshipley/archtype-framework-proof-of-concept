@@ -141,18 +141,21 @@ card:
     display: flex
     flex-direction: column
     background: surface
-    shadow: sm
-    radius: md
+    border: border          # Flowbite uses subtle border
+    shadow: none            # Flowbite is nearly flat
+    radius: lg              # Slightly more rounded (~8px) like Flowbite
   header:
     size: md
     weight: semibold
     padding: lg
+    border-bottom: border   # Subtle separator between header and body
   body:
     padding: lg
   footer:
     padding: lg
     gap: sm
     justify: end
+    border-top: border      # Subtle separator between body and footer
 
 # Button styling
 button:

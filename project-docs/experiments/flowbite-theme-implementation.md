@@ -90,32 +90,44 @@ Current tokens vs Flowbite observations:
 
 ---
 
-### Task 1.1: Card Styling ⬜
+### Task 1.1: Card Styling ✅
 
 **File:** `PagePlay.Site/Infrastructure/UI/Themes/default.theme.yaml`
 
-**Current:**
+**Before:**
 ```yaml
 card:
   base:
-    display: flex
-    flex-direction: column
     background: surface
     shadow: sm
     radius: md
 ```
 
-**Target (Flowbite):**
-- White background
-- Very subtle shadow OR just border
-- Consistent padding in slots
-- Clean separation between header/body/footer
+**After:**
+```yaml
+card:
+  base:
+    background: surface
+    border: border          # Flowbite uses subtle border
+    shadow: none            # Flowbite is nearly flat
+    radius: lg              # Slightly more rounded (~8px)
+  header:
+    border-bottom: border   # Subtle separator
+  footer:
+    border-top: border      # Subtle separator
+```
+
+**Changes Made:**
+1. Added `border` property support to ThemeCompiler for cards
+2. Changed from shadow-based to border-based card styling
+3. Added header/footer border support for slot separation
+4. Increased radius from `md` (6px) to `lg` (8px) to match Flowbite
 
 **Acceptance Criteria:**
-- ⬜ Cards match Flowbite visual style
-- ⬜ Header has appropriate typography
-- ⬜ Footer actions right-aligned
-- ⬜ Consistent internal spacing
+- ✅ Cards match Flowbite visual style (border instead of shadow)
+- ✅ Header has appropriate typography (md size, semibold weight)
+- ✅ Footer actions right-aligned (justify: end)
+- ✅ Consistent internal spacing (lg padding throughout)
 
 ---
 
@@ -238,8 +250,9 @@ Priority order (based on Flowbite usage):
 ## Current Status
 
 **Active Phase:** Phase 1 - Style Existing Elements
-**Next Task:** Task 1.1 - Card Styling
+**Next Task:** Task 1.2 - Button Styling
 **Blockers:** None
+**Completed:** Task 1.1 (Card Styling)
 
 ---
 
@@ -264,6 +277,42 @@ Priority order (based on Flowbite usage):
 - Focus on Phase 1 first (existing elements)
 - Get the foundation right before adding new vocabulary
 - Token values appear close already - main work is component mappings
+
+### Session 2 (2026-01-10)
+
+**Completed:** Task 1.1 - Card Styling
+
+**Changes made:**
+1. **ThemeCompiler.cs** - Added support for:
+   - `border` property on cards (generates `border: 1px solid {color}`)
+   - `shadow: none` to disable box-shadow
+   - `border-bottom` on card headers
+   - `border-top` on card footers
+
+2. **default.theme.yaml** - Updated card section:
+   - Changed from shadow-based to border-based styling
+   - Added `border: border` (references `--color-border`)
+   - Set `shadow: none` (Flowbite is nearly flat)
+   - Changed `radius: md` to `radius: lg` (~8px vs ~6px)
+   - Added header `border-bottom` and footer `border-top` for slot separation
+
+**Key insight:**
+Flowbite uses a very subtle 1px border approach rather than shadows for cards. This gives a cleaner, flatter look. The existing token values (`--color-border: #e5e5e5`) work well for this.
+
+**Generated CSS result:**
+```css
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+.card > .header {
+  border-bottom: 1px solid var(--color-border);
+}
+.card > .footer {
+  border-top: 1px solid var(--color-border);
+}
+```
 
 ---
 
@@ -313,4 +362,4 @@ This experiment is considered successful when:
 ---
 
 **Last Updated:** 2026-01-10
-**Document Version:** 1.0
+**Document Version:** 1.1

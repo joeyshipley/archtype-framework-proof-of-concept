@@ -352,13 +352,37 @@ public class ThemeCompiler
         css.AppendLine("  .card {");
         css.AppendLine($"    background: {getPropertyOrDefault(card, "base.background", "background", "var(--color-surface)")};");
         css.AppendLine($"    border-radius: {getPropertyOrDefault(card, "base.radius", "radius", "var(--radius-md)")};");
-        css.AppendLine($"    box-shadow: {getPropertyOrDefault(card, "base.shadow", "shadow", "var(--shadow-sm)")};");
+
+        // Border support - Flowbite uses subtle border instead of heavy shadows
+        var borderValue = card != null ? getComponentProperty(card, "base.border") : null;
+        if (borderValue != null)
+        {
+            var borderColor = resolvePropertyValue("border", borderValue);
+            css.AppendLine($"    border: 1px solid {borderColor};");
+        }
+
+        // Shadow - can be "none" to disable, or a shadow token
+        var shadowValue = card != null ? getComponentProperty(card, "base.shadow") : null;
+        if (shadowValue?.ToString() != "none")
+        {
+            css.AppendLine($"    box-shadow: {getPropertyOrDefault(card, "base.shadow", "shadow", "var(--shadow-sm)")};");
+        }
+
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .header {");
         css.AppendLine($"    font-size: {getPropertyOrDefault(card, "header.size", "size", "var(--text-md)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(card, "header.weight", "weight", "var(--weight-semibold)")};");
         css.AppendLine($"    padding: {getPropertyOrDefault(card, "header.padding", "padding", "var(--spacing-lg)")};");
+
+        // Header border-bottom for slot separation
+        var headerBorderBottom = card != null ? getComponentProperty(card, "header.border-bottom") : null;
+        if (headerBorderBottom != null)
+        {
+            var borderColor = resolvePropertyValue("border", headerBorderBottom);
+            css.AppendLine($"    border-bottom: 1px solid {borderColor};");
+        }
+
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .card > .body {");
@@ -369,6 +393,15 @@ public class ThemeCompiler
         css.AppendLine($"    padding: {getPropertyOrDefault(card, "footer.padding", "padding", "var(--spacing-lg)")};");
         css.AppendLine($"    gap: {getPropertyOrDefault(card, "footer.gap", "gap", "var(--spacing-sm)")};");
         css.AppendLine("    justify-content: flex-end;");
+
+        // Footer border-top for slot separation
+        var footerBorderTop = card != null ? getComponentProperty(card, "footer.border-top") : null;
+        if (footerBorderTop != null)
+        {
+            var borderColor = resolvePropertyValue("border", footerBorderTop);
+            css.AppendLine($"    border-top: 1px solid {borderColor};");
+        }
+
         css.AppendLine("  }");
         css.AppendLine();
     }
