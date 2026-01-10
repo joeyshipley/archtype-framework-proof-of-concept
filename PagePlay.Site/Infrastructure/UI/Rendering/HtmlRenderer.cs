@@ -97,6 +97,12 @@ public class HtmlRenderer : IHtmlRenderer
             case Badge badge:
                 renderBadge(badge, sb);
                 break;
+            case TopNav topNav:
+                renderTopNav(topNav, sb);
+                break;
+            case Link link:
+                renderLink(link, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown element type: {element.GetType().Name}");
         }
@@ -665,6 +671,56 @@ public class HtmlRenderer : IHtmlRenderer
         }
 
         sb.Append("</div>");
+    }
+
+    private void renderTopNav(TopNav topNav, StringBuilder sb)
+    {
+        var idAttr = !string.IsNullOrEmpty(topNav.ElementId)
+            ? $" id=\"{htmlEncode(topNav.ElementId)}\""
+            : "";
+
+        sb.Append($"<header class=\"top-nav\"{idAttr}>");
+
+        // Logo (left side)
+        if (!string.IsNullOrEmpty(topNav.ElementLogoText))
+        {
+            var href = !string.IsNullOrEmpty(topNav.ElementLogoHref)
+                ? topNav.ElementLogoHref
+                : "/";
+            sb.Append($"<a class=\"top-nav__logo\" href=\"{htmlEncode(href)}\">");
+            sb.Append(htmlEncode(topNav.ElementLogoText));
+            sb.Append("</a>");
+        }
+
+        // Actions slot (right side)
+        if (topNav._actionsSlot != null && topNav._actionsSlot.Children.Any())
+        {
+            sb.Append("<div class=\"top-nav__actions\">");
+            foreach (var child in topNav._actionsSlot.Children)
+                renderElement(child, sb);
+            sb.Append("</div>");
+        }
+
+        sb.Append("</header>");
+    }
+
+    private void renderLink(Link link, StringBuilder sb)
+    {
+        var styleClass = link.ElementStyle switch
+        {
+            LinkStyle.Default => "link",
+            LinkStyle.Button => "link link--button",
+            LinkStyle.Ghost => "link link--ghost",
+            _ => "link"
+        };
+
+        var idAttr = !string.IsNullOrEmpty(link.ElementId)
+            ? $" id=\"{htmlEncode(link.ElementId)}\""
+            : "";
+
+        sb.Append($"<a class=\"{styleClass}\" href=\"{htmlEncode(link.ElementHref)}\"{idAttr}>");
+        sb.Append(htmlEncode(link.Label));
+        sb.Append("</a>");
     }
 
     private string htmlEncode(string text)

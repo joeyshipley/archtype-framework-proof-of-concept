@@ -358,6 +358,12 @@ public class ThemeCompiler
         // Tabs styling
         generateTabsStyles(theme, css);
 
+        // TopNav styling
+        generateTopNavStyles(theme, css);
+
+        // Link styling
+        generateLinkStyles(theme, css);
+
         css.AppendLine("}");
     }
 
@@ -1347,6 +1353,122 @@ public class ThemeCompiler
         // Hidden panel (inactive)
         css.AppendLine("  .tabs__panel[hidden] {");
         css.AppendLine("    display: none;");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateTopNavStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        var topNav = getComponent(theme, "top-nav");
+
+        css.AppendLine("  /* Top Navigation */");
+
+        // Base container
+        css.AppendLine("  .top-nav {");
+        css.AppendLine($"    display: {getDisplayValue(topNav, "base.display", "flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(topNav, "base.align-items", "align-items", "center")};");
+        css.AppendLine($"    justify-content: {getPropertyOrDefault(topNav, "base.justify-content", "justify-content", "space-between")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(topNav, "base.background", "background", "var(--color-surface)")};");
+
+        var borderBottom = topNav != null ? getComponentProperty(topNav, "base.border-bottom") : null;
+        if (borderBottom != null)
+        {
+            var borderColor = resolvePropertyValue("border", borderBottom);
+            css.AppendLine($"    border-bottom: 1px solid {borderColor};");
+        }
+
+        var paddingX = getPropertyOrDefault(topNav, "base.padding-x", "padding-x", "var(--spacing-lg)");
+        css.AppendLine($"    padding-left: {paddingX};");
+        css.AppendLine($"    padding-right: {paddingX};");
+
+        var height = topNav != null ? getComponentProperty(topNav, "base.height") : null;
+        if (height != null)
+        {
+            css.AppendLine($"    height: {height}px;");
+        }
+
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Logo
+        css.AppendLine("  .top-nav__logo {");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(topNav, "logo.size", "size", "var(--text-lg)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(topNav, "logo.weight", "weight", "var(--weight-semibold)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(topNav, "logo.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(topNav, "logo.text-decoration", "none")};");
+        css.AppendLine($"    transition: color {getPropertyOrDefault(topNav, "logo.transition-duration", "transition-duration", "var(--duration-fast)")} ease;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Logo hover
+        css.AppendLine("  .top-nav__logo:hover {");
+        css.AppendLine($"    color: {getPropertyOrDefault(topNav, "logo-hover.color", "color", "var(--color-accent)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Actions container
+        css.AppendLine("  .top-nav__actions {");
+        css.AppendLine($"    display: {getDisplayValue(topNav, "actions.display", "flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(topNav, "actions.align-items", "align-items", "center")};");
+        css.AppendLine($"    gap: {getPropertyOrDefault(topNav, "actions.gap", "gap", "var(--spacing-sm)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateLinkStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        var link = getComponent(theme, "link");
+
+        css.AppendLine("  /* Link element */");
+
+        // Base link
+        css.AppendLine("  .link {");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "base.color", "color", "var(--color-accent)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "base.text-decoration", "none")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(link, "base.weight", "weight", "var(--weight-medium)")};");
+        css.AppendLine($"    transition: all {getPropertyOrDefault(link, "base.transition-duration", "transition-duration", "var(--duration-fast)")} ease;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Link hover
+        css.AppendLine("  .link:hover {");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "hover.text-decoration", "underline")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Button style link
+        css.AppendLine("  .link--button {");
+        css.AppendLine($"    display: {getDisplayValue(link, "style-button.display", "inline-flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(link, "style-button.align-items", "align-items", "center")};");
+        css.AppendLine($"    justify-content: {getPropertyOrDefault(link, "style-button.justify-content", "justify-content", "center")};");
+        var btnPaddingY = getPropertyOrDefault(link, "style-button.padding-y", "padding-y", "var(--spacing-sm)");
+        var btnPaddingX = getPropertyOrDefault(link, "style-button.padding-x", "padding-x", "var(--spacing-lg)");
+        css.AppendLine($"    padding: {btnPaddingY} {btnPaddingX};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(link, "style-button.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(link, "style-button.background", "background", "var(--color-accent)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "style-button.color", "color", "var(--color-white)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "style-button.text-decoration", "none")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Button style hover
+        css.AppendLine("  .link--button:hover {");
+        css.AppendLine($"    background: {getPropertyOrDefault(link, "style-button-hover.background", "background", "var(--color-accent-hover)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "style-button-hover.text-decoration", "none")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Ghost style link
+        css.AppendLine("  .link--ghost {");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "style-ghost.color", "color", "var(--color-text-secondary)")};");
+        css.AppendLine("    text-decoration: none;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Ghost style hover
+        css.AppendLine("  .link--ghost:hover {");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "style-ghost-hover.color", "color", "var(--color-accent)")};");
+        css.AppendLine("    text-decoration: none;");
         css.AppendLine("  }");
         css.AppendLine();
     }

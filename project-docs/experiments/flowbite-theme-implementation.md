@@ -61,7 +61,8 @@ Elements visible in Flowbite that we don't have yet:
 | `Tabs` | ✅ Complete | Tab container with Underline/Boxed/Pill styles |
 | `Tab` | ✅ Complete | Individual tab items with content slots |
 | `Badge` | ✅ Complete | Small labels (counts, status indicators) - 5 tones, 2 sizes |
-| `TopNav` | ⬜ Not started | Horizontal header bar with logo (text link), right-side actions |
+| `TopNav` | ✅ Complete | Horizontal header bar with logo, right-side actions |
+| `Link` | ✅ Complete | Navigation links with Default/Button/Ghost styles (bonus) |
 | `Sidebar` / `Nav` | ⬜ Not started | Left navigation with icons, expandable sections |
 | `NavItem` | ⬜ Not started | Navigation items with icon + label + chevron |
 | `Avatar` | ⬜ Not started | User profile images (circular) |
@@ -438,23 +439,101 @@ public record Badge : IElement, IHeaderContent, IBodyContent, IFooterContent
 
 ---
 
+### Task 2.3: TopNav ✅
+
+**Elements:** `TopNav`, `Link` (bonus element)
+
+**Target (Flowbite observations):**
+- White background with subtle bottom border
+- Logo on left as styled text link
+- Actions on right (links, buttons, badges)
+
+**Files Created/Modified:**
+1. `Infrastructure/UI/Vocabulary/TopNavElements.cs` - NEW
+2. `Infrastructure/UI/Vocabulary/LinkElements.cs` - NEW (bonus: needed for navigation)
+3. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added `renderTopNav()` and `renderLink()` methods
+4. `Infrastructure/UI/Themes/default.theme.yaml` - Added top-nav and link configurations
+5. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added `generateTopNavStyles()` and `generateLinkStyles()` methods
+6. `Pages/Shared/Nav.cs` - Refactored to use TopNav with Link elements
+7. `Pages/Home/Home.Page.cs` - Added TopNav showcase section
+
+**Implementation Details:**
+
+**C# Vocabulary (TopNav):**
+```csharp
+public record TopNav : ElementBase, IElement, IBodyContent
+{
+    public string ElementLogoText { get; init; }
+    public string ElementLogoHref { get; init; } = "/";
+    internal TopNavActions _actionsSlot { get; init; }
+
+    public TopNav Logo(string text, string href = "/") => ...
+    public TopNav Actions(params IElement[] content) => ...
+}
+```
+
+**C# Vocabulary (Link - bonus):**
+```csharp
+public enum LinkStyle { Default, Button, Ghost }
+
+public record Link : IElement, IHeaderContent, IBodyContent, IFooterContent
+{
+    public string Label { get; }
+    public string ElementHref { get; init; } = "#";
+    public LinkStyle ElementStyle { get; init; } = LinkStyle.Default;
+
+    public Link(string label, string href) { ... }
+    public Link Style(LinkStyle style) => ...
+}
+```
+
+**HTML Output:**
+```html
+<header class="top-nav">
+  <a class="top-nav__logo" href="/">PagePlay</a>
+  <div class="top-nav__actions">
+    <a class="link link--ghost" href="/todos">Todos</a>
+    <a class="link link--button" href="/login">Login</a>
+  </div>
+</header>
+```
+
+**Theme Configuration:**
+- Fixed height (64px)
+- White background with subtle bottom border
+- Logo: semibold, primary color, hover shows accent
+- Actions container: flex with tight gap
+
+**Site Integration:**
+- Replaced raw HTML nav in `Pages/Shared/Nav.cs` with TopNav component
+- Uses Link elements with Ghost style for navigation items
+- Button-styled Link for primary CTA (Login)
+
+**Acceptance Criteria:**
+- ✅ TopNav matches Flowbite header style
+- ✅ Logo links to home, shows hover state
+- ✅ Actions slot supports multiple element types
+- ✅ Link element provides navigation styling options
+- ✅ Integrated into site layout (replaces old nav)
+
+---
+
 ### Remaining Phase 2 Elements
 
 Priority order (remaining):
-1. `TopNav` - Horizontal header bar (logo as styled text link, right-side actions)
-2. `Sidebar` / `NavItem` - Navigation structure
-3. `Avatar` - User profile images
-4. `Icon` - Icon system integration
-5. `StatCard` - Big number + label + trend
+1. `Sidebar` / `NavItem` - Navigation structure
+2. `Avatar` - User profile images
+3. `Icon` - Icon system integration
+4. `StatCard` - Big number + label + trend
 
 ---
 
 ## Current Status
 
 **Active Phase:** Phase 2 - New Vocabulary Elements
-**Next Task:** TopNav - Horizontal header bar with logo and actions
+**Next Task:** Sidebar / NavItem - Navigation structure
 **Blockers:** None
-**Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab), Task 2.2 (Badge)
+**Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab), Task 2.2 (Badge), Task 2.3 (TopNav + Link)
 
 ---
 
@@ -842,6 +921,42 @@ The Badge implementation followed the established patterns exactly - the vocabul
 - Size variants (small: xs text/tight padding, medium: sm text/comfortable padding)
 - Tone variants (semantic background/text color pairings)
 
+### Session 11 (2026-01-10)
+
+**Completed:** Task 2.3 - TopNav + Link (bonus)
+
+**Files created/modified:**
+1. `Infrastructure/UI/Vocabulary/TopNavElements.cs` - NEW file with `TopNav` record and `TopNavActions` internal record
+2. `Infrastructure/UI/Vocabulary/LinkElements.cs` - NEW file with `Link` record and `LinkStyle` enum (bonus element)
+3. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added `renderTopNav()` and `renderLink()` methods
+4. `Infrastructure/UI/Themes/default.theme.yaml` - Added top-nav and link configurations
+5. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added `generateTopNavStyles()` and `generateLinkStyles()` methods
+6. `Pages/Shared/Nav.cs` - Refactored to use TopNav with Link elements (replacing raw HTML)
+7. `Pages/Home/Home.Page.cs` - Added TopNav showcase section
+
+**Design decisions:**
+1. **TopNav structure:** Logo on left, actions slot on right - matches Flowbite pattern. Uses flex with `space-between` for automatic spacing.
+
+2. **Fixed height:** 64px height matches common dashboard header heights. This is a raw pixel value in the theme since it's a structural dimension.
+
+3. **Logo as link:** The logo is rendered as an anchor tag with its own styling (semibold, hover effect). This is separate from the Link element because it has special positioning and styling in the TopNav context.
+
+4. **Link element (bonus):** Needed a proper Link vocabulary element for navigation since Button uses HTMX POST actions. Three style variants:
+   - `Default` - Standard link (accent color, underline on hover)
+   - `Button` - Styled like a primary button (for CTAs)
+   - `Ghost` - Subtle nav link (muted color, accent on hover)
+
+5. **Site integration:** Replaced the old raw HTML nav in `Nav.cs` with the new TopNav + Link elements. This validates the component works in real usage, not just showcase.
+
+**Key insight:**
+Creating TopNav revealed a gap in the vocabulary - we didn't have a proper Link element for navigation. Buttons with `Action()` are for HTMX interactions, not traditional navigation. Adding Link as a bonus element makes the vocabulary more complete and enables proper semantic navigation patterns.
+
+**Generated CSS includes:**
+- TopNav: flex container, fixed height, subtle bottom border
+- Logo: styled link with hover state
+- Actions: flex container with tight gap
+- Link: base styles, button variant, ghost variant
+
 ---
 
 ## Session Handoff Protocol
@@ -880,6 +995,7 @@ This experiment is considered successful when:
 **Phase 2:**
 - ✅ Tabs/Tab functional with three style variants
 - ✅ Badge component added (5 tones, 2 sizes)
+- ✅ TopNav added with Link element (3 styles)
 - ⬜ Navigation/Sidebar components added
 - ⬜ Full dashboard layout achievable
 

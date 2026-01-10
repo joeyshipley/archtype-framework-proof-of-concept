@@ -376,6 +376,41 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                                     ))
                         )
                 )
+            ),
+
+            // TopNav Showcase Section
+            new Section(
+                new SectionTitle("Top Navigation"),
+                new Stack(For.Fields,
+                    new Text("TopNav is a horizontal header bar with logo and actions:"),
+                    new Card()
+                        .Body(
+                            new TopNav("PagePlay")
+                                .Logo("PagePlay", "/")
+                                .Actions(
+                                    new Badge("3", BadgeTone.Accent).Size(BadgeSize.Small),
+                                    new Button(Importance.Ghost, "Settings"),
+                                    new Button(Importance.Primary, "New Project")
+                                )
+                        ),
+                    new Text("TopNav with just logo:"),
+                    new Card()
+                        .Body(
+                            new TopNav()
+                                .Logo("My Dashboard", "/dashboard")
+                        ),
+                    new Text("TopNav with multiple action items:"),
+                    new Card()
+                        .Body(
+                            new TopNav("Acme Inc")
+                                .Actions(
+                                    new Badge("12", BadgeTone.Warning).Size(BadgeSize.Small),
+                                    new Badge("New", BadgeTone.Positive).Size(BadgeSize.Small),
+                                    new Button(Importance.Secondary, "Help"),
+                                    new Button(Importance.Primary, "Sign Out")
+                                )
+                        )
+                )
             )
         ).Id(ViewId);
 

@@ -1,4 +1,7 @@
 using PagePlay.Site.Infrastructure.Security;
+using PagePlay.Site.Infrastructure.UI;
+using PagePlay.Site.Infrastructure.UI.Rendering;
+using PagePlay.Site.Infrastructure.UI.Vocabulary;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Todos;
@@ -10,28 +13,34 @@ public interface INavView
     string Render();
 }
 
-public class Nav(IUserIdentityService _userIdentityService) : INavView
+public class Nav(IUserIdentityService _userIdentityService, IHtmlRenderer _renderer) : INavView
 {
-    // language=html
     public string Render()
     {
         var isAuthenticated = _userIdentityService.GetCurrentUserId().HasValue;
 
-        return $$"""
-        <nav class="main-nav">
-            <div class="nav-brand">
-                <a href="/{{HomePageEndpoints.PAGE_ROUTE}}">Page Play</a>
-            </div>
-            <div class="nav-links">
-                {{renderAuthLinks(isAuthenticated)}}
-            </div>
-        </nav>
-        """;
+        var topNav = new TopNav()
+            .Logo("PagePlay", $"/{HomePageEndpoints.PAGE_ROUTE}")
+            .Actions(getAuthActions(isAuthenticated));
+
+        return _renderer.Render(topNav);
     }
 
-    // language=html
-    private string renderAuthLinks(bool isAuthenticated) =>
-        isAuthenticated
-            ? $$"""<a href="/{{TodosPageEndpoints.PAGE_ROUTE}}">Todos</a>"""
-            : $$"""<a href="/{{LoginPageEndpoints.PAGE_ROUTE}}">Login</a>""";
+    private IElement[] getAuthActions(bool isAuthenticated)
+    {
+        if (isAuthenticated)
+        {
+            return new IElement[]
+            {
+                new Link("Todos", $"/{TodosPageEndpoints.PAGE_ROUTE}")
+                    .Style(LinkStyle.Ghost)
+            };
+        }
+
+        return new IElement[]
+        {
+            new Link("Login", $"/{LoginPageEndpoints.PAGE_ROUTE}")
+                .Style(LinkStyle.Button)
+        };
+    }
 }

@@ -488,6 +488,60 @@ tabs-pill:
     background: accent
     color: white
 
+# ============================================================================
+# TOP NAVIGATION
+# ============================================================================
+top-nav:
+  base:
+    display: flex
+    align-items: center
+    justify-content: space-between
+    background: surface
+    border-bottom: border        # Subtle bottom border (Flowbite style)
+    padding-x: lg
+    height: 64                   # Fixed height in pixels
+  logo:
+    size: lg                     # Slightly larger than body text
+    weight: semibold
+    color: text-primary
+    text-decoration: none
+    transition-duration: fast
+  logo-hover:
+    color: accent
+  actions:
+    display: flex
+    align-items: center
+    gap: sm                      # Tight spacing between action items
+
+# ============================================================================
+# LINK ELEMENT
+# ============================================================================
+link:
+  base:
+    color: accent
+    text-decoration: none
+    transition-duration: fast
+    weight: medium
+  hover:
+    text-decoration: underline
+  style-button:
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    padding-x: lg
+    padding-y: sm
+    radius: md
+    background: accent
+    color: white
+    text-decoration: none
+  style-button-hover:
+    background: accent-hover
+    text-decoration: none
+  style-ghost:
+    color: text-secondary
+  style-ghost-hover:
+    color: accent
+
 # Page structure
 page-title:
   base:
