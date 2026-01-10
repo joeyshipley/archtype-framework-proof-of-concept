@@ -15,10 +15,12 @@ The backend registration logic exists (`Register.Performer`) but there's no UI -
 
 ## Success Signal
 
-- [ ] User can fill out registration form (email, password, confirm password)
-- [ ] Validation errors display correctly (empty fields, invalid email, password mismatch, too short)
-- [ ] Duplicate email error displays correctly
-- [ ] Successful registration redirects to login page
+- [x] User can fill out registration form (email, password, confirm password)
+- [x] Validation errors display correctly (empty fields, invalid email, password mismatch, too short)
+- [x] Duplicate email error displays correctly
+- [x] Successful registration redirects to login page
+
+**Verified:** 2026-01-10 - All signals confirmed via manual testing
 
 ## Constraints
 
