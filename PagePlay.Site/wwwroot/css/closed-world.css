@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 17:58:08 UTC
+ * Generated: 2026-01-10 18:09:54 UTC
  */
 
 @layer tokens, base, components;
@@ -585,17 +585,53 @@
     gap: var(--spacing-lg);
   }
 
+  .row--content {
+    gap: var(--spacing-md);
+  }
+
+  .row--items {
+    gap: var(--spacing-md);
+  }
+
+  .row--sections {
+    gap: var(--spacing-2xl);
+  }
+
   .row--inline {
     gap: var(--spacing-xs);
   }
 
-  /* Grid - purpose-based spacing and columns */
-  .grid--cards {
+  .row--cards {
     gap: var(--spacing-2xl);
+  }
+
+  /* Grid - purpose-based spacing and columns */
+  .grid--actions {
+    gap: var(--spacing-sm);
+  }
+
+  .grid--fields {
+    gap: var(--spacing-lg);
+  }
+
+  .grid--content {
+    gap: var(--spacing-md);
   }
 
   .grid--items {
     gap: var(--spacing-md);
+  }
+
+  .grid--sections {
+    gap: var(--spacing-3xl);
+  }
+
+  .grid--inline {
+    gap: var(--spacing-xs);
+  }
+
+  .grid--cards {
+    gap: var(--spacing-2xl);
   }
 
   .grid--cols-1 {

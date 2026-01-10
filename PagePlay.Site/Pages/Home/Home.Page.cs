@@ -126,6 +126,84 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                 )
             ),
 
+            // Layout Spacing Showcase - Visual blocks to see gaps
+            new Section(
+                new SectionTitle("Layout Spacing"),
+                new Stack(For.Fields,
+                    // Row gaps comparison - side by side
+                    new Card()
+                        .Header(new Text("Row Gaps"))
+                        .Body(
+                            new Stack(For.Content,
+                                new Text("Inline"),
+                                new Row(For.Inline,
+                                    new Card().Body(new Text("A")),
+                                    new Card().Body(new Text("B")),
+                                    new Card().Body(new Text("C"))
+                                ),
+                                new Text("Actions"),
+                                new Row(For.Actions,
+                                    new Card().Body(new Text("A")),
+                                    new Card().Body(new Text("B")),
+                                    new Card().Body(new Text("C"))
+                                ),
+                                new Text("Items"),
+                                new Row(For.Items,
+                                    new Card().Body(new Text("A")),
+                                    new Card().Body(new Text("B")),
+                                    new Card().Body(new Text("C"))
+                                ),
+                                new Text("Fields"),
+                                new Row(For.Fields,
+                                    new Card().Body(new Text("A")),
+                                    new Card().Body(new Text("B")),
+                                    new Card().Body(new Text("C"))
+                                ),
+                                new Text("Cards"),
+                                new Row(For.Cards,
+                                    new Card().Body(new Text("A")),
+                                    new Card().Body(new Text("B")),
+                                    new Card().Body(new Text("C"))
+                                )
+                            )
+                        ),
+
+                    // Grid columns
+                    new Card()
+                        .Header(new Text("Grid Columns"))
+                        .Body(
+                            new Stack(For.Content,
+                                new Text("Two"),
+                                new Grid(For.Items, Columns.Two,
+                                    new Card().Body(new Text("1")),
+                                    new Card().Body(new Text("2")),
+                                    new Card().Body(new Text("3")),
+                                    new Card().Body(new Text("4"))
+                                ),
+                                new Text("Three"),
+                                new Grid(For.Items, Columns.Three,
+                                    new Card().Body(new Text("1")),
+                                    new Card().Body(new Text("2")),
+                                    new Card().Body(new Text("3"))
+                                ),
+                                new Text("Four"),
+                                new Grid(For.Items, Columns.Four,
+                                    new Card().Body(new Text("1")),
+                                    new Card().Body(new Text("2")),
+                                    new Card().Body(new Text("3")),
+                                    new Card().Body(new Text("4"))
+                                ),
+                                new Text("Auto (responsive)"),
+                                new Grid(For.Cards, Columns.Auto,
+                                    new Card().Body(new Text("Auto 1")),
+                                    new Card().Body(new Text("Auto 2")),
+                                    new Card().Body(new Text("Auto 3"))
+                                )
+                            )
+                        )
+                )
+            ),
+
             // List Showcase Section
             new Section(
                 new SectionTitle("List Elements"),

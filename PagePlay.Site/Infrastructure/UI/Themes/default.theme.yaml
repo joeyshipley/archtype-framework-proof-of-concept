@@ -102,10 +102,19 @@ layout:
   row:
     purpose-actions: sm       # Tight grouping for horizontal buttons
     purpose-fields: lg        # Spacing between horizontal form fields
+    purpose-content: md       # Readable flow for horizontal content
+    purpose-items: md         # Consistent rhythm for horizontal items
+    purpose-sections: 2xl     # Separation for major horizontal divisions
     purpose-inline: xs        # Minimal gap for inline elements
+    purpose-cards: 2xl        # Horizontal card row spacing
   grid:
-    purpose-cards: 2xl        # Card grid spacing
+    purpose-actions: sm       # Tight grid for action buttons
+    purpose-fields: lg        # Form field grid spacing
+    purpose-content: md       # Content grid spacing
     purpose-items: md         # Item grid spacing
+    purpose-sections: 3xl     # Section grid spacing
+    purpose-inline: xs        # Minimal grid gap
+    purpose-cards: 2xl        # Card grid spacing
     cols-auto-minwidth: 300   # Minimum column width for auto-fit grids (px)
 
 # ============================================================================
