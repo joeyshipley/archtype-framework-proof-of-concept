@@ -42,6 +42,17 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                     )
             ),
 
+            // Alert Showcase Section
+            new Section(
+                new SectionTitle("Alert Variants"),
+                new Stack(For.Fields,
+                    new Alert("This is a neutral alert for general information.", AlertTone.Neutral),
+                    new Alert("Success! Your changes have been saved.", AlertTone.Positive),
+                    new Alert("Warning: This action cannot be undone.", AlertTone.Warning),
+                    new Alert("Error: Please check your input and try again.", AlertTone.Critical)
+                )
+            ),
+
             // Form Elements Section
             new Section(
                 new SectionTitle("Form Elements"),

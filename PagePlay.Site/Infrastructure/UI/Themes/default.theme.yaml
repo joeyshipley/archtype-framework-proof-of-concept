@@ -302,7 +302,7 @@ alert:
   base:
     padding-x: lg
     padding-y: md
-    radius: md
+    radius: lg              # Match card/button radius for consistency
     border-width: 1
   tone-neutral:
     background: surface-raised
@@ -321,7 +321,8 @@ alert:
     border-color: critical
     text: critical-dark
   message:
-    size: md
+    size: sm                # Flowbite uses slightly smaller text in alerts
+    weight: medium          # Medium weight for better readability
     margin: 0
 
 empty-state:

@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 17:37:56 UTC
+ * Generated: 2026-01-10 17:58:08 UTC
  */
 
 @layer tokens, base, components;
@@ -394,14 +394,15 @@
   /* Feedback elements */
   .alert {
     padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-lg);
     border-width: 1px;
     border-style: solid;
   }
 
   .alert__message {
     margin: 0px;
-    font-size: var(--text-md);
+    font-size: var(--text-sm);
+    font-weight: var(--weight-medium);
   }
 
   .alert--neutral {

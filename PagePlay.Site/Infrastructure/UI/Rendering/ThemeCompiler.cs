@@ -783,7 +783,8 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .alert__message {");
         css.AppendLine($"    margin: {getPropertyOrDefault(alert, "message.margin", "margin", "0")};");
-        css.AppendLine($"    font-size: {getPropertyOrDefault(alert, "message.size", "size", "var(--text-md)")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(alert, "message.size", "size", "var(--text-sm)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(alert, "message.weight", "weight", "var(--weight-medium)")};");
         css.AppendLine("  }");
         css.AppendLine();
 

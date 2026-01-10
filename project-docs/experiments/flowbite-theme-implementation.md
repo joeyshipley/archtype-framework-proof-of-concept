@@ -238,7 +238,7 @@ card:
 
 ---
 
-### Task 1.6: Alert Styling ⬜
+### Task 1.6: Alert Styling ✅
 
 **Element:** `Alert`
 
@@ -248,9 +248,22 @@ card:
 - Appropriate icon space (even if no icons yet)
 
 **Acceptance Criteria:**
-- ⬜ All four tones styled appropriately
-- ⬜ Positive/Warning/Critical use correct colors
-- ⬜ Neutral is subtle but visible
+- ✅ All four tones styled appropriately
+- ✅ Positive/Warning/Critical use correct colors
+- ✅ Neutral is subtle but visible
+
+**Changes Made:**
+1. **default.theme.yaml** - Updated alert section:
+   - Changed `radius` from `md` to `lg` (8px) to match cards/buttons
+   - Added `size: sm` to message for slightly smaller text (Flowbite style)
+   - Added `weight: medium` to message for better readability
+
+2. **ThemeCompiler.cs** - Updated generateFeedbackStyles():
+   - Added `font-weight` generation for alert messages
+
+3. **Home.Page.cs** - Added Alert showcase section:
+   - All four tones: Neutral, Positive, Warning, Critical
+   - Displayed in a Stack with appropriate spacing
 
 ---
 
@@ -288,9 +301,9 @@ Priority order (based on Flowbite usage):
 ## Current Status
 
 **Active Phase:** Phase 1 - Style Existing Elements
-**Next Task:** Task 1.6 - Alert Styling
+**Next Task:** Task 1.7 - Layout Spacing
 **Blockers:** None
-**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling), Task 1.3 (Form Elements Styling), Task 1.4 (Typography Styling), Task 1.5 (List Styling)
+**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling), Task 1.3 (Form Elements Styling), Task 1.4 (Typography Styling), Task 1.5 (List Styling), Task 1.6 (Alert Styling)
 
 ---
 
@@ -533,6 +546,50 @@ Flowbite dashboard lists use subtle dividers between items rather than relying p
   color: var(--color-text-secondary);
   text-decoration: line-through;
 }
+```
+
+### Session 7 (2026-01-10)
+
+**Completed:** Task 1.6 - Alert Styling
+
+**Analysis:**
+Alert styling was already mostly in place with good Flowbite-aligned colors (subtle backgrounds, tone-matched borders, dark text). The main refinements were:
+- Increasing border-radius from `md` (6px) to `lg` (8px) for consistency with cards/buttons
+- Using smaller text (`sm` = 14px) which is more typical for Flowbite alerts
+- Adding medium font weight for better readability
+
+**Changes made:**
+1. **default.theme.yaml** - Updated alert configuration:
+   - `radius: lg` (matches cards/buttons)
+   - `message.size: sm` (14px - Flowbite style)
+   - `message.weight: medium` (500 - better readability)
+
+2. **ThemeCompiler.cs** - Added font-weight support to alert message generation
+
+3. **Home.Page.cs** - Added Alert showcase section with all four tones
+
+**Key insight:**
+The existing theme tokens (positive-subtle, warning-subtle, critical-subtle for backgrounds; positive-dark, warning-dark, critical-dark for text) already followed Flowbite patterns. The alert system was well-designed from the start - just needed minor tweaks for consistency with other components (radius) and Flowbite density (smaller text).
+
+**Generated CSS result:**
+```css
+.alert {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  border-width: 1px;
+  border-style: solid;
+}
+.alert__message {
+  margin: 0px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+.alert--positive {
+  background: var(--color-positive-subtle);
+  border-color: var(--color-positive);
+  color: var(--color-positive-dark);
+}
+/* ... similar for warning, critical, neutral */
 ```
 
 ---
