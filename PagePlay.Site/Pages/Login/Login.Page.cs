@@ -19,13 +19,17 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
 
     public string Render(IDataContext data) =>
         _renderer.Render(
-            new Section()
-                .Id(ViewId)
-                .Children(
-                    new PageTitle("Login"),
-                    new Section().Id("notifications"),
-                    renderLoginFormComponent()
+            new Page(
+                new PageTitle("Login"),
+                new Section().Id("notifications"),
+                new Grid(For.Sections, Columns.Three,
+                    renderLoginFormComponent(),
+                    new Section(
+                        new Text("Welcome back! Sign in to access your todos and keep track of what needs to be done.")
+                    ),
+                    new Section()
                 )
+            ).Id(ViewId)
         );
 
     public string RenderLoginForm()
@@ -76,10 +80,10 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
                                         .Type(InputType.Password)
                                         .Placeholder("Enter password")
                                         .Id("password")
-                                    )
-                            ),
-                        new Button(Importance.Primary, "Login")
-                            .Type(ButtonType.Submit)
+                                    ),
+                                new Button(Importance.Primary, "Login")
+                                    .Type(ButtonType.Submit)
+                            )
                     )
             );
 }

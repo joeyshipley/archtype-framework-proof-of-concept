@@ -19,13 +19,17 @@ public class RegisterPage(IHtmlRenderer _renderer) : IRegisterPageView
 
     public string Render(IDataContext data) =>
         _renderer.Render(
-            new Section()
-                .Id(ViewId)
-                .Children(
-                    new PageTitle("Create Account"),
-                    new Section().Id("notifications"),
-                    renderRegisterFormComponent()
+            new Page(
+                new PageTitle("Create Account"),
+                new Section().Id("notifications"),
+                new Grid(For.Sections, Columns.Three,
+                    renderRegisterFormComponent(),
+                    new Section(
+                        new Text("Join PagePlay to start organizing your tasks. Create an account to get started with your personal todo list.")
+                    ),
+                    new Section()
                 )
+            ).Id(ViewId)
         );
 
     public string RenderRegisterForm()
@@ -84,10 +88,10 @@ public class RegisterPage(IHtmlRenderer _renderer) : IRegisterPageView
                                         .Type(InputType.Password)
                                         .Placeholder("Confirm password")
                                         .Id("confirmPassword")
-                                    )
-                            ),
-                        new Button(Importance.Primary, "Create Account")
-                            .Type(ButtonType.Submit)
+                                    ),
+                                new Button(Importance.Primary, "Create Account")
+                                    .Type(ButtonType.Submit)
+                            )
                     )
             );
 }

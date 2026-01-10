@@ -169,6 +169,12 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("@layer base {");
 
+        // Global box-sizing reset
+        css.AppendLine("  *, *::before, *::after {");
+        css.AppendLine("    box-sizing: border-box;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
         // Page structure
         var page = getComponent(theme, "page");
         css.AppendLine("  /* Page structure */");

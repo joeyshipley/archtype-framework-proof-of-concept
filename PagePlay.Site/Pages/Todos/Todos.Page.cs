@@ -28,16 +28,14 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
         var todos = data.Get<TodosListDomainView>();
 
         return _renderer.Render(
-            new Section()
-                .Id(ViewId)
-                .Children(
-                    new PageTitle("My Todos"),
-                    new Section().Id("notifications"),
-                    renderCreateFormComponent(),
-                    new Section()
-                        .Id("todo-list")
-                        .Children(renderTodoListComponent(todos.List))
-                )
+            new Page(
+                new PageTitle("My Todos"),
+                new Section().Id("notifications"),
+                renderCreateFormComponent(),
+                new Section()
+                    .Id("todo-list")
+                    .Children(renderTodoListComponent(todos.List))
+            ).Id(ViewId)
         );
     }
 
