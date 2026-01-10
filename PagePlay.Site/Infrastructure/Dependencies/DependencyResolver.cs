@@ -24,6 +24,8 @@ using PagePlay.Site.Pages;
 using PagePlay.Site.Pages.Home;
 using PagePlay.Site.Pages.Login;
 using PagePlay.Site.Pages.Login.Interactions;
+using PagePlay.Site.Pages.Register;
+using PagePlay.Site.Pages.Register.Interactions;
 using PagePlay.Site.Pages.Shared;
 using PagePlay.Site.Pages.StyleTest;
 using PagePlay.Site.Pages.StyleTest.Interactions;
@@ -166,6 +168,7 @@ public static class DependencyResolver
     {
         services.AddScoped<IClientEndpoint, HomePageEndpoints>();
         services.AddScoped<IClientEndpoint, LoginPageEndpoints>();
+        services.AddScoped<IClientEndpoint, RegisterPageEndpoints>();
         services.AddScoped<IClientEndpoint, StyleTestPageEndpoints>();
         services.AddScoped<IClientEndpoint, TodosPageEndpoints>();
     }
@@ -174,6 +177,9 @@ public static class DependencyResolver
     {
         // Login
         services.AddScoped<ILoginPageInteraction, AuthenticateInteraction>();
+
+        // Register
+        services.AddScoped<IRegisterPageInteraction, CreateAccountInteraction>();
 
         // StyleTest
         services.AddScoped<IStyleTestPageInteraction, GetRandomNumberInteraction>();

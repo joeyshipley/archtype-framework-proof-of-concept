@@ -1,6 +1,6 @@
 # Brief: Registration Page
 
-**Status:** In Progress
+**Status:** Complete
 **Created:** 2026-01-10
 
 ---
@@ -33,7 +33,7 @@ The backend registration logic exists (`Register.Performer`) but there's no UI -
 | # | Goal | Status |
 |---|------|--------|
 | 1 | Create Registration Page view (form, notifications) | ✅ |
-| 2 | Create Registration Interaction & Route (wire up performer) | ⬜ |
+| 2 | Create Registration Interaction & Route (wire up performer) | ✅ |
 
 ---
 
@@ -126,7 +126,17 @@ None - straightforward implementation following existing pattern.
    **Impl:** Register view, endpoints, interaction
 
 ### Done
-[To be filled after implementation]
+- Created `Pages/Register/Interactions/CreateAccount.Interaction.cs`
+  - Extends `PageInteractionBase<RegisterRequest, RegisterResponse, IRegisterPageView>`
+  - On success: redirects to `/login`
+  - On error: renders error notification OOB
+- Created `Pages/Register/Register.Route.cs`
+  - `IRegisterPageInteraction` marker interface
+  - `RegisterPageEndpoints` maps GET /register and loops interactions
+- Updated `DependencyResolver.cs`
+  - Added `RegisterPageEndpoints` to bindPageEndpoints
+  - Added `CreateAccountInteraction` to bindPageInteractions
+- Build verified successful
 
 ---
 
@@ -148,3 +158,11 @@ None currently - requirements are clear.
 - Completed Phase 1: Registration Page View
 - Created `Pages/Register/Register.Page.cs` following Login page pattern
 - Build verified successful
+
+### 2026-01-10 - Session 3
+- Completed Phase 2: Registration Interaction & Route
+- Created `CreateAccount.Interaction.cs` following Authenticate.Interaction.cs pattern
+- Created `Register.Route.cs` following Login.Route.cs pattern
+- Updated DependencyResolver.cs with registrations
+- Build verified successful
+- Brief complete
