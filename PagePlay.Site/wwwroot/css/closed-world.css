@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 23:09:14 UTC
+ * Generated: 2026-01-10 23:34:13 UTC
  */
 
 @layer tokens, base, components;
@@ -846,6 +846,25 @@
 
   .link--button:hover {
     background: var(--color-accent-hover);
+    text-decoration: none;
+  }
+
+  .link--button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    text-decoration: none;
+  }
+
+  .link--button-secondary:hover {
+    background: var(--color-surface-raised);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
     text-decoration: none;
   }
 

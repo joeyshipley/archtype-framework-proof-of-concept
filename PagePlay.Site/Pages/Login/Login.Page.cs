@@ -60,29 +60,38 @@ public class LoginPage(IHtmlRenderer _renderer) : ILoginPageView
         new Section()
             .Id("login-form")
             .Children(
-                new Form()
-                    .Action("/interaction/login/authenticate")
+                new Stack(For.Sections)
                     .Children(
+                        new Form()
+                            .Action("/interaction/login/authenticate")
+                            .Children(
+                                new Stack(For.Fields)
+                                    .Children(
+                                        new Field()
+                                            .Label(new Label("Email").For("email"))
+                                            .Input(new Input()
+                                                .Name("email")
+                                                .Type(InputType.Email)
+                                                .Placeholder("Enter email")
+                                                .Id("email")
+                                            ),
+                                        new Field()
+                                            .Label(new Label("Password").For("password"))
+                                            .Input(new Input()
+                                                .Name("password")
+                                                .Type(InputType.Password)
+                                                .Placeholder("Enter password")
+                                                .Id("password")
+                                            ),
+                                        new Button(Importance.Primary, "Login")
+                                            .Type(ButtonType.Submit)
+                                    )
+                            ),
                         new Stack(For.Fields)
                             .Children(
-                                new Field()
-                                    .Label(new Label("Email").For("email"))
-                                    .Input(new Input()
-                                        .Name("email")
-                                        .Type(InputType.Email)
-                                        .Placeholder("Enter email")
-                                        .Id("email")
-                                    ),
-                                new Field()
-                                    .Label(new Label("Password").For("password"))
-                                    .Input(new Input()
-                                        .Name("password")
-                                        .Type(InputType.Password)
-                                        .Placeholder("Enter password")
-                                        .Id("password")
-                                    ),
-                                new Button(Importance.Primary, "Login")
-                                    .Type(ButtonType.Submit)
+                                new Text("Need an account?"),
+                                new Link("Register", "/register")
+                                    .Style(LinkStyle.ButtonSecondary)
                             )
                     )
             );

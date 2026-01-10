@@ -43,7 +43,8 @@ public record Link : IElement, IHeaderContent, IBodyContent, IFooterContent
 /// </summary>
 public enum LinkStyle
 {
-    Default,    // Standard link (text with underline on hover)
-    Button,     // Styled like a primary button
-    Ghost       // Subtle link (no underline, muted color)
+    Default,        // Standard link (text with underline on hover)
+    Button,         // Styled like a primary button
+    ButtonSecondary,// Styled like a secondary button
+    Ghost           // Subtle link (no underline, muted color)
 }

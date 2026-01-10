@@ -60,37 +60,46 @@ public class RegisterPage(IHtmlRenderer _renderer) : IRegisterPageView
         new Section()
             .Id("register-form")
             .Children(
-                new Form()
-                    .Action("/interaction/register/create")
+                new Stack(For.Sections)
                     .Children(
+                        new Form()
+                            .Action("/interaction/register/create")
+                            .Children(
+                                new Stack(For.Fields)
+                                    .Children(
+                                        new Field()
+                                            .Label(new Label("Email").For("email"))
+                                            .Input(new Input()
+                                                .Name("email")
+                                                .Type(InputType.Email)
+                                                .Placeholder("Enter email")
+                                                .Id("email")
+                                            ),
+                                        new Field()
+                                            .Label(new Label("Password").For("password"))
+                                            .Input(new Input()
+                                                .Name("password")
+                                                .Type(InputType.Password)
+                                                .Placeholder("Enter password")
+                                                .Id("password")
+                                            ),
+                                        new Field()
+                                            .Label(new Label("Confirm Password").For("confirmPassword"))
+                                            .Input(new Input()
+                                                .Name("confirmPassword")
+                                                .Type(InputType.Password)
+                                                .Placeholder("Confirm password")
+                                                .Id("confirmPassword")
+                                            ),
+                                        new Button(Importance.Primary, "Create Account")
+                                            .Type(ButtonType.Submit)
+                                    )
+                            ),
                         new Stack(For.Fields)
                             .Children(
-                                new Field()
-                                    .Label(new Label("Email").For("email"))
-                                    .Input(new Input()
-                                        .Name("email")
-                                        .Type(InputType.Email)
-                                        .Placeholder("Enter email")
-                                        .Id("email")
-                                    ),
-                                new Field()
-                                    .Label(new Label("Password").For("password"))
-                                    .Input(new Input()
-                                        .Name("password")
-                                        .Type(InputType.Password)
-                                        .Placeholder("Enter password")
-                                        .Id("password")
-                                    ),
-                                new Field()
-                                    .Label(new Label("Confirm Password").For("confirmPassword"))
-                                    .Input(new Input()
-                                        .Name("confirmPassword")
-                                        .Type(InputType.Password)
-                                        .Placeholder("Confirm password")
-                                        .Id("confirmPassword")
-                                    ),
-                                new Button(Importance.Primary, "Create Account")
-                                    .Type(ButtonType.Submit)
+                                new Text("Already have an account?"),
+                                new Link("Login", "/login")
+                                    .Style(LinkStyle.ButtonSecondary)
                             )
                     )
             );

@@ -1464,6 +1464,31 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
 
+        // Button secondary style link
+        css.AppendLine("  .link--button-secondary {");
+        css.AppendLine($"    display: {getDisplayValue(link, "style-button-secondary.display", "inline-flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(link, "style-button-secondary.align-items", "align-items", "center")};");
+        css.AppendLine($"    justify-content: {getPropertyOrDefault(link, "style-button-secondary.justify-content", "justify-content", "center")};");
+        var btnSecPaddingY = getPropertyOrDefault(link, "style-button-secondary.padding-y", "padding-y", "var(--spacing-sm)");
+        var btnSecPaddingX = getPropertyOrDefault(link, "style-button-secondary.padding-x", "padding-x", "var(--spacing-lg)");
+        css.AppendLine($"    padding: {btnSecPaddingY} {btnSecPaddingX};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(link, "style-button-secondary.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(link, "style-button-secondary.background", "background", "transparent")};");
+        css.AppendLine($"    border: 1px solid {getPropertyOrDefault(link, "style-button-secondary.border-color", "border-color", "var(--color-border)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "style-button-secondary.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "style-button-secondary.text-decoration", "none")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Button secondary style hover
+        css.AppendLine("  .link--button-secondary:hover {");
+        css.AppendLine($"    background: {getPropertyOrDefault(link, "style-button-secondary-hover.background", "background", "var(--color-surface-raised)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(link, "style-button-secondary-hover.border-color", "border-color", "var(--color-accent)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(link, "style-button-secondary-hover.color", "color", "var(--color-accent)")};");
+        css.AppendLine($"    text-decoration: {getTextDecorationValue(link, "style-button-secondary-hover.text-decoration", "none")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
         // Ghost style link
         css.AppendLine("  .link--ghost {");
         css.AppendLine($"    color: {getPropertyOrDefault(link, "style-ghost.color", "color", "var(--color-text-secondary)")};");

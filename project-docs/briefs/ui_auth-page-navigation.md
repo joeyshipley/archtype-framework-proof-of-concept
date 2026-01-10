@@ -1,6 +1,6 @@
 # Brief: Auth Page Navigation Links
 
-**Status:** Not Started
+**Status:** Complete
 **Created:** 2026-01-10
 
 ---
@@ -15,11 +15,11 @@ Users on the Login page have no easy way to navigate to Register (and vice versa
 
 ## Success Signal
 
-- [ ] Login page shows "Need an account?" text with "Register" secondary button below the Login button
-- [ ] Register page shows "Already have an account?" text with "Login" secondary button below the Create Account button
-- [ ] Visual spacing separates the primary action from the navigation section
-- [ ] Links navigate to correct pages (`/register` and `/login`)
-- [ ] Secondary button style follows closed-world UI patterns (theme-controlled appearance)
+- [x] Login page shows "Need an account?" text with "Register" secondary button below the Login button
+- [x] Register page shows "Already have an account?" text with "Login" secondary button below the Create Account button
+- [x] Visual spacing separates the primary action from the navigation section
+- [x] Links navigate to correct pages (`/register` and `/login`)
+- [x] Secondary button style follows closed-world UI patterns (theme-controlled appearance)
 
 ## Constraints
 
@@ -33,8 +33,8 @@ Users on the Login page have no easy way to navigate to Register (and vice versa
 
 | # | Goal | Status |
 |---|------|--------|
-| 1 | Add `ButtonSecondary` style to Link vocabulary | :white_medium_square: |
-| 2 | Add navigation sections to Login and Register pages | :white_medium_square: |
+| 1 | Add `ButtonSecondary` style to Link vocabulary | :white_check_mark: |
+| 2 | Add navigation sections to Login and Register pages | :white_check_mark: |
 
 ---
 
@@ -87,7 +87,12 @@ None needed - pattern is clear and consistent.
    **Implement:** Add CSS generation in `generateLinkStyles` method of ThemeCompiler
 
 ### Done
-[What shipped - filled after implementation]
+- Added `ButtonSecondary` to `LinkStyle` enum in `LinkElements.cs`
+- Added `link--button-secondary` class mapping in `HtmlRenderer.cs`
+- Added CSS generation for `.link--button-secondary` in `ThemeCompiler.cs` with:
+  - Transparent background with border
+  - Hover state with accent color border/text
+- Regenerated `closed-world.css` with new styles
 
 ---
 
@@ -129,7 +134,10 @@ None needed - structure is straightforward.
    **Implement:** Add Link element with ButtonSecondary style
 
 ### Done
-[What shipped - filled after implementation]
+- Login page (`Login.Page.cs`): Added "Need an account?" text with Register secondary button link to `/register`
+- Register page (`Register.Page.cs`): Added "Already have an account?" text with Login secondary button link to `/login`
+- Both use `Stack(For.Sections)` wrapper for generous spacing between form and navigation
+- Navigation sections use `Stack(For.Fields)` for text + link grouping
 
 ---
 
@@ -146,3 +154,10 @@ None currently - scope is well-defined.
 - Identified Link element with existing Button style
 - Clarified UX: Text prompt + secondary button, with spacing from primary action
 - Created brief with 2 phases
+
+### 2026-01-10 - Session 2
+- Implemented Phase 1: Added `ButtonSecondary` to LinkStyle enum, HtmlRenderer, and ThemeCompiler
+- Implemented Phase 2: Added navigation sections to Login and Register pages
+- Regenerated CSS with `dotnet run compile-theme` to include new styles
+- All 19 tests passing, build successful
+- Brief complete

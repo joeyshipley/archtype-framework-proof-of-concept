@@ -710,6 +710,7 @@ public class HtmlRenderer : IHtmlRenderer
         {
             LinkStyle.Default => "link",
             LinkStyle.Button => "link link--button",
+            LinkStyle.ButtonSecondary => "link link--button-secondary",
             LinkStyle.Ghost => "link link--ghost",
             _ => "link"
         };
