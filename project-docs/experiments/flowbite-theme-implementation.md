@@ -155,7 +155,7 @@ card:
 
 ---
 
-### Task 1.3: Form Elements Styling ⬜
+### Task 1.3: Form Elements Styling ✅
 
 **Elements:** `Input`, `Label`, `Field`, `Checkbox`
 
@@ -166,10 +166,10 @@ card:
 - Clean error states
 
 **Acceptance Criteria:**
-- ⬜ Input matches Flowbite text field style
-- ⬜ Focus states visible and consistent
-- ⬜ Error states use red appropriately
-- ⬜ Checkbox styling matches
+- ✅ Input matches Flowbite text field style
+- ✅ Focus states visible and consistent
+- ✅ Error states use red appropriately
+- ✅ Checkbox styling matches
 
 ---
 
@@ -256,9 +256,9 @@ Priority order (based on Flowbite usage):
 ## Current Status
 
 **Active Phase:** Phase 1 - Style Existing Elements
-**Next Task:** Task 1.3 - Form Elements Styling
+**Next Task:** Task 1.4 - Typography Styling
 **Blockers:** None
-**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling)
+**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling), Task 1.3 (Form Elements Styling)
 
 ---
 
@@ -364,6 +364,47 @@ Flowbite uses a blue focus ring (box-shadow) instead of browser default outline.
 }
 ```
 
+### Session 4 (2026-01-10)
+
+**Completed:** Task 1.3 - Form Elements Styling
+
+**Changes made:**
+1. **default.theme.yaml** - Updated form elements:
+   - Added `placeholder-color: text-secondary` to input base configuration
+   - Checkbox size remains `lg` (semantic token)
+
+2. **ThemeCompiler.cs** - Updated form styling generation:
+   - Added placeholder styling generation (`.input::placeholder` with color and opacity: 1 for Firefox)
+   - Fixed `resolvePropertyValue` to recognize `rem` and `em` values as raw CSS values (not token references)
+   - Changed checkbox size to resolve to `--spacing-` tokens (for dimensions) instead of `--text-` tokens (for font-size)
+
+**Key insight:**
+The form elements were already well-styled from previous sessions. The main gaps were:
+1. Missing placeholder text styling (Flowbite shows placeholder in gray)
+2. Checkbox size semantic mismatch - `size` property was resolving to text tokens (`--text-lg` = 18px) when it should use spacing tokens (`--spacing-lg` = 16px) for dimensional sizing
+
+**Design decision:** Checkbox `size` property now explicitly maps to spacing tokens since it represents width/height dimensions, not font-size. This keeps the YAML semantic (`size: lg`) while producing correct CSS.
+
+**Generated CSS result:**
+```css
+.input::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 1;
+}
+
+.checkbox {
+  width: var(--spacing-lg);
+  height: var(--spacing-lg);
+  /* ... */
+}
+```
+
+**Form elements now include:**
+- Input: gray background (#fafafa), subtle border, lg radius (8px), blue focus ring + border
+- Label: sm text (14px), medium weight, primary color
+- Field: error state with red border + subtle red background, help/error text styling
+- Checkbox: 16px size, custom appearance, blue checked state with SVG checkmark, focus ring
+
 ---
 
 ## Session Handoff Protocol
@@ -412,4 +453,4 @@ This experiment is considered successful when:
 ---
 
 **Last Updated:** 2026-01-10
-**Document Version:** 1.1
+**Document Version:** 1.2

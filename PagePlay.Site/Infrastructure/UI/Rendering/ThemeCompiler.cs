@@ -588,6 +588,17 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
 
+        // Input placeholder styling
+        var placeholderColor = input != null ? getComponentProperty(input, "base.placeholder-color")?.ToString() : null;
+        if (placeholderColor != null)
+        {
+            css.AppendLine("  .input::placeholder {");
+            css.AppendLine($"    color: var(--color-{placeholderColor});");
+            css.AppendLine("    opacity: 1;"); // Firefox reduces placeholder opacity by default
+            css.AppendLine("  }");
+            css.AppendLine();
+        }
+
         // Input focus state - Flowbite-style focus ring
         css.AppendLine("  .input:focus {");
         css.AppendLine("    outline: none;");
@@ -677,7 +688,9 @@ public class ThemeCompiler
         css.AppendLine("    -webkit-appearance: none;");
         css.AppendLine("    -moz-appearance: none;");
         css.AppendLine("    appearance: none;");
-        var checkboxSize = getPropertyOrDefault(checkbox, "base.size", "size", "var(--spacing-lg)");
+        // Checkbox size uses spacing tokens for dimensions (not text tokens for font-size)
+        var checkboxSizeToken = checkbox != null ? getComponentProperty(checkbox, "base.size")?.ToString() : null;
+        var checkboxSize = checkboxSizeToken != null ? $"var(--spacing-{checkboxSizeToken})" : "var(--spacing-lg)";
         css.AppendLine($"    width: {checkboxSize};");
         css.AppendLine($"    height: {checkboxSize};");
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(checkbox, "base.border", "border", "var(--color-border)")};");
@@ -1103,9 +1116,14 @@ public class ThemeCompiler
         // If this property maps to a CSS variable, resolve it
         if (cssVarMapping.TryGetValue(property, out var prefix))
         {
-            // Check if the value looks like a token name (not a raw value like "1px" or "#fff")
+            // Check if the value looks like a token name (not a raw value like "1px", "1rem", or "#fff")
             // Named tokens: xs, sm, md, lg, xl, 2xl, 3xl, semibold, disabled, fast, etc.
-            if (!valueStr.Contains("px") && !valueStr.Contains("#") && !valueStr.Contains("rgba"))
+            // Note: Check for unit suffixes specifically to avoid matching "semibold" which contains "em"
+            var looksLikeRawValue = valueStr.Contains("px")
+                || valueStr.Contains("#")
+                || valueStr.Contains("rgba")
+                || System.Text.RegularExpressions.Regex.IsMatch(valueStr, @"\d+(\.\d+)?(rem|em)$");
+            if (!looksLikeRawValue)
             {
                 // If it's a plain integer without units, assume it's a raw value (like opacity: 1 or border-width: 1)
                 // But if it's spacing/padding/margin/gap, it should have been a named token in the YAML

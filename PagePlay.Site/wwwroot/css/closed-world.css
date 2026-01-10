@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 16:13:14 UTC
+ * Generated: 2026-01-10 16:55:35 UTC
  */
 
 @layer tokens, base, components;
@@ -303,6 +303,11 @@
     transition: border-color var(--duration-fast) ease, box-shadow var(--duration-fast) ease;
   }
 
+  .input::placeholder {
+    color: var(--color-text-secondary);
+    opacity: 1;
+  }
+
   .input:focus {
     outline: none;
     box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.3);
@@ -353,8 +358,8 @@
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    width: var(--text-lg);
-    height: var(--text-lg);
+    width: var(--spacing-lg);
+    height: var(--spacing-lg);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     background: var(--color-surface);

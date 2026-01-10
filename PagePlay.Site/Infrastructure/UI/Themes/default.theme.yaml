@@ -224,6 +224,7 @@ input:
     size: sm                       # Flowbite uses 14px text in inputs
     width: 100%
     transition-duration: fast
+    placeholder-color: text-secondary  # Gray placeholder text
 
   # Focus ring configuration (Flowbite-style, matches buttons)
   focus:
@@ -270,7 +271,7 @@ form:
 
 checkbox:
   base:
-    size: lg  # 16px
+    size: lg                      # Uses spacing token (1rem = 16px)
     border: border
     background: surface           # White background when unchecked
     radius: sm
