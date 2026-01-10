@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 15:09:35 UTC
+ * Generated: 2026-01-10 15:22:33 UTC
  */
 
 @layer tokens, base, components;
@@ -203,6 +203,12 @@
     font-size: var(--text-md);
   }
 
+  /* Button focus state */
+  .button:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
+  }
+
   /* Button: Primary importance */
   .button--primary {
     background: var(--color-accent);
@@ -215,7 +221,7 @@
 
   /* Button: Secondary importance */
   .button--secondary {
-    background: var(--color-transparent);
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
     color: var(--color-text-primary);
   }
@@ -226,7 +232,7 @@
 
   /* Button: Tertiary importance */
   .button--tertiary {
-    background: var(--color-transparent);
+    background: transparent;
     color: var(--color-text-secondary);
   }
 
@@ -237,7 +243,7 @@
 
   /* Button: Ghost importance */
   .button--ghost {
-    background: var(--color-transparent);
+    background: transparent;
     color: var(--color-text-secondary);
   }
 

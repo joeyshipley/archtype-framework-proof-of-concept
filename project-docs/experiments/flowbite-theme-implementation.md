@@ -131,7 +131,7 @@ card:
 
 ---
 
-### Task 1.2: Button Styling ⬜
+### Task 1.2: Button Styling ✅
 
 **File:** `PagePlay.Site/Infrastructure/UI/Themes/default.theme.yaml`
 
@@ -142,10 +142,16 @@ card:
 - Consistent padding and sizing
 
 **Acceptance Criteria:**
-- ⬜ Primary button matches Flowbite blue style
-- ⬜ Secondary button has border styling
-- ⬜ Hover transitions feel smooth
-- ⬜ Disabled state clearly visible
+- ✅ Primary button matches Flowbite blue style
+- ✅ Secondary button has border styling
+- ✅ Hover transitions feel smooth
+- ✅ Disabled state clearly visible
+
+**Changes Made:**
+1. Added focus ring configuration (Flowbite-style blue ring on focus)
+2. Made all hover backgrounds theme-controlled (removed hardcoded values)
+3. Secondary button now has explicit `background: surface` (white)
+4. Fixed ThemeCompiler to preserve CSS keywords like `transparent`
 
 ---
 
@@ -250,9 +256,9 @@ Priority order (based on Flowbite usage):
 ## Current Status
 
 **Active Phase:** Phase 1 - Style Existing Elements
-**Next Task:** Task 1.2 - Button Styling
+**Next Task:** Task 1.3 - Form Elements Styling
 **Blockers:** None
-**Completed:** Task 1.1 (Card Styling)
+**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling)
 
 ---
 
@@ -311,6 +317,50 @@ Flowbite uses a very subtle 1px border approach rather than shadows for cards. T
 }
 .card > .footer {
   border-top: 1px solid var(--color-border);
+}
+```
+
+### Session 3 (2026-01-10)
+
+**Completed:** Task 1.2 - Button Styling
+
+**Changes made:**
+1. **default.theme.yaml** - Updated button section:
+   - Added `focus` configuration with `ring-width: 4px`, `ring-color: accent`, `ring-opacity: 0.3`
+   - Added explicit `background: surface` to secondary buttons (white background)
+   - Added `background-hover` to secondary, tertiary, ghost variants for theme control
+   - Ghost button hover background stays transparent (no visible change)
+
+2. **ThemeCompiler.cs** - Updated button generation:
+   - Added focus state CSS with Flowbite-style box-shadow ring
+   - Made all hover backgrounds read from theme (removed hardcoded values)
+   - Added CSS keywords preservation (`transparent`, `inherit`, `none`, etc.) to prevent them being converted to token references
+
+**Key insight:**
+Flowbite uses a blue focus ring (box-shadow) instead of browser default outline. This gives a more polished, consistent look across browsers. The ring uses the accent color with reduced opacity (0.3) for a subtle but visible effect.
+
+**Generated CSS result:**
+```css
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.3);
+}
+.button--primary {
+  background: var(--color-accent);
+  color: var(--color-white);
+}
+.button--secondary {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+.button--tertiary {
+  background: transparent;
+  color: var(--color-text-secondary);
+}
+.button--ghost {
+  background: transparent;
+  color: var(--color-text-secondary);
 }
 ```
 

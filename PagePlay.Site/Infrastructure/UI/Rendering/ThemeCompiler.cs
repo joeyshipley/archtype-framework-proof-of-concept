@@ -423,6 +423,25 @@ public class ThemeCompiler
         css.AppendLine("  }");
         css.AppendLine();
 
+        // Focus state - Flowbite-style focus ring
+        css.AppendLine("  /* Button focus state */");
+        css.AppendLine("  .button:focus {");
+        css.AppendLine("    outline: none;");
+
+        // Get focus ring configuration from theme
+        var ringWidth = button != null ? getComponentProperty(button, "focus.ring-width")?.ToString() : null;
+        var ringColor = button != null ? getComponentProperty(button, "focus.ring-color")?.ToString() : null;
+        var ringOpacity = button != null ? getComponentProperty(button, "focus.ring-opacity")?.ToString() : null;
+
+        ringWidth ??= "4px";
+        var ringColorVar = ringColor != null ? $"var(--color-{ringColor})" : "var(--color-accent)";
+        ringOpacity ??= "0.3";
+
+        // Use box-shadow for the focus ring (Flowbite pattern)
+        css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} rgba(37, 99, 235, {ringOpacity});");
+        css.AppendLine("  }");
+        css.AppendLine();
+
         css.AppendLine("  /* Button: Primary importance */");
         css.AppendLine("  .button--primary {");
         css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-primary.background", "background", "var(--color-accent)")};");
@@ -436,13 +455,13 @@ public class ThemeCompiler
 
         css.AppendLine("  /* Button: Secondary importance */");
         css.AppendLine("  .button--secondary {");
-        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-secondary.background", "background", "transparent")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-secondary.background", "background", "var(--color-surface)")};");
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(button, "importance-secondary.border", "border", "var(--color-border)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-secondary.text", "text", "var(--color-text-primary)")};");
         css.AppendLine("  }");
         css.AppendLine();
         css.AppendLine("  .button--secondary:hover:not(:disabled) {");
-        css.AppendLine("    background: var(--color-surface-raised);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-secondary.background-hover", "background", "var(--color-surface-raised)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -454,7 +473,7 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .button--tertiary:hover:not(:disabled) {");
         css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-tertiary.text-hover", "text", "var(--color-text-primary)")};");
-        css.AppendLine("    background: var(--color-surface-raised);");
+        css.AppendLine($"    background: {getPropertyOrDefault(button, "importance-tertiary.background-hover", "background", "var(--color-surface-raised)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -466,6 +485,11 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .button--ghost:hover:not(:disabled) {");
         css.AppendLine($"    color: {getPropertyOrDefault(button, "importance-ghost.text-hover", "text", "var(--color-accent)")};");
+        var ghostHoverBg = getPropertyOrDefault(button, "importance-ghost.background-hover", "background", "transparent");
+        if (ghostHoverBg != "transparent")
+        {
+            css.AppendLine($"    background: {ghostHoverBg};");
+        }
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -959,6 +983,18 @@ public class ThemeCompiler
             ["color"] = "--color-",
             ["text"] = "--color-",
         };
+
+        // CSS keywords that should stay as literal values (not converted to tokens)
+        var cssKeywords = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "transparent", "inherit", "initial", "unset", "none", "auto", "currentColor"
+        };
+
+        // If the value is a CSS keyword, return it as-is
+        if (cssKeywords.Contains(valueStr))
+        {
+            return valueStr;
+        }
 
         // If this property maps to a CSS variable, resolve it
         if (cssVarMapping.TryGetValue(property, out var prefix))

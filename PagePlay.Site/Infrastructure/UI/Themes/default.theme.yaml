@@ -175,24 +175,32 @@ button:
     weight: medium
     size: md
 
+  # Focus ring configuration (Flowbite-style)
+  focus:
+    ring-width: 4px
+    ring-color: accent
+    ring-opacity: 0.3
+
   importance-primary:
     background: accent
     background-hover: accent-hover
     text: white
 
   importance-secondary:
-    background: transparent
+    background: surface
+    background-hover: surface-raised
     border: border
     text: text-primary
-    text-hover: text-primary
 
   importance-tertiary:
     background: transparent
+    background-hover: surface-raised
     text: text-secondary
     text-hover: text-primary
 
   importance-ghost:
     background: transparent
+    background-hover: transparent
     text: text-secondary
     text-hover: accent
 
