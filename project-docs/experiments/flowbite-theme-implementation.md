@@ -61,12 +61,11 @@ Elements visible in Flowbite that we don't have yet:
 | `Tabs` | ✅ Complete | Tab container with Underline/Boxed/Pill styles |
 | `Tab` | ✅ Complete | Individual tab items with content slots |
 | `Badge` | ✅ Complete | Small labels (counts, status indicators) - 5 tones, 2 sizes |
-| `TrendIndicator` | ⬜ Not started | ↑12.5% style positive/negative indicators |
+| `TopNav` | ⬜ Not started | Horizontal header bar with logo (text link), right-side actions |
 | `Sidebar` / `Nav` | ⬜ Not started | Left navigation with icons, expandable sections |
 | `NavItem` | ⬜ Not started | Navigation items with icon + label + chevron |
 | `Avatar` | ⬜ Not started | User profile images (circular) |
 | `Icon` | ⬜ Not started | Icon system integration |
-| `SearchInput` | ⬜ Not started | Search-specific input with icon |
 | `StatCard` | ⬜ Not started | Big number + label + trend (could be Card variant) |
 
 ---
@@ -439,22 +438,21 @@ public record Badge : IElement, IHeaderContent, IBodyContent, IFooterContent
 
 ---
 
-### Task 2.3: TrendIndicator
-
-*Not started*
+### Remaining Phase 2 Elements
 
 Priority order (remaining):
-1. `TrendIndicator` - ↑12.5% patterns
+1. `TopNav` - Horizontal header bar (logo as styled text link, right-side actions)
 2. `Sidebar` / `NavItem` - Navigation structure
-3. `Avatar` - User profile
-4. `Icon` - Icon system
+3. `Avatar` - User profile images
+4. `Icon` - Icon system integration
+5. `StatCard` - Big number + label + trend
 
 ---
 
 ## Current Status
 
 **Active Phase:** Phase 2 - New Vocabulary Elements
-**Next Task:** Task 2.3 - TrendIndicator
+**Next Task:** TopNav - Horizontal header bar with logo and actions
 **Blockers:** None
 **Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab), Task 2.2 (Badge)
 
@@ -882,7 +880,6 @@ This experiment is considered successful when:
 **Phase 2:**
 - ✅ Tabs/Tab functional with three style variants
 - ✅ Badge component added (5 tones, 2 sizes)
-- ⬜ TrendIndicator component added
 - ⬜ Navigation/Sidebar components added
 - ⬜ Full dashboard layout achievable
 
