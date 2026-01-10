@@ -20,7 +20,7 @@ public class Nav(IUserIdentityService _userIdentityService, IHtmlRenderer _rende
         var isAuthenticated = _userIdentityService.GetCurrentUserId().HasValue;
 
         var topNav = new TopNav()
-            .Logo("PagePlay", $"/{HomePageEndpoints.PAGE_ROUTE}")
+            .Logo("TODO", $"/{HomePageEndpoints.PAGE_ROUTE}")
             .Actions(getAuthActions(isAuthenticated));
 
         return _renderer.Render(topNav);

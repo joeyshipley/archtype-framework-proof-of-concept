@@ -23,7 +23,7 @@ public class Layout(
             <meta charset="utf-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <meta name="csrf-token" content="{{antiforgeryToken}}" />
-            <title>{{title}} - PagePlay</title>
+            <title>{{title}} - TODO</title>
             <script src="https://unpkg.com/htmx.org@1.9.10"></script>
             <script src="https://unpkg.com/idiomorph@0.3.0/dist/idiomorph-ext.min.js"></script>
             <script src="/js/component-context.js"></script>
