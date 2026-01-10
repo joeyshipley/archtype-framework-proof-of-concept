@@ -1,12 +1,12 @@
 {
   "permissions": {
       "allow": [
-        "Bash(*)",
+        "Bash",
         "Edit(**/*)",
         "Write(**/*)",
         "Read(**/*)",
         "WebSearch",
-        "WebFetch(*)"
+        "WebFetch(domain:*)"
       ],
       "deny": [],
       "ask": [
@@ -16,8 +16,8 @@
         "Bash(dd:*)",
         "Bash(mkfs:*)",
         "Bash(format:*)",
-        "Bash(curl:*|bash)",
-        "Bash(wget:*|bash)",
+        "Bash(curl:*)",
+        "Bash(wget:*)",
         "Bash(chmod 777:*)",
         "Bash(git push --force:*)",
         "Bash(git reset --hard:*)",
