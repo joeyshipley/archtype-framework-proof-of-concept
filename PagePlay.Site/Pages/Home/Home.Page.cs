@@ -18,9 +18,9 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
     {
         var page = new Page(
             new PageTitle("Welcome to TODO"),
-            new Section(
+            new Stack(For.Sections,
                 new Stack(For.Content,
-                    new Text("A framework for building web applications with server authority and semantic UI.")
+                    new Text("This example uses ArchType, a framework for building web applications with server authority and semantic UIs.")
                 ),
                 new Row(For.Actions,
                     new Link("Style Test", "/style-test").Style(LinkStyle.ButtonSecondary),
