@@ -893,27 +893,73 @@ public class ThemeCompiler
 
         // ListItem base
         css.AppendLine("  .list-item {");
-        var listItemPaddingY = getPropertyOrDefault(listItem, "base.padding-y", "padding-y", "var(--spacing-sm)");
+        var listItemPaddingY = getPropertyOrDefault(listItem, "base.padding-y", "padding-y", "var(--spacing-md)");
         var listItemPaddingX = getPropertyOrDefault(listItem, "base.padding-x", "padding-x", "0");
         css.AppendLine($"    padding: {listItemPaddingY} {listItemPaddingX};");
+
+        // Text color
+        var listItemColor = listItem != null ? getComponentProperty(listItem, "base.color") : null;
+        if (listItemColor != null)
+        {
+            css.AppendLine($"    color: {resolvePropertyValue("color", listItemColor)};");
+        }
+
+        // Border-bottom for dividers (Flowbite style)
+        var listItemBorderBottom = listItem != null ? getComponentProperty(listItem, "base.border-bottom") : null;
+        if (listItemBorderBottom != null)
+        {
+            var borderColor = resolvePropertyValue("border", listItemBorderBottom);
+            css.AppendLine($"    border-bottom: 1px solid {borderColor};");
+        }
+
         css.AppendLine("  }");
         css.AppendLine();
 
+        // Last child removes border (Flowbite style)
+        var lastChildBorder = listItem != null ? getComponentProperty(listItem, "last-child.border-bottom") : null;
+        if (lastChildBorder != null && lastChildBorder.ToString() == "none")
+        {
+            css.AppendLine("  .list-item:last-child {");
+            css.AppendLine("    border-bottom: none;");
+            css.AppendLine("  }");
+            css.AppendLine();
+        }
+
         // ListItem state variants
         css.AppendLine("  .list-item--normal {");
-        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-normal.opacity", "opacity", "1")};");
+        var normalColor = listItem != null ? getComponentProperty(listItem, "state-normal.color") : null;
+        if (normalColor != null)
+        {
+            css.AppendLine($"    color: {resolvePropertyValue("color", normalColor)};");
+        }
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .list-item--completed {");
-        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-completed.opacity", "opacity", "var(--opacity-subtle)")};");
+        var completedColor = listItem != null ? getComponentProperty(listItem, "state-completed.color") : null;
+        if (completedColor != null)
+        {
+            css.AppendLine($"    color: {resolvePropertyValue("color", completedColor)};");
+        }
         css.AppendLine($"    text-decoration: {getTextDecorationValue(listItem, "state-completed.text-decoration", "line-through")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .list-item--disabled {");
-        css.AppendLine($"    opacity: {getPropertyOrDefault(listItem, "state-disabled.opacity", "opacity", "var(--opacity-subdued)")};");
+        var disabledColor = listItem != null ? getComponentProperty(listItem, "state-disabled.color") : null;
+        if (disabledColor != null)
+        {
+            css.AppendLine($"    color: {resolvePropertyValue("color", disabledColor)};");
+        }
+        var disabledOpacity = listItem != null ? getComponentProperty(listItem, "state-disabled.opacity") : null;
+        if (disabledOpacity != null)
+        {
+            css.AppendLine($"    opacity: {resolvePropertyValue("opacity", disabledOpacity)};");
+        }
         css.AppendLine($"    cursor: {getCursorValue(listItem, "state-disabled.cursor", "not-allowed")};");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .list-item--error {");
         css.AppendLine($"    background: {getPropertyOrDefault(listItem, "state-error.background", "background", "var(--color-critical-subtle)")};");
         css.AppendLine($"    border-left: {getBorderWidthValue(listItem, "state-error.border-left-width", "2px")} solid {getPropertyOrDefault(listItem, "state-error.border-left-color", "border", "var(--color-critical)")};");

@@ -201,19 +201,40 @@ card:
 
 ---
 
-### Task 1.5: List Styling ⬜
+### Task 1.5: List Styling ✅
 
 **Elements:** `List`, `ListItem`
 
 **Target (Flowbite observations):**
 - Product list items have consistent spacing
-- Hover states on interactive items
-- Completed/disabled states subdued
+- Subtle dividers between items
+- Completed/disabled states subdued with muted text color
 
 **Acceptance Criteria:**
-- ⬜ List items have appropriate padding
-- ⬜ States (completed, disabled, error) visible
-- ⬜ Plain list style works for dashboard lists
+- ✅ List items have appropriate padding (md instead of sm)
+- ✅ States (completed, disabled, error) visible with proper colors
+- ✅ Plain list style works for dashboard lists with dividers
+
+**Changes Made:**
+1. **default.theme.yaml** - Updated list-item section:
+   - Increased `padding-y` from `sm` to `md` for Flowbite density
+   - Added explicit `color: text-primary` for base list items
+   - Added `border-bottom: border` for subtle dividers between items
+   - Added `last-child.border-bottom: none` to remove border on last item
+   - Updated `state-completed` to use `color: text-secondary` (not just opacity)
+   - Updated `state-disabled` to use `color: text-secondary` + opacity
+
+2. **ThemeCompiler.cs** - Updated generateListStyles():
+   - Added support for `color` property on list items
+   - Added support for `border-bottom` property for dividers
+   - Added `:last-child` pseudo-selector for removing bottom border
+   - Updated state variants to use explicit color properties
+
+3. **Home.Page.cs** - Added List showcase section:
+   - Plain list (dashboard style) with dividers
+   - List item states (normal, completed, disabled, error)
+   - Unordered list with bullets
+   - Ordered list with numbers
 
 ---
 
@@ -267,9 +288,9 @@ Priority order (based on Flowbite usage):
 ## Current Status
 
 **Active Phase:** Phase 1 - Style Existing Elements
-**Next Task:** Task 1.5 - List Styling
+**Next Task:** Task 1.6 - Alert Styling
 **Blockers:** None
-**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling), Task 1.3 (Form Elements Styling), Task 1.4 (Typography Styling)
+**Completed:** Task 1.1 (Card Styling), Task 1.2 (Button Styling), Task 1.3 (Form Elements Styling), Task 1.4 (Typography Styling), Task 1.5 (List Styling)
 
 ---
 
@@ -467,6 +488,50 @@ Initially used hardcoded values (1.25), but this violated the Closed-World UI pr
   color: var(--color-text-primary);
   line-height: var(--line-height-tight);
   margin-bottom: var(--spacing-md);
+}
+```
+
+### Session 6 (2026-01-10)
+
+**Completed:** Task 1.5 - List Styling
+
+**Changes made:**
+1. **default.theme.yaml** - Updated list-item section:
+   - Increased `padding-y` from `sm` to `md` for better Flowbite-style density
+   - Added explicit `color: text-primary` for base list items
+   - Added `border-bottom: border` for subtle dividers between items (Flowbite pattern)
+   - Added `last-child.border-bottom: none` to remove border on last item
+   - Updated `state-completed` to use `color: text-secondary` (clearer than just opacity)
+   - Updated `state-disabled` to use `color: text-secondary` + `opacity: subdued`
+
+2. **ThemeCompiler.cs** - Updated generateListStyles():
+   - Added support for `color` property on list items (base and state variants)
+   - Added support for `border-bottom` property for dividers
+   - Added `:last-child` pseudo-selector support for removing bottom border
+   - Updated state variant generation to use explicit color properties
+
+3. **Home.Page.cs** - Added List showcase section:
+   - Plain list (dashboard style) showing dividers
+   - List item states (normal, completed, disabled, error)
+   - Unordered list with bullets
+   - Ordered list with numbers
+
+**Key insight:**
+Flowbite dashboard lists use subtle dividers between items rather than relying purely on spacing. The `:last-child` pseudo-selector removes the bottom border to prevent a double-border when lists are inside cards. Using explicit `color` for states (rather than just `opacity`) provides better visual distinction - completed items are muted gray rather than just transparent.
+
+**Generated CSS result:**
+```css
+.list-item {
+  padding: var(--spacing-md) 0px;
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+.list-item:last-child {
+  border-bottom: none;
+}
+.list-item--completed {
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
 }
 ```
 

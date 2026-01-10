@@ -361,14 +361,17 @@ list:
 
 list-item:
   base:
-    padding-y: sm
+    padding-y: md             # Slightly more padding for Flowbite density
     padding-x: 0
+    color: text-primary       # Explicit text color
+    border-bottom: border     # Subtle dividers between items (Flowbite style)
   state-normal:
-    opacity: 1
+    color: text-primary
   state-completed:
-    opacity: subtle
+    color: text-secondary     # Muted text color for completed
     text-decoration: line-through
   state-disabled:
+    color: text-secondary
     opacity: subdued
     cursor: not-allowed
   state-error:
@@ -376,6 +379,9 @@ list-item:
     border-left-width: 2
     border-left-color: critical
     padding-left: md
+  # Last item removes bottom border
+  last-child:
+    border-bottom: none
 
 # Page structure
 page-title:

@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 17:14:30 UTC
+ * Generated: 2026-01-10 17:37:56 UTC
  */
 
 @layer tokens, base, components;
@@ -490,19 +490,26 @@
   }
 
   .list-item {
-    padding: var(--spacing-sm) 0px;
+    padding: var(--spacing-md) 0px;
+    color: var(--color-text-primary);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .list-item:last-child {
+    border-bottom: none;
   }
 
   .list-item--normal {
-    opacity: 1;
+    color: var(--color-text-primary);
   }
 
   .list-item--completed {
-    opacity: var(--opacity-subtle);
+    color: var(--color-text-secondary);
     text-decoration: line-through;
   }
 
   .list-item--disabled {
+    color: var(--color-text-secondary);
     opacity: var(--opacity-subdued);
     cursor: not-allowed;
   }

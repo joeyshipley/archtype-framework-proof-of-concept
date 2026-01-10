@@ -113,6 +113,58 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                             new Button(Importance.Primary, "Action")
                         )
                 )
+            ),
+
+            // List Showcase Section
+            new Section(
+                new SectionTitle("List Elements"),
+                new Grid(For.Cards, Columns.Two,
+                    // Plain list (dashboard style)
+                    new Card()
+                        .Header(new Text("Plain List (Dashboard Style)"))
+                        .Body(
+                            new List(
+                                new ListItem(new Text("First dashboard item")),
+                                new ListItem(new Text("Second dashboard item")),
+                                new ListItem(new Text("Third dashboard item")),
+                                new ListItem(new Text("Fourth dashboard item"))
+                            ).Style(ListStyle.Plain)
+                        ),
+
+                    // List item states
+                    new Card()
+                        .Header(new Text("List Item States"))
+                        .Body(
+                            new List(
+                                new ListItem(new Text("Normal item")).State(ListItemState.Normal),
+                                new ListItem(new Text("Completed item - strikethrough")).State(ListItemState.Completed),
+                                new ListItem(new Text("Disabled item - muted")).State(ListItemState.Disabled),
+                                new ListItem(new Text("Error item - highlighted")).State(ListItemState.Error)
+                            ).Style(ListStyle.Plain)
+                        ),
+
+                    // Unordered list
+                    new Card()
+                        .Header(new Text("Unordered List"))
+                        .Body(
+                            new List(
+                                new ListItem(new Text("First bullet point")),
+                                new ListItem(new Text("Second bullet point")),
+                                new ListItem(new Text("Third bullet point"))
+                            ).Style(ListStyle.Unordered)
+                        ),
+
+                    // Ordered list
+                    new Card()
+                        .Header(new Text("Ordered List"))
+                        .Body(
+                            new List(
+                                new ListItem(new Text("Step one")),
+                                new ListItem(new Text("Step two")),
+                                new ListItem(new Text("Step three"))
+                            ).Style(ListStyle.Ordered)
+                        )
+                )
             )
         ).Id(ViewId);
 
