@@ -1,27 +1,28 @@
 {
   "permissions": {
-      "allow": [
-        "Bash",
-        "Edit(**/*)",
-        "Write(**/*)",
-        "Read(**/*)",
-        "WebSearch",
-        "WebFetch(domain:*)"
-      ],
-      "deny": [],
-      "ask": [
-        "Bash(rm:*)",
-        "Bash(rm -rf:*)",
-        "Bash(rmdir:*)",
-        "Bash(dd:*)",
-        "Bash(mkfs:*)",
-        "Bash(format:*)",
-        "Bash(curl:*)",
-        "Bash(wget:*)",
-        "Bash(chmod 777:*)",
-        "Bash(git push --force:*)",
-        "Bash(git reset --hard:*)",
-        "Bash(sudo:*)"
-      ]
+    "allow": [
+      "Bash",
+      "Edit(**/*)",
+      "Write(**/*)",
+      "Read(**/*)",
+      "WebSearch",
+      "WebFetch(domain:*)",
+      "Skill(brief-create)"
+    ],
+    "deny": [],
+    "ask": [
+      "Bash(rm:*)",
+      "Bash(rm -rf:*)",
+      "Bash(rmdir:*)",
+      "Bash(dd:*)",
+      "Bash(mkfs:*)",
+      "Bash(format:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(chmod 777:*)",
+      "Bash(git push --force:*)",
+      "Bash(git reset --hard:*)",
+      "Bash(sudo:*)"
+    ]
   }
 }
