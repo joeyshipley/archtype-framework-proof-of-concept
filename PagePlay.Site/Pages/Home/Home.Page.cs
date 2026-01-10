@@ -42,6 +42,40 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                     )
             ),
 
+            // Form Elements Section
+            new Section(
+                new SectionTitle("Form Elements"),
+                new Card()
+                    .Header(new Text("Sample Form"))
+                    .Body(
+                        new Stack(For.Fields,
+                            new Field()
+                                .Label(new Label("Email Address").For("email"))
+                                .Input(new Input().Name("email").Type(InputType.Email).Placeholder("you@example.com").Id("email"))
+                                .HelpText(new Text("We'll never share your email.")),
+                            new Field()
+                                .Label(new Label("Password").For("password"))
+                                .Input(new Input().Name("password").Type(InputType.Password).Placeholder("Enter your password").Id("password")),
+                            new Field()
+                                .Label(new Label("Username (with error)").For("username"))
+                                .Input(new Input().Name("username").Value("taken_user").Id("username"))
+                                .ErrorMessage("This username is already taken.")
+                                .HasError(true),
+                            new Field()
+                                .Label(new Label("Disabled Input").For("disabled"))
+                                .Input(new Input().Name("disabled").Value("Cannot edit this").Disabled(true).Id("disabled")),
+                            new Row(For.Inline,
+                                new Checkbox().Name("remember").Id("remember"),
+                                new Label("Remember me").For("remember")
+                            )
+                        )
+                    )
+                    .Footer(
+                        new Button(Importance.Secondary, "Cancel"),
+                        new Button(Importance.Primary, "Submit").Type(ButtonType.Submit)
+                    )
+            ),
+
             // Card Showcase Section
             new Section(
                 new SectionTitle("Card Layouts"),

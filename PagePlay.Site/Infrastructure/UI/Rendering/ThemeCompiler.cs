@@ -428,17 +428,22 @@ public class ThemeCompiler
         css.AppendLine("  .button:focus {");
         css.AppendLine("    outline: none;");
 
-        // Get focus ring configuration from theme
-        var ringWidth = button != null ? getComponentProperty(button, "focus.ring-width")?.ToString() : null;
-        var ringColor = button != null ? getComponentProperty(button, "focus.ring-color")?.ToString() : null;
-        var ringOpacity = button != null ? getComponentProperty(button, "focus.ring-opacity")?.ToString() : null;
+        // Get focus ring configuration from theme (all values are token references)
+        var ringWidthToken = button != null ? getComponentProperty(button, "focus.ring-width")?.ToString() : null;
+        var ringColorToken = button != null ? getComponentProperty(button, "focus.ring-color")?.ToString() : null;
+        var ringOpacityToken = button != null ? getComponentProperty(button, "focus.ring-opacity")?.ToString() : null;
 
-        ringWidth ??= "4px";
-        ringColor ??= "accent";
-        ringOpacity ??= "0.3";
+        // Resolve tokens to actual values
+        var ringWidth = ringWidthToken != null ? getSpacingTokenValue(theme, ringWidthToken) : null;
+        var ringOpacity = ringOpacityToken != null ? getOpacityTokenValue(theme, ringOpacityToken) : null;
+
+        // Fallback to token defaults if resolution fails
+        ringWidth ??= getSpacingTokenValue(theme, "xs") ?? "0.25rem";
+        ringColorToken ??= "accent";
+        ringOpacity ??= getOpacityTokenValue(theme, "focus-ring") ?? "0.3";
 
         // Get the hex value of the color token and parse to RGB
-        var colorHex = getColorTokenHex(theme, ringColor);
+        var colorHex = getColorTokenHex(theme, ringColorToken);
         var rgb = parseHexToRgb(colorHex);
 
         // Use box-shadow for the focus ring (Flowbite pattern)
@@ -450,8 +455,8 @@ public class ThemeCompiler
         else
         {
             // Fallback if token lookup fails - log warning and use accent color assumption
-            css.AppendLine($"    /* Warning: Could not resolve color token '{ringColor}' - using CSS variable fallback */");
-            css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} var(--color-{ringColor});");
+            css.AppendLine($"    /* Warning: Could not resolve color token '{ringColorToken}' - using CSS variable fallback */");
+            css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} var(--color-{ringColorToken});");
         }
         css.AppendLine("  }");
         css.AppendLine();
@@ -570,22 +575,60 @@ public class ThemeCompiler
         css.AppendLine($"    padding: {inputPaddingY} {inputPaddingX};");
 
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(input, "base.border", "border", "var(--color-border)")};");
-        css.AppendLine($"    border-radius: {getPropertyOrDefault(input, "base.radius", "radius", "var(--radius-md)")};");
-        css.AppendLine($"    font-size: {getPropertyOrDefault(input, "base.size", "size", "var(--text-md)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(input, "base.radius", "radius", "var(--radius-lg)")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(input, "base.size", "size", "var(--text-sm)")};");
         css.AppendLine("    font-family: inherit;");
         css.AppendLine("    line-height: 1.5;");
         css.AppendLine("    color: var(--color-text-primary);");
-        css.AppendLine("    background: var(--color-surface);");
+        css.AppendLine($"    background: {getPropertyOrDefault(input, "base.background", "background", "var(--color-surface-raised)")};");
+
+        // Transition for smooth focus effect
+        var inputTransitionDuration = getPropertyOrDefault(input, "base.transition-duration", "transition-duration", "var(--duration-fast)");
+        css.AppendLine($"    transition: border-color {inputTransitionDuration} ease, box-shadow {inputTransitionDuration} ease;");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Input focus state - Flowbite-style focus ring
         css.AppendLine("  .input:focus {");
-        css.AppendLine("    outline: 2px solid var(--color-accent);");
-        css.AppendLine("    outline-offset: 2px;");
+        css.AppendLine("    outline: none;");
+
+        // Get focus ring configuration from theme (all values are token references)
+        var inputRingWidthToken = input != null ? getComponentProperty(input, "focus.ring-width")?.ToString() : null;
+        var inputRingColorToken = input != null ? getComponentProperty(input, "focus.ring-color")?.ToString() : null;
+        var inputRingOpacityToken = input != null ? getComponentProperty(input, "focus.ring-opacity")?.ToString() : null;
+        var inputFocusBorderColor = input != null ? getComponentProperty(input, "focus.border-color")?.ToString() : null;
+
+        // Resolve tokens to actual values
+        var inputRingWidth = inputRingWidthToken != null ? getSpacingTokenValue(theme, inputRingWidthToken) : null;
+        var inputRingOpacity = inputRingOpacityToken != null ? getOpacityTokenValue(theme, inputRingOpacityToken) : null;
+
+        // Fallback to token defaults if resolution fails
+        inputRingWidth ??= getSpacingTokenValue(theme, "xs") ?? "0.25rem";
+        inputRingColorToken ??= "accent";
+        inputRingOpacity ??= getOpacityTokenValue(theme, "focus-ring") ?? "0.3";
+        inputFocusBorderColor ??= "accent";
+
+        // Get the hex value of the color token and parse to RGB
+        var inputColorHex = getColorTokenHex(theme, inputRingColorToken);
+        var inputRgb = parseHexToRgb(inputColorHex);
+
+        if (inputRgb.HasValue)
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {inputRingWidth} rgba({inputRgb.Value.r}, {inputRgb.Value.g}, {inputRgb.Value.b}, {inputRingOpacity});");
+        }
+        else
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {inputRingWidth} var(--color-{inputRingColorToken});");
+        }
+
+        css.AppendLine($"    border-color: var(--color-{inputFocusBorderColor});");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .input:disabled {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(input, "state-disabled.opacity", "opacity", "var(--opacity-disabled)")};");
         css.AppendLine($"    cursor: {getCursorValue(input, "state-disabled.cursor", "not-allowed")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(input, "state-disabled.background", "background", "var(--color-surface-raised)")};");
         css.AppendLine("  }");
         css.AppendLine();
 
@@ -631,19 +674,66 @@ public class ThemeCompiler
 
         // Checkbox
         css.AppendLine("  .checkbox {");
+        css.AppendLine("    -webkit-appearance: none;");
+        css.AppendLine("    -moz-appearance: none;");
+        css.AppendLine("    appearance: none;");
         var checkboxSize = getPropertyOrDefault(checkbox, "base.size", "size", "var(--spacing-lg)");
         css.AppendLine($"    width: {checkboxSize};");
         css.AppendLine($"    height: {checkboxSize};");
         css.AppendLine($"    border: 1px solid {getPropertyOrDefault(checkbox, "base.border", "border", "var(--color-border)")};");
         css.AppendLine($"    border-radius: {getPropertyOrDefault(checkbox, "base.radius", "radius", "var(--radius-sm)")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(checkbox, "base.background", "background", "var(--color-surface)")};");
         css.AppendLine($"    cursor: {getCursorValue(checkbox, "base.cursor", "pointer")};");
+
+        // Transition for smooth state changes
+        var checkboxTransitionDuration = getPropertyOrDefault(checkbox, "base.transition-duration", "transition-duration", "var(--duration-fast)");
+        css.AppendLine($"    transition: background-color {checkboxTransitionDuration} ease, border-color {checkboxTransitionDuration} ease, box-shadow {checkboxTransitionDuration} ease;");
         css.AppendLine("  }");
         css.AppendLine();
+
+        // Checkbox focus state - Flowbite-style focus ring
+        css.AppendLine("  .checkbox:focus {");
+        css.AppendLine("    outline: none;");
+
+        // Get focus ring configuration from theme (all values are token references)
+        var checkboxRingWidthToken = checkbox != null ? getComponentProperty(checkbox, "focus.ring-width")?.ToString() : null;
+        var checkboxRingColorToken = checkbox != null ? getComponentProperty(checkbox, "focus.ring-color")?.ToString() : null;
+        var checkboxRingOpacityToken = checkbox != null ? getComponentProperty(checkbox, "focus.ring-opacity")?.ToString() : null;
+
+        // Resolve tokens to actual values
+        var checkboxRingWidth = checkboxRingWidthToken != null ? getSpacingTokenValue(theme, checkboxRingWidthToken) : null;
+        var checkboxRingOpacity = checkboxRingOpacityToken != null ? getOpacityTokenValue(theme, checkboxRingOpacityToken) : null;
+
+        // Fallback to token defaults if resolution fails
+        checkboxRingWidth ??= getSpacingTokenValue(theme, "xs") ?? "0.25rem";
+        checkboxRingColorToken ??= "accent";
+        checkboxRingOpacity ??= getOpacityTokenValue(theme, "focus-ring") ?? "0.3";
+
+        var checkboxColorHex = getColorTokenHex(theme, checkboxRingColorToken);
+        var checkboxRgb = parseHexToRgb(checkboxColorHex);
+
+        if (checkboxRgb.HasValue)
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {checkboxRingWidth} rgba({checkboxRgb.Value.r}, {checkboxRgb.Value.g}, {checkboxRgb.Value.b}, {checkboxRingOpacity});");
+        }
+        else
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {checkboxRingWidth} var(--color-{checkboxRingColorToken});");
+        }
+        css.AppendLine("  }");
+        css.AppendLine();
+
         css.AppendLine("  .checkbox:checked {");
         css.AppendLine($"    background: {getPropertyOrDefault(checkbox, "checked.background", "background", "var(--color-accent)")};");
         css.AppendLine($"    border-color: {getPropertyOrDefault(checkbox, "checked.border-color", "border", "var(--color-accent)")};");
+        // Add checkmark using CSS
+        css.AppendLine("    background-image: url(\"data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e\");");
+        css.AppendLine("    background-size: 100% 100%;");
+        css.AppendLine("    background-position: center;");
+        css.AppendLine("    background-repeat: no-repeat;");
         css.AppendLine("  }");
         css.AppendLine();
+
         css.AppendLine("  .checkbox:disabled {");
         css.AppendLine($"    opacity: {getPropertyOrDefault(checkbox, "disabled.opacity", "opacity", "var(--opacity-disabled)")};");
         css.AppendLine($"    cursor: {getCursorValue(checkbox, "disabled.cursor", "not-allowed")};");
@@ -1292,6 +1382,42 @@ public class ThemeCompiler
             return defaultValue;
 
         return value.ToString() ?? defaultValue;
+    }
+
+    /// <summary>
+    /// Gets a spacing token value from the theme (e.g., "xs" -> "0.25rem").
+    /// Returns null if the token doesn't exist.
+    /// </summary>
+    private static string getSpacingTokenValue(Dictionary<string, object> theme, string spacingName)
+    {
+        if (!theme.TryGetValue("tokens", out var tokensObj) || tokensObj is not Dictionary<object, object> tokens)
+            return null;
+
+        if (!tokens.TryGetValue("spacing", out var spacingObj) || spacingObj is not Dictionary<object, object> spacing)
+            return null;
+
+        if (spacing.TryGetValue(spacingName, out var value))
+            return value?.ToString();
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets an opacity token value from the theme (e.g., "focus-ring" -> "0.3").
+    /// Returns null if the token doesn't exist.
+    /// </summary>
+    private static string getOpacityTokenValue(Dictionary<string, object> theme, string opacityName)
+    {
+        if (!theme.TryGetValue("tokens", out var tokensObj) || tokensObj is not Dictionary<object, object> tokens)
+            return null;
+
+        if (!tokens.TryGetValue("opacity", out var opacityObj) || opacityObj is not Dictionary<object, object> opacity)
+            return null;
+
+        if (opacity.TryGetValue(opacityName, out var value))
+            return value?.ToString();
+
+        return null;
     }
 
     /// <summary>

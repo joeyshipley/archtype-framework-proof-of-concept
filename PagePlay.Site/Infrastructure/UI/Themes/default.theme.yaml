@@ -61,6 +61,7 @@ tokens:
     slow: 500ms      # Loading states, emphasis
 
   opacity:
+    focus-ring: 0.3  # Focus ring visibility
     subdued: 0.4     # Very disabled/inactive
     disabled: 0.5    # Standard disabled state
     subtle: 0.6      # De-emphasized/completed
@@ -177,9 +178,9 @@ button:
 
   # Focus ring configuration (Flowbite-style)
   focus:
-    ring-width: 4px
-    ring-color: accent
-    ring-opacity: 0.3
+    ring-width: xs           # Uses spacing token (0.25rem = 4px)
+    ring-color: accent       # Uses color token
+    ring-opacity: focus-ring # Uses opacity token
 
   importance-primary:
     background: accent
@@ -218,12 +219,23 @@ input:
     padding-x: md
     padding-y: sm
     border: border
-    radius: md
-    size: md
+    background: surface-raised    # Flowbite uses slightly gray background
+    radius: lg                     # Match card/button radius
+    size: sm                       # Flowbite uses 14px text in inputs
     width: 100%
+    transition-duration: fast
+
+  # Focus ring configuration (Flowbite-style, matches buttons)
+  focus:
+    ring-width: xs           # Uses spacing token (0.25rem = 4px)
+    ring-color: accent       # Uses color token
+    ring-opacity: focus-ring # Uses opacity token
+    border-color: accent
+
   state-disabled:
     opacity: disabled
     cursor: not-allowed
+    background: surface-raised
 
 label:
   base:
@@ -260,11 +272,21 @@ checkbox:
   base:
     size: lg  # 16px
     border: border
+    background: surface           # White background when unchecked
     radius: sm
     cursor: pointer
+    transition-duration: fast
+
+  # Focus ring configuration (Flowbite-style)
+  focus:
+    ring-width: xs           # Uses spacing token (0.25rem = 4px)
+    ring-color: accent       # Uses color token
+    ring-opacity: focus-ring # Uses opacity token
+
   checked:
     background: accent
     border-color: accent
+
   disabled:
     opacity: disabled
     cursor: not-allowed
