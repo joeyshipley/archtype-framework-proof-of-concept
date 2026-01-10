@@ -144,7 +144,6 @@ public static class DependencyResolver
         services.AddScoped<IAnalyticsStatsWidget, AnalyticsStatsWidget>();
         services.AddScoped<INavView, Nav>();
         services.AddScoped<IPageLayout, Layout>();
-        services.AddScoped<IWelcomeWidget, WelcomeWidget>();
     }
 
     private static void bindPages(IServiceCollection services)
