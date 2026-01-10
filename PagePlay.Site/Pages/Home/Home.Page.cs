@@ -254,6 +254,85 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                             ).Style(ListStyle.Ordered)
                         )
                 )
+            ),
+
+            // Tabs Showcase Section
+            new Section(
+                new SectionTitle("Tabs"),
+                new Grid(For.Cards, Columns.Three,
+                    // Underline style (default, Flowbite common)
+                    new Card()
+                        .Header(new Text("Underline Style"))
+                        .Body(
+                            new Tabs()
+                                .Style(TabStyle.Underline)
+                                .Tab(new Tab("Details")
+                                    .Id("details-underline")
+                                    .Active()
+                                    .Content(
+                                        new Text("Product details and specifications go here."),
+                                        new Text("This is the default Flowbite tab style.")
+                                    ))
+                                .Tab(new Tab("Reviews")
+                                    .Id("reviews-underline")
+                                    .Content(
+                                        new Text("Customer reviews content.")
+                                    ))
+                                .Tab(new Tab("Shipping")
+                                    .Id("shipping-underline")
+                                    .Content(
+                                        new Text("Shipping information content.")
+                                    ))
+                        ),
+
+                    // Boxed style
+                    new Card()
+                        .Header(new Text("Boxed Style"))
+                        .Body(
+                            new Tabs()
+                                .Style(TabStyle.Boxed)
+                                .Tab(new Tab("Overview")
+                                    .Id("overview-boxed")
+                                    .Active()
+                                    .Content(
+                                        new Text("Overview content with bordered tabs.")
+                                    ))
+                                .Tab(new Tab("Settings")
+                                    .Id("settings-boxed")
+                                    .Content(
+                                        new Text("Settings content.")
+                                    ))
+                                .Tab(new Tab("Stats")
+                                    .Id("stats-boxed")
+                                    .Content(
+                                        new Text("Statistics content.")
+                                    ))
+                        ),
+
+                    // Pill style
+                    new Card()
+                        .Header(new Text("Pill Style"))
+                        .Body(
+                            new Tabs()
+                                .Style(TabStyle.Pill)
+                                .Tab(new Tab("All")
+                                    .Id("all-pill")
+                                    .Active()
+                                    .Content(
+                                        new Text("All items view with pill-style tabs.")
+                                    ))
+                                .Tab(new Tab("Active")
+                                    .Id("active-pill")
+                                    .Content(
+                                        new Text("Active items only.")
+                                    ))
+                                .Tab(new Tab("Archived")
+                                    .Id("archived-pill")
+                                    .Content(
+                                        new Text("Archived items.")
+                                    ))
+                        )
+                )
             )
         ).Id(ViewId);
 

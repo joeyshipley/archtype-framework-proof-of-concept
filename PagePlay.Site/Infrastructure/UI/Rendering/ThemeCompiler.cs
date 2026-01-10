@@ -352,6 +352,9 @@ public class ThemeCompiler
         // Layout primitive styling
         generateLayoutStyles(theme, css);
 
+        // Tabs styling
+        generateTabsStyles(theme, css);
+
         css.AppendLine("}");
     }
 
@@ -1121,6 +1124,160 @@ public class ThemeCompiler
         var colsAutoMinwidth = getPropertyOrDefault(layout, "grid.cols-auto-minwidth", "cols-auto-minwidth", "300");
         css.AppendLine("  .grid--cols-auto {");
         css.AppendLine($"    grid-template-columns: repeat(auto-fit, minmax({colsAutoMinwidth}px, 1fr));");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateTabsStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        var tabs = getComponent(theme, "tabs");
+        var tabsUnderline = getComponent(theme, "tabs-underline");
+        var tabsBoxed = getComponent(theme, "tabs-boxed");
+        var tabsPill = getComponent(theme, "tabs-pill");
+
+        css.AppendLine("  /* Tabs */");
+
+        // Base container
+        css.AppendLine("  .tabs {");
+        css.AppendLine($"    display: {getDisplayValue(tabs, "base.display", "flex")};");
+        css.AppendLine($"    flex-direction: {getFlexDirectionValue(tabs, "base.flex-direction", "column")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Triggers container
+        css.AppendLine("  .tabs__triggers {");
+        css.AppendLine($"    display: {getDisplayValue(tabs, "triggers.display", "flex")};");
+        css.AppendLine($"    gap: {getPropertyOrDefault(tabs, "triggers.gap", "gap", "var(--spacing-sm)")};");
+
+        var triggersBorderBottom = tabs != null ? getComponentProperty(tabs, "triggers.border-bottom") : null;
+        if (triggersBorderBottom != null)
+        {
+            var borderColor = resolvePropertyValue("border", triggersBorderBottom);
+            css.AppendLine($"    border-bottom: 1px solid {borderColor};");
+        }
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Individual trigger
+        css.AppendLine("  .tabs__trigger {");
+        var triggerPaddingY = getPropertyOrDefault(tabs, "trigger.padding-y", "padding-y", "var(--spacing-sm)");
+        var triggerPaddingX = getPropertyOrDefault(tabs, "trigger.padding-x", "padding-x", "var(--spacing-md)");
+        css.AppendLine($"    padding: {triggerPaddingY} {triggerPaddingX};");
+        css.AppendLine($"    background: {getPropertyOrDefault(tabs, "trigger.background", "background", "transparent")};");
+        css.AppendLine($"    border: {getPropertyOrDefault(tabs, "trigger.border", "border", "none")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(tabs, "trigger.color", "color", "var(--color-text-secondary)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(tabs, "trigger.weight", "weight", "var(--weight-medium)")};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(tabs, "trigger.size", "size", "var(--text-sm)")};");
+        css.AppendLine($"    cursor: {getCursorValue(tabs, "trigger.cursor", "pointer")};");
+        css.AppendLine($"    transition: all {getPropertyOrDefault(tabs, "trigger.transition-duration", "transition-duration", "var(--duration-fast)")} ease;");
+        css.AppendLine("    font-family: inherit;");
+        css.AppendLine("    margin-bottom: -1px;"); // Overlap border for underline effect
+        css.AppendLine("    border-bottom: 2px solid transparent;"); // Placeholder for active state
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Trigger hover state
+        css.AppendLine("  .tabs__trigger:hover:not(.tabs__trigger--active) {");
+        css.AppendLine($"    color: {getPropertyOrDefault(tabs, "trigger-hover.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Trigger focus state
+        css.AppendLine("  .tabs__trigger:focus {");
+        css.AppendLine("    outline: none;");
+
+        // Get focus ring configuration from theme (reusing button focus pattern)
+        var ringWidthToken = tabs != null ? getComponentProperty(tabs, "trigger.focus-ring-width")?.ToString() : null;
+        var ringColorToken = tabs != null ? getComponentProperty(tabs, "trigger.focus-ring-color")?.ToString() : null;
+        var ringOpacityToken = tabs != null ? getComponentProperty(tabs, "trigger.focus-ring-opacity")?.ToString() : null;
+
+        // Fallback to button defaults
+        var ringWidth = ringWidthToken != null ? getSpacingTokenValue(theme, ringWidthToken) : null;
+        var ringOpacity = ringOpacityToken != null ? getOpacityTokenValue(theme, ringOpacityToken) : null;
+
+        ringWidth ??= getSpacingTokenValue(theme, "xs") ?? "0.25rem";
+        ringColorToken ??= "accent";
+        ringOpacity ??= getOpacityTokenValue(theme, "focus-ring") ?? "0.3";
+
+        var colorHex = getColorTokenHex(theme, ringColorToken);
+        var rgb = parseHexToRgb(colorHex);
+
+        if (rgb.HasValue)
+        {
+            css.AppendLine($"    box-shadow: 0 0 0 {ringWidth} rgba({rgb.Value.r}, {rgb.Value.g}, {rgb.Value.b}, {ringOpacity});");
+        }
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Underline style - active trigger
+        css.AppendLine("  .tabs--underline .tabs__trigger--active {");
+        css.AppendLine($"    color: {getPropertyOrDefault(tabs, "trigger-active.color", "color", "var(--color-accent)")};");
+        var underlineWidth = getBorderWidthValue(tabs, "trigger-active.border-bottom-width", "2px");
+        var underlineColor = getPropertyOrDefault(tabs, "trigger-active.border-bottom-color", "border", "var(--color-accent)");
+        css.AppendLine($"    border-bottom: {underlineWidth} solid {underlineColor};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Boxed style
+        css.AppendLine("  .tabs--boxed .tabs__triggers {");
+        css.AppendLine("    border-bottom: none;");
+        css.AppendLine($"    gap: {getPropertyOrDefault(tabsBoxed, "triggers.gap", "gap", "var(--spacing-xs)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .tabs--boxed .tabs__trigger {");
+        css.AppendLine($"    border: 1px solid {getPropertyOrDefault(tabsBoxed, "trigger.border", "border", "var(--color-border)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(tabsBoxed, "trigger.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine("    margin-bottom: 0;");
+        css.AppendLine("    border-bottom-width: 1px;"); // Override the transparent bottom border
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .tabs--boxed .tabs__trigger--active {");
+        css.AppendLine($"    background: {getPropertyOrDefault(tabsBoxed, "trigger-active.background", "background", "var(--color-surface)")};");
+        css.AppendLine($"    border-color: {getPropertyOrDefault(tabsBoxed, "trigger-active.border-color", "border", "var(--color-border)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(tabsBoxed, "trigger-active.color", "color", "var(--color-accent)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Pill style
+        css.AppendLine("  .tabs--pill .tabs__triggers {");
+        css.AppendLine("    border-bottom: none;");
+        css.AppendLine($"    gap: {getPropertyOrDefault(tabsPill, "triggers.gap", "gap", "var(--spacing-xs)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .tabs--pill .tabs__trigger {");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(tabsPill, "trigger.radius", "radius", "var(--radius-full)")};");
+        var pillPaddingX = getPropertyOrDefault(tabsPill, "trigger.padding-x", "padding-x", "var(--spacing-lg)");
+        css.AppendLine($"    padding-left: {pillPaddingX};");
+        css.AppendLine($"    padding-right: {pillPaddingX};");
+        css.AppendLine("    margin-bottom: 0;");
+        css.AppendLine("    border-bottom: none;"); // No underline for pill style
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .tabs--pill .tabs__trigger--active {");
+        css.AppendLine($"    background: {getPropertyOrDefault(tabsPill, "trigger-active.background", "background", "var(--color-accent)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(tabsPill, "trigger-active.color", "color", "var(--color-white)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Panels container
+        css.AppendLine("  .tabs__panels {");
+        css.AppendLine($"    padding-top: {getPropertyOrDefault(tabs, "panels.padding-top", "padding-top", "var(--spacing-lg)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Individual panel
+        css.AppendLine("  .tabs__panel {");
+        css.AppendLine($"    display: {getDisplayValue(tabs, "panel.display", "block")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Hidden panel (inactive)
+        css.AppendLine("  .tabs__panel[hidden] {");
+        css.AppendLine("    display: none;");
         css.AppendLine("  }");
         css.AppendLine();
     }

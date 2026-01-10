@@ -91,6 +91,9 @@ public class HtmlRenderer : IHtmlRenderer
             case ListItem listItem:
                 renderListItem(listItem, sb);
                 break;
+            case Tabs tabs:
+                renderTabs(tabs, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown element type: {element.GetType().Name}");
         }
@@ -522,6 +525,116 @@ public class HtmlRenderer : IHtmlRenderer
             renderElement(child, sb);
 
         sb.Append("</li>");
+    }
+
+    private void renderTabs(Tabs tabs, StringBuilder sb)
+    {
+        var styleClass = tabs.ElementStyle switch
+        {
+            TabStyle.Underline => "tabs--underline",
+            TabStyle.Boxed => "tabs--boxed",
+            TabStyle.Pill => "tabs--pill",
+            _ => "tabs--underline"
+        };
+
+        var classes = $"tabs {styleClass}";
+        var idAttr = !string.IsNullOrEmpty(tabs.ElementId)
+            ? $" id=\"{htmlEncode(tabs.ElementId)}\""
+            : "";
+
+        sb.Append($"<div class=\"{classes}\"{idAttr}>");
+
+        // Render triggers container
+        sb.Append("<div class=\"tabs__triggers\" role=\"tablist\">");
+        foreach (var tab in tabs._tabs)
+        {
+            renderTabTrigger(tab, tabs.ElementId, sb);
+        }
+        sb.Append("</div>");
+
+        // Render panels container
+        sb.Append("<div class=\"tabs__panels\">");
+        var hasHtmxAction = tabs._tabs.Any(t => !string.IsNullOrEmpty(t.ElementAction));
+        foreach (var tab in tabs._tabs)
+        {
+            // In HTMX mode, only render active panel to reduce payload
+            if (hasHtmxAction && !tab.ElementActive)
+                continue;
+
+            renderTabPanel(tab, sb);
+        }
+        sb.Append("</div>");
+
+        sb.Append("</div>");
+    }
+
+    private void renderTabTrigger(Tab tab, string tabsId, StringBuilder sb)
+    {
+        var classes = tab.ElementActive
+            ? "tabs__trigger tabs__trigger--active"
+            : "tabs__trigger";
+
+        var ariaSelected = tab.ElementActive ? "true" : "false";
+        var panelId = !string.IsNullOrEmpty(tab.ElementId)
+            ? $"tab-panel-{tab.ElementId}"
+            : "";
+
+        var ariaControls = !string.IsNullOrEmpty(panelId)
+            ? $" aria-controls=\"{panelId}\""
+            : "";
+
+        // Build HTMX attributes if Action is specified
+        var htmxAttrs = "";
+        if (!string.IsNullOrEmpty(tab.ElementAction))
+        {
+            htmxAttrs = $" hx-get=\"{htmlEncode(tab.ElementAction)}\"";
+
+            var target = !string.IsNullOrEmpty(tab.ElementTarget)
+                ? tab.ElementTarget
+                : (!string.IsNullOrEmpty(tabsId) ? $"#{tabsId}" : "");
+            if (!string.IsNullOrEmpty(target))
+                htmxAttrs += $" hx-target=\"{htmlEncode(target)}\"";
+
+            var swapValue = tab.ElementSwap switch
+            {
+                SwapStrategy.InnerHTML => "innerHTML",
+                SwapStrategy.OuterHTML => "outerHTML",
+                SwapStrategy.BeforeBegin => "beforebegin",
+                SwapStrategy.AfterBegin => "afterbegin",
+                SwapStrategy.BeforeEnd => "beforeend",
+                SwapStrategy.AfterEnd => "afterend",
+                SwapStrategy.None => "none",
+                _ => "outerHTML"
+            };
+            htmxAttrs += $" hx-swap=\"{swapValue}\"";
+        }
+
+        sb.Append($"<button class=\"{classes}\" role=\"tab\" aria-selected=\"{ariaSelected}\"{ariaControls}{htmxAttrs}>");
+        sb.Append(htmlEncode(tab.Label));
+        sb.Append("</button>");
+    }
+
+    private void renderTabPanel(Tab tab, StringBuilder sb)
+    {
+        var classes = tab.ElementActive
+            ? "tabs__panel tabs__panel--active"
+            : "tabs__panel";
+
+        var panelId = !string.IsNullOrEmpty(tab.ElementId)
+            ? $" id=\"tab-panel-{tab.ElementId}\""
+            : "";
+
+        var hiddenAttr = tab.ElementActive ? "" : " hidden";
+
+        sb.Append($"<div class=\"{classes}\"{panelId} role=\"tabpanel\"{hiddenAttr}>");
+
+        if (tab._content != null)
+        {
+            foreach (var child in tab._content.Children)
+                renderElement(child, sb);
+        }
+
+        sb.Append("</div>");
     }
 
     private string htmlEncode(string text)

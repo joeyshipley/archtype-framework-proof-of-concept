@@ -393,6 +393,68 @@ list-item:
   last-child:
     border-bottom: none
 
+# ============================================================================
+# TABS COMPONENT
+# ============================================================================
+tabs:
+  base:
+    display: flex
+    flex-direction: column
+  triggers:
+    display: flex
+    gap: sm                      # Space between triggers
+    border-bottom: border        # Subtle line under triggers (Flowbite style)
+  trigger:
+    padding-y: sm
+    padding-x: md
+    background: transparent
+    border: none
+    color: text-secondary
+    weight: medium
+    size: sm
+    cursor: pointer
+    transition-duration: fast
+  trigger-hover:
+    color: text-primary
+  trigger-active:
+    color: accent
+    border-bottom-width: 2       # Underline indicator
+    border-bottom-color: accent
+  panels:
+    padding-top: lg              # Space above panel content
+  panel:
+    display: block
+
+# Tabs style variants
+tabs-underline:
+  trigger-active:
+    border-bottom-width: 2
+    border-bottom-color: accent
+
+tabs-boxed:
+  triggers:
+    border-bottom: none          # No underline for boxed style
+    gap: xs
+  trigger:
+    border: border
+    radius: md
+    background: transparent
+  trigger-active:
+    background: surface
+    border-color: border
+    color: accent
+
+tabs-pill:
+  triggers:
+    border-bottom: none          # No underline for pill style
+    gap: xs
+  trigger:
+    radius: full
+    padding-x: lg
+  trigger-active:
+    background: accent
+    color: white
+
 # Page structure
 page-title:
   base:

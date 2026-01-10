@@ -58,12 +58,12 @@ Elements visible in Flowbite that we don't have yet:
 
 | Element | Status | Notes |
 |---------|--------|-------|
-| `Sidebar` / `Nav` | ⬜ Not started | Left navigation with icons, expandable sections |
-| `NavItem` | ⬜ Not started | Navigation items with icon + label + chevron |
-| `Tabs` | ⬜ Not started | Tab container with active state |
-| `Tab` | ⬜ Not started | Individual tab items |
+| `Tabs` | ✅ Complete | Tab container with Underline/Boxed/Pill styles |
+| `Tab` | ✅ Complete | Individual tab items with content slots |
 | `Badge` | ⬜ Not started | Small labels (counts, status indicators) |
 | `TrendIndicator` | ⬜ Not started | ↑12.5% style positive/negative indicators |
+| `Sidebar` / `Nav` | ⬜ Not started | Left navigation with icons, expandable sections |
+| `NavItem` | ⬜ Not started | Navigation items with icon + label + chevron |
 | `Avatar` | ⬜ Not started | User profile images (circular) |
 | `Icon` | ⬜ Not started | Icon system integration |
 | `SearchInput` | ⬜ Not started | Search-specific input with icon |
@@ -292,24 +292,114 @@ card:
 
 ## Phase 2: New Vocabulary Elements
 
-*To be expanded after Phase 1 is complete.*
+### Task 2.1: Tabs/Tab ✅
 
-Priority order (based on Flowbite usage):
-1. `Tabs` / `Tab` - Seen in "Top products / Top Customers"
-2. `Badge` - Counts, status indicators
-3. `TrendIndicator` - ↑12.5% patterns
-4. `Sidebar` / `NavItem` - Navigation structure
-5. `Avatar` - User profile
-6. `Icon` - Icon system
+**Elements:** `Tabs`, `Tab`, `TabStyle` enum
+
+**Target (Flowbite observations):**
+- Underline style most common (colored bottom border on active tab)
+- Triggers in horizontal row, content below
+- Clear active/inactive visual distinction
+- Subtle hover states
+
+**Files Created/Modified:**
+1. `Infrastructure/UI/Vocabulary/TabElements.cs` - NEW
+2. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added tab rendering
+3. `Infrastructure/UI/Themes/default.theme.yaml` - Added tabs configuration
+4. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added generateTabsStyles()
+5. `Pages/Home/Home.Page.cs` - Added Tabs showcase
+
+**Implementation Details:**
+
+**C# Vocabulary:**
+```csharp
+public enum TabStyle { Underline, Boxed, Pill }
+
+public record Tabs : ElementBase, IBodyContent
+{
+    public TabStyle ElementStyle { get; init; } = TabStyle.Underline;
+    public string ElementId { get; init; }
+    internal List<Tab> _tabs { get; init; } = new();
+
+    public Tabs Style(TabStyle style) => this with { ElementStyle = style };
+    public Tabs Id(string id) => this with { ElementId = id };
+    public Tabs Tab(Tab tab) => this with { _tabs = _tabs.Append(tab).ToList() };
+}
+
+public record Tab : IElement
+{
+    public string Label { get; }
+    public bool ElementActive { get; init; }
+    public string ElementId { get; init; }
+    // HTMX support
+    public string ElementAction { get; init; }
+    public string ElementTarget { get; init; }
+    public SwapStrategy ElementSwap { get; init; } = SwapStrategy.OuterHTML;
+    internal TabContent _content { get; init; }
+
+    public Tab Active(bool active = true) => this with { ElementActive = active };
+    public Tab Content(params IBodyContent[] content) => ...
+}
+```
+
+**HTML Output:**
+```html
+<div class="tabs tabs--underline" id="...">
+  <div class="tabs__triggers" role="tablist">
+    <button class="tabs__trigger tabs__trigger--active" role="tab" aria-selected="true">...</button>
+    <button class="tabs__trigger" role="tab" aria-selected="false">...</button>
+  </div>
+  <div class="tabs__panels">
+    <div class="tabs__panel tabs__panel--active" role="tabpanel">...</div>
+    <div class="tabs__panel" role="tabpanel" hidden>...</div>
+  </div>
+</div>
+```
+
+**CSS Classes (BEM):**
+- `.tabs` - Container
+- `.tabs--underline` / `.tabs--boxed` / `.tabs--pill` - Style variants
+- `.tabs__triggers` - Trigger button container
+- `.tabs__trigger` - Individual trigger
+- `.tabs__trigger--active` - Active state
+- `.tabs__panels` - Content panels container
+- `.tabs__panel` / `.tabs__panel--active` - Content panels
+
+**Features:**
+- Three style variants (Underline, Boxed, Pill)
+- Server-authoritative active state (no client-side JS)
+- HTMX-ready for server-driven tab switching
+- Accessible (ARIA roles: tablist, tab, tabpanel, aria-selected)
+- Theme-controlled appearance via YAML
+
+**Acceptance Criteria:**
+- ✅ Underline tabs match Flowbite style (blue underline on active)
+- ✅ Boxed and Pill variants provide alternatives
+- ✅ Inactive tabs muted, hover shows interaction
+- ✅ Focus ring consistent with buttons
+- ✅ Content panels show/hide correctly
+
+---
+
+### Task 2.2: Badge
+
+*Not started*
+
+Priority order (remaining):
+1. `Badge` - Counts, status indicators
+2. `TrendIndicator` - ↑12.5% patterns
+3. `Sidebar` / `NavItem` - Navigation structure
+4. `Avatar` - User profile
+5. `Icon` - Icon system
 
 ---
 
 ## Current Status
 
-**Active Phase:** Phase 1 - Style Existing Elements ✅ COMPLETE
-**Next Task:** Phase 2 - New Vocabulary Elements
+**Active Phase:** Phase 2 - New Vocabulary Elements
+**Next Task:** Task 2.2 - Badge
 **Blockers:** None
-**Completed:** All Phase 1 tasks (1.1-1.7)
+**Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab)
 
 ---
 
@@ -623,6 +713,49 @@ All existing vocabulary elements now styled to match Flowbite aesthetic:
 - Alerts: Consistent radius, proper tone colors
 - Layout: Purpose-based gaps verified visually
 
+### Session 9 (2026-01-10)
+
+**Completed:** Task 2.1 - Tabs/Tab (First Phase 2 element!)
+
+**Files created/modified:**
+1. `Infrastructure/UI/Vocabulary/TabElements.cs` - NEW file with `Tabs`, `Tab`, `TabContent` records and `TabStyle` enum
+2. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added `renderTabs()`, `renderTabTrigger()`, `renderTabPanel()` methods
+3. `Infrastructure/UI/Themes/default.theme.yaml` - Added `tabs`, `tabs-underline`, `tabs-boxed`, `tabs-pill` configurations
+4. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added `generateTabsStyles()` method (~150 lines)
+5. `Pages/Home/Home.Page.cs` - Added Tabs showcase section with all three styles
+
+**Design decisions:**
+1. **Server-authoritative state:** Active tab is controlled via `.Active()` method on `Tab`. No client-side JavaScript for tab switching - follows PagePlay's HTTP-first philosophy.
+
+2. **HTMX-ready:** Tabs support optional `.Action()`, `.Target()`, `.Swap()` for server-driven tab switching. When HTMX action is set, only the active panel is rendered (reduces payload).
+
+3. **Three style variants:**
+   - `Underline` (default) - Flowbite common style, colored bottom border on active
+   - `Boxed` - Bordered tab triggers, white background on active
+   - `Pill` - Rounded pill shape, colored background on active
+
+4. **BEM class naming:** `.tabs`, `.tabs__trigger`, `.tabs__trigger--active`, `.tabs__panel` - consistent with existing patterns.
+
+5. **Accessibility:** ARIA roles (`tablist`, `tab`, `tabpanel`) and `aria-selected` attribute for screen readers.
+
+6. **Internal content slot:** `TabContent` is an internal record to prevent orphan content elements. Content is set via fluent `.Content()` method.
+
+**Key insight:**
+The implementation follows the same patterns established in Phase 1:
+- C# records with `init` properties and fluent methods
+- Internal slots for composition (like Card's `_headerSlot`)
+- Enum variants for style variations
+- Theme YAML controls all appearance
+- ThemeCompiler generates CSS with proper token resolution
+
+**Generated CSS includes:**
+- Base container (flex column)
+- Trigger container (flex row with border-bottom)
+- Trigger buttons (transparent, muted color, hover/focus states)
+- Active trigger (accent color, underline/background depending on style)
+- Style variant overrides (boxed borders, pill radius)
+- Panel visibility (hidden attribute support)
+
 ---
 
 ## Session Handoff Protocol
@@ -659,16 +792,18 @@ This experiment is considered successful when:
 - ✅ Site looks professional, not broken
 
 **Phase 2:**
-- ⬜ New vocabulary elements added as needed
-- ⬜ Navigation/Tabs/Badges functional
+- ✅ Tabs/Tab functional with three style variants
+- ⬜ Badge component added
+- ⬜ TrendIndicator component added
+- ⬜ Navigation/Sidebar components added
 - ⬜ Full dashboard layout achievable
 
 **Overall:**
-- ⬜ Designer can adjust appearance via YAML only
-- ⬜ No escape hatches needed
-- ⬜ Closed-World UI principles maintained
+- ✅ Designer can adjust appearance via YAML only
+- ✅ No escape hatches needed
+- ✅ Closed-World UI principles maintained
 
 ---
 
 **Last Updated:** 2026-01-10
-**Document Version:** 1.2
+**Document Version:** 1.3
