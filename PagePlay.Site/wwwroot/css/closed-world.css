@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 16:55:35 UTC
+ * Generated: 2026-01-10 17:14:30 UTC
  */
 
 @layer tokens, base, components;
@@ -78,6 +78,11 @@
     --opacity-subdued: 0.4;
     --opacity-disabled: 0.5;
     --opacity-subtle: 0.6;
+
+    /* Line Height */
+    --line-height-tight: 1.25;
+    --line-height-normal: 1.5;
+    --line-height-relaxed: 1.625;
   }
 }
 
@@ -285,7 +290,7 @@
   .text {
     font-size: var(--text-md);
     color: var(--color-text-primary);
-    line-height: 1.5;
+    line-height: var(--line-height-normal);
   }
 
   /* Form elements */
@@ -522,6 +527,7 @@
     font-size: var(--text-2xl);
     font-weight: var(--weight-bold);
     color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
     margin-bottom: var(--spacing-lg);
   }
 
@@ -529,6 +535,7 @@
     font-size: var(--text-xl);
     font-weight: var(--weight-semibold);
     color: var(--color-text-primary);
+    line-height: var(--line-height-tight);
     margin-bottom: var(--spacing-md);
   }
 

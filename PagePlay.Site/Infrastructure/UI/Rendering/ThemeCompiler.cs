@@ -142,6 +142,17 @@ public class ThemeCompiler
                 {
                     css.AppendLine($"    --opacity-{kvp.Key}: {kvp.Value};");
                 }
+                css.AppendLine();
+            }
+
+            // Line-height tokens
+            if (tokens.TryGetValue("line-height", out var lineHeightObj) && lineHeightObj is Dictionary<object, object> lineHeights)
+            {
+                css.AppendLine("    /* Line Height */");
+                foreach (var kvp in lineHeights)
+                {
+                    css.AppendLine($"    --line-height-{kvp.Key}: {kvp.Value};");
+                }
             }
         }
 
@@ -930,6 +941,7 @@ public class ThemeCompiler
         css.AppendLine($"    font-size: {getPropertyOrDefault(pageTitle, "base.size", "size", "var(--text-2xl)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(pageTitle, "base.weight", "weight", "var(--weight-bold)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(pageTitle, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    line-height: {getLineHeightValue(pageTitle, "base.line-height", "1.25")};");
         css.AppendLine($"    margin-bottom: {getPropertyOrDefault(pageTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-lg)")};");
         css.AppendLine("  }");
         css.AppendLine();
@@ -937,6 +949,7 @@ public class ThemeCompiler
         css.AppendLine($"    font-size: {getPropertyOrDefault(sectionTitle, "base.size", "size", "var(--text-xl)")};");
         css.AppendLine($"    font-weight: {getPropertyOrDefault(sectionTitle, "base.weight", "weight", "var(--weight-semibold)")};");
         css.AppendLine($"    color: {getPropertyOrDefault(sectionTitle, "base.color", "color", "var(--color-text-primary)")};");
+        css.AppendLine($"    line-height: {getLineHeightValue(sectionTitle, "base.line-height", "1.25")};");
         css.AppendLine($"    margin-bottom: {getPropertyOrDefault(sectionTitle, "base.margin-bottom", "margin-bottom", "var(--spacing-md)")};");
         css.AppendLine("  }");
         css.AppendLine();
@@ -1167,7 +1180,8 @@ public class ThemeCompiler
 
     /// <summary>
     /// Gets a line-height value from component mapping, with fallback to default.
-    /// Line-height is special because it can be a unitless number or a unit value, and doesn't map to tokens.
+    /// Line-height can be a token reference (tight, normal, relaxed) or a raw value (1.5, 1.25).
+    /// Token references resolve to var(--line-height-{name}).
     /// </summary>
     private static string getLineHeightValue(Dictionary<object, object> component, string path, string defaultValue)
     {
@@ -1178,7 +1192,19 @@ public class ThemeCompiler
         if (value == null)
             return defaultValue;
 
-        return value.ToString() ?? defaultValue;
+        var valueStr = value.ToString() ?? defaultValue;
+
+        // Known line-height token names
+        var lineHeightTokens = new HashSet<string> { "tight", "normal", "relaxed" };
+
+        // If it's a token name, resolve to CSS variable
+        if (lineHeightTokens.Contains(valueStr))
+        {
+            return $"var(--line-height-{valueStr})";
+        }
+
+        // Otherwise return as raw value (for numeric values like 1.5)
+        return valueStr;
     }
 
     /// <summary>
