@@ -53,6 +53,49 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                 )
             ),
 
+            // Badge Showcase Section
+            new Section(
+                new SectionTitle("Badge Variants"),
+                new Card()
+                    .Header(new Text("Badges"))
+                    .Body(
+                        new Stack(For.Fields,
+                            new Text("Tone variants (medium size):"),
+                            new Row(For.Actions,
+                                new Badge("Neutral"),
+                                new Badge("Accent", BadgeTone.Accent),
+                                new Badge("Positive", BadgeTone.Positive),
+                                new Badge("Warning", BadgeTone.Warning),
+                                new Badge("Critical", BadgeTone.Critical)
+                            ),
+                            new Text("Small size:"),
+                            new Row(For.Actions,
+                                new Badge("Neutral").Size(BadgeSize.Small),
+                                new Badge("Accent").Tone(BadgeTone.Accent).Size(BadgeSize.Small),
+                                new Badge("3").Tone(BadgeTone.Positive).Size(BadgeSize.Small),
+                                new Badge("99+").Tone(BadgeTone.Critical).Size(BadgeSize.Small)
+                            ),
+                            new Text("Common usage (count badges in headers):"),
+                            new Card()
+                                .Header(
+                                    new Row(For.Items,
+                                        new Text("Notifications"),
+                                        new Badge("12", BadgeTone.Accent).Size(BadgeSize.Small)
+                                    )
+                                )
+                                .Body(new Text("Card with a badge in the header.")),
+                            new Card()
+                                .Header(
+                                    new Row(For.Items,
+                                        new Text("Pending Reviews"),
+                                        new Badge("5", BadgeTone.Warning).Size(BadgeSize.Small)
+                                    )
+                                )
+                                .Body(new Text("Another common pattern for status counts."))
+                        )
+                    )
+            ),
+
             // Form Elements Section
             new Section(
                 new SectionTitle("Form Elements"),

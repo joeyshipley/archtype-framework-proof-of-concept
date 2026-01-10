@@ -94,6 +94,9 @@ public class HtmlRenderer : IHtmlRenderer
             case Tabs tabs:
                 renderTabs(tabs, sb);
                 break;
+            case Badge badge:
+                renderBadge(badge, sb);
+                break;
             default:
                 throw new InvalidOperationException($"Unknown element type: {element.GetType().Name}");
         }
@@ -454,6 +457,33 @@ public class HtmlRenderer : IHtmlRenderer
         sb.Append(htmlEncode(alert.Message));
         sb.Append("</p>");
         sb.Append("</div>");
+    }
+
+    private void renderBadge(Badge badge, StringBuilder sb)
+    {
+        var toneClass = badge.ElementTone switch
+        {
+            BadgeTone.Neutral => "badge--neutral",
+            BadgeTone.Accent => "badge--accent",
+            BadgeTone.Positive => "badge--positive",
+            BadgeTone.Warning => "badge--warning",
+            BadgeTone.Critical => "badge--critical",
+            _ => "badge--neutral"
+        };
+
+        var sizeClass = badge.ElementSize switch
+        {
+            BadgeSize.Small => "badge--small",
+            BadgeSize.Medium => "badge--medium",
+            _ => "badge--medium"
+        };
+
+        var classes = $"badge {toneClass} {sizeClass}";
+        var idAttr = !string.IsNullOrEmpty(badge.ElementId) ? $" id=\"{htmlEncode(badge.ElementId)}\"" : "";
+
+        sb.Append($"<span class=\"{classes}\"{idAttr}>");
+        sb.Append(htmlEncode(badge.Label));
+        sb.Append("</span>");
     }
 
     private void renderEmptyState(EmptyState emptyState, StringBuilder sb)

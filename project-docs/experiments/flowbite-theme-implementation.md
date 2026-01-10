@@ -60,7 +60,7 @@ Elements visible in Flowbite that we don't have yet:
 |---------|--------|-------|
 | `Tabs` | ✅ Complete | Tab container with Underline/Boxed/Pill styles |
 | `Tab` | ✅ Complete | Individual tab items with content slots |
-| `Badge` | ⬜ Not started | Small labels (counts, status indicators) |
+| `Badge` | ✅ Complete | Small labels (counts, status indicators) - 5 tones, 2 sizes |
 | `TrendIndicator` | ⬜ Not started | ↑12.5% style positive/negative indicators |
 | `Sidebar` / `Nav` | ⬜ Not started | Left navigation with icons, expandable sections |
 | `NavItem` | ⬜ Not started | Navigation items with icon + label + chevron |
@@ -381,25 +381,82 @@ public record Tab : IElement
 
 ---
 
-### Task 2.2: Badge
+### Task 2.2: Badge ✅
+
+**Elements:** `Badge`, `BadgeTone` enum, `BadgeSize` enum
+
+**Target (Flowbite observations):**
+- Small pill-shaped labels for counts and status
+- Color-coded tones (neutral, accent, success, warning, error)
+- Used in card headers, navigation badges, status indicators
+
+**Files Created/Modified:**
+1. `Infrastructure/UI/Vocabulary/BadgeElements.cs` - NEW
+2. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added `renderBadge()` method
+3. `Infrastructure/UI/Themes/default.theme.yaml` - Added badge configuration
+4. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added `generateBadgeStyles()` method
+5. `Infrastructure/UI/Vocabulary/Layout.cs` - Added `IHeaderContent` to `Row` for header layouts
+6. `Pages/Home/Home.Page.cs` - Added Badge showcase section
+
+**Implementation Details:**
+
+**C# Vocabulary:**
+```csharp
+public enum BadgeTone { Neutral, Accent, Positive, Warning, Critical }
+public enum BadgeSize { Small, Medium }
+
+public record Badge : IElement, IHeaderContent, IBodyContent, IFooterContent
+{
+    public string Label { get; }
+    public BadgeTone ElementTone { get; init; } = BadgeTone.Neutral;
+    public BadgeSize ElementSize { get; init; } = BadgeSize.Medium;
+
+    public Badge(string label) { ... }
+    public Badge(string label, BadgeTone tone) { ... }
+
+    public Badge Tone(BadgeTone tone) => this with { ElementTone = tone };
+    public Badge Size(BadgeSize size) => this with { ElementSize = size };
+}
+```
+
+**HTML Output:**
+```html
+<span class="badge badge--accent badge--small">12</span>
+<span class="badge badge--positive badge--medium">Active</span>
+```
+
+**Theme Configuration:**
+- Full radius (pill shape)
+- Five tone variants with semantic colors
+- Two size variants (small: xs text, medium: sm text)
+- Consistent with Flowbite's tight padding
+
+**Acceptance Criteria:**
+- ✅ Five tone variants styled appropriately (Neutral, Accent, Positive, Warning, Critical)
+- ✅ Two size variants (Small, Medium)
+- ✅ Can be used in card headers (common pattern for counts)
+- ✅ Pill shape with full border-radius
+
+---
+
+### Task 2.3: TrendIndicator
 
 *Not started*
 
 Priority order (remaining):
-1. `Badge` - Counts, status indicators
-2. `TrendIndicator` - ↑12.5% patterns
-3. `Sidebar` / `NavItem` - Navigation structure
-4. `Avatar` - User profile
-5. `Icon` - Icon system
+1. `TrendIndicator` - ↑12.5% patterns
+2. `Sidebar` / `NavItem` - Navigation structure
+3. `Avatar` - User profile
+4. `Icon` - Icon system
 
 ---
 
 ## Current Status
 
 **Active Phase:** Phase 2 - New Vocabulary Elements
-**Next Task:** Task 2.2 - Badge
+**Next Task:** Task 2.3 - TrendIndicator
 **Blockers:** None
-**Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab)
+**Completed:** All Phase 1 tasks (1.1-1.7), Task 2.1 (Tabs/Tab), Task 2.2 (Badge)
 
 ---
 
@@ -756,6 +813,37 @@ The implementation follows the same patterns established in Phase 1:
 - Style variant overrides (boxed borders, pill radius)
 - Panel visibility (hidden attribute support)
 
+### Session 10 (2026-01-10)
+
+**Completed:** Task 2.2 - Badge
+
+**Files created/modified:**
+1. `Infrastructure/UI/Vocabulary/BadgeElements.cs` - NEW file with `Badge` record, `BadgeTone` enum, `BadgeSize` enum
+2. `Infrastructure/UI/Rendering/HtmlRenderer.cs` - Added `renderBadge()` method
+3. `Infrastructure/UI/Themes/default.theme.yaml` - Added badge configuration (base, sizes, tones)
+4. `Infrastructure/UI/Rendering/ThemeCompiler.cs` - Added `generateBadgeStyles()` method
+5. `Infrastructure/UI/Vocabulary/Layout.cs` - Added `IHeaderContent` to `Row` record
+6. `Pages/Home/Home.Page.cs` - Added Badge showcase section
+
+**Design decisions:**
+1. **Five tone variants:** Neutral (gray), Accent (blue), Positive (green), Warning (yellow), Critical (red) - matches Alert tones plus Accent for brand highlights.
+
+2. **Two size variants:** Small (xs text, tight padding) for counts/numbers, Medium (sm text) for labels.
+
+3. **Pill shape:** Uses `radius: full` (9999px) for consistent rounded appearance regardless of content width.
+
+4. **Universal slot compatibility:** Badge implements `IHeaderContent`, `IBodyContent`, `IFooterContent` so it can be placed anywhere.
+
+5. **Row in headers:** Extended `Row` to implement `IHeaderContent` to enable common "title + badge" header patterns.
+
+**Key insight:**
+The Badge implementation followed the established patterns exactly - the vocabulary file structure, renderer method, theme YAML, and compiler method were all predictable from existing elements. The only unexpected change was needing to extend `Row` to work in headers, which makes sense as a general improvement since horizontal layouts are common in headers.
+
+**Generated CSS includes:**
+- Base styles (inline-flex, centered, pill radius, medium weight)
+- Size variants (small: xs text/tight padding, medium: sm text/comfortable padding)
+- Tone variants (semantic background/text color pairings)
+
 ---
 
 ## Session Handoff Protocol
@@ -793,7 +881,7 @@ This experiment is considered successful when:
 
 **Phase 2:**
 - ✅ Tabs/Tab functional with three style variants
-- ⬜ Badge component added
+- ✅ Badge component added (5 tones, 2 sizes)
 - ⬜ TrendIndicator component added
 - ⬜ Navigation/Sidebar components added
 - ⬜ Full dashboard layout achievable
@@ -806,4 +894,4 @@ This experiment is considered successful when:
 ---
 
 **Last Updated:** 2026-01-10
-**Document Version:** 1.3
+**Document Version:** 1.4

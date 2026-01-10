@@ -334,6 +334,39 @@ alert:
     weight: medium          # Medium weight for better readability
     margin: 0
 
+# Badge elements (counts, status indicators, tags)
+badge:
+  base:
+    display: inline-flex
+    align-items: center
+    justify-content: center
+    radius: full             # Pill shape (Flowbite style)
+    weight: medium
+    white-space: nowrap
+  size-small:
+    padding-x: sm            # 8px horizontal
+    padding-y: xs            # 4px vertical (tight, as per Flowbite note)
+    size: xs                 # 12px text
+  size-medium:
+    padding-x: md            # 12px horizontal
+    padding-y: xs            # 4px vertical
+    size: sm                 # 14px text
+  tone-neutral:
+    background: surface-raised
+    text: text-secondary
+  tone-accent:
+    background: accent
+    text: white
+  tone-positive:
+    background: positive-subtle
+    text: positive-dark
+  tone-warning:
+    background: warning-subtle
+    text: warning-dark
+  tone-critical:
+    background: critical-subtle
+    text: critical-dark
+
 empty-state:
   base:
     text-align: center

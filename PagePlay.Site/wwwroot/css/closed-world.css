@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-10 18:30:35 UTC
+ * Generated: 2026-01-10 18:50:04 UTC
  */
 
 @layer tokens, base, components;
@@ -467,6 +467,51 @@
 
   .empty-state--large .empty-state__message {
     font-size: var(--text-lg);
+  }
+
+  /* Badge elements */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-full);
+    font-weight: var(--weight-medium);
+    white-space: nowrap;
+  }
+
+  .badge--small {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: var(--text-xs);
+  }
+
+  .badge--medium {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: var(--text-sm);
+  }
+
+  .badge--neutral {
+    background: var(--color-surface-raised);
+    color: var(--color-text-secondary);
+  }
+
+  .badge--accent {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .badge--positive {
+    background: var(--color-positive-subtle);
+    color: var(--color-positive-dark);
+  }
+
+  .badge--warning {
+    background: var(--color-warning-subtle);
+    color: var(--color-warning-dark);
+  }
+
+  .badge--critical {
+    background: var(--color-critical-subtle);
+    color: var(--color-critical-dark);
   }
 
   /* List elements */

@@ -73,7 +73,7 @@ public record Stack : ElementBase, IBodyContent
 /// <summary>
 /// Row - Horizontal arrangement with semantic purpose-based spacing.
 /// </summary>
-public record Row : ElementBase, IBodyContent, IFooterContent
+public record Row : ElementBase, IHeaderContent, IBodyContent, IFooterContent
 {
     public For ElementPurpose { get; }
 

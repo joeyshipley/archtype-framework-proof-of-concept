@@ -343,6 +343,9 @@ public class ThemeCompiler
         // Feedback element styling
         generateFeedbackStyles(theme, css);
 
+        // Badge element styling
+        generateBadgeStyles(theme, css);
+
         // List element styling
         generateListStyles(theme, css);
 
@@ -860,6 +863,72 @@ public class ThemeCompiler
         css.AppendLine();
         css.AppendLine("  .empty-state--large .empty-state__message {");
         css.AppendLine($"    font-size: {getPropertyOrDefault(emptyState, "size-large.text-size", "size", "var(--text-lg)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateBadgeStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        var badge = getComponent(theme, "badge");
+
+        css.AppendLine("  /* Badge elements */");
+
+        // Badge base
+        css.AppendLine("  .badge {");
+        css.AppendLine($"    display: {getPropertyOrDefault(badge, "base.display", "display", "inline-flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(badge, "base.align-items", "align-items", "center")};");
+        css.AppendLine($"    justify-content: {getPropertyOrDefault(badge, "base.justify-content", "justify-content", "center")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(badge, "base.radius", "radius", "var(--radius-full)")};");
+        css.AppendLine($"    font-weight: {getPropertyOrDefault(badge, "base.weight", "weight", "var(--weight-medium)")};");
+        css.AppendLine($"    white-space: {getPropertyOrDefault(badge, "base.white-space", "white-space", "nowrap")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Badge size variants
+        css.AppendLine("  .badge--small {");
+        var smallPaddingY = getPropertyOrDefault(badge, "size-small.padding-y", "padding-y", "var(--spacing-xs)");
+        var smallPaddingX = getPropertyOrDefault(badge, "size-small.padding-x", "padding-x", "var(--spacing-sm)");
+        css.AppendLine($"    padding: {smallPaddingY} {smallPaddingX};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(badge, "size-small.size", "size", "var(--text-xs)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .badge--medium {");
+        var mediumPaddingY = getPropertyOrDefault(badge, "size-medium.padding-y", "padding-y", "var(--spacing-xs)");
+        var mediumPaddingX = getPropertyOrDefault(badge, "size-medium.padding-x", "padding-x", "var(--spacing-md)");
+        css.AppendLine($"    padding: {mediumPaddingY} {mediumPaddingX};");
+        css.AppendLine($"    font-size: {getPropertyOrDefault(badge, "size-medium.size", "size", "var(--text-sm)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Badge tone variants
+        css.AppendLine("  .badge--neutral {");
+        css.AppendLine($"    background: {getPropertyOrDefault(badge, "tone-neutral.background", "background", "var(--color-surface-raised)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(badge, "tone-neutral.text", "text", "var(--color-text-secondary)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .badge--accent {");
+        css.AppendLine($"    background: {getPropertyOrDefault(badge, "tone-accent.background", "background", "var(--color-accent)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(badge, "tone-accent.text", "text", "var(--color-white)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .badge--positive {");
+        css.AppendLine($"    background: {getPropertyOrDefault(badge, "tone-positive.background", "background", "var(--color-positive-subtle)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(badge, "tone-positive.text", "text", "var(--color-positive-dark)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .badge--warning {");
+        css.AppendLine($"    background: {getPropertyOrDefault(badge, "tone-warning.background", "background", "var(--color-warning-subtle)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(badge, "tone-warning.text", "text", "var(--color-warning-dark)")};");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        css.AppendLine("  .badge--critical {");
+        css.AppendLine($"    background: {getPropertyOrDefault(badge, "tone-critical.background", "background", "var(--color-critical-subtle)")};");
+        css.AppendLine($"    color: {getPropertyOrDefault(badge, "tone-critical.text", "text", "var(--color-critical-dark)")};");
         css.AppendLine("  }");
         css.AppendLine();
     }
