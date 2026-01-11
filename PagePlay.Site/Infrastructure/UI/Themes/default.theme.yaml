@@ -563,3 +563,30 @@ section-title:
     color: text-primary
     line-height: tight       # Token reference for tighter heading spacing
     margin-bottom: md
+
+# ============================================================================
+# DRAG AND DROP
+# ============================================================================
+drag-drop:
+  proxy:
+    opacity: 0.9
+    shadow: lg
+    radius: md
+    padding: md
+    rotation: 2deg
+    background: surface
+  dragging:
+    opacity: subdued
+  drop-target:
+    outline-color: accent
+    outline-style: dashed
+    outline-width: 2
+    outline-offset: 4
+    background-opacity: 0.05
+    transition: fast
+  drop-target-hover:
+    outline-style: solid
+    background-opacity: 0.1
+  cursors:
+    grab: grab
+    grabbing: grabbing

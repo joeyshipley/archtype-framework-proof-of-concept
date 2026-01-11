@@ -610,21 +610,21 @@ drag-drop:
 - [ ] Total JS under 50 lines
 - [ ] No external dependencies
 - [ ] Works with existing toggle endpoint (no new endpoints)
-- [ ] CSS uses modern features (`:has()`, `color-mix()`)
+- [x] CSS uses modern features (`:has()`, `color-mix()`)
 
 ### Architecture
 - [ ] Server authority preserved (client just triggers toggle)
 - [ ] Fits framework JS pattern (small utility file)
 - [x] Semantic vocabulary methods (`.DragSource()`, `.DropZone()`)
 - [x] Interface-based element capabilities (`IDragSource`, `IDropZone`)
-- [ ] Theme-controlled appearance (drag styles in YAML)
+- [x] Theme-controlled appearance (drag styles in YAML)
 
 ---
 
 ## Implementation Order
 
 1. **Phase 1: Vocabulary Extensions** - Create `IDragSource`/`IDropZone` interfaces, implement on `ListItem`/`Section` **[COMPLETE]**
-2. **Phase 2: Theme + Compiler** - Add drag-drop section to YAML, update ThemeCompiler
+2. **Phase 2: Theme + Compiler** - Add drag-drop section to YAML, update ThemeCompiler **[COMPLETE]**
 3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines)
 4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`
 5. **Phase 5: Include JS** - Add script to layout
@@ -681,6 +681,26 @@ drag-drop:
 - Committed: `6c69955`
 
 **Next session:** Phase 2 (Theme YAML + ThemeCompiler updates)
+
+### Session 3 (2026-01-11)
+- Implemented Phase 2: Theme YAML + ThemeCompiler Updates
+- Added `drag-drop:` section to `default.theme.yaml` with:
+  - `proxy:` settings (opacity, shadow, radius, padding, rotation, background)
+  - `dragging:` settings (opacity)
+  - `drop-target:` settings (outline-color, outline-style, outline-width, outline-offset, background-opacity, transition)
+  - `drop-target-hover:` settings (outline-style, background-opacity)
+  - `cursors:` settings (grab, grabbing)
+- Added `generateDragDropStyles()` method to `ThemeCompiler.cs`
+- Generated CSS includes:
+  - `.drag-proxy` class with fixed positioning and theme-controlled appearance
+  - `.dragging` class with opacity dimming
+  - `[draggable="true"]` cursor states (grab/grabbing)
+  - CSS `:has()` selector for drop zone highlighting when drag starts
+  - `.drag-over` class for hover intensification
+  - Modern `color-mix()` for semi-transparent backgrounds
+- All 19 tests pass, build clean with 0 warnings
+
+**Next session:** Phase 3 (JavaScript implementation - `drag-drop.js`)
 
 ---
 

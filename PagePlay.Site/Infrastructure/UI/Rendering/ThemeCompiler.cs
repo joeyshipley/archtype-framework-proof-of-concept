@@ -370,6 +370,9 @@ public class ThemeCompiler
         // Link styling
         generateLinkStyles(theme, css);
 
+        // Drag and drop styling
+        generateDragDropStyles(theme, css);
+
         css.AppendLine("}");
     }
 
@@ -1518,6 +1521,82 @@ public class ThemeCompiler
         css.AppendLine("  .link--ghost:hover {");
         css.AppendLine($"    color: {getPropertyOrDefault(link, "style-ghost-hover.color", "color", "var(--color-accent)")};");
         css.AppendLine("    text-decoration: none;");
+        css.AppendLine("  }");
+        css.AppendLine();
+    }
+
+    private static void generateDragDropStyles(Dictionary<string, object> theme, StringBuilder css)
+    {
+        var dragDrop = getComponent(theme, "drag-drop");
+        if (dragDrop == null) return;
+
+        css.AppendLine("  /* Drag and drop */");
+        css.AppendLine();
+
+        // Drag proxy - the visual element that follows the mouse
+        css.AppendLine("  .drag-proxy {");
+        css.AppendLine("    position: fixed;");
+        css.AppendLine("    top: 0;");
+        css.AppendLine("    left: 0;");
+        css.AppendLine("    pointer-events: none;");
+        css.AppendLine("    z-index: 1000;");
+
+        var proxyOpacity = getComponentProperty(dragDrop, "proxy.opacity")?.ToString() ?? "0.9";
+        css.AppendLine($"    opacity: {proxyOpacity};");
+
+        css.AppendLine($"    box-shadow: {getPropertyOrDefault(dragDrop, "proxy.shadow", "shadow", "var(--shadow-lg)")};");
+        css.AppendLine($"    border-radius: {getPropertyOrDefault(dragDrop, "proxy.radius", "radius", "var(--radius-md)")};");
+        css.AppendLine($"    padding: {getPropertyOrDefault(dragDrop, "proxy.padding", "padding", "var(--spacing-md)")};");
+        css.AppendLine($"    background: {getPropertyOrDefault(dragDrop, "proxy.background", "background", "var(--color-surface)")};");
+
+        var rotation = getComponentProperty(dragDrop, "proxy.rotation")?.ToString() ?? "2deg";
+        css.AppendLine($"    transform: rotate({rotation});");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Original item while dragging - dims to show it's being moved
+        css.AppendLine("  .dragging {");
+        var draggingOpacity = getComponentProperty(dragDrop, "dragging.opacity")?.ToString() ?? "subdued";
+        css.AppendLine($"    opacity: var(--opacity-{draggingOpacity});");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Cursor states for draggable elements
+        var grabCursor = getComponentProperty(dragDrop, "cursors.grab")?.ToString() ?? "grab";
+        var grabbingCursor = getComponentProperty(dragDrop, "cursors.grabbing")?.ToString() ?? "grabbing";
+        css.AppendLine($"  [draggable=\"true\"] {{ cursor: {grabCursor}; }}");
+        css.AppendLine($"  [draggable=\"true\"]:active {{ cursor: {grabbingCursor}; }}");
+        css.AppendLine();
+
+        // Drop zone highlighting using CSS :has() - shows when dragging starts
+        // This targets drop zones that don't contain the dragging element
+        var outlineColor = getComponentProperty(dragDrop, "drop-target.outline-color")?.ToString() ?? "accent";
+        var outlineStyle = getComponentProperty(dragDrop, "drop-target.outline-style")?.ToString() ?? "dashed";
+        var outlineWidth = getComponentProperty(dragDrop, "drop-target.outline-width")?.ToString() ?? "2";
+        var outlineOffset = getComponentProperty(dragDrop, "drop-target.outline-offset")?.ToString() ?? "4";
+        var bgOpacity = getComponentProperty(dragDrop, "drop-target.background-opacity")?.ToString() ?? "0.05";
+        var transition = getComponentProperty(dragDrop, "drop-target.transition")?.ToString() ?? "fast";
+
+        css.AppendLine("  /* Drop zone - ready state (via CSS :has()) */");
+        css.AppendLine("  body:has([data-drop-zone] .dragging) [data-drop-zone]:not(:has(.dragging)) {");
+        css.AppendLine($"    outline: {outlineWidth}px {outlineStyle} var(--color-{outlineColor});");
+        css.AppendLine($"    outline-offset: {outlineOffset}px;");
+        // Use color-mix for semi-transparent background
+        var bgOpacityPercent = (double.Parse(bgOpacity) * 100).ToString("0");
+        css.AppendLine($"    background: color-mix(in srgb, var(--color-{outlineColor}) {bgOpacityPercent}%, transparent);");
+        css.AppendLine($"    transition: all var(--duration-{transition}) ease;");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Drop zone hover state - when dragging over the target
+        var hoverOutlineStyle = getComponentProperty(dragDrop, "drop-target-hover.outline-style")?.ToString() ?? "solid";
+        var hoverBgOpacity = getComponentProperty(dragDrop, "drop-target-hover.background-opacity")?.ToString() ?? "0.1";
+        var hoverBgOpacityPercent = (double.Parse(hoverBgOpacity) * 100).ToString("0");
+
+        css.AppendLine("  /* Drop zone - hovering over it */");
+        css.AppendLine("  .drag-over {");
+        css.AppendLine($"    outline-style: {hoverOutlineStyle} !important;");
+        css.AppendLine($"    background: color-mix(in srgb, var(--color-{outlineColor}) {hoverBgOpacityPercent}%, transparent) !important;");
         css.AppendLine("  }");
         css.AppendLine();
     }
