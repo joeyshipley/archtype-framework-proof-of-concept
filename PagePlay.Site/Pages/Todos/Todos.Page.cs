@@ -26,55 +26,76 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
     public string Render(IDataContext data)
     {
         var todos = data.Get<TodosListDomainView>();
+        var openTodos = todos.List.Where(t => !t.IsCompleted).ToList();
+        var completedTodos = todos.List.Where(t => t.IsCompleted).ToList();
 
         return _renderer.Render(
             new Page(
                 new PageTitle("My Todos"),
                 new Section().Id("notifications"),
-                renderCreateFormComponent(),
-                new Section()
-                    .Id("todo-list")
-                    .Children(renderTodoListComponent(todos.List))
+                new Grid(For.Sections, Columns.Three,
+                    renderAddColumn(),
+                    renderOpenColumn(openTodos),
+                    renderCompletedColumn(completedTodos)
+                )
             ).Id(ViewId)
         );
     }
+
+    private Section renderOpenColumn(List<TodoListEntry> openTodos) =>
+        new Section()
+            .Id("open-todos")
+            .Children(
+                new SectionTitle("Open"),
+                renderTodoListComponent(openTodos, "No open todos")
+            );
+
+    private Section renderAddColumn() =>
+        new Section()
+            .Id("todo-create-form")
+            .Children(
+                new SectionTitle("\u00A0"),
+                renderCreateFormContent()
+            );
+
+    private Section renderCompletedColumn(List<TodoListEntry> completedTodos) =>
+        new Section()
+            .Id("completed-todos")
+            .Children(
+                new SectionTitle("Completed"),
+                renderTodoListComponent(completedTodos, "No completed todos")
+            );
 
     private Form renderCreateFormContent() =>
         new Form()
             .Action("/interaction/todos/create")
             .Children(
-                new Row(For.Items,
+                new Stack(For.Items,
                     new Input()
                         .Name("title")
                         .Type(InputType.Text)
                         .Placeholder("What needs to be done?")
                         .Id("title"),
-                    new Button(Importance.Primary, "Add Todo")
+                    new Button(Importance.Primary, "Add")
                         .Type(ButtonType.Submit)
                 )
             );
 
-    private Section renderCreateFormComponent() =>
-        new Section()
-            .Id("todo-create-form")
-            .Children(renderCreateFormContent());
-
     public string RenderCreateForm() =>
-        _renderer.Render(renderCreateFormComponent());
+        _renderer.Render(renderAddColumn());
 
-    private IElement renderTodoListComponent(List<TodoListEntry> todos)
+    private IElement renderTodoListComponent(List<TodoListEntry> todos, string emptyMessage = "No todos")
     {
         if (todos.Count == 0)
         {
-            return new EmptyState("No todos yet. Add one above to get started!")
+            return new EmptyState(emptyMessage)
             {
                 ElementSize = EmptyStateSize.Small
             };
         }
 
         var list = new List()
-            .Style(ListStyle.Plain)
-            .Id("todo-list-ul");
+            .Style(ListStyle.Plain);
 
         foreach (var todo in todos)
         {

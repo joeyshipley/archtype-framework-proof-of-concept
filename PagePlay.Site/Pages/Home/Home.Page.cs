@@ -24,7 +24,7 @@ public class HomePage(IHtmlRenderer _renderer) : IHomePageView
                 ),
                 new Row(For.Actions,
                     new Link("Style Test", "/style-test").Style(LinkStyle.ButtonSecondary),
-                    new Link("Get Started", "/login").Style(LinkStyle.Button)
+                    new Link("Get Started", "/todos").Style(LinkStyle.Button)
                 )
             )
         ).Id(ViewId);
