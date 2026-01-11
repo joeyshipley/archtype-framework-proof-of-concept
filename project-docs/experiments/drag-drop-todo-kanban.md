@@ -615,15 +615,15 @@ drag-drop:
 ### Architecture
 - [ ] Server authority preserved (client just triggers toggle)
 - [ ] Fits framework JS pattern (small utility file)
-- [ ] Semantic vocabulary methods (`.DragSource()`, `.DropZone()`)
-- [ ] Interface-based element capabilities (`IDragSource`, `IDropZone`)
+- [x] Semantic vocabulary methods (`.DragSource()`, `.DropZone()`)
+- [x] Interface-based element capabilities (`IDragSource`, `IDropZone`)
 - [ ] Theme-controlled appearance (drag styles in YAML)
 
 ---
 
 ## Implementation Order
 
-1. **Phase 1: Vocabulary Extensions** - Create `IDragSource`/`IDropZone` interfaces, implement on `ListItem`/`Section`
+1. **Phase 1: Vocabulary Extensions** - Create `IDragSource`/`IDropZone` interfaces, implement on `ListItem`/`Section` **[COMPLETE]**
 2. **Phase 2: Theme + Compiler** - Add drag-drop section to YAML, update ThemeCompiler
 3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines)
 4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`
@@ -670,6 +670,17 @@ drag-drop:
 6. **Animation:** Defer (revisit site-wide with HTMX animations)
 
 **Next session:** Begin Phase 1 implementation (interfaces + vocabulary methods)
+
+### Session 2 (2026-01-11)
+- Implemented Phase 1: Vocabulary Extensions
+- Created `IDragSource.cs` and `IDropZone.cs` interfaces
+- Added `IDragSource` to `ListItem` with `.DragSource(long id)` method
+- Added `IDropZone` to `Section` with `.DropZone(string name)` method
+- Updated `HtmlRenderer` to emit `draggable="true" data-drag-id="{id}"` and `data-drop-zone="{name}"`
+- All 19 tests pass, build clean with 0 warnings
+- Committed: `6c69955`
+
+**Next session:** Phase 2 (Theme YAML + ThemeCompiler updates)
 
 ---
 
