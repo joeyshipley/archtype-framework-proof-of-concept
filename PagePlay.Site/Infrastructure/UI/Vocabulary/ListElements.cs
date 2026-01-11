@@ -62,11 +62,13 @@ public enum ListItemState
 /// <summary>
 /// ListItem - Individual list item with semantic state.
 /// Used within List containers to represent individual items with optional state styling.
+/// Implements IDragSource to support drag-and-drop interactions.
 /// </summary>
-public record ListItem : ElementBase
+public record ListItem : ElementBase, IDragSource
 {
     public ListItemState ElementState { get; init; } = ListItemState.Normal;
     public string ElementId { get; init; }
+    public long? DragSourceId { get; init; }
 
     public ListItem()
     {
@@ -85,6 +87,9 @@ public record ListItem : ElementBase
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
     public ListItem Id(string id) => this with { ElementId = id };
+
+    /// <summary>Makes this item draggable with the specified ID. Returns new instance (immutable).</summary>
+    public ListItem DragSource(long id) => this with { DragSourceId = id };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
     public new ListItem Children(params IElement[] children)

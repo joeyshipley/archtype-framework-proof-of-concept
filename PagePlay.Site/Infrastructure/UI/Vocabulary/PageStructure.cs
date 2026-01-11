@@ -33,10 +33,12 @@ public record Page : ElementBase
 /// <summary>
 /// Section - Major division within a page.
 /// Groups related content with appropriate spacing.
+/// Implements IDropZone to support drag-and-drop interactions.
 /// </summary>
-public record Section : ElementBase, IBodyContent
+public record Section : ElementBase, IBodyContent, IDropZone
 {
     public string ElementId { get; init; }
+    public string DropZoneName { get; init; }
 
     public Section() { }
 
@@ -50,6 +52,9 @@ public record Section : ElementBase, IBodyContent
 
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
     public Section Id(string id) => this with { ElementId = id };
+
+    /// <summary>Makes this section a drop zone with the specified name. Returns new instance (immutable).</summary>
+    public Section DropZone(string name) => this with { DropZoneName = name };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
     public new Section Children(params IElement[] children)

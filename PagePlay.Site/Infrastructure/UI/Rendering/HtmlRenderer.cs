@@ -224,7 +224,8 @@ public class HtmlRenderer : IHtmlRenderer
     private void renderSection(Section section, StringBuilder sb)
     {
         var idAttr = !string.IsNullOrEmpty(section.ElementId) ? $" id=\"{htmlEncode(section.ElementId)}\"" : "";
-        sb.Append($"<section class=\"section\"{idAttr}>");
+        var dropZoneAttr = !string.IsNullOrEmpty(section.DropZoneName) ? $" data-drop-zone=\"{htmlEncode(section.DropZoneName)}\"" : "";
+        sb.Append($"<section class=\"section\"{idAttr}{dropZoneAttr}>");
 
         foreach (var child in ((IElement)section).Children)
             renderElement(child, sb);
@@ -554,8 +555,10 @@ public class HtmlRenderer : IHtmlRenderer
 
         var classes = $"list-item {stateClass}";
         var idAttr = !string.IsNullOrEmpty(listItem.ElementId) ? $" id=\"{htmlEncode(listItem.ElementId)}\"" : "";
+        var draggableAttr = listItem.DragSourceId.HasValue ? " draggable=\"true\"" : "";
+        var dragIdAttr = listItem.DragSourceId.HasValue ? $" data-drag-id=\"{listItem.DragSourceId.Value}\"" : "";
 
-        sb.Append($"<li class=\"{classes}\"{idAttr}>");
+        sb.Append($"<li class=\"{classes}\"{idAttr}{draggableAttr}{dragIdAttr}>");
 
         foreach (var child in ((IElement)listItem).Children)
             renderElement(child, sb);
