@@ -681,6 +681,9 @@ public class HtmlRenderer : IHtmlRenderer
 
         sb.Append($"<header class=\"top-nav\"{idAttr}>");
 
+        // Inner container (max-width constrained)
+        sb.Append("<div class=\"top-nav__inner\">");
+
         // Logo (left side)
         if (!string.IsNullOrEmpty(topNav.ElementLogoText))
         {
@@ -701,6 +704,7 @@ public class HtmlRenderer : IHtmlRenderer
             sb.Append("</div>");
         }
 
+        sb.Append("</div>"); // Close inner
         sb.Append("</header>");
     }
 

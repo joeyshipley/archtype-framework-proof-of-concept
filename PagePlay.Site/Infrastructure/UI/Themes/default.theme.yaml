@@ -493,12 +493,15 @@ tabs-pill:
 # ============================================================================
 top-nav:
   base:
+    background: surface
+    border-bottom: border        # Subtle bottom border (Flowbite style) - stays full width
+  inner:
     display: flex
     align-items: center
     justify-content: space-between
-    background: surface
-    border-bottom: border        # Subtle bottom border (Flowbite style)
-    padding-x: lg
+    max-width: 1200              # Same as page max-width
+    margin: auto                 # Center the inner content
+    padding-x: lg                # Same as page padding
     height: 64                   # Fixed height in pixels
   logo:
     size: lg                     # Slightly larger than body text

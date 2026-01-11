@@ -1369,11 +1369,8 @@ public class ThemeCompiler
 
         css.AppendLine("  /* Top Navigation */");
 
-        // Base container
+        // Base container (full-width, holds the border)
         css.AppendLine("  .top-nav {");
-        css.AppendLine($"    display: {getDisplayValue(topNav, "base.display", "flex")};");
-        css.AppendLine($"    align-items: {getPropertyOrDefault(topNav, "base.align-items", "align-items", "center")};");
-        css.AppendLine($"    justify-content: {getPropertyOrDefault(topNav, "base.justify-content", "justify-content", "space-between")};");
         css.AppendLine($"    background: {getPropertyOrDefault(topNav, "base.background", "background", "var(--color-surface)")};");
 
         var borderBottom = topNav != null ? getComponentProperty(topNav, "base.border-bottom") : null;
@@ -1383,11 +1380,32 @@ public class ThemeCompiler
             css.AppendLine($"    border-bottom: 1px solid {borderColor};");
         }
 
-        var paddingX = getPropertyOrDefault(topNav, "base.padding-x", "padding-x", "var(--spacing-lg)");
+        css.AppendLine("  }");
+        css.AppendLine();
+
+        // Inner container (max-width constrained, holds the content)
+        css.AppendLine("  .top-nav__inner {");
+        css.AppendLine($"    display: {getDisplayValue(topNav, "inner.display", "flex")};");
+        css.AppendLine($"    align-items: {getPropertyOrDefault(topNav, "inner.align-items", "align-items", "center")};");
+        css.AppendLine($"    justify-content: {getPropertyOrDefault(topNav, "inner.justify-content", "justify-content", "space-between")};");
+
+        var maxWidth = topNav != null ? getComponentProperty(topNav, "inner.max-width") : null;
+        if (maxWidth != null)
+        {
+            css.AppendLine($"    max-width: {maxWidth}px;");
+        }
+
+        var margin = topNav != null ? getComponentProperty(topNav, "inner.margin") : null;
+        if (margin != null)
+        {
+            css.AppendLine($"    margin: 0 {margin};");
+        }
+
+        var paddingX = getPropertyOrDefault(topNav, "inner.padding-x", "padding-x", "var(--spacing-lg)");
         css.AppendLine($"    padding-left: {paddingX};");
         css.AppendLine($"    padding-right: {paddingX};");
 
-        var height = topNav != null ? getComponentProperty(topNav, "base.height") : null;
+        var height = topNav != null ? getComponentProperty(topNav, "inner.height") : null;
         if (height != null)
         {
             css.AppendLine($"    height: {height}px;");
