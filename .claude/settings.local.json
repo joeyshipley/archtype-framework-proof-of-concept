@@ -7,7 +7,9 @@
       "Read(**/*)",
       "WebSearch",
       "WebFetch(domain:*)",
-      "Skill(brief-create)"
+      "Skill(brief-create)",
+      "WebFetch(domain:htmx.org)",
+      "WebFetch(domain:github.com)"
     ],
     "deny": [],
     "ask": [
