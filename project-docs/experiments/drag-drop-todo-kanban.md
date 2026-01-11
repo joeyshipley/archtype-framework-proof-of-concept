@@ -625,9 +625,9 @@ drag-drop:
 
 1. **Phase 1: Vocabulary Extensions** - Create `IDragSource`/`IDropZone` interfaces, implement on `ListItem`/`Section` **[COMPLETE]**
 2. **Phase 2: Theme + Compiler** - Add drag-drop section to YAML, update ThemeCompiler **[COMPLETE]**
-3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines)
+3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines) **[COMPLETE]**
 4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`
-5. **Phase 5: Include JS** - Add script to layout
+5. **Phase 5: Include JS** - Add script to layout **[COMPLETE]**
 6. **Phase 6: Testing** - Manual testing of all drag scenarios
 7. **Phase 7: Polish** - Address any UX issues discovered
 
@@ -701,6 +701,20 @@ drag-drop:
 - All 19 tests pass, build clean with 0 warnings
 
 **Next session:** Phase 3 (JavaScript implementation - `drag-drop.js`)
+
+### Session 4 (2026-01-11)
+- Implemented Phase 3: JavaScript Implementation
+- Created `wwwroot/js/drag-drop.js` (68 lines including comments)
+  - Handles `dragstart`, `dragover`, `drop`, `dragend` events
+  - Creates visual proxy that follows mouse (top-left at cursor)
+  - Adds `.dragging` class to original item
+  - Adds `.drag-over` class to valid drop targets
+  - Triggers existing toggle endpoint via `htmx.ajax()` on drop
+  - Cleanup function removes proxy and classes
+- Added script reference to `Pages/Shared/Layout.cs`
+- All 19 tests pass, build clean with 0 warnings
+
+**Next session:** Phase 4 (Page Updates - apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`)
 
 ---
 

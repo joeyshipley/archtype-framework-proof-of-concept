@@ -36,6 +36,7 @@ public class Layout(
                 {{bodyContent}}
             </main>
             <script src="/js/csrf-setup.js"></script>
+            <script src="/js/drag-drop.js"></script>
         </body>
         </html>
         """;
