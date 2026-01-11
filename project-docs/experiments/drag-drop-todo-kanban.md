@@ -637,7 +637,7 @@ drag-drop:
 5. **Phase 5: Include JS** - Add script to layout **[COMPLETE]**
 6. **Phase 6: Configurable Drop Action** - Add action URL parameter to `.DropZone()`, update JS to read from `data-drop-action` **[COMPLETE]**
 7. **Phase 7: Testing** - Manual testing of all drag scenarios **[COMPLETE]**
-8. **Phase 8: Polish** - Address any UX issues discovered **[N/A - No issues found]**
+8. **Phase 8: Polish** - Address UX issues discovered **[COMPLETE]**
 
 ---
 
@@ -786,6 +786,14 @@ drag-drop:
 - Semantic vocabulary API (`.DragSource()`, `.DropZone()`) fits Closed-World UI philosophy
 - Theme-controlled appearance allows designers to tweak drag visuals via YAML
 - Modern CSS features (`:has()`, `color-mix()`) eliminate need for additional JS
+
+### Session 9 (2026-01-11)
+- Completed Phase 8: Polish
+- Fixed three visual artifacts discovered during testing:
+  1. **Globe icon**: Native browser drag ghost was visible because ghost element wasn't in DOM before `setDragImage`. Fix: Append ghost to body, position off-screen, remove after frame.
+  2. **List bullet**: Cloned `<li>` element showed bullet marker. Fix: Added `list-style: none` to `.drag-proxy` in ThemeCompiler.
+  3. **Proxy teleport**: Drag proxy started at (0,0) and jumped to cursor on first dragover. Fix: Set initial `left`/`top` to mouse coordinates in dragstart.
+- All visual artifacts resolved - drag experience is now smooth
 
 ---
 

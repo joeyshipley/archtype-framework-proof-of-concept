@@ -3,7 +3,7 @@
  *
  * AUTO-GENERATED from theme file - DO NOT EDIT
  * Source: default.theme.yaml
- * Generated: 2026-01-11 15:00:08 UTC
+ * Generated: 2026-01-11 17:43:11 UTC
  */
 
 @layer tokens, base, components;
@@ -891,6 +891,7 @@
     left: 0;
     pointer-events: none;
     z-index: 1000;
+    list-style: none;
     opacity: 0.9;
     box-shadow: var(--shadow-lg);
     border-radius: var(--radius-md);

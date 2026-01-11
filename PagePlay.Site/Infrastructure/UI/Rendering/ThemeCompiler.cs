@@ -1540,6 +1540,7 @@ public class ThemeCompiler
         css.AppendLine("    left: 0;");
         css.AppendLine("    pointer-events: none;");
         css.AppendLine("    z-index: 1000;");
+        css.AppendLine("    list-style: none;");
 
         var proxyOpacity = getComponentProperty(dragDrop, "proxy.opacity")?.ToString() ?? "0.9";
         css.AppendLine($"    opacity: {proxyOpacity};");

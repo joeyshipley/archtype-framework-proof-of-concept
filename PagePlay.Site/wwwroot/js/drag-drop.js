@@ -18,12 +18,17 @@ document.addEventListener('dragstart', e => {
     dragProxy = item.cloneNode(true);
     dragProxy.className = 'drag-proxy';
     dragProxy.style.width = item.offsetWidth + 'px';
+    dragProxy.style.left = e.clientX + 'px';
+    dragProxy.style.top = e.clientY + 'px';
     document.body.appendChild(dragProxy);
 
-    // Hide native ghost (set to 1x1 transparent element)
+    // Hide native ghost (must be in DOM before setDragImage)
     const ghost = document.createElement('div');
+    ghost.style.cssText = 'position:absolute;top:-1000px;width:1px;height:1px;';
+    document.body.appendChild(ghost);
     e.dataTransfer.setDragImage(ghost, 0, 0);
     e.dataTransfer.effectAllowed = 'move';
+    requestAnimationFrame(() => ghost.remove());
 
     item.classList.add('dragging');
 });
