@@ -6,7 +6,6 @@
       "Write(**/*)",
       "Read(**/*)",
       "WebSearch",
-      "WebFetch(domain:*)",
       "Skill(brief-create)",
       "WebFetch(domain:htmx.org)",
       "WebFetch(domain:github.com)"
