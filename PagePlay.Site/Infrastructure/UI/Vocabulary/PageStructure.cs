@@ -39,6 +39,7 @@ public record Section : ElementBase, IBodyContent, IDropZone
 {
     public string ElementId { get; init; }
     public string DropZoneName { get; init; }
+    public string DropAction { get; init; }
 
     public Section() { }
 
@@ -53,8 +54,8 @@ public record Section : ElementBase, IBodyContent, IDropZone
     /// <summary>Sets the element ID. Returns new instance (immutable).</summary>
     public Section Id(string id) => this with { ElementId = id };
 
-    /// <summary>Makes this section a drop zone with the specified name. Returns new instance (immutable).</summary>
-    public Section DropZone(string name) => this with { DropZoneName = name };
+    /// <summary>Makes this section a drop zone with the specified name and action URL. Returns new instance (immutable).</summary>
+    public Section DropZone(string name, string action) => this with { DropZoneName = name, DropAction = action };
 
     /// <summary>Adds child components. Returns this instance (mutable for children).</summary>
     public new Section Children(params IElement[] children)

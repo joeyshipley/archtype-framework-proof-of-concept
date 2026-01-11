@@ -635,7 +635,7 @@ drag-drop:
 3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines) **[COMPLETE]**
 4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs` **[COMPLETE]**
 5. **Phase 5: Include JS** - Add script to layout **[COMPLETE]**
-6. **Phase 6: Configurable Drop Action** - Add action URL parameter to `.DropZone()`, update JS to read from `data-drop-action`
+6. **Phase 6: Configurable Drop Action** - Add action URL parameter to `.DropZone()`, update JS to read from `data-drop-action` **[COMPLETE]**
 7. **Phase 7: Testing** - Manual testing of all drag scenarios
 8. **Phase 8: Polish** - Address any UX issues discovered
 
@@ -751,6 +751,17 @@ drag-drop:
 5. Update `Todos.Page.cs` to use new API
 
 **Next:** Implement Phase 6 (Configurable Drop Action)
+
+### Session 7 (2026-01-11)
+- Implemented Phase 6: Configurable Drop Action
+- Updated `IDropZone` interface to include `DropAction` property
+- Updated `Section.DropZone(name, action)` to accept two parameters
+- Updated `HtmlRenderer` to emit `data-drop-action="{action}"` attribute
+- Updated `drag-drop.js` to read action URL from `zone.dataset.dropAction`
+- Updated `Todos.Page.cs` to use new API: `.DropZone("open", "/interaction/todos/toggle")`
+- All 19 tests pass, build clean with 0 warnings
+
+**Next:** Phase 7 (Manual testing of drag-drop functionality)
 
 ---
 

@@ -225,7 +225,8 @@ public class HtmlRenderer : IHtmlRenderer
     {
         var idAttr = !string.IsNullOrEmpty(section.ElementId) ? $" id=\"{htmlEncode(section.ElementId)}\"" : "";
         var dropZoneAttr = !string.IsNullOrEmpty(section.DropZoneName) ? $" data-drop-zone=\"{htmlEncode(section.DropZoneName)}\"" : "";
-        sb.Append($"<section class=\"section\"{idAttr}{dropZoneAttr}>");
+        var dropActionAttr = !string.IsNullOrEmpty(section.DropAction) ? $" data-drop-action=\"{htmlEncode(section.DropAction)}\"" : "";
+        sb.Append($"<section class=\"section\"{idAttr}{dropZoneAttr}{dropActionAttr}>");
 
         foreach (var child in ((IElement)section).Children)
             renderElement(child, sb);

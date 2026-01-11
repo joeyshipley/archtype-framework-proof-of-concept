@@ -49,10 +49,11 @@ document.addEventListener('dragover', e => {
 document.addEventListener('drop', e => {
     const zone = e.target.closest('[data-drop-zone]');
     if (zone && zone !== sourceZone && draggedItem) {
-        // Extract ID from data-drag-id and trigger toggle
+        // Extract ID and action URL, then trigger endpoint
         const dragId = draggedItem.dataset.dragId;
-        if (dragId) {
-            htmx.ajax('POST', '/interaction/todos/toggle', {values: {id: dragId}, swap: 'none'});
+        const action = zone.dataset.dropAction;
+        if (dragId && action) {
+            htmx.ajax('POST', action, {values: {id: dragId}, swap: 'none'});
         }
     }
     cleanup();

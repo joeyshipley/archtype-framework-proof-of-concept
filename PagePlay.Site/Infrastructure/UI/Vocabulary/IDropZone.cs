@@ -11,4 +11,10 @@ public interface IDropZone : IElement
     /// When set, the element renders with data-drop-zone="{name}".
     /// </summary>
     string DropZoneName { get; }
+
+    /// <summary>
+    /// The action URL to trigger when an item is dropped on this zone.
+    /// When set, the element renders with data-drop-action="{action}".
+    /// </summary>
+    string DropAction { get; }
 }
