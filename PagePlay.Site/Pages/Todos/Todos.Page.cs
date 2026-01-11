@@ -45,6 +45,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
     private Section renderOpenColumn(List<TodoListEntry> openTodos) =>
         new Section()
             .Id("open-todos")
+            .DropZone("open")
             .Children(
                 new SectionTitle("Open"),
                 renderTodoListComponent(openTodos, "No open todos")
@@ -61,6 +62,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
     private Section renderCompletedColumn(List<TodoListEntry> completedTodos) =>
         new Section()
             .Id("completed-todos")
+            .DropZone("completed")
             .Children(
                 new SectionTitle("Completed"),
                 renderTodoListComponent(completedTodos, "No completed todos")
@@ -109,6 +111,7 @@ public class TodosPage(IHtmlRenderer _renderer) : ITodosPageView
         new ListItem()
             .State(todo.IsCompleted ? ListItemState.Completed : ListItemState.Normal)
             .Id($"todo-{todo.Id}")
+            .DragSource(todo.Id)
             .Children(
                 new Row(For.Items,
                     // Toggle form with checkbox button

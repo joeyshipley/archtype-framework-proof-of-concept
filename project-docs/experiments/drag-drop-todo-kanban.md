@@ -626,7 +626,7 @@ drag-drop:
 1. **Phase 1: Vocabulary Extensions** - Create `IDragSource`/`IDropZone` interfaces, implement on `ListItem`/`Section` **[COMPLETE]**
 2. **Phase 2: Theme + Compiler** - Add drag-drop section to YAML, update ThemeCompiler **[COMPLETE]**
 3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines) **[COMPLETE]**
-4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`
+4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs` **[COMPLETE]**
 5. **Phase 5: Include JS** - Add script to layout **[COMPLETE]**
 6. **Phase 6: Testing** - Manual testing of all drag scenarios
 7. **Phase 7: Polish** - Address any UX issues discovered
@@ -715,6 +715,16 @@ drag-drop:
 - All 19 tests pass, build clean with 0 warnings
 
 **Next session:** Phase 4 (Page Updates - apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs`)
+
+### Session 5 (2026-01-11)
+- Implemented Phase 4: Page Updates
+- Updated `Todos.Page.cs` with drag-drop vocabulary methods:
+  - Added `.DropZone("open")` to Open column Section
+  - Added `.DropZone("completed")` to Completed column Section
+  - Added `.DragSource(todo.Id)` to each ListItem
+- All 19 tests pass, build clean with 0 warnings
+
+**Next session:** Phase 6 (Manual testing of drag-drop functionality)
 
 ---
 
