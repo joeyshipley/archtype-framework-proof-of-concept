@@ -3,9 +3,9 @@
 ## Demographics
 
 - **Age:** 50
-- **Background:** Software consultancy owner, developer
-- **Tech Savvy:** Expert
-- **Business Experience:** High
+- **Background:** Site owner, developer
+- **Tech Savvy:** High
+- **Business Experience:** Moderate
 
 ## Background
 
