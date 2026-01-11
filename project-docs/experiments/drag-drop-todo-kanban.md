@@ -185,6 +185,7 @@ namespace PagePlay.Site.Infrastructure.UI.Vocabulary;
 public interface IDropZone : IElement
 {
     string? DropZoneName { get; }
+    string? DropAction { get; }
 }
 ```
 
@@ -205,14 +206,16 @@ public record Section : ElementBase, IDropZone
 {
     // Existing properties...
     public string? DropZoneName { get; init; }
+    public string? DropAction { get; init; }
 
-    public Section DropZone(string name) => this with { DropZoneName = name };
+    public Section DropZone(string name, string action) =>
+        this with { DropZoneName = name, DropAction = action };
 }
 ```
 
 **HtmlRenderer changes:**
 - In `RenderListItem()`: if `DragSourceId` has value, add `draggable="true" data-drag-id="{id}"`
-- In `RenderSection()`: if `DropZoneName` has value, add `data-drop-zone="{name}"`
+- In `RenderSection()`: if `DropZoneName` has value, add `data-drop-zone="{name}" data-drop-action="{action}"`
 
 ### Phase 2: Theme YAML + ThemeCompiler Updates
 
@@ -354,10 +357,11 @@ document.addEventListener('dragover', e => {
 document.addEventListener('drop', e => {
     const zone = e.target.closest('[data-drop-zone]');
     if (zone && zone !== sourceZone && draggedItem) {
-        // Extract ID from data-drag-id and trigger toggle
+        // Extract ID and action URL, then trigger endpoint
         const dragId = draggedItem.dataset.dragId;
-        if (dragId) {
-            htmx.ajax('POST', '/interaction/todos/toggle', {values: {id: dragId}});
+        const action = zone.dataset.dropAction;
+        if (dragId && action) {
+            htmx.ajax('POST', action, {values: {id: dragId}, swap: 'none'});
         }
     }
     cleanup();
@@ -388,13 +392,13 @@ Update column rendering to add drop zones:
 private Section renderOpenColumn(List<TodoListEntry> openTodos) =>
     new Section()
         .Id("open-todos")
-        .DropZone("open")  // NEW - semantic method
+        .DropZone("open", "/interaction/todos/toggle")  // zone name + action URL
         .Children(...)
 
 private Section renderCompletedColumn(List<TodoListEntry> completedTodos) =>
     new Section()
         .Id("completed-todos")
-        .DropZone("completed")  // NEW - semantic method
+        .DropZone("completed", "/interaction/todos/toggle")  // zone name + action URL
         .Children(...)
 ```
 
@@ -459,13 +463,13 @@ Add script reference after other framework JS files:
 
 **API:**
 ```csharp
-new ListItem().DragSource(todo.Id)   // I can be dragged, my ID is this
-new Section().DropZone("open")       // I am a drop target, zone="open"
+new ListItem().DragSource(todo.Id)                        // I can be dragged, my ID is this
+new Section().DropZone("open", "/interaction/todos/toggle")  // I am a drop target, call this action on drop
 ```
 
 **Renders as:**
 - `.DragSource(123)` → `draggable="true" data-drag-id="123"`
-- `.DropZone("open")` → `data-drop-zone="open"`
+- `.DropZone("open", "/interaction/todos/toggle")` → `data-drop-zone="open" data-drop-action="/interaction/todos/toggle"`
 
 ---
 
@@ -490,6 +494,7 @@ public interface IDragSource : IElement
 public interface IDropZone : IElement
 {
     string? DropZoneName { get; }
+    string? DropAction { get; }
 }
 
 // ListItem implements drag source
@@ -503,7 +508,9 @@ public record ListItem : ElementBase, IDragSource
 public record Section : ElementBase, IDropZone
 {
     public string? DropZoneName { get; init; }
-    public Section DropZone(string name) => this with { DropZoneName = name };
+    public string? DropAction { get; init; }
+    public Section DropZone(string name, string action) =>
+        this with { DropZoneName = name, DropAction = action };
 }
 ```
 
@@ -628,8 +635,9 @@ drag-drop:
 3. **Phase 3: JavaScript** - Create `drag-drop.js` (~45 lines) **[COMPLETE]**
 4. **Phase 4: Page Updates** - Apply `.DragSource()` and `.DropZone()` in `Todos.Page.cs` **[COMPLETE]**
 5. **Phase 5: Include JS** - Add script to layout **[COMPLETE]**
-6. **Phase 6: Testing** - Manual testing of all drag scenarios
-7. **Phase 7: Polish** - Address any UX issues discovered
+6. **Phase 6: Configurable Drop Action** - Add action URL parameter to `.DropZone()`, update JS to read from `data-drop-action`
+7. **Phase 7: Testing** - Manual testing of all drag scenarios
+8. **Phase 8: Polish** - Address any UX issues discovered
 
 ---
 
@@ -725,6 +733,24 @@ drag-drop:
 - All 19 tests pass, build clean with 0 warnings
 
 **Next session:** Phase 6 (Manual testing of drag-drop functionality)
+
+### Session 6 (2026-01-11)
+- Manual testing revealed blank screen on drop
+- Fixed: Added `swap: 'none'` to `htmx.ajax()` call in `drag-drop.js`
+- Without this, HTMX tried to swap OOB response into body
+- Committed fix: `09d28bc`
+- Identified hardcoded URL in JS as next improvement
+- Added Phase 6: Configurable Drop Action to implementation plan
+- Updated API design: `.DropZone(name, action)` with two parameters
+
+**Changes to make:**
+1. Update `IDropZone` interface to include `DropAction` property
+2. Update `Section.DropZone()` to accept action URL parameter
+3. Update `HtmlRenderer` to emit `data-drop-action` attribute
+4. Update `drag-drop.js` to read action from data attribute
+5. Update `Todos.Page.cs` to use new API
+
+**Next:** Implement Phase 6 (Configurable Drop Action)
 
 ---
 
