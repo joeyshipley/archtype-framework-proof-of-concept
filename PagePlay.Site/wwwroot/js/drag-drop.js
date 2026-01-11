@@ -52,7 +52,7 @@ document.addEventListener('drop', e => {
         // Extract ID from data-drag-id and trigger toggle
         const dragId = draggedItem.dataset.dragId;
         if (dragId) {
-            htmx.ajax('POST', '/interaction/todos/toggle', {values: {id: dragId}});
+            htmx.ajax('POST', '/interaction/todos/toggle', {values: {id: dragId}, swap: 'none'});
         }
     }
     cleanup();
