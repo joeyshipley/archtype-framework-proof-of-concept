@@ -1,14 +1,16 @@
-# ArchType PoC App
+# ArchType Framework Proof-of-Concept
 
-A server-rendered web framework applying game architecture patterns to web development.
+ArchType reduces web development complexity by encoding solved technical decisions as defaults—not documentation. Through server-authoritative architecture and a closed-world UI system, it enforces a strict separation between framework infrastructure and feature development. Developers write business logic using consistent patterns—no CSS, no JavaScript, no HTML templates, no security configuration. 
 
-*NOTE:* App name changed and is no longer PagePlay. If you see that, just ignore.
+The trade-off is flexibility: this framework targets the 70% of web applications that don't need SPAs or real-time streaming. For our web applications, a junior developer or AI assistant can ship features that would require senior-level knowledge in mainstream frameworks.
 
 **[Development Setup](./README_SETUP.md)** - Prerequisites, installation, and common tasks.
 
 **License:** [MIT](./LICENSE)
 
 ## Project Structure
+
+*NOTE: App name changed and is no longer PagePlay. If you see that, just ignore.*
 
 ```
 PagePlay/
@@ -21,11 +23,6 @@ PagePlay/
 ```
 
 See `.claude/docs/` for detailed architecture documentation.
-
-## TODO
-
-- Caching architecture (Redis integration, cache invalidation strategy)
-- CORS configuration (currently defaults to same-origin)
 
 ## Framework Features
 
@@ -155,7 +152,7 @@ Server-side rendering with database-backed state means every request hits the se
 - User-friendly validation error messages
 - Request logging with correlation IDs (no body logging)
 
-## Rich Client Features TODO
+## Planned Rich Client Features
 
 ### Server-Side Only (HTMX handles it, no custom JS needed)
 
@@ -192,3 +189,17 @@ Server-side rendering with database-backed state means every request hits the se
 | Hybrid features | ~260 | ~7.9 KB | ~2.5 KB |
 | Client-only features | ~180 | ~5.5 KB | ~1.7 KB |
 | **Total framework JS** | **~555** | **~17.3 KB** | **~5.1 KB** |
+
+## 1.0 Roadmap
+- Self-teaching documentation (code examples, errors that reference docs, pattern guides—the framework teaches you how to use it rather than requiring external knowledge)
+- CORS configuration (currently defaults to same-origin)
+- Page testing practices and infrastructure.
+- Continue building out the rich clientside behaviors.
+- Caching architecture (Redis integration, cache invalidation strategy)
+
+## 1.x Roadmap
+- UX patterns as architectural constraints (server-side pagination, sensible list limits, filtering over scrolling—prevent bad UX the same way we prevent bad CSS)
+- Closed-world deployment (IaC generated from app dependencies, not hand-crafted—the framework knows what it needs)
+- Closed-world observability (logging, metrics, events with standardized patterns—where it exports is configuration, not code)
+- Closed-world feature flags (standardized API for rollouts and toggles—provider is configuration, not code)
+
