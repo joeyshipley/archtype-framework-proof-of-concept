@@ -3,6 +3,8 @@
     <File Path=".gitignore" />
     <File Path="README.md" />
     <File Path="docker-compose.yml" />
+    <File Path="README_SETUP.md" />
+    <File Path="README_ARCH.md" />
   </Folder>
   <Project Path="ArchType.Framework\ArchType.Framework.csproj" Type="Classic C#" />
   <Project Path="PagePlay.Site/PagePlay.Site.csproj" />

@@ -4,25 +4,13 @@ ArchType reduces web development complexity by encoding solved technical decisio
 
 The trade-off is flexibility: this framework targets the 70% of web applications that don't need SPAs or real-time streaming. For our web applications, a junior developer or AI assistant can ship features that would require senior-level knowledge in mainstream frameworks.
 
-**[Development Setup](./README_SETUP.md)** - Prerequisites, installation, and common tasks.
-
 **License:** [MIT](./LICENSE)
 
-## Project Structure
+**[Architecture Guide](./README_ARCH.md)** - Visual guide to request flow, components, and data binding.
 
-*NOTE: App name changed and is no longer PagePlay. If you see that, just ignore.*
+**[Development Setup](./README_SETUP.md)** - Prerequisites, installation, and common tasks.
 
-```
-PagePlay/
-├── PagePlay.Site/          # Main web application
-│   ├── Application/        # Feature vertical slices
-│   ├── Pages/              # Page views and interactions
-│   └── Infrastructure/     # Framework, data, UI rendering
-├── PagePlay.Tests/         # Test project
-└── docker-compose.yml      # PostgreSQL container config
-```
-
-See `.claude/docs/` for detailed architecture documentation.
+*NOTE: App name changed and is no longer PagePlay. The framework became the point of the experiment after a bit. If you see the old naming, just ignore as it wont be in future versions.*
 
 ## Framework Features
 
