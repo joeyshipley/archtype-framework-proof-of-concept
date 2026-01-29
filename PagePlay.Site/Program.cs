@@ -27,7 +27,7 @@ Log.Logger = new LoggerConfiguration()
 
 try
 {
-    Log.Information("Starting PagePlay application");
+    Log.Information("Starting ArchType Todo application");
 
     var builder = WebApplication.CreateBuilder(args);
 
